@@ -8,21 +8,16 @@ using System.Threading.Tasks;
 
 namespace SQLiteTest
 {
-    public class OurSQL<T> where T : Serializable, new()
+
+
+    class SQLConnectionWrapper
     {
+        public static SQLiteConnection connection {get{ return _connection; } }
+        private static SQLiteConnection _connection;
 
-        SQLiteConnection connection { get; }
-
-
-        Dictionary<string, int> lastID = new Dictionary<string, int>();
-
-        public OurSQL(string path) : this(path, !File.Exists(path))
+        public static SQLiteConnection makeConnection (string path, bool makeNew)
         {
-        }
-
-        public OurSQL(string path, bool makeNew)
-        {
-            connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + (makeNew ? "True" : "False") +
+            _connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + (makeNew ? "True" : "False") +
                 "; Compress = True; ");
             try
             {
@@ -31,9 +26,34 @@ namespace SQLiteTest
             catch (Exception e)
             {
                 Console.Out.WriteLine(e.ToString());
-                connection = null;
+                _connection = null;
             }
+            return _connection;
         }
+        public static SQLiteConnection makeConnection(string path)
+        {
+            return makeConnection(path, !File.Exists(path));
+        }
+    }
+
+    public class OurSQL<T> where T : Serializable, new()
+    {
+
+        SQLiteConnection connection { get; }
+
+
+        Dictionary<string, int> lastID = new Dictionary<string, int>();
+
+        public OurSQL(string path)
+        {
+            if (SQLConnectionWrapper.connection == null)
+                SQLConnectionWrapper.makeConnection(path);
+            connection = SQLConnectionWrapper.connection;
+
+            
+        }
+
+
 
         public void makeTable(string tableName)
         {
@@ -50,22 +70,25 @@ namespace SQLiteTest
             bool first = true;
             foreach (var column in columns)
             {
-                if (first)
+                if (!first)
                 {
-                    first = false;
                     commandText.Append(", ");
                 }
+                else
+                    first = false;
                 commandText.Append(column + " " + "TEXT");
             }
 
             // add key so the records can be cognised
-            commandText.Append(", key INTEGER");
+            commandText.Append(", key INTEGER, lastChange INTEGER");
 
 
             commandText.Append(")");
             command.CommandText = commandText.ToString();
 
             command.ExecuteNonQuery();
+
+            lastID.Add(tableName, 0);
         }
 
         public int addData(string table, T value)
@@ -76,7 +99,7 @@ namespace SQLiteTest
             SQLiteCommand command = connection.CreateCommand();
             StringBuilder commandText = new StringBuilder();
 
-            commandText.Append("INSERT INTO" + table + " (");
+            commandText.Append("INSERT INTO " + table + " (");
 
             var columns = value.getAttributeNames();
 
@@ -91,6 +114,7 @@ namespace SQLiteTest
                 commandText.Append(a);
             }
             commandText.Append(", key");
+            commandText.Append(", lastChange");
             commandText.Append(") VALUES(");
 
             first = true;
@@ -100,13 +124,15 @@ namespace SQLiteTest
                     first = false;
                 else
                     commandText.Append(", ");
-                commandText.Append(a);
+                commandText.Append("'"+a+"'");
             }
 
             commandText.Append(", " + lastID[table]);
             lastID[table] += 1;
 
-            commandText.Append(");");
+            commandText.Append(", " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
+
+            commandText.Append(")");
             command.CommandText = commandText.ToString();
             return command.ExecuteNonQuery();
         }
@@ -124,11 +150,10 @@ namespace SQLiteTest
             reader = command.ExecuteReader();
 
             List<T> output = new List<T>();
-
+            int size = 0;
             while (reader.Read())
             {
-
-
+                ++size;
                 T newStuff = new T();
 
 
@@ -139,6 +164,10 @@ namespace SQLiteTest
                 output.Add(newStuff);
             }
 
+            if (lastID.ContainsKey(tableName))
+                lastID[tableName] = size;
+            else
+                lastID.Add(tableName, size);
 
             return output;
 
@@ -161,7 +190,7 @@ namespace SQLiteTest
                 commandText.Append(" = ");
                 commandText.Append(values[i]);
             }
-
+            commandText.Append(", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
             commandText.Append(" WHERE key = " + index);
 
             command.CommandText = commandText.ToString();
@@ -187,9 +216,33 @@ namespace SQLiteTest
         {
             SQLiteCommand command = connection.CreateCommand();
 
-            command.CommandText = "UPDATE" + table + " SET key = " + oldValue + " WHERE key = " + newValue;
+            command.CommandText = "UPDATE" + table + " SET key = " + oldValue + ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE key = " + newValue;
             command.ExecuteNonQuery();
 
+        }
+
+        public List<int> getDataSince(string tableName, long when)
+        {
+
+            SQLiteDataReader reader;
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT key FROM " + tableName + "WHERE lastChange < " + when;
+
+            reader = command.ExecuteReader();
+            List<int> output = new List<int>();
+            while(reader.Read())
+            {
+                output.Add(reader.GetInt32(0));
+            }
+            return output;
+        }
+
+        public bool containsTable(string name)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + name + "'";
+            var reader = command.ExecuteReader();
+            return reader.HasRows;
         }
     }
 }

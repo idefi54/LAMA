@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SQLiteTest
 {
-    class Event : Serializable
+    class LarpEvent : Serializable
     {
         public enum EventType { normal, preparation};
         public enum Status { awaitingPrerequisites, readyToLaunch, launched, inProgress, completed };
-        public Event() { }
+        public LarpEvent() { }
 
         int ID;
         string name;

@@ -8,7 +8,6 @@ namespace SQLiteTest
 {
     public struct Time
     {
-        public int day;
         int _minutes; 
         public int getRawMinutes()
         {

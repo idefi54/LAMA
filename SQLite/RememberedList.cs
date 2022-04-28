@@ -6,28 +6,34 @@ using System.Threading.Tasks;
 
 namespace SQLiteTest
 {
+
+    
     public class RememberedList<T> where T : Serializable, new()
     {
-        static List<char> ID = new List<char>();
+        public delegate void DataChanged(RememberedList<T> sender, List<int> indexes);
+        public event DataChanged dataChanged;
+        
+
+        static StringBuilder ID = new StringBuilder();
 
         string myID;
 
         List<T> cache = new List<T>();
         OurSQL<T> sql;
         public OurSQL<T> sqlConnection { get { return sql; } }
-        RememberedList(OurSQL<T> sql)
+        public RememberedList(OurSQL<T> sql)
         {
             this.sql = sql;
 
-            if (ID.Count == 0)
-                ID.Add('a');
-            if (ID[ID.Count - 1] < 'Z')
-                ++ID[ID.Count - 1];
+            if (ID.Length == 0)
+                ID.Append(typeof(T).Name);
+            if (ID[ID.Length - 1] < 'Z')
+                ++ID[ID.Length - 1];
             else
-                ID.Add('a');
+                ID.Append('a');
             myID = ID.ToString();
-
-            sql.makeTable(myID);
+            if (!sql.containsTable(myID))
+                sql.makeTable(myID);
 
             loadData();
         }
@@ -40,7 +46,19 @@ namespace SQLiteTest
         public T this[int index]
         {
             get { return cache[index]; }
-            set { sql.changeData(myID, value, index); }
+            set 
+            { 
+                sql.changeData(myID, value, index);
+                List<int> changed = new List<int>();
+                changed.Add(index);
+                dataChanged.Invoke(this, changed);
+            }
+        }
+
+        public void add(T data)
+        {
+            sql.addData(myID, data);
+            cache.Add(data);
         }
 
         public int Count { get { return cache.Count; } }
@@ -48,6 +66,10 @@ namespace SQLiteTest
         public void removeAt(int index)
         {
             sql.removeAt(myID, index);
+            List<int> changed = new List<int>();
+            for (int i = index; i < Count; ++i)
+                changed.Add(i);
+            dataChanged.Invoke(this, changed);
         }
     }
 
