@@ -14,8 +14,10 @@ namespace SQLiteTest
     {
 
         //TODO INVOKES
-        public delegate void DataChanged(Serializable changed, int changedAttributeIndex);
-        public delegate void Created(Serializable created);
+        public delegate void DataChangedDelegate(Serializable changed, int changedAttributeIndex);
+        public delegate void CreatedDelegate(Serializable created);
+        public event DataChangedDelegate dataChanged;
+        public event CreatedDelegate created;
 
         public static SQLiteConnection connection {get{ return _connection; } }
         private static SQLiteConnection _connection;
