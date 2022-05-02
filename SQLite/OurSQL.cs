@@ -12,6 +12,11 @@ namespace SQLiteTest
 
     class SQLConnectionWrapper
     {
+
+        //TODO INVOKES
+        public delegate void DataChanged(Serializable changed, int changedAttributeIndex);
+        public delegate void Created(Serializable created);
+
         public static SQLiteConnection connection {get{ return _connection; } }
         private static SQLiteConnection _connection;
 

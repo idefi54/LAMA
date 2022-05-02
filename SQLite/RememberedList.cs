@@ -10,8 +10,7 @@ namespace SQLiteTest
     
     public class RememberedList<T> where T : Serializable, new()
     {
-        public delegate void DataChanged(RememberedList<T> sender, List<int> indexes);
-        public event DataChanged dataChanged;
+        
         
 
         static StringBuilder ID = new StringBuilder();
@@ -49,9 +48,7 @@ namespace SQLiteTest
             set 
             { 
                 sql.changeData(myID, value, index);
-                List<int> changed = new List<int>();
-                changed.Add(index);
-                dataChanged.Invoke(this, changed);
+
             }
         }
 
@@ -66,10 +63,13 @@ namespace SQLiteTest
         public void removeAt(int index)
         {
             sql.removeAt(myID, index);
-            List<int> changed = new List<int>();
-            for (int i = index; i < Count; ++i)
-                changed.Add(i);
-            dataChanged.Invoke(this, changed);
+
+        }
+
+        //TODO 
+        public T getByID(int id)
+        {
+
         }
     }
 

@@ -12,6 +12,15 @@ namespace SQLiteTest
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
+        //TODO
+        int getID();
+        //TODO
+        void buildFromStrings(string[] input);
+        //TODO 
+        RememberedList<Serializable> getStorage();
+        //TODO 
+        string getAttribute(int index);
+        
 
     }
 }
