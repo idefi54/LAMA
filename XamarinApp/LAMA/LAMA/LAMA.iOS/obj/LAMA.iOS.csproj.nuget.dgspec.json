@@ -42,6 +42,15 @@
       "frameworks": {
         "xamarinios10": {
           "dependencies": {
+            "Mapsui.Forms": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
+            "System.Memory": {
+              "include": "None",
+              "target": "Package",
+              "version": "[4.5.4, )"
+            },
             "Xamarin.Essentials": {
               "target": "Package",
               "version": "[1.7.0, )"
@@ -105,6 +114,10 @@
         "netstandard2.0": {
           "targetAlias": "netstandard2.0",
           "dependencies": {
+            "Mapsui.Forms": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "NETStandard.Library": {
               "suppressParent": "All",
               "target": "Package",
