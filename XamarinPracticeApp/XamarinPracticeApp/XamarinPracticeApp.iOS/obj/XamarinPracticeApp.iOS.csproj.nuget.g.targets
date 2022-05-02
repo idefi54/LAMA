@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)xamarin.forms\5.0.0.2196\buildTransitive\Xamarin.Forms.targets" Condition="Exists('$(NuGetPackageRoot)xamarin.forms\5.0.0.2196\buildTransitive\Xamarin.Forms.targets')" />
+    <Import Project="$(NuGetPackageRoot)skiasharp\2.80.2\buildTransitive\xamarinios1.0\SkiaSharp.targets" Condition="Exists('$(NuGetPackageRoot)skiasharp\2.80.2\buildTransitive\xamarinios1.0\SkiaSharp.targets')" />
+    <Import Project="$(NuGetPackageRoot)harfbuzzsharp\2.6.1.7\buildTransitive\xamarinios1.0\HarfBuzzSharp.targets" Condition="Exists('$(NuGetPackageRoot)harfbuzzsharp\2.6.1.7\buildTransitive\xamarinios1.0\HarfBuzzSharp.targets')" />
+    <Import Project="$(NuGetPackageRoot)mapsui.forms\3.0.2\build\xamarinios1.0\Mapsui.Forms.targets" Condition="Exists('$(NuGetPackageRoot)mapsui.forms\3.0.2\build\xamarinios1.0\Mapsui.Forms.targets')" />
+  </ImportGroup>
+</Project>
