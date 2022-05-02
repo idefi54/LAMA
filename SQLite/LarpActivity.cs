@@ -19,6 +19,7 @@ namespace SQLiteTest
         EventType eventType;
 
         List<int> prerequisiteIDs = new List<int>();
+        //TODO remake
         List<int> registeredPeople = new List<int>();
 
 
@@ -26,12 +27,17 @@ namespace SQLiteTest
         int day;
         Time start;
 
-        //TODO 
-        // required items
-
-        (double, double) place;
+        Pair<double, double> place;
 
         Status status;
+
+        //TODO add these
+        List<Pair<int, int>> requiredItems = new List<Pair<int, int>>();
+
+        //string jmeno role, kolik, registrace na roli
+        List<Pair<string, int>> roles = new List<Pair<string, int>>();
+        List<Pair<int, string>> registrationByRole = new List<Pair<int, string>>();
+
 
 
         public int numOfAttributes()
@@ -95,6 +101,8 @@ namespace SQLiteTest
         }
 
 
+        //TODO 
+        //konstruktor
 
     }
 }
