@@ -57,7 +57,5 @@
     <Import Project="$(NuGetPackageRoot)xamarin.androidx.concurrent.futures\1.1.0.3\buildTransitive\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets" Condition="Exists('$(NuGetPackageRoot)xamarin.androidx.concurrent.futures\1.1.0.3\buildTransitive\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets')" />
     <Import Project="$(NuGetPackageRoot)xamarin.androidx.browser\1.3.0.6\buildTransitive\monoandroid90\Xamarin.AndroidX.Browser.targets" Condition="Exists('$(NuGetPackageRoot)xamarin.androidx.browser\1.3.0.6\buildTransitive\monoandroid90\Xamarin.AndroidX.Browser.targets')" />
     <Import Project="$(NuGetPackageRoot)xamarin.forms\5.0.0.2196\buildTransitive\Xamarin.Forms.targets" Condition="Exists('$(NuGetPackageRoot)xamarin.forms\5.0.0.2196\buildTransitive\Xamarin.Forms.targets')" />
-    <Import Project="$(NuGetPackageRoot)skiasharp\2.80.2\buildTransitive\monoandroid1.0\SkiaSharp.targets" Condition="Exists('$(NuGetPackageRoot)skiasharp\2.80.2\buildTransitive\monoandroid1.0\SkiaSharp.targets')" />
-    <Import Project="$(NuGetPackageRoot)harfbuzzsharp\2.6.1.7\buildTransitive\monoandroid1.0\HarfBuzzSharp.targets" Condition="Exists('$(NuGetPackageRoot)harfbuzzsharp\2.6.1.7\buildTransitive\monoandroid1.0\HarfBuzzSharp.targets')" />
   </ImportGroup>
 </Project>
