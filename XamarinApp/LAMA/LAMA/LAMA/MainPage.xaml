@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.MainPage">
+             x:Class="LAMA.MainPage"
+			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms">
 
     <StackLayout>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
@@ -19,6 +20,10 @@
                 </FormattedString>
             </Label.FormattedText>
         </Label>
-    </StackLayout>
+		<mapsui:MapView x:Name="mapView"
+    VerticalOptions="FillAndExpand"
+    HorizontalOptions="Fill"
+    BackgroundColor="Gray" />
+	</StackLayout>
 
 </ContentPage>

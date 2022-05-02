@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\My Program Files\\C#\\LAMA-main\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj": {}
+    "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj": {}
   },
   "projects": {
-    "C:\\My Program Files\\C#\\LAMA-main\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj": {
+    "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\My Program Files\\C#\\LAMA-main\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
         "projectName": "LAMA",
-        "projectPath": "C:\\My Program Files\\C#\\LAMA-main\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
-        "packagesPath": "C:\\Users\\hyppe\\.nuget\\packages\\",
-        "outputPath": "C:\\My Program Files\\C#\\LAMA-main\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\hyppe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,6 +44,10 @@
         "netstandard2.0": {
           "targetAlias": "netstandard2.0",
           "dependencies": {
+            "Mapsui.Forms": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "NETStandard.Library": {
               "suppressParent": "All",
               "target": "Package",
@@ -69,7 +73,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
         }
       }
     }
