@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace SQLiteTest
 {
-    public struct Time
+    public class Time
     {
+
+        public delegate void DataChanged();
+        public event DataChanged dataChanged;
+
+
         int _minutes; 
         public int getRawMinutes()
         {
@@ -16,9 +21,15 @@ namespace SQLiteTest
         public void setRawMinutes(int input)
         {
             _minutes = input;
+            dataChanged?.Invoke();
         }
 
-        public int hours { get { return _minutes / 60; } set { _minutes = value * 60 + _minutes%60; } }
-        public int minutes { get { return _minutes % 60; }  set { _minutes = value + _minutes / 60; }}
+        public int hours { get { return _minutes / 60; } set { _minutes = value * 60 + _minutes%60; dataChanged?.Invoke(); } }
+        public int minutes { get { return _minutes % 60; }  set { _minutes = value + _minutes / 60; dataChanged?.Invoke(); }}
+
+        public override string ToString()
+        {
+            return _minutes.ToString();
+        }
     }
 }

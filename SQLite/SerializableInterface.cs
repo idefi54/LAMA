@@ -9,6 +9,8 @@ namespace SQLiteTest
     public interface Serializable
     {
         void setAttribute(int index, string value);
+
+        //THERE HAS TO BE AN ATTRIBUTE CALLED ID
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
@@ -16,8 +18,6 @@ namespace SQLiteTest
         int getID();
         //TODO
         void buildFromStrings(string[] input);
-        //TODO 
-        RememberedList<Serializable> getStorage();
         //TODO 
         string getAttribute(int index);
         

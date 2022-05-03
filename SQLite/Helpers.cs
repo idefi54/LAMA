@@ -25,9 +25,9 @@ namespace SQLiteTest
             return readInt(input, ref i);
         }
 
-        public static List<int> readIntField(string input)
+        public static EventList<int> readIntField(string input)
         {
-            List<int> output = new List<int>();
+            EventList<int> output = new EventList<int>();
             int i = 0;
             skipNonDigits(input, ref i);
             while(i<input.Length)
@@ -41,6 +41,16 @@ namespace SQLiteTest
         {
             while (!char.IsDigit(input[offset]))
                 ++offset;
+        }
+        static string readString(string input, ref int offset)
+        {
+            StringBuilder output = new StringBuilder();
+            while (offset < input.Length && input[offset] != ',') 
+            {
+                output.Append(input[offset]);
+                ++offset;
+            }
+            return output.ToString();
         }
 
         public static int findIndex<T> (T[] array, T value) 
@@ -63,12 +73,57 @@ namespace SQLiteTest
 
             return (double)firstPart + ((double)secondPart) / Math.Ceiling(Math.Log10(secondPart));
         }
-        public static (double, double) readDoublePair(string input)
+        public static Pair<double, double> readDoublePair(string input)
         {
             int i = 0;
             double first = readDouble(input, ref i);
             ++i;
-            return (first, readDouble(input, ref i));
+            return new Pair<double, double>(first, readDouble(input, ref i));
         }
+
+        public static EventList<Pair<int, int>> readIntPairField(string input)
+        {
+            EventList<Pair<int, int>> output = new EventList<Pair<int, int>>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                int first = readInt(input, ref i);
+                skipNonDigits(input, ref i);
+                output.Add(new Pair<int,int>(first, readInt(input, ref i)));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
+        public static EventList<Pair<string, int>> readStringIntPairField(string input)
+        {
+            EventList<Pair<string, int>> output = new EventList<Pair<string, int>>();
+            int i = 0;
+            while (i < input.Length) 
+            {
+                string first = readString(input, ref i);
+                skipNonDigits(input, ref i);
+                output.Add(new Pair<string, int>(first, readInt(input, ref i)));
+                ++i;
+            }
+            return output;
+        }
+        public static EventList<Pair<int, string>> readIntStringPairField(string input)
+        {
+            EventList<Pair<int, string>> output = new EventList<Pair<int, string>>();
+            int i = 0;
+            while (i < input.Length)
+            {
+                int first = readInt(input, ref i);
+                ++i;
+                output.Add(new Pair<int, string>(first, readString(input, ref i)));
+                skipNonDigits(input, ref i); ;
+            }
+            return output;
+        }
+
+
+
+
     }
 }

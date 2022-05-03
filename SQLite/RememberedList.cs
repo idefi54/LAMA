@@ -11,11 +11,12 @@ namespace SQLiteTest
     public class RememberedList<T> where T : Serializable, new()
     {
         
-        
+        Dictionary<int, int> IDToIndex = new Dictionary<int, int>();
 
         static StringBuilder ID = new StringBuilder();
 
         string myID;
+        public string tableName { get { return myID; } }
 
         List<T> cache = new List<T>();
         OurSQL<T> sql;
@@ -40,36 +41,47 @@ namespace SQLiteTest
         void loadData()
         {
             cache = sql.ReadData(myID);
+
+            int i = 0;
+            foreach(var a in cache)
+            {
+                IDToIndex.Add(a.getID(), i);
+                ++i;
+            }
         }
 
         public T this[int index]
         {
             get { return cache[index]; }
-            set 
-            { 
-                sql.changeData(myID, value, index);
-
-            }
         }
 
         public void add(T data)
         {
-            sql.addData(myID, data);
+            
             cache.Add(data);
+            IDToIndex.Add(data.getID(), cache.Count - 1);
+
+            sql.addData(myID, data);
         }
 
         public int Count { get { return cache.Count; } }
 
         public void removeAt(int index)
         {
-            sql.removeAt(myID, index);
+            
+            IDToIndex.Remove(cache[index].getID());
+            for (int i = index; i < cache.Count; ++i)
+            {
+                --IDToIndex[cache[index].getID()];
+            }
+            cache.RemoveAt(index);
 
+            sql.removeAt(myID, cache[index]);
         }
 
-        //TODO 
         public T getByID(int id)
         {
-
+            return cache[IDToIndex[id]];
         }
     }
 

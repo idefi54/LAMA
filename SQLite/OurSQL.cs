@@ -10,14 +10,34 @@ namespace SQLiteTest
 {
 
 
+    class SQLEvents
+    {
+        public delegate void DataChangedDelegate(Serializable changed, int changedAttributeIndex);
+        public delegate void CreatedDelegate(Serializable created);
+        public delegate void DataDeletedDelegate(Serializable deleted);
+        public static event DataChangedDelegate dataChanged;
+        public static event CreatedDelegate created;
+        public static event DataDeletedDelegate dataDeleted;
+
+        public static void invokeCreated(Serializable created)
+        {
+            SQLEvents.created?.Invoke(created);
+        }
+        public static void invokeChanged(Serializable changed, int index)
+        {
+            dataChanged?.Invoke(changed, index);
+        }
+        public static void invokeDeleted(Serializable deleted)
+        {
+            dataDeleted?.Invoke(deleted);
+        }
+
+    }
+
     class SQLConnectionWrapper
     {
 
-        //TODO INVOKES
-        public delegate void DataChangedDelegate(Serializable changed, int changedAttributeIndex);
-        public delegate void CreatedDelegate(Serializable created);
-        public event DataChangedDelegate dataChanged;
-        public event CreatedDelegate created;
+        
 
         public static SQLiteConnection connection {get{ return _connection; } }
         private static SQLiteConnection _connection;
@@ -86,8 +106,8 @@ namespace SQLiteTest
                 commandText.Append(column + " " + "TEXT");
             }
 
-            // add key so the records can be cognised
-            commandText.Append(", key INTEGER, lastChange INTEGER");
+            // last change parameter, so we can get items since some time
+            commandText.Append(", lastChange INTEGER");
 
 
             commandText.Append(")");
@@ -98,11 +118,11 @@ namespace SQLiteTest
             lastID.Add(tableName, 0);
         }
 
-        public int addData(string table, T value)
+        public void addData(string table, T value)
         {
-
             if (value == null)
-                return 0;
+                return;
+
             SQLiteCommand command = connection.CreateCommand();
             StringBuilder commandText = new StringBuilder();
 
@@ -120,7 +140,6 @@ namespace SQLiteTest
                     commandText.Append(", ");
                 commandText.Append(a);
             }
-            commandText.Append(", key");
             commandText.Append(", lastChange");
             commandText.Append(") VALUES(");
 
@@ -141,7 +160,11 @@ namespace SQLiteTest
 
             commandText.Append(")");
             command.CommandText = commandText.ToString();
-            return command.ExecuteNonQuery();
+
+            
+           command.ExecuteNonQuery();
+
+            SQLEvents.invokeCreated(value);
         }
 
 
@@ -180,60 +203,39 @@ namespace SQLiteTest
 
         }
 
-        public void changeData(string tableName, T newContent, int index)
+        
+        public void changeData(string tableName, int attributeIndex, string newAttributeValue, T who)
         {
             SQLiteCommand command = connection.CreateCommand();
-            StringBuilder commandText = new StringBuilder();
 
-            commandText.Append("UPDATE " + tableName + " SET ");
+            string attributeName = who.getAttributeNames()[attributeIndex];
 
-            var columns = newContent.getAttributeNames();
-            var values = newContent.getAttributes();
-            for (int i = 0; i < columns.Length; ++i)
-            {
-                if (i != 0)
-                    commandText.Append(", ");
-                commandText.Append(columns[i]);
-                commandText.Append(" = ");
-                commandText.Append(values[i]);
-            }
-            commandText.Append(", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
-            commandText.Append(" WHERE key = " + index);
-
-            command.CommandText = commandText.ToString();
+            command.CommandText = "UPDATE " + tableName + " SET " + attributeName + " = " + newAttributeValue + 
+                ", lastChange = "+ DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE ID = " + who.getID();
             command.ExecuteNonQuery();
+
+            SQLEvents.invokeChanged(who, attributeIndex);
         }
 
-        public void removeAt(string table, int index)
+        public void removeAt(string table, T who)
         {
             SQLiteCommand command = connection.CreateCommand();
             StringBuilder commandText = new StringBuilder();
 
-            commandText.Append("DELETE FROM " + table + " WHERE key = " + index);
+            commandText.Append("DELETE FROM " + table + " WHERE ID = " + who.getID());
             command.CommandText = command.ToString();
             command.ExecuteNonQuery();
 
-            for (int i = index + 1; i < lastID[table]; ++i)
-            {
-                changeKey(table, i, i - 1);
-            }
-            lastID[table] -= 1;
+            SQLEvents.invokeDeleted(who);
         }
-        void changeKey(string table, int oldValue, int newValue)
-        {
-            SQLiteCommand command = connection.CreateCommand();
-
-            command.CommandText = "UPDATE" + table + " SET key = " + oldValue + ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE key = " + newValue;
-            command.ExecuteNonQuery();
-
-        }
+        
 
         public List<int> getDataSince(string tableName, long when)
         {
 
             SQLiteDataReader reader;
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT key FROM " + tableName + "WHERE lastChange < " + when;
+            command.CommandText = "SELECT ID FROM " + tableName + "WHERE lastChange < " + when;
 
             reader = command.ExecuteReader();
             List<int> output = new List<int>();
