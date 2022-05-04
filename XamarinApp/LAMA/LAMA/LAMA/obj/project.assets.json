@@ -2329,6 +2329,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
+      "Mapsui >= 3.0.2",
       "Mapsui.Forms >= 3.0.2",
       "NETStandard.Library >= 2.0.3",
       "Xamarin.Essentials >= 1.7.0",
@@ -2336,25 +2337,28 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Tom\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Idefix\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
+      "projectUniqueName": "C:\\Users\\Idefix\\source\\repos\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
       "projectName": "LAMA",
-      "projectPath": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
-      "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Tom\\Documents\\GitHub\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\obj\\",
+      "projectPath": "C:\\Users\\Idefix\\source\\repos\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\LAMA.csproj",
+      "packagesPath": "C:\\Users\\Idefix\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Idefix\\source\\repos\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Idefix\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
@@ -2379,6 +2383,10 @@
       "netstandard2.0": {
         "targetAlias": "netstandard2.0",
         "dependencies": {
+          "Mapsui": {
+            "target": "Package",
+            "version": "[3.0.2, )"
+          },
           "Mapsui.Forms": {
             "target": "Package",
             "version": "[3.0.2, )"
