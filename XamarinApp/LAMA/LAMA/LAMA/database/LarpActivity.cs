@@ -65,13 +65,14 @@ namespace LAMA
 
 
 
-        Time _duration;
+        Time _duration = new Time();
         public Time duration
         {
             get { return _duration; }
             set
             {
                 _duration = value;
+                _duration.dataChanged += durationChanged;
                 updateValue(6, value.ToString());
             }
         }
@@ -87,13 +88,14 @@ namespace LAMA
             }
         }
 
-        Time _start;
+        Time _start = new Time();
         public Time start
         {
             get { return _start; }
             set
             {
                 _start = value;
+                start.dataChanged += startChanged;
                 updateValue(8, _start.ToString());
             }
         }

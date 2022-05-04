@@ -39,7 +39,7 @@ namespace LAMA
         }
         static void skipNonDigits(string input, ref int offset)
         {
-            while (!char.IsDigit(input[offset]))
+            while (offset < input.Length && !char.IsDigit(input[offset])) 
                 ++offset;
         }
         static string readString(string input, ref int offset)
@@ -71,13 +71,13 @@ namespace LAMA
             ++offset;
             int secondPart = readInt(input, ref offset);
 
-            return (double)firstPart + ((double)secondPart) / Math.Ceiling(Math.Log10(secondPart));
+            return (double)firstPart + ((double)secondPart) / Math.Pow(10, Math.Ceiling(Math.Log10(secondPart)));
         }
         public static Pair<double, double> readDoublePair(string input)
         {
             int i = 0;
             double first = readDouble(input, ref i);
-            ++i;
+            skipNonDigits(input, ref i);
             return new Pair<double, double>(first, readDouble(input, ref i));
         }
 

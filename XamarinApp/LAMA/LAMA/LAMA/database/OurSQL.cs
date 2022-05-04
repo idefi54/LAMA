@@ -69,10 +69,9 @@ namespace LAMA
         SQLiteConnection connection { get; }
 
 
-        Dictionary<string, int> lastID = new Dictionary<string, int>();
-
         public OurSQL(string path)
         {
+
             if (SQLConnectionWrapper.connection == null)
                 SQLConnectionWrapper.makeConnection(path);
             connection = SQLConnectionWrapper.connection;
@@ -115,7 +114,6 @@ namespace LAMA
 
             command.ExecuteNonQuery();
 
-            lastID.Add(tableName, 0);
         }
 
         public void addData(string table, T value, bool invoke)
@@ -153,8 +151,6 @@ namespace LAMA
                 commandText.Append("'"+a+"'");
             }
 
-            commandText.Append(", " + lastID[table]);
-            lastID[table] += 1;
 
             commandText.Append(", " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
 
@@ -195,13 +191,7 @@ namespace LAMA
                 output.Add(newStuff);
             }
 
-            if (lastID.ContainsKey(tableName))
-                lastID[tableName] = size;
-            else
-                lastID.Add(tableName, size);
-
             return output;
-
         }
 
         
@@ -224,7 +214,7 @@ namespace LAMA
             StringBuilder commandText = new StringBuilder();
 
             commandText.Append("DELETE FROM " + table + " WHERE ID = " + who.getID());
-            command.CommandText = command.ToString();
+            command.CommandText = commandText.ToString();
             command.ExecuteNonQuery();
 
             SQLEvents.invokeDeleted(who);

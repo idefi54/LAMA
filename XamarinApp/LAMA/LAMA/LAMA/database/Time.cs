@@ -31,5 +31,11 @@ namespace LAMA
         {
             return _minutes.ToString();
         }
+
+        public Time() { }
+        public Time(int minutes)
+        {
+            _minutes = minutes;
+        }
     }
 }
