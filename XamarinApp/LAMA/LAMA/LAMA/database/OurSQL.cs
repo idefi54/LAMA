@@ -118,7 +118,7 @@ namespace LAMA
             lastID.Add(tableName, 0);
         }
 
-        public void addData(string table, T value)
+        public void addData(string table, T value, bool invoke)
         {
             if (value == null)
                 return;
@@ -164,7 +164,8 @@ namespace LAMA
             
            command.ExecuteNonQuery();
 
-            SQLEvents.invokeCreated(value);
+            if(invoke)
+                SQLEvents.invokeCreated(value);
         }
 
 
