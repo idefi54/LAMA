@@ -579,6 +579,33 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/SQLite.Interop.dll": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/SQLite.Interop.dll": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-x64/native/SQLite.Interop.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/SQLite.Interop.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -635,6 +662,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -916,6 +955,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -1682,6 +1722,15 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -1739,6 +1788,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -2023,6 +2084,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -2832,6 +2894,15 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -2889,6 +2960,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -3204,6 +3287,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -4013,6 +4097,15 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -4070,6 +4163,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -4382,6 +4487,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -5148,6 +5254,18 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "native": {
+          "runtimes/win-x64/native/SQLite.Interop.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -5205,6 +5323,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -5489,6 +5619,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -6298,6 +6429,18 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "native": {
+          "runtimes/win-x64/native/SQLite.Interop.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -6355,6 +6498,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -6670,6 +6825,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -7436,6 +7592,18 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "native": {
+          "runtimes/win-x86/native/SQLite.Interop.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -7493,6 +7661,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -7777,6 +7957,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -8586,6 +8767,18 @@
           "lib/uap10.0/SkiaSharp.Views.Forms.dll": {}
         }
       },
+      "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Data.SQLite.dll": {}
+        },
+        "native": {
+          "runtimes/win-x86/native/SQLite.Interop.dll": {}
+        }
+      },
       "Svg.Custom/0.5.7.1": {
         "type": "package",
         "dependencies": {
@@ -8643,6 +8836,18 @@
         },
         "runtime": {
           "lib/win8/_._": {}
+        }
+      },
+      "System.Data.SQLite/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "System.Data.SQLite.Core": "[1.0.115.5]"
+        }
+      },
+      "System.Data.SQLite.Core/1.0.115.5": {
+        "type": "package",
+        "dependencies": {
+          "Stub.System.Data.SQLite.Core.NetStandard": "[1.0.115.5]"
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -8958,6 +9163,7 @@
         "dependencies": {
           "Mapsui": "3.0.2",
           "Mapsui.Forms": "3.0.2",
+          "System.Data.SQLite": "1.0.115.5",
           "Xamarin.Essentials": "1.7.0",
           "Xamarin.Forms": "5.0.0.2196"
         },
@@ -14250,6 +14456,27 @@
         "skiasharp.views.forms.nuspec"
       ]
     },
+    "Stub.System.Data.SQLite.Core.NetStandard/1.0.115.5": {
+      "sha512": "WfrqQg6WL+r4H1sVKTenNj6ERLXUukUxqcjH1rqPqXadeIWccTVpydESieD7cZ/NWQVSKLYIHuoBX5du+BFhIQ==",
+      "type": "package",
+      "path": "stub.system.data.sqlite.core.netstandard/1.0.115.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/System.Data.SQLite.dll",
+        "lib/netstandard2.0/System.Data.SQLite.dll.altconfig",
+        "lib/netstandard2.0/System.Data.SQLite.xml",
+        "lib/netstandard2.1/System.Data.SQLite.dll",
+        "lib/netstandard2.1/System.Data.SQLite.dll.altconfig",
+        "lib/netstandard2.1/System.Data.SQLite.xml",
+        "runtimes/linux-x64/native/SQLite.Interop.dll",
+        "runtimes/osx-x64/native/SQLite.Interop.dll",
+        "runtimes/win-x64/native/SQLite.Interop.dll",
+        "runtimes/win-x86/native/SQLite.Interop.dll",
+        "stub.system.data.sqlite.core.netstandard.1.0.115.5.nupkg.sha512",
+        "stub.system.data.sqlite.core.netstandard.nuspec"
+      ]
+    },
     "Svg.Custom/0.5.7.1": {
       "sha512": "06ryceFIx1LlalWZ5wnN3CyvUza9vHsIl4fUtVSngVkmMMIiOAef8KOWHfyyUF0gQDs+9ay1kCLZnAY0UcA7Fg==",
       "type": "package",
@@ -14362,6 +14589,28 @@
         "ref/xamarinwatchos10/_._",
         "system.collections.4.3.0.nupkg.sha512",
         "system.collections.nuspec"
+      ]
+    },
+    "System.Data.SQLite/1.0.115.5": {
+      "sha512": "zo5xzYAVkmREKM4ImeiEatwa9D6Bc1KvnmX+VFysJ4sf89yZVdz4uf7A351hZhqBbHsX4ZeULmYocokOPCOcKw==",
+      "type": "package",
+      "path": "system.data.sqlite/1.0.115.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "system.data.sqlite.1.0.115.5.nupkg.sha512",
+        "system.data.sqlite.nuspec"
+      ]
+    },
+    "System.Data.SQLite.Core/1.0.115.5": {
+      "sha512": "vADIqqgpxaC5xR6qOV8/KMZkQeSDCfmmWpVOtQx0oEr3Yjq2XdTxX7+jfE4+oO2xPovAbYiz6Q5cLRbSsDkq6Q==",
+      "type": "package",
+      "path": "system.data.sqlite.core/1.0.115.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "system.data.sqlite.core.1.0.115.5.nupkg.sha512",
+        "system.data.sqlite.core.nuspec"
       ]
     },
     "System.Diagnostics.Debug/4.3.0": {

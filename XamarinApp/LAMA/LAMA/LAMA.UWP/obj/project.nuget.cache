@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "rYKNSPFFT2hlVDDlqJSG+424Fx3GFdw4lwRZZwZ8DfWINqsgenrB6+6eTwImOqRZYiEdFIBdZq9atE961bpeAg==",
+  "dgSpecHash": "qblKlBtN7ODIV2+7l457Nkktd9T+3h+D1ED+S+XdcHM/HgI5a9xcyV9er7OIWRozLLGSvs286aRAdKClrhMIcA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Idefix\\source\\repos\\LAMA\\XamarinApp\\LAMA\\LAMA\\LAMA.UWP\\LAMA.UWP.csproj",
   "expectedPackageFiles": [
@@ -62,10 +62,13 @@
     "C:\\Users\\Idefix\\.nuget\\packages\\skiasharp.harfbuzz\\2.80.2\\skiasharp.harfbuzz.2.80.2.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\skiasharp.views\\2.80.2\\skiasharp.views.2.80.2.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\skiasharp.views.forms\\2.80.2\\skiasharp.views.forms.2.80.2.nupkg.sha512",
+    "C:\\Users\\Idefix\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.115.5\\stub.system.data.sqlite.core.netstandard.1.0.115.5.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\svg.custom\\0.5.7.1\\svg.custom.0.5.7.1.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\svg.model\\0.5.7.1\\svg.model.0.5.7.1.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\svg.skia\\0.5.7.1\\svg.skia.0.5.7.1.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
+    "C:\\Users\\Idefix\\.nuget\\packages\\system.data.sqlite\\1.0.115.5\\system.data.sqlite.1.0.115.5.nupkg.sha512",
+    "C:\\Users\\Idefix\\.nuget\\packages\\system.data.sqlite.core\\1.0.115.5\\system.data.sqlite.core.1.0.115.5.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\system.diagnostics.debug\\4.3.0\\system.diagnostics.debug.4.3.0.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\system.drawing.common\\5.0.0\\system.drawing.common.5.0.0.nupkg.sha512",
     "C:\\Users\\Idefix\\.nuget\\packages\\system.globalization\\4.3.0\\system.globalization.4.3.0.nupkg.sha512",
