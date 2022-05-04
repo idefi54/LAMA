@@ -52,16 +52,24 @@ namespace LAMA
 
         public T this[int index]
         {
+
             get { return cache[index]; }
         }
 
-        public void add(T data)
+        /*public void add(T data)
         {
             
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
-            sql.addData(myID, data);
+            sql.addData(myID, data, true);
+        }*/
+        public void add(T data, bool invokeEvent = true)
+        {
+            cache.Add(data);
+            IDToIndex.Add(data.getID(), cache.Count - 1);
+
+            sql.addData(myID, data, invokeEvent);
         }
 
         public int Count { get { return cache.Count; } }
