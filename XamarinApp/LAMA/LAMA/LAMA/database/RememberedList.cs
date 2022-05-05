@@ -35,6 +35,11 @@ namespace LAMA
             if (!sql.containsTable(myID))
                 sql.makeTable(myID);
 
+
+            //set up singleton
+            if(typeof(T).Equals(typeof(LarpActivity)))
+                SingletonPlaceholder.activities = this as RememberedList<LarpActivity>;
+
             loadData();
         }
 
@@ -78,19 +83,22 @@ namespace LAMA
         {
             
             IDToIndex.Remove(cache[index].getID());
-            for (int i = index; i < cache.Count; ++i)
+            for (int i = index + 1; i < cache.Count; ++i) 
             {
-                --IDToIndex[cache[index].getID()];
+                --IDToIndex[cache[i].getID()];
             }
+            var who = cache[index];
             cache.RemoveAt(index);
 
-            sql.removeAt(myID, cache[index]);
+            sql.removeAt(myID, who);
         }
 
         public T getByID(int id)
         {
             return cache[IDToIndex[id]];
         }
+
+
     }
 
 
