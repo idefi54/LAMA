@@ -1,68 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace LAMA
 {
-    public class ServerCommunicator
+    public class ClientCommunicator
     {
-        static byte[] buffer = new byte[8 * 1024];
-        static Socket serverSocket;
-        public Thread server;
-        public static ServerCommunicator THIS;
+        static Socket s;
+        public Thread listener;
+        private static string CPName;
+        private static string assignedEvent = "";
 
+        static byte[] buffer = new byte[8 * 1024];
+        public static ClientCommunicator THIS;
         public Dictionary<string, Command> objectsCache = new Dictionary<string, Command>();
         public Dictionary<string, TimeValue> attributesCache = new Dictionary<string, TimeValue>();
+        static Random rd = new Random();
 
-        private static List<Socket> clientSockets = new List<Socket>();
-
-        public object commandsLock = new object();
-        private Queue<Command> commandsToBroadCast = new Queue<Command>();
-        private Command currentCommand = null;
-
-        private void StartServer()
+        internal static string CreateString(int stringLength)
         {
-            serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            var timer = new System.Threading.Timer((e) =>
+            const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
+            char[] chars = new char[stringLength];
+
+            for (int i = 0; i < stringLength; i++)
             {
-                ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+                chars[i] = allowedChars[rd.Next(0, allowedChars.Length)];
+            }
+
+            return new string(chars);
         }
 
-        private void ProcessBroadcast()
+        private void SendCommand(Command command)
         {
-            lock (commandsLock)
-            {
-                if (commandsToBroadCast.Count > 0)
-                {
-                    currentCommand = commandsToBroadCast.Dequeue();
-                }
-                else
-                {
-                    currentCommand = null;
-                }
-            }
-            if (currentCommand != null)
-            {
-                byte[] data = currentCommand.Encode();
-                foreach (var client in clientSockets)
-                {
-                    client.Send(data);
-                }
-            }
-        }
-
-        private static void AcceptCallback(IAsyncResult AR)
-        {
-            Socket socket = serverSocket.EndAccept(AR);
-            clientSockets.Add(socket);
-            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
-            serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
+            s.Send(command.Encode());
         }
 
         private static void ReceiveData(IAsyncResult AR)
@@ -76,7 +53,6 @@ namespace LAMA
             catch (SocketException)
             {
                 current.Close();
-                clientSockets.Remove(current);
                 return;
             }
             byte[] data = new byte[received];
@@ -104,56 +80,68 @@ namespace LAMA
                     THIS.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
-            if (messageParts[1] == "Update")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.SendUpdate(current, Int64.Parse(messageParts[0]));
-                }));
-            }
             current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
         }
 
-        public ServerCommunicator(string name, string IP, int port, string password)
+        /*
+        private void SendConnectionInfo()
+        {
+            string q = "ClientConnected;";
+            q += CPName + ";";
+            byte[] data = Encoding.Default.GetBytes(q);
+            s.Send(data);
+        }
+        */
+
+        private void RequestUpdate()
+        {
+            string q = System.DateTime.UtcNow.ToString() + ";";
+            q += "Update;";
+            q += CPName + ";";
+            byte[] data = Encoding.Default.GetBytes(q);
+            s.Send(data);
+        }
+
+        private void StartListening()
+        {
+            //SendConnectionInfo();
+            RequestUpdate();
+            s.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), s);
+        }
+
+        public ClientCommunicator(string serverName, string password, string clientName)
         {
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {
-                { "name", "\"" + name + "\"" },
-                { "IP", "\"" + IP + "\"" },
-                { "port", port.ToString() },
+                { "name", "\"" + serverName + "\"" },
                 { "password", "\"" + password + "\"" }
             };
 
             var content = new FormUrlEncodedContent(values);
-            var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
-            var responseString = response.Result.Content.ReadAsStringAsync();
+            var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/findserver.php", content);
+            var responseString = response.Result.Content.ReadAsStringAsync().Result;
 
-            serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
-            serverSocket.Listen(64);
-            server = new Thread(StartServer);
-            server.Start();
-            THIS = this;
-            SQLEvents.dataChanged += OnDataUpdated;
-            SQLEvents.created += OnItemCreated;
-            SQLEvents.dataDeleted += OnItemDeleted;
-        }
-
-        private void SendCommand(string commandText)
-        {
-            Command command = new Command(commandText, DateTimeOffset.Now.ToUnixTimeMilliseconds());
-            lock (commandsLock)
+            if (responseString == "Connection")
             {
-                commandsToBroadCast.Enqueue(command);
+                throw new Exception("Connecting to database failed");
             }
-        }
-
-        private void SendCommand(Command command)
-        {
-            lock (commandsLock)
+            else if (responseString == "password")
             {
-                commandsToBroadCast.Enqueue(command);
+                throw new Exception("Wrong password");
+            }
+            else if (responseString == "server")
+            {
+                throw new Exception("No such server exists");
+            }
+            else
+            {
+                string[] array = responseString.Split(',');
+                s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                s.Connect(IPAddress.Parse(array[0]), int.Parse(array[1]));
+                CPName = clientName;
+                listener = new Thread(StartListening);
+                listener.Start();
             }
         }
 
@@ -182,8 +170,6 @@ namespace LAMA
                  * TO DO - update game data (once there is a way for me to access it)
                  */
             }
-            // Notify every CP
-            THIS.SendCommand(new Command(command, updateTime));
         }
 
         public void OnItemCreated(Serializable changed)
@@ -203,7 +189,6 @@ namespace LAMA
                 {
                     attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributes[i]);
                 }
-                // Notify every CP of item creation
                 THIS.SendCommand(new Command(command, updateTime));
             }
         }
@@ -227,8 +212,6 @@ namespace LAMA
                     {
                         attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
                     }
-                    // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime));
                 }
                 else
                 {
@@ -252,7 +235,6 @@ namespace LAMA
             if (objectsCache.ContainsKey(objectCacheID))
             {
                 objectsCache[objectCacheID] = new Command(command, updateTime);
-                // Notify every CP of item deletion
                 THIS.SendCommand(new Command(command, updateTime));
                 for (int i = 0; i < attributes.Length; i++)
                 {
@@ -272,31 +254,6 @@ namespace LAMA
                  * Delete object
                  */
                 objectsCache.Remove(objectCacheID);
-
-                // Notify every CP of deletion
-                THIS.SendCommand(new Command(command, updateTime));
-            }
-        }
-
-        public void SendUpdate(Socket current, long lastUpdateTime)
-        {
-            foreach (KeyValuePair<string, Command> entry in objectsCache)
-            {
-                if (entry.Value.time > lastUpdateTime)
-                {
-                    current.Send(entry.Value.Encode());
-                }
-            }
-
-            foreach (KeyValuePair<string, TimeValue> entry in attributesCache)
-            {
-                if (entry.Value.time > lastUpdateTime)
-                {
-                    string value = entry.Value.value;
-                    string[] keyParts = entry.Key.Split(';');
-                    string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
-                    current.Send((new Command(command, entry.Value.time)).Encode());
-                }
             }
         }
     }
