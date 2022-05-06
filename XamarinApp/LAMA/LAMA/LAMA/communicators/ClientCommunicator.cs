@@ -138,7 +138,7 @@ namespace LAMA
             {
                 string[] array = responseString.Split(',');
                 s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                s.Connect(IPAddress.Parse(array[0]), int.Parse(array[1]));
+                s.Connect(IPAddress.Parse(array[0].Trim('"')), int.Parse(array[1]));
                 CPName = clientName;
                 listener = new Thread(StartListening);
                 listener.Start();
