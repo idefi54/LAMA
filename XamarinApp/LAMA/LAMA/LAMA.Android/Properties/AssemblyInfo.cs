@@ -30,14 +30,10 @@ using Android.App;
 [assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
 
 
-// for geolocation
+// for Geolocation
 [assembly: UsesPermission(Android.Manifest.Permission.AccessCoarseLocation)]
 [assembly: UsesPermission(Android.Manifest.Permission.AccessFineLocation)]
 [assembly: UsesFeature("android.hardware.location", Required = false)]
 [assembly: UsesFeature("android.hardware.location.gps", Required = false)]
-[assembly: UsesFeature("android.hardware.location.network", Required = false)]
-
-// geolocation specificaly for android 10 (API level 29 or higher)
-[assembly: UsesPermission(Android.Manifest.Permission.AccessBackgroundLocation)] 
-
+[assembly: UsesFeature("android.hardware.location.network", Required = false)] 
 

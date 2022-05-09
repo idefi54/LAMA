@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="D96DADB2-4665-4717-B0BF-8434D8A4D0A6"
-    Publisher="CN=F72FA767-D096-41CB-B34A-DD3F0430D6A0"
+    Name="57B15FE9-B834-47F6-9DB1-948A94CAC9F8"
+    Publisher="CN=778646E9-1D83-4E20-978F-6925E78A7E73"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>LAMA.UWP</DisplayName>
-    <PublisherDisplayName>F72FA767-D096-41CB-B34A-DD3F0430D6A0</PublisherDisplayName>
+    <PublisherDisplayName>778646E9-1D83-4E20-978F-6925E78A7E73</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

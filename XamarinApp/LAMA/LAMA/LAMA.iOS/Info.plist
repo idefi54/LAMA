@@ -34,8 +34,10 @@
     <string>LAMA</string>
     <key>XSAppIconAssets</key>
     <string>Assets.xcassets/AppIcon.appiconset</string>
-	<!-- for geolocation -->
+	
+	<!-- for Geolocation -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Fill in a reason why your app needs access to location.</string>
+	<string>We need geolocation for map integrated funtions of the app.</string>
+
 </dict>
 </plist>

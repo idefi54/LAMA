@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LAMA.Views.NewActivityPage"
+			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
+             Title="New Activity"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true">
+    <ContentPage.Content>
+		<ScrollView>
+			<StackLayout Padding="15" >
+				<Label Text="Název aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Entry Text="Přepad karavanu" FontSize="Medium" />
+
+
+
+				<Label Text="Popis aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Editor Text="Kupec je přepaden bandity, kteřé mají hráči porazit." AutoSize="TextChanges" FontSize="Medium" Margin="0" />
+
+
+				<Label Text="Typ aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Picker Title="Typ aktivity" HorizontalOptions="Start">
+					<Picker.ItemsSource>
+						<x:Array Type="{x:Type x:String}">
+							<x:String>Organizační</x:String>
+							<x:String>Vedlejší event</x:String>
+							<x:String>Hlavní event</x:String>
+						</x:Array>
+					</Picker.ItemsSource>
+				</Picker>
+
+
+				<Label Text="Časové rozmezí"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<!--
+				<Grid ColumnDefinitions="*,*" RowDefinitions="100">
+					<StackLayout Orientation="Horizontal" Grid.Column="0">
+						<Label Text="Začátek"/>
+						<TimePicker></TimePicker>
+					</StackLayout>
+					<StackLayout Orientation="Horizontal" Grid.Column="1">
+						<Label Text="Konec"/>
+						<TimePicker></TimePicker>
+					</StackLayout>
+				</Grid>
+				-->
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="30" />
+						<RowDefinition Height="55" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+
+					<Label Grid.Row="0" Grid.Column="0" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
+					<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start"/>
+					<Label Grid.Row="0" Grid.Column="1" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
+					<DatePicker Grid.Row="1" Grid.Column="1" HorizontalOptions="Start"/>
+				</Grid>
+
+
+				<Label Text="Role"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<StackLayout Orientation="Vertical">
+					<StackLayout Orientation="Horizontal">
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Kupec"/>
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+						<Button Text="-"></Button>
+					</StackLayout>
+					<StackLayout Orientation="Horizontal">
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Bandita"/>
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="4" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+						<Button Text="-"></Button>
+					</StackLayout>
+				</StackLayout>
+				<Button Text="+" HorizontalOptions="Start"></Button>
+
+
+				<Label Text="Potřebná příprava"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Editor AutoSize="TextChanges" FontSize="Medium" Margin="0" MinimumHeightRequest="300"/>
+			
+			
+				<Label Text="Vybavení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<StackLayout Orientation="Vertical">
+					<StackLayout Orientation="Horizontal">
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Truhla s pokladem"/>
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+						<Button Text="-"></Button>
+					</StackLayout>
+					<StackLayout Orientation="Horizontal">
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Povoz"/>
+						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+						<Button Text="-"></Button>
+					</StackLayout>
+				</StackLayout>
+				<Button Text="+" HorizontalOptions="Start"></Button>
+
+
+				<Label Text="Lokace"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<mapsui:MapView
+					x:Name="mapView"
+					Grid.Row="1"
+					VerticalOptions="Start"
+					HeightRequest="300"
+					HorizontalOptions="Fill"
+					BackgroundColor="Gray" />
+			
+				<StackLayout Orientation="Horizontal">
+					<Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
+					<Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+				</StackLayout>
+			</StackLayout>
+		</ScrollView>
+	</ContentPage.Content>
+</ContentPage>
