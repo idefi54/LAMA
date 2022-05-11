@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             x:Class="LAMA.Views.ActivityListPage">
+
+	<!--
+	<ContentPage.BindingContext>
+		<viewmodel:ActivityListViewModel/>
+	</ContentPage.BindingContext>
+	-->
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Řadit" />
+		<ToolbarItem Text="Filtr" />
+		<ToolbarItem Text="Nová Aktivita" Command="{Binding AddActivityCommand}"/>
+	</ContentPage.ToolbarItems>
+
+	<ContentPage.Content>
+		<ScrollView Padding="5,5,5,0">
+			<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<Grid Padding="5" Margin="5" >
+								<Grid.RowDefinitions>
+									<RowDefinition Height="auto" />
+									<RowDefinition Height="auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="50" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="auto" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding name}" FontSize="Small" />
+								<Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding start}" FontSize="Micro" TextColor="Gray" />
+								<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5" />
+							</Grid>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+		</ScrollView>
+    </ContentPage.Content>
+</ContentPage>

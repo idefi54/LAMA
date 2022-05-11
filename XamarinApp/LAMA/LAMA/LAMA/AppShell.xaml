@@ -81,14 +81,17 @@
 	<FlyoutItem Title="Map">
 		<ShellContent Route="MapPage" ContentTemplate="{DataTemplate local:MapPage}" />
 	</FlyoutItem>
-    <FlyoutItem Title="About" Icon="icon_about.png">
+	<FlyoutItem Title="About" Icon="icon_about.png">
         <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Browse" Icon="icon_feed.png">
-        <ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:ItemsPage}" />
-    </FlyoutItem>
+	</FlyoutItem>
+	<FlyoutItem Title="Browse" Icon="icon_feed.png">
+		<ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:ItemsPage}" />
+	</FlyoutItem>
+	<FlyoutItem Title="Seznam Aktivit" Icon="icon_feed.png">
+		<ShellContent Route="ActivityListPage" ContentTemplate="{DataTemplate local:ActivityListPage}" />
+	</FlyoutItem>
 
-    <!-- When the Flyout is visible this will be a menu item you can tie a click behavior to  -->
+	<!-- When the Flyout is visible this will be a menu item you can tie a click behavior to  -->
     <MenuItem Text="Logout" StyleClass="MenuItemLayoutStyle" Clicked="OnMenuItemClicked">
     </MenuItem>
 
@@ -100,8 +103,9 @@
         await Shell.Current.GoToAsync("//LoginPage");
     -->
     <TabBar>
-        <ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
-    </TabBar>
+		<ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
+		<ShellContent Route="NewActivityPage" ContentTemplate="{DataTemplate local:NewActivityPage}" />
+	</TabBar>
 
     <!-- Optional Templates 
     // These may be provided inline as below or as separate classes.
