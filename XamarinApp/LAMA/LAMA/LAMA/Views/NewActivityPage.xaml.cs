@@ -19,7 +19,7 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewActivityPage : ContentPage
 	{
-		//public LAMA.LarpActivity Activity { get; set; }
+		public LarpActivity Activity { get; set; }
 
 		public NewActivityPage()
         {

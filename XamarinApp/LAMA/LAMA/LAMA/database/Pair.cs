@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace LAMA
 {
 
-    struct Pair<A, B>
+    public struct Pair<A, B>
     {
 
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LAMA
+namespace LAMA.Models
 {
-    class LarpActivity : Serializable
+    public class LarpActivity : Serializable
     {
         public enum EventType { normal, preparation };
         public enum Status { awaitingPrerequisites, readyToLaunch, launched, inProgress, completed };

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
-    class EventList<T> : List<T>
+    public class EventList<T> : List<T>
     {
         public delegate void DataChanged();
         public event DataChanged dataChanged;
