@@ -10,6 +10,7 @@ using Xamarin.Forms.Xaml;
 using Mapsui;
 using Mapsui.Projection;
 using Mapsui.Utilities;
+using LAMA.Services;
 using Xamarin.Essentials;
 
 namespace LAMA.Views

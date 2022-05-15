@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Essentials;
 
-namespace LAMA
+namespace LAMA.Services
 {
     public class MapHandler
     {
