@@ -182,7 +182,8 @@ namespace LAMA.Models
         //helper function to update values inside SQL
         void updateValue(int index, string newVal)
         {
-            SingletonPlaceholder.activities.sqlConnection.changeData(SingletonPlaceholder.activities.tableName, index, newVal, this);
+            var list = DatabaseHolder<LarpActivity>.Instance.rememberedList;
+            list.sqlConnection.changeData(list.tableName, index, newVal, this);
         }
 
         // interface Serializable implementation

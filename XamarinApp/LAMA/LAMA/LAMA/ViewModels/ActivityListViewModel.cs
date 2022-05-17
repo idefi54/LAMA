@@ -26,22 +26,27 @@ namespace LAMA.ViewModels
 
             LarpActivity larpActivity = new LarpActivity(0, "Příprava přepadu", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
                 new Time(60 + 30), 0, new Time(60 * 12 + 45), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
             
             larpActivity = new LarpActivity(0, "Přepad karavanu", "", "", LarpActivity.EventType.normal, new EventList<int>(),
                 new Time(60 + 30), 0, new Time(60 * 14 + 15), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
             
             larpActivity = new LarpActivity(0, "Příprava záchrany", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
                 new Time(60 + 30), 0, new Time(60 * 14), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
             
             larpActivity = new LarpActivity(0, "Záchrana kupce", "", "", LarpActivity.EventType.normal, new EventList<int>(),
                 new Time(60 + 30), 0, new Time(60 * 16 + 10), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
 
             larpActivity = new LarpActivity(0, "Úklid mrtvol hráčů", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
                 new Time(60 + 30), 0, new Time(60 * 16 + 15), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
 
             AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);

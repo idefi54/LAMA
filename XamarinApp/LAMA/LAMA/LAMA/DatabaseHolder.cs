@@ -18,7 +18,7 @@ namespace LAMA
         // Object Specific
         private DatabaseHolder()
         {
-            var sql = new OurSQL<T>("database.db");
+            var sql = new OurSQL<T>(".\\database.db");
             rememberedList = new RememberedList<T>(sql);
         }
 

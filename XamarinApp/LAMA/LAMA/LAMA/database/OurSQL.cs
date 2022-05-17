@@ -44,14 +44,19 @@ namespace LAMA
 
         public static SQLiteConnection makeConnection (string path, bool makeNew)
         {
+            if(!File.Exists(path))
+                File.Create(path);
+
             _connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + (makeNew ? "True" : "False") +
                 "; Compress = True; ");
             try
             {
-                connection.Open();
+                _connection.Open();
             }
             catch (Exception e)
             {
+                //TODO   show a real error message
+
                 Console.Out.WriteLine(e.ToString());
                 _connection = null;
             }

@@ -22,6 +22,7 @@ namespace LAMA
         List<T> cache = new List<T>();
         OurSQL<T> sql;
         public OurSQL<T> sqlConnection { get { return sql; } }
+
         public RememberedList(OurSQL<T> sql)
         {
             this.sql = sql;
@@ -36,16 +37,12 @@ namespace LAMA
             if (!sql.containsTable(myID))
                 sql.makeTable(myID);
 
-
-            //set up singleton
-            if(typeof(T).Equals(typeof(LarpActivity)))
-                SingletonPlaceholder.activities = this as RememberedList<LarpActivity>;
-
             loadData();
         }
 
         void loadData()
         {
+
             cache = sql.ReadData(myID);
 
             int i = 0;
@@ -70,18 +67,24 @@ namespace LAMA
 
             sql.addData(myID, data, true);
         }*/
-        public void add(T data, bool invokeEvent = true)
+        public bool add(T data, bool invokeEvent = true)
         {
+            if (IDToIndex.ContainsKey(data.getID()))
+                return false;
+
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
             sql.addData(myID, data, invokeEvent);
+            return true;
         }
 
         public int Count { get { return cache.Count; } }
 
         public void removeAt(int index)
         {
+            if (index < 0 || index >= cache.Count)
+                return;
             
             IDToIndex.Remove(cache[index].getID());
             for (int i = index + 1; i < cache.Count; ++i) 
@@ -96,6 +99,8 @@ namespace LAMA
 
         public T getByID(int id)
         {
+            if (IDToIndex.ContainsKey(id))
+                return default(T);
             return cache[IDToIndex[id]];
         }
 
