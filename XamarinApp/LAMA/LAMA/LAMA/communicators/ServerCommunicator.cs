@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using Xamarin.Essentials;
 
-namespace LAMA
+namespace LAMA.Communicator
 {
     public class ServerCommunicator
     {

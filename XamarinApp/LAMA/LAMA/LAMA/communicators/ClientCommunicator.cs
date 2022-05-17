@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
-namespace LAMA
+namespace LAMA.Communicator
 {
     public class ClientCommunicator
     {

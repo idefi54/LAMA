@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LAMA
+namespace LAMA.Communicator
 {
     public class TimeValue
     {
