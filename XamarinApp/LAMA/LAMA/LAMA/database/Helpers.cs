@@ -11,7 +11,7 @@ namespace LAMA
         public static int readInt(string input, ref int offset)
         {
             int num = 0;
-            while (offset < input.Length && char.IsDigit(input[offset])) 
+            while (offset < input.Length && char.IsDigit(input[offset]))
             {
                 num *= 10;
                 num += input[offset] - '0';
@@ -30,7 +30,7 @@ namespace LAMA
             EventList<int> output = new EventList<int>();
             int i = 0;
             skipNonDigits(input, ref i);
-            while(i<input.Length)
+            while (i < input.Length)
             {
                 output.Add(readInt(input, ref i));
                 skipNonDigits(input, ref i);
@@ -39,13 +39,13 @@ namespace LAMA
         }
         static void skipNonDigits(string input, ref int offset)
         {
-            while (offset < input.Length && !char.IsDigit(input[offset])) 
+            while (offset < input.Length && !char.IsDigit(input[offset]))
                 ++offset;
         }
         static string readString(string input, ref int offset)
         {
             StringBuilder output = new StringBuilder();
-            while (offset < input.Length && input[offset] != ',') 
+            while (offset < input.Length && input[offset] != ',')
             {
                 output.Append(input[offset]);
                 ++offset;
@@ -53,9 +53,9 @@ namespace LAMA
             return output.ToString();
         }
 
-        public static int findIndex<T> (T[] array, T value) 
+        public static int findIndex<T>(T[] array, T value)
         {
-            for (int i = 0; i < array.Length; ++i) 
+            for (int i = 0; i < array.Length; ++i)
             {
                 if (array[i].Equals(value))
                     return i;
@@ -65,7 +65,7 @@ namespace LAMA
 
         public static double readDouble(string input, ref int offset)
         {
-            
+
             int firstPart = readInt(input, ref offset);
             // skip the decimal . or ,
             ++offset;
@@ -90,7 +90,7 @@ namespace LAMA
             {
                 int first = readInt(input, ref i);
                 skipNonDigits(input, ref i);
-                output.Add(new Pair<int,int>(first, readInt(input, ref i)));
+                output.Add(new Pair<int, int>(first, readInt(input, ref i)));
                 skipNonDigits(input, ref i);
             }
             return output;
@@ -99,7 +99,7 @@ namespace LAMA
         {
             EventList<Pair<string, int>> output = new EventList<Pair<string, int>>();
             int i = 0;
-            while (i < input.Length) 
+            while (i < input.Length)
             {
                 string first = readString(input, ref i);
                 skipNonDigits(input, ref i);
@@ -123,7 +123,18 @@ namespace LAMA
         }
 
 
+        public static EventList<string> readStringField(string input)
+        {
+            int i = 0;
+            EventList<string> output = new EventList<string>();
 
+            while (i < input.Length)
+            {
+                output.Add(readString(input, ref i));
+                ++i;
+            }
+            return output;
+        }
 
     }
 }
