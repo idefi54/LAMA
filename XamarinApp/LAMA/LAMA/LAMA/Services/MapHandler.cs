@@ -15,7 +15,6 @@ namespace LAMA.Services
     public class MapHandler
     {
         // Private fields
-        //===================
         private List<Feature> _symbols;
         private Dictionary<int, Pin> _events;
         private Dictionary<ulong, Pin> _notifications;
@@ -24,6 +23,7 @@ namespace LAMA.Services
         private ulong _notificationID;
         private static MapHandler _instance;
 
+        // Events
         public delegate void PinClick(PinClickedEventArgs e);
         public delegate void MapClick(MapClickedEventArgs e);
         public event PinClick OnPinClick;
@@ -246,6 +246,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public async void UpdateLocation(MapView view)
         {
+            if (await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>() != PermissionStatus.Granted)
+                return;
+
             var location = await Geolocation.GetLastKnownLocationAsync();
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude));
         }
@@ -257,6 +260,13 @@ namespace LAMA.Services
         /// </summary>
         /// <returns></returns>
         public (double, double) GetTemporaryPin() => (_pin.Position.Longitude, _pin.Position.Latitude);
+
+        /// <summary>
+        /// Enables or disables the icon showing our location from the gps.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="visible"></param>
+        public void SetLocationVisible(MapView view, bool visible) => view.MyLocationEnabled = visible;
 
 
         // Private methods

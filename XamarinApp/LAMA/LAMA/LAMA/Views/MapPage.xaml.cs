@@ -18,6 +18,7 @@ namespace LAMA.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
+        private bool UserAnswered = false;
 		public MapPage()
 		{
 			InitializeComponent();
@@ -28,15 +29,27 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+            var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
 
-            while (status != PermissionStatus.Granted)
+
+            // Just to be sure but it did not fixed the problem.
+            await Permissions.RequestAsync<Permissions.StorageWrite>();
+            await Permissions.RequestAsync<Permissions.StorageRead>();
+
+            if (status != PermissionStatus.Granted)
             {
-                await DisplayAlert("Error", "Please, have your location turned on and accept the permission.", "OK");
-                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                if (!UserAnswered)
+                {
+                    await DisplayAlert("Location not available", "If you want your location to be visible on the map, please have your location turned on and grant the permission to use it.", "OK");
+                    UserAnswered = true;
+                }
+
+                MapHandler.Instance.SetLocationVisible(mapView, false);
+                return;
             }
 
             MapHandler.Instance.UpdateLocation(mapView);
+            MapHandler.Instance.SetLocationVisible(mapView, true);
         }
     }
 }
