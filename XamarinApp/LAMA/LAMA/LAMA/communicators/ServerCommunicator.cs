@@ -1,5 +1,4 @@
-﻿using LAMA.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -182,6 +181,15 @@ namespace LAMA.Communicator
                 /*
                  * TO DO - update game data (once there is a way for me to access it)
                  */
+                if (objectType == "LarpActivity")
+                {
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "CP")
+                {
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
             }
             // Notify every CP
             THIS.SendCommand(new Command(command, updateTime));
@@ -213,7 +221,7 @@ namespace LAMA.Communicator
         {
             if (objectType == "LarpActivity")
             {
-                LarpActivity activity = new LarpActivity();
+                Models.LarpActivity activity = new Models.LarpActivity();
                 string[] attributtes = serializedObject.Split(',');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
@@ -224,6 +232,33 @@ namespace LAMA.Communicator
                     /*
                      * TO DO - update game data once there is access to it
                      */
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                    }
+                    // Notify every CP of item creation
+                    THIS.SendCommand(new Command(command, updateTime));
+                }
+                else
+                {
+                    /*
+                     * TO DO - notify sender of unsuccessful creation
+                     */
+                }
+            }
+
+            else if (objectType == "CP")
+            {
+                Models.CP cp = new Models.CP();
+                string[] attributtes = serializedObject.Split(',');
+                cp.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cp.getID();
+
+                if (!objectsCache.ContainsKey(objectID))
+                {
+                    objectsCache[objectID] = new Command(command, updateTime);
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
@@ -272,6 +307,27 @@ namespace LAMA.Communicator
                  * Delete attributes from cache
                  * Delete object
                  */
+                Models.LarpActivity removedItemActivity;
+                if (objectType == "LarpActivity" && (removedItemActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    int nAttributes = removedItemActivity.numOfAttributes();
+                    for (int i = 0; i < nAttributes; i++)
+                    {
+                        attributesCache.Remove(objectID + ";" + i);
+                    }
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeAt(objectID);
+                }
+
+                Models.CP removedItemCP;
+                if (objectType == "CP" && (removedItemCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    int nAttributes = removedItemCP.numOfAttributes();
+                    for (int i = 0; i < nAttributes; i++)
+                    {
+                        attributesCache.Remove(objectID + ";" + i);
+                    }
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeAt(objectID);
+                }
                 objectsCache.Remove(objectCacheID);
 
                 // Notify every CP of deletion

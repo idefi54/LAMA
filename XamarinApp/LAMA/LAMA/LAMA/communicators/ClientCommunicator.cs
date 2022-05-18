@@ -1,5 +1,4 @@
-﻿using LAMA.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -170,6 +169,15 @@ namespace LAMA.Communicator
                 /*
                  * TO DO - update game data (once there is a way for me to access it)
                  */
+                if (objectType == "LarpActivity")
+                {
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "CP")
+                {
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
             }
         }
 
@@ -198,7 +206,7 @@ namespace LAMA.Communicator
         {
             if (objectType == "LarpActivity")
             {
-                LarpActivity activity = new LarpActivity();
+                Models.LarpActivity activity = new Models.LarpActivity();
                 string[] attributtes = serializedObject.Split(',');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
@@ -206,9 +214,31 @@ namespace LAMA.Communicator
                 if (!objectsCache.ContainsKey(objectID))
                 {
                     objectsCache[objectID] = new Command(command, updateTime);
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                    }
+                }
+                else
+                {
                     /*
-                     * TO DO - update game data once there is access to it
+                     * TO DO - notify sender of unsuccessful creation
                      */
+                }
+            }
+
+            if (objectType == "CP")
+            {
+                Models.CP cp = new Models.CP();
+                string[] attributtes = serializedObject.Split(',');
+                cp.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cp.getID();
+
+                if (!objectsCache.ContainsKey(objectID))
+                {
+                    objectsCache[objectID] = new Command(command, updateTime);
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
@@ -254,6 +284,22 @@ namespace LAMA.Communicator
                  * Delete attributes from cache
                  * Delete object
                  */
+                int nAttributes = 0;
+                Models.LarpActivity removedActivity;
+                if (objectType == "LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null) {
+                    nAttributes = removedActivity.numOfAttributes();
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeAt(objectID);
+                }
+                Models.CP removedCP;
+                if (objectType == "CP" && (removedCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedCP.numOfAttributes();
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeAt(objectID);
+                }
+                for (int i = 0; i < nAttributes; i++)
+                {
+                    attributesCache.Remove(objectID + ";" + i);
+                }
                 objectsCache.Remove(objectCacheID);
             }
         }
