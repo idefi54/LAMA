@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 
 using LAMA.Models;
 using LAMA.ViewModels;
+using LAMA.Services;
 
 using Mapsui;
 using Mapsui.Projection;
@@ -26,18 +27,7 @@ namespace LAMA.Views
             InitializeComponent();
 			BindingContext = new NewActivityViewModel();
 
-			var map = new Map
-			{
-				CRS = "EPSG:3857",
-				Transformation = new MinimalTransformation()
-			};
-
-			var tileLayer = OpenStreetMap.CreateTileLayer();
-
-			map.Layers.Add(tileLayer);
-			map.Widgets.Add(new Mapsui.Widgets.ScaleBar.ScaleBarWidget(map) { TextAlignment = Mapsui.Widgets.Alignment.Center, HorizontalAlignment = Mapsui.Widgets.HorizontalAlignment.Left, VerticalAlignment = Mapsui.Widgets.VerticalAlignment.Bottom });
-
-			mapView.Map = map;
+            MapHandler.Instance.MapViewSetupAdding(mapView);
 		}
     }
 }

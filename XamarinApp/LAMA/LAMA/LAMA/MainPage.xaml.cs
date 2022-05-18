@@ -12,13 +12,9 @@ namespace LAMA
 {
     public partial class MainPage : ContentPage
     {
-        private MapHandler mapHandler;
-
         public MainPage()
         {
             InitializeComponent();
-
-            mapHandler = new MapHandler(mapView);
         }
 
         protected async override void OnAppearing()
@@ -32,8 +28,7 @@ namespace LAMA
                 status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
             }
 
-            mapHandler.CenterOnLocation();
-
+            MapHandler.Instance.UpdateLocation(mapView);
         }
     }
 }

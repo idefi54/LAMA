@@ -14,49 +14,125 @@ namespace LAMA.Services
 {
     public class MapHandler
     {
-        private MemoryLayer layer;
-        private MapView view;
-        private List<Feature> points;
+        // Private fields
+        //===================
+        private List<Feature> _symbols;
+        private Dictionary<int, Pin> _events;
+        private Dictionary<ulong, Pin> _notifications;
+        private List<Pin> _pins;
         private Pin _pin;
-        private bool _createPinOnClick;
-
+        private ulong _notificationID;
+        private static MapHandler _instance;
 
         public delegate void PinClick(PinClickedEventArgs e);
+        public delegate void MapClick(MapClickedEventArgs e);
         public event PinClick OnPinClick;
-        public bool CreatePinOnClick
-        {
-            get { return _createPinOnClick; }
-            set
-            {
-                if (!value && _pin != null)
-                {
-                    view.Pins.Remove(_pin);
-                    _pin = null;
-                }
+        public event MapClick OnMapClick;
 
-                _createPinOnClick = value;
+
+        /// <summary>
+        /// <para>
+        /// Instance holds internal data on events, notifications and such, that should show on the map.
+        /// </para>
+        /// 
+        /// Has methods that need to work with this data.
+        /// Static methods work just with a given MapView.
+        /// </summary>
+        public static MapHandler Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new MapHandler();
+                return _instance;
             }
         }
 
-        public int TestBitmapID { get; private set; }
-
-        public MapHandler(MapView mapView)
+        private MapHandler()
         {
-            points = new List<Feature>();
-            layer = CreateMarkersLayer();
-            view = mapView;
+            _symbols = new List<Feature>();
+            _pins = new List<Pin>();
+            _events = new Dictionary<int, Pin>();
+            _notifications = new Dictionary<ulong, Pin>();
+            _pin = new Pin();
+            _pin.Label = "temp";
+            _notificationID = 0;
+        }
 
-            Mapsui.Map map = new Mapsui.Map();
-            map.Layers.Add(OpenStreetMap.CreateTileLayer());
-            map.Layers.Add(layer);
-            map.Home = n => n.NavigateTo(view.MyLocationLayer.MyLocation.ToMapsui(), map.Resolutions[5]);
-            view.Map = map;
-
-            view.PinClicked += HandlePinClicked;
-            view.MapClicked += HandleMapClicked;
+        // Static methods do not need the map, they just work with given mapView.
+        public static void SetZoomLimits(MapView view, double min, double max)
+        {
+            view.Map.Limiter.ZoomLimits = new Mapsui.UI.MinMax(min, max);
+        }
+        public static void SetPanLimits(MapView view, double minLon, double minLat, double maxLon, double maxLat)
+        {
+            view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
         }
 
 
+        // Public methods need to work with the map.
+        //============================================
+
+        /// <summary>
+        /// Sets up MapView for normal use.
+        /// </summary>
+        /// <param name="view"></param>
+        public void MapViewSetup(MapView view)
+        {
+            view.Map = CreateMap();
+            view.PinClicked += HandlePinClicked;
+            view.MapClicked += HandleMapClicked;
+
+            foreach (Pin pin in _events.Values)
+                view.Pins.Add(pin);
+
+            foreach (Pin pin in _notifications.Values)
+                view.Pins.Add(pin);
+        }
+
+        /// <summary>
+        /// Sets up MapView with temporary pin. Click on map to relocate the pin.
+        /// Use GetTemporaryPin() method to get the pin location.
+        /// </summary>
+        /// <param name="view"></param>
+        public void MapViewSetupAdding(MapView view)
+        {
+            view.Map = CreateMap();
+            view.PinClicked += HandlePinClicked;
+            view.MapClicked += HandleMapClickedAdding;
+
+            _pin.Position = new Position(0, 0);
+            if (!view.Pins.Contains(_pin))
+                view.Pins.Add(_pin);
+
+            foreach (Pin pin in _events.Values)
+                view.Pins.Add(pin);
+
+            foreach (Pin pin in _notifications.Values)
+                view.Pins.Add(pin);
+        }
+
+        /// <summary>
+        /// Removes everything from the map and adds it again to ensure only relevant data is on the map.
+        /// </summary>
+        /// <param name="view"></param>
+        public void RefreshMapView(MapView view)
+        {
+            view.Pins.Clear();
+            view.HideCallouts();
+
+            foreach (Pin pin in _events.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _notifications.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _pins) view.Pins.Add(pin);
+        }
+
+        /// <summary>
+        /// Symbols are background things that are non-clickable.
+        /// Has very wide variety of what to show on the map, not only icons.
+        /// Not usable right now and might remove later.
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
+        /// <param name="styles"></param>
         public void AddSymbol(double lon, double lat, IEnumerable<IStyle> styles = null)
         {
             var feature = new Feature();
@@ -66,63 +142,131 @@ namespace LAMA.Services
                 foreach (Style style in styles)
                     feature.Styles.Add(style);
 
-            points.Add(feature);
-            layer.DataSource = new MemoryProvider(points);
-            view.Refresh();
+            _symbols.Add(feature);
         }
-        public void SetZoomLimits(double min, double max)
+
+        /// <summary>
+        /// Adds a general pin to the internal data.
+        /// Also adds the pin to a MapView if specfied.
+        /// 
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
+        /// <param name="label"></param>
+        /// <param name="view"></param>
+        /// <returns> Returns the pin and you can edit it however you want afterwards.</returns>
+        public Pin AddPin(double lon, double lat, string label, MapView view = null)
         {
-            view.Map.Limiter.ZoomLimits = new Mapsui.UI.MinMax(min, max);
-        }
-        public void SetPanLimits(double minLon, double minLat, double maxLon, double maxLat)
-        {
-            view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
-        }
-        public Pin AddPin(double lon, double lat, string label)
-        {
-            Pin p = new Pin(view);
+            Pin p = new Pin();
             p.Label = label;
-            p.Position = new Position(lon, lat);
-            view.Pins.Add(p);
+            p.Position = new Position(lat, lon);
+            view?.Pins.Add(p);
             return p;
         }
-        public void ShowNotification(double lon, double lat, string text)
+
+        /// <summary>
+        /// Adds the event to the internal data.
+        /// Also adds a pin to a MapView if specified.
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
+        /// <param name="eventID"></param>
+        /// <param name="view"></param>
+        public void AddEvent(double lon, double lat, int eventID, MapView view = null)
         {
-            Pin p = AddPin(lon, lat, "normal");
-            p.Callout.Title = text;
-            p.Color = Xamarin.Forms.Color.Green;
+            Pin pin = CreatePin(lon, lat, "normal");
+            _events.Add(eventID, pin);
+            pin.Callout.Title = $"TO BE DONE... EVENT ID: {eventID}\n HOLD TO GO TO EVENT PAGE?";
+            pin.Color = Xamarin.Forms.Color.Green;
+            view?.Pins.Add(pin);
         }
-        public void ShowImportantNotification(double lon, double lat, string text)
+
+        /// <summary>
+        /// Adds the notification to the internal data.
+        /// Also adds a pin to a MapView if specified.
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
+        /// <param name="text"></param>
+        /// <param name="view"></param>
+        /// <returns>Returns notification id, if you want to remove it later.</returns>
+        public ulong AddNotification(double lon, double lat, string text, MapView view = null)
         {
-            Pin p = AddPin(lon, lat, "important");
+            Pin p = CreatePin(lon, lat, "important");
             p.Callout.Title = text;
             p.Color = Xamarin.Forms.Color.Red;
             p.Callout.Color = Xamarin.Forms.Color.Red;
-        }
-        /// <summary>
-        /// Ties to "CreatePinOnClick".
-        /// Returns null if no such pin is on the map.
-        /// </summary>
-        /// <returns></returns>
-        public (double, double)? GetTempPinLocation()
-        {
-            if (_pin == null) return null;
-            return (_pin.Position.Longitude, _pin.Position.Latitude);
+            _notifications.Add(_notificationID, p);
+            view?.Pins.Add(p);
+
+            return _notificationID++;
         }
 
-        public async void CenterOnLocation()
+        /// <summary>
+        /// Removes the event from the internal data.
+        /// Also removes it from MapView if specified.
+        /// </summary>
+        /// <param name="eventID"></param>
+        /// <param name="view"></param>
+        public void RemoveEvent(int eventID, MapView view = null)
+        {
+            view?.Pins.Remove(_events[eventID]);
+            _events.Remove(eventID);
+        }
+
+        /// <summary>
+        /// Removes the notification from the internal data.
+        /// Also removes it from a MapView if specified.
+        /// </summary>
+        /// <param name="noficationID"></param>
+        /// <param name="view"></param>
+        public void RemoveNotification(ulong noficationID, MapView view = null)
+        {
+            view?.Pins.Remove(_notifications[noficationID]);
+            _notifications.Remove(noficationID);
+        }
+
+        /// <summary>
+        /// Removes the pin from the internal data.
+        /// Also removes it from a MapView if specified.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="view"></param>
+        public void RemovePin(Pin pin, MapView view = null)
+        {
+            _pins.Remove(pin);
+            view?.Pins.Remove(pin);
+        }
+
+        /// <summary>
+        /// Calls Xamarin.Essentials.Geolocation to get last known location.
+        /// Then updates it on the map.
+        /// Needs to be async.
+        /// </summary>
+        /// <param name="view"></param>
+        public async void UpdateLocation(MapView view)
         {
             var location = await Geolocation.GetLastKnownLocationAsync();
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude));
-            view.Map.Home = n => n.CenterOn(location.Latitude, location.Longitude);
         }
+
+        /// <summary>
+        /// Gets the location of temporary pin.
+        /// See MapViewSetupAdding() method for more information.
+        /// Always returns last location from the last mapView where it was used.
+        /// </summary>
+        /// <returns></returns>
+        public (double, double) GetTemporaryPin() => (_pin.Position.Longitude, _pin.Position.Latitude);
+
+
+        // Private methods
+        //===================
         private MemoryLayer CreateMarkersLayer()
         {
-
             string path = "LAMA.marker.png";
             var assembly = typeof(MapHandler).Assembly;
             var image = assembly.GetManifestResourceStream(path);
-            TestBitmapID = BitmapRegistry.Instance.Register(image);
+            var TestBitmapID = BitmapRegistry.Instance.Register(image);
             var bitmapHeight = 175;
 
             var style = new SymbolStyle
@@ -135,36 +279,50 @@ namespace LAMA.Services
             {
                 Name = "markers",
                 IsMapInfoLayer = true,
-                DataSource = new MemoryProvider(points),
+                DataSource = new MemoryProvider(_symbols),
                 Style = style
-
             };
         }
+        private Mapsui.Map CreateMap()
+        {
+            var map = new Mapsui.Map();
+            map.Layers.Add(OpenStreetMap.CreateTileLayer());
+            map.Layers.Add(CreateMarkersLayer());
+
+            return map;
+        }
+        private Pin CreatePin(double lon, double lat, string label)
+        {
+            Pin p = new Pin();
+            p.Label = label;
+            p.Position = new Position(lat, lon);
+            return p;
+        }
+
+        // Event Handlers
+        //===================
         private void HandlePinClicked(object sender, PinClickedEventArgs e)
         {
-            if (e.NumOfTaps == 1)
+            if (e.NumOfTaps == 1 && e.Pin.Label != "temp")
                 if (e.Pin.Callout.IsVisible)
                     e.Pin.HideCallout();
                 else
                     e.Pin.ShowCallout();
 
-            PinClick handler = OnPinClick;
-            handler?.Invoke(e);
-
+            OnPinClick?.Invoke(e);
+            
             e.Handled = true;
         }
         private void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
-            if (!_createPinOnClick)
-                return;
-
-            if (_pin == null)
-                _pin = AddPin(e.Point.Longitude, e.Point.Latitude, "temp");
-            else
-                _pin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
-
+            OnMapClick?.Invoke(e);
             e.Handled = true;
         }
-
+        private void HandleMapClickedAdding(object sender, MapClickedEventArgs e)
+        {
+            _pin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
+            OnMapClick?.Invoke(e);
+            e.Handled = true;
+        }
     }
 }

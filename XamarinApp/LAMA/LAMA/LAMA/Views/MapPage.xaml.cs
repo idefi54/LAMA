@@ -18,13 +18,11 @@ namespace LAMA.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-		private MapHandler mapHandler;
-
 		public MapPage()
 		{
 			InitializeComponent();
-
-			mapHandler = new MapHandler(mapView);
+            MapHandler.Instance.MapViewSetup(mapView);
+            MapHandler.Instance.AddEvent(0, 0, 125, mapView);
         }
 
         protected async override void OnAppearing()
@@ -38,8 +36,7 @@ namespace LAMA.Views
                 status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
             }
 
-            mapHandler.CenterOnLocation();
-
+            MapHandler.Instance.UpdateLocation(mapView);
         }
     }
 }
