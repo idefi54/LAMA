@@ -32,14 +32,14 @@
 				<Label Text="Typ aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Picker Title="Typ aktivity" SelectedIndex="{Binding TypeIndex}" HorizontalOptions="Start">
-					<Picker.ItemsSource>
+				<Picker Title="Typ aktivity" ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}" HorizontalOptions="Start">
+					<!--<Picker.ItemsSource>
 						<x:Array Type="{x:Type x:String}">
 							<x:String>Organizační</x:String>
 							<x:String>Vedlejší event</x:String>
 							<x:String>Hlavní event</x:String>
 						</x:Array>
-					</Picker.ItemsSource>
+					</Picker.ItemsSource>-->
 				</Picker>
 
 

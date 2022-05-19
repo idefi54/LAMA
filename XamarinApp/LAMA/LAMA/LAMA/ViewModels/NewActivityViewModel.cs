@@ -23,6 +23,7 @@ namespace LAMA.ViewModels
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
+		private List<string> _typeList;
 
 		public string Id { get { return _id; } set { SetProperty(ref _id , value); } }
 		public string Name { get { return _name; } set { SetProperty(ref _name , value); } }
@@ -38,6 +39,8 @@ namespace LAMA.ViewModels
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
+
+		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
 
 
 		//public NewActivityViewModel()
@@ -56,11 +59,17 @@ namespace LAMA.ViewModels
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
 			SaveCommand = new Xamarin.Forms.Command(OnSave);
-        }
+			TypeList = new List<string>();
+			foreach (LarpActivity.EventType type in Enum.GetValues(typeof(LarpActivity.EventType)))
+			{
+				TypeList.Add(type.ToString());
+			}
+			TypeIndex = 0;
+			Type = ((LarpActivity.EventType)TypeIndex).ToString();
+		}
 
 		private bool ValidateSave()
 		{
-			return true;
 			return !String.IsNullOrWhiteSpace(_name)
 				&& !String.IsNullOrWhiteSpace(_description);
 		}
@@ -92,9 +101,9 @@ namespace LAMA.ViewModels
 				return;
             }
 
-
-			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
-				LarpActivity.EventType.preparation, new EventList<int>(),
+            LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
+				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
+				new EventList<int>(),
 				new Time(60 * Duration.Hour + Duration.Minute), Day, new Time(60 * Start.Hour + Start.Minute),
 				new Pair<double, double>(0, 0), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
