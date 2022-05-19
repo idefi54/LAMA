@@ -22,6 +22,12 @@ namespace LAMA.ViewModels
 
             LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
 
+            //for(int i = 0; i < SingletonPlaceholder.activities.Count; i++)
+            //{
+            //    LarpActivityListItems.Add(new ActivityListItemViewModel(SingletonPlaceholder.activities[i]));
+            //}
+                
+
             //LarpActivity activity = new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation };
 
             LarpActivity larpActivity = new LarpActivity(0, "Příprava přepadu", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
@@ -62,11 +68,16 @@ namespace LAMA.ViewModels
         {
             //await Shell.Current.GoToAsync(nameof(NewActivityPage));
 
-            await Navigation.PushAsync(new NewActivityPage());
+            await Navigation.PushAsync(new NewActivityPage(CreateNewActivity));
             
             //LarpActivity larpActivity = new LarpActivity(0, "New Activity", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
             //    new Time(0), 0, new Time(0), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             //LarpActivityListItems.Add(larpActivity);
+        }
+
+        private void CreateNewActivity(LarpActivity larpActivity)
+        {
+            LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
         }
     }
 }
