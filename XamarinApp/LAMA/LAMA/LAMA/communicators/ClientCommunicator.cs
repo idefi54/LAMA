@@ -121,17 +121,17 @@ namespace LAMA.Communicator
                     THIS.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
-            lock (THIS.socketLock)
+            try
             {
-                try
-                {
-                    current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
-                }
-                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
+            }
+            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+            {
+                lock (THIS.socketLock)
                 {
                     current.Close();
-                    return;
                 }
+                return;
             }
         }
 

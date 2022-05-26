@@ -87,7 +87,18 @@ namespace LAMA.Communicator
             {
                 clientSockets.Add(socket);
             }
-            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
+            try
+            {
+                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
+            }
+            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+            {
+                lock (THIS.socketsLock)
+                {
+                    socket.Close();
+                    clientSockets.Remove(socket);
+                }
+            }
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
         }
 
@@ -99,7 +110,7 @@ namespace LAMA.Communicator
             {
                 received = current.EndReceive(AR);
             }
-            catch (SocketException)
+            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
                 lock (THIS.socketsLock)
                 {
@@ -140,7 +151,18 @@ namespace LAMA.Communicator
                     THIS.SendUpdate(current, Int64.Parse(messageParts[0]));
                 }));
             }
-            current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
+            try {
+                current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
+            }
+            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+            {
+                lock (THIS.socketsLock)
+                {
+                    current.Close();
+                    clientSockets.Remove(current);
+                }
+                return;
+            }
         }
 
         public ServerCommunicator(string name, string IP, int port, string password)
