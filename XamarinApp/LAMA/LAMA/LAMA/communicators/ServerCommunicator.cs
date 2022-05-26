@@ -19,6 +19,7 @@ namespace LAMA.Communicator
         public Dictionary<string, Command> objectsCache = new Dictionary<string, Command>();
         public Dictionary<string, TimeValue> attributesCache = new Dictionary<string, TimeValue>();
 
+        public object socketsLock = new object();
         private static List<Socket> clientSockets = new List<Socket>();
 
         public object commandsLock = new object();
@@ -52,7 +53,29 @@ namespace LAMA.Communicator
                 byte[] data = currentCommand.Encode();
                 foreach (var client in clientSockets)
                 {
-                    client.Send(data);
+                    if (client.Connected)
+                    {
+                        try
+                        {
+                            client.Send(data);
+                        }
+                        catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                        {
+                            lock (socketsLock)
+                            {
+                                client.Close();
+                                clientSockets.Remove(client);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        lock (socketsLock)
+                        {
+                            client.Close();
+                            clientSockets.Remove(client);
+                        }
+                    }
                 }
             }
         }
@@ -60,7 +83,10 @@ namespace LAMA.Communicator
         private static void AcceptCallback(IAsyncResult AR)
         {
             Socket socket = serverSocket.EndAccept(AR);
-            clientSockets.Add(socket);
+            lock (THIS.socketsLock)
+            {
+                clientSockets.Add(socket);
+            }
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
         }
@@ -75,8 +101,11 @@ namespace LAMA.Communicator
             }
             catch (SocketException)
             {
-                current.Close();
-                clientSockets.Remove(current);
+                lock (THIS.socketsLock)
+                {
+                    current.Close();
+                    clientSockets.Remove(current);
+                }
                 return;
             }
             byte[] data = new byte[received];
@@ -341,7 +370,14 @@ namespace LAMA.Communicator
             {
                 if (entry.Value.time > lastUpdateTime)
                 {
-                    current.Send(entry.Value.Encode());
+                    try
+                    {
+                        current.Send(entry.Value.Encode());
+                    }
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -352,7 +388,14 @@ namespace LAMA.Communicator
                     string value = entry.Value.value;
                     string[] keyParts = entry.Key.Split(';');
                     string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
-                    current.Send((new Command(command, entry.Value.time)).Encode());
+                    try
+                    {
+                        current.Send((new Command(command, entry.Value.time)).Encode());
+                    }
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                    {
+                        return;
+                    }
                 }
             }
         }

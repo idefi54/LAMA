@@ -14,15 +14,50 @@ namespace LAMA.Communicator
     public class ClientCommunicator
     {
         static Socket s;
+        public object socketLock = new object();
         public Thread listener;
+        public long lastUpdate;
         private static string CPName;
         private static string assignedEvent = "";
+        private IPAddress _IP;
+        private int _port;
+        private bool _IPv6 = false;
+        private bool _IPv4 = false;
 
         static byte[] buffer = new byte[8 * 1024];
         public static ClientCommunicator THIS;
         public Dictionary<string, Command> objectsCache = new Dictionary<string, Command>();
         public Dictionary<string, TimeValue> attributesCache = new Dictionary<string, TimeValue>();
         static Random rd = new Random();
+
+        public object commandsLock = new object();
+        private Queue<Command> commandsToBroadCast = new Queue<Command>();
+
+        private void ProcessBroadcast()
+        {
+            if (s.Connected)
+            {
+                lock (commandsLock)
+                {
+                    while (commandsToBroadCast.Count > 0)
+                    {
+                        Command currentCommand = commandsToBroadCast.Dequeue();
+                        byte[] data = currentCommand.Encode();
+                        lock (socketLock)
+                        {
+                            try
+                            {
+                                s.Send(data);
+                            }
+                            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                            {
+                                s.Close();
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         internal static string CreateString(int stringLength)
         {
@@ -39,21 +74,27 @@ namespace LAMA.Communicator
 
         private void SendCommand(Command command)
         {
-            s.Send(command.Encode());
+            lock (commandsLock)
+            {
+                commandsToBroadCast.Enqueue(command);
+            }
         }
 
         private static void ReceiveData(IAsyncResult AR)
         {
             int received;
             Socket current = (Socket)AR.AsyncState;
-            try
+            lock (THIS.socketLock)
             {
-                received = current.EndReceive(AR);
-            }
-            catch (SocketException)
-            {
-                current.Close();
-                return;
+                try
+                {
+                    received = current.EndReceive(AR);
+                }
+                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                {
+                    current.Close();
+                    return;
+                }
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
@@ -80,7 +121,18 @@ namespace LAMA.Communicator
                     THIS.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
-            current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
+            lock (THIS.socketLock)
+            {
+                try
+                {
+                    current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
+                }
+                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                {
+                    current.Close();
+                    return;
+                }
+            }
         }
 
         /*
@@ -95,20 +147,65 @@ namespace LAMA.Communicator
 
         private void RequestUpdate()
         {
-            string q = System.DateTime.UtcNow.ToString() + ";";
+            string q = lastUpdate.ToString() + ";";
             q += "Update;";
             q += CPName + ";";
-            byte[] data = Encoding.Default.GetBytes(q);
-            s.Send(data);
+            SendCommand(new Command(q));
         }
 
         private void StartListening()
         {
-            //SendConnectionInfo();
             RequestUpdate();
-            s.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), s);
+            var timer = new System.Threading.Timer((e) =>
+            {
+                ProcessBroadcast();
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            lock (THIS.socketLock)
+            {
+                try
+                {
+                    s.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), s);
+                }
+                catch (Exception ex) when(ex is SocketException || ex is ObjectDisposedException)
+                {
+                    s.Close();
+                    return;
+                }
+            }
         }
 
+        private void InitSocket()
+        {
+            if (_IPv6)
+            {
+                s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            }
+            else
+            {
+                s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            }
+        }
+
+        private bool Connect()
+        {
+            if (!s.Connected)
+            {
+                try
+                {
+                    InitSocket();
+                    s.Connect(_IP, _port);
+                    listener = new Thread(StartListening);
+                    listener.Start();
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <exception cref="HttpRequestException">Can't connect to the server</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             HttpClient client = new HttpClient();
@@ -137,11 +234,30 @@ namespace LAMA.Communicator
             else
             {
                 string[] array = responseString.Split(',');
-                s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                s.Connect(IPAddress.Parse(array[0].Trim('"')), int.Parse(array[1]));
-                CPName = clientName;
-                listener = new Thread(StartListening);
-                listener.Start();
+                if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
+                {
+                    if (_IP.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        _IPv6 = true;
+                    }
+                    else
+                    {
+                        _IPv4 = true;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Server IP address not valid");
+                }
+                _port = int.Parse(array[1]);
+                CPName = CreateString(10);
+                InitSocket();
+                Connect();
+                var timer = new System.Threading.Timer((e) =>
+                {
+                    Connect();
+                }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
+                lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
             }
         }
 
@@ -160,15 +276,13 @@ namespace LAMA.Communicator
 
         public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
         {
+            lastUpdate = updateTime;
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (attributesCache.ContainsKey(attributeID) && attributesCache[attributeID].time <= updateTime)
             {
                 attributesCache[attributeID].value = value;
                 attributesCache[attributeID].time = updateTime;
 
-                /*
-                 * TO DO - update game data (once there is a way for me to access it)
-                 */
                 if (objectType == "LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
@@ -204,6 +318,7 @@ namespace LAMA.Communicator
 
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
+            lastUpdate = updateTime;
             if (objectType == "LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
@@ -219,12 +334,6 @@ namespace LAMA.Communicator
                     {
                         attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
                     }
-                }
-                else
-                {
-                    /*
-                     * TO DO - notify sender of unsuccessful creation
-                     */
                 }
             }
 
@@ -243,12 +352,6 @@ namespace LAMA.Communicator
                     {
                         attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
                     }
-                }
-                else
-                {
-                    /*
-                     * TO DO - notify sender of unsuccessful creation
-                     */
                 }
             }
         }
@@ -276,14 +379,10 @@ namespace LAMA.Communicator
 
         public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
         {
+            lastUpdate = updateTime;
             string objectCacheID = objectType + ";" + objectID;
             if (objectsCache.ContainsKey(objectCacheID))
             {
-                /*
-                 * TO DO - Find object and its attributes
-                 * Delete attributes from cache
-                 * Delete object
-                 */
                 int nAttributes = 0;
                 Models.LarpActivity removedActivity;
                 if (objectType == "LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null) {
