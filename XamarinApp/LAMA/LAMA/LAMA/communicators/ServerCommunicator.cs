@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Xamarin.Essentials;
 
@@ -168,6 +169,20 @@ namespace LAMA.Communicator
         public ServerCommunicator(string name, string IP, int port, string password)
         {
             HttpClient client = new HttpClient();
+            Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
+            if (!nameRegex.IsMatch(name))
+            {
+                throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 charcters");
+            }
+            if (port < 0 || port > 65535)
+            {
+                throw new WrongPortException("Ports must be in range [0..65535]");
+            }
+            bool isIPValid = IPAddress.TryParse(IP, out _);
+            if (!isIPValid)
+            {
+                throw new NotAnIPAddressException("Invalid IP address format");
+            }
             var values = new Dictionary<string, string>
             {
                 { "name", "\"" + name + "\"" },
@@ -176,9 +191,28 @@ namespace LAMA.Communicator
                 { "password", "\"" + password + "\"" }
             };
 
+
             var content = new FormUrlEncodedContent(values);
-            var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
-            var responseString = response.Result.Content.ReadAsStringAsync();
+            var responseString = "";
+            try
+            {
+                var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
+                responseString = response.Result.Content.ReadAsStringAsync().Result;
+            }
+            catch (HttpRequestException)
+            {
+                throw new CantConnectToCentralServerException("Can not connect to the central server check your internet connection");
+            }
+
+
+            if (responseString == "Connection")
+            {
+                throw new CantConnectToDatabaseException("Connecting to database failed");
+            }
+            else if (responseString == "password")
+            {
+                throw new WrongPasswordException("Wrong password for existing server");
+            }
 
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));

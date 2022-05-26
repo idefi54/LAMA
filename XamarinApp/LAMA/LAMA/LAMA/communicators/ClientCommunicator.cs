@@ -216,20 +216,28 @@ namespace LAMA.Communicator
             };
 
             var content = new FormUrlEncodedContent(values);
-            var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/findserver.php", content);
-            var responseString = response.Result.Content.ReadAsStringAsync().Result;
+            var responseString = "";
+            try
+            {
+                var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/findserver.php", content);
+                responseString = response.Result.Content.ReadAsStringAsync().Result;
+            }
+            catch (HttpRequestException)
+            {
+                throw new CantConnectToCentralServerException("Can not connect to the server, check your internet connection");
+            }
 
             if (responseString == "Connection")
             {
-                throw new Exception("Connecting to database failed");
+                throw new CantConnectToDatabaseException("Connecting to database failed");
             }
             else if (responseString == "password")
             {
-                throw new Exception("Wrong password");
+                throw new WrongPasswordException("Wrong password");
             }
             else if (responseString == "server")
             {
-                throw new Exception("No such server exists");
+                throw new NonExistentServerException("No such server exists");
             }
             else
             {
@@ -247,7 +255,7 @@ namespace LAMA.Communicator
                 }
                 else
                 {
-                    throw new Exception("Server IP address not valid");
+                    throw new NotAnIPAddressException("Server IP address not valid");
                 }
                 _port = int.Parse(array[1]);
                 CPName = CreateString(10);
