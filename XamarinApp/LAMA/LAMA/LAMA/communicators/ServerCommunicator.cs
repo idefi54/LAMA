@@ -166,6 +166,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
+        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
+        /// <exception cref="WrongPasswordException">Wrong password used for existing server</exception>
+        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
+        /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
             HttpClient client = new HttpClient();

@@ -205,7 +205,11 @@ namespace LAMA.Communicator
             return true;
         }
 
-        /// <exception cref="HttpRequestException">Can't connect to the server</exception>
+        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
+        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
+        /// <exception cref="WrongPasswordException">Wrong password used</exception>
+        /// <exception cref="NonExistentServerException">Server with this name doesn't exist</exception>
+        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             HttpClient client = new HttpClient();
