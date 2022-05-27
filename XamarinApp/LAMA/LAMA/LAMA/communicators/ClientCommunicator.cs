@@ -217,6 +217,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPasswordException">Wrong password used</exception>
         /// <exception cref="NonExistentServerException">Server with this name doesn't exist</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
+        /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             HttpClient client = new HttpClient();
