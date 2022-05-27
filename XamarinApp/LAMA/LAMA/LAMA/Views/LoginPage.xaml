@@ -8,15 +8,27 @@
 			 Shell.NavBarIsVisible="False"
 			 Shell.FlyoutBehavior="Disabled">
     <ContentPage.Content>
-		<StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-			<Label Text="Jméno serveru:"/>
-			<Entry Placeholder="Jméno serveru"/>
-			<Label Text="Jméno klienta:"/>
-			<Entry Placeholder="Jméno klienta"/>
-			<Label Text="Heslo:"/>
-			<Entry Placeholder="Heslo"/>
-			<Button Text="Login" HorizontalOptions="Center" Command="{Binding LoginCommand}"/>
-			<Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}"/>
-		</StackLayout>
+		<ScrollView>
+			<StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+				<Label Text="Jméno serveru:"/>
+				<Entry Placeholder="Jméno serveru" Text="{Binding ClientServerName}"/>
+				<Label Text="Jméno klienta:"/>
+				<Entry Placeholder="Jméno klienta" Text="{Binding ClientName}"/>
+				<Label Text="Heslo:"/>
+				<Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ClientPassword}"/>
+				<Button Text="Přihlásit se jako klient" HorizontalOptions="Center" Command="{Binding LoginCommand}"/>
+				<Label Text="Jméno serveru:"/>
+				<Entry Placeholder="Jméno serveru" Text="{Binding ServerName}"/>
+				<Label Text="Veřejná IP:"/>
+				<Entry Placeholder="Veřejná IP" Keyboard="Numeric" Text="{Binding ServerIP}"/>
+				<Label Text="Port:"/>
+				<Entry Placeholder="Port" Keyboard="Numeric" Text="{Binding ServerPort}"/>
+				<Label Text="Heslo:"/>
+				<Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ServerPassword}"/>
+				<Button Text="Přihlásit se jako server" HorizontalOptions="Center" Command="{Binding ServerLoginCommand}"/>
+				<Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}"/>
+				<Label Text="{Binding ErrorLabel, Mode=TwoWay}"/>
+			</StackLayout>
+		</ScrollView>
     </ContentPage.Content>
 </ContentPage>
