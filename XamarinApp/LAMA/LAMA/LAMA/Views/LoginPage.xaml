@@ -5,10 +5,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="LAMA.Views.LoginPage"
-             Shell.NavBarIsVisible="False">
+			 Shell.NavBarIsVisible="False"
+			 Shell.FlyoutBehavior="Disabled">
     <ContentPage.Content>
-        <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
-        </StackLayout>
+		<StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+			<Label Text="Jméno serveru:"/>
+			<Entry Placeholder="Jméno serveru"/>
+			<Label Text="Jméno klienta:"/>
+			<Entry Placeholder="Jméno klienta"/>
+			<Label Text="Heslo:"/>
+			<Entry Placeholder="Heslo"/>
+			<Button Text="Login" HorizontalOptions="Center" Command="{Binding LoginCommand}"/>
+			<Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}"/>
+		</StackLayout>
     </ContentPage.Content>
 </ContentPage>
