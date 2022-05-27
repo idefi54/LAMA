@@ -10,6 +10,8 @@ namespace LAMA.ViewModels
 
         LarpActivity _larpActivity;
 
+        public LarpActivity LarpActivity => _larpActivity;
+
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + (_larpActivity.eventType == LarpActivity.EventType.normal ? "(N)" : "(P)");
 
         public string Detail => _larpActivity == null ? "" : "začíná za " + TimeFormat(_larpActivity.start.hours, _larpActivity.start.minutes);

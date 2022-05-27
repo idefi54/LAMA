@@ -13,6 +13,7 @@ namespace LAMA.ViewModels
 		private string _name;
 		private string _description;
 		private string _type;
+		private int _typeIndex;
 		//private DateTime _startTime;
 		//private DateTime _endTime;
 		private DateTime _duration;
@@ -22,11 +23,13 @@ namespace LAMA.ViewModels
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
+		private List<string> _typeList;
 
 		public string Id { get { return _id; } set { SetProperty(ref _id , value); } }
 		public string Name { get { return _name; } set { SetProperty(ref _name , value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description , value); } }
-		public string Type { get { return _type; } set { SetProperty(ref _type , value); } }
+		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
+		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
 		//public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime , value); } }
 		//public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime , value); } }
 		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
@@ -37,14 +40,33 @@ namespace LAMA.ViewModels
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
+		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
+
 
 		//public NewActivityViewModel()
 		//{
-  //          SaveCommand = new Command(OnSave, ValidateSave);
-  //          CancelCommand = new Command(OnCancel);
-  //          this.PropertyChanged +=
-  //              (_, __) => SaveCommand.ChangeCanExecute();
-  //      }
+		//          SaveCommand = new Command(OnSave, ValidateSave);
+		//          CancelCommand = new Command(OnCancel);
+		//          this.PropertyChanged +=
+		//              (_, __) => SaveCommand.ChangeCanExecute();
+		//      }
+
+		INavigation _navigation;
+		Action<LarpActivity> _createNewActivity;
+
+        public NewActivityViewModel(INavigation navigation, Action<LarpActivity> createNewActivity)
+        {
+			_navigation = navigation;
+			_createNewActivity = createNewActivity;
+			SaveCommand = new Xamarin.Forms.Command(OnSave);
+			TypeList = new List<string>();
+			foreach (LarpActivity.EventType type in Enum.GetValues(typeof(LarpActivity.EventType)))
+			{
+				TypeList.Add(type.ToString());
+			}
+			TypeIndex = 0;
+			Type = ((LarpActivity.EventType)TypeIndex).ToString();
+		}
 
 		private bool ValidateSave()
 		{
@@ -52,8 +74,8 @@ namespace LAMA.ViewModels
 				&& !String.IsNullOrWhiteSpace(_description);
 		}
 
-		public Command SaveCommand { get; }
-		public Command CancelCommand { get; }
+		public Xamarin.Forms.Command SaveCommand { get; }
+		public ICommand CancelCommand { get; }
 
 		private async void OnCancel()
 		{
@@ -61,19 +83,35 @@ namespace LAMA.ViewModels
 			await Shell.Current.GoToAsync("..");
 		}
 
-        //private async void OnSave()
-        //{
-        //    Activity newActivity = new Activity()
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        Name = Name,
-        //        Description = Description
-        //    };
+        private async void OnSave()
+        {
+			//Activity newActivity = new Activity()
+			//{
+			//    Id = Guid.NewGuid().ToString(),
+			//    Name = Name,
+			//    Description = Description
+			//};
 
-        //    await ActivityDataStore.AddItemAsync(newActivity);
+			//await ActivityDataStore.AddItemAsync(newActivity);
 
-        //    // This will pop the current page off the navigation stack
-        //    await Shell.Current.GoToAsync("..");
-        //}
+			if(!ValidateSave())
+            {
+
+
+				return;
+            }
+
+            LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
+				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
+				new EventList<int>(),
+				new Time(60 * Duration.Hour + Duration.Minute), Day, new Time(60 * Start.Hour + Start.Minute),
+				new Pair<double, double>(0, 0), LarpActivity.Status.readyToLaunch,
+				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+
+			_createNewActivity(larpActivity);
+
+			// This will pop the current page off the navigation stack
+			await Shell.Current.GoToAsync("..");
+        }
     }
 }

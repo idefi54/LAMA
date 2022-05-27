@@ -5,34 +5,41 @@
 			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
              Title="New Activity"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
-             ios:Page.UseSafeArea="true">
+             ios:Page.UseSafeArea="true"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 x:DataType="viewmodel:NewActivityViewModel">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
+	</ContentPage.ToolbarItems>
+	
     <ContentPage.Content>
 		<ScrollView>
 			<StackLayout Padding="15" >
 				<Label Text="Název aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Entry Text="Přepad karavanu" FontSize="Medium" />
+				<Entry Text="{Binding Name}" Placeholder="Název aktivity" FontSize="Medium" />
 
 
 
 				<Label Text="Popis aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Editor Text="Kupec je přepaden bandity, kteřé mají hráči porazit." AutoSize="TextChanges" FontSize="Medium" Margin="0" />
+				<Editor Text="{Binding Description}" Placeholder="Popis aktivity" AutoSize="TextChanges" FontSize="Medium" Margin="0" />
 
 
 				<Label Text="Typ aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Picker Title="Typ aktivity" HorizontalOptions="Start">
-					<Picker.ItemsSource>
+				<Picker Title="Typ aktivity" ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}" HorizontalOptions="Start">
+					<!--<Picker.ItemsSource>
 						<x:Array Type="{x:Type x:String}">
 							<x:String>Organizační</x:String>
 							<x:String>Vedlejší event</x:String>
 							<x:String>Hlavní event</x:String>
 						</x:Array>
-					</Picker.ItemsSource>
+					</Picker.ItemsSource>-->
 				</Picker>
 
 
@@ -66,7 +73,7 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<Picker Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Title="Den konání" HorizontalOptions="Start" VerticalOptions="Center">
+					<Picker Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Title="Den konání" SelectedIndex="{Binding Day}" HorizontalOptions="Start" VerticalOptions="Center">
 						<Picker.ItemsSource>
 							<x:Array Type="{x:Type x:String}">
 								<x:String>Pondělí 12.4.</x:String>
@@ -77,15 +84,16 @@
 					</Picker>
 
 					<Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start"/>
+					<TimePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Start}"/>
 					<Label Grid.Row="3" Grid.Column="0" Text="Délka trvání" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start"/>
+					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Duration}"/>
 				</Grid>
 
 
 				<Label Text="Role"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
+				<!--
 				<StackLayout Orientation="Vertical">
 					<StackLayout Orientation="Horizontal">
 						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Kupec"/>
@@ -98,18 +106,20 @@
 						<Button Text="-"></Button>
 					</StackLayout>
 				</StackLayout>
+				-->
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
 
 				<Label Text="Potřebná příprava"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Editor AutoSize="TextChanges" FontSize="Medium" Margin="0" MinimumHeightRequest="300"/>
+				<Editor AutoSize="TextChanges" Text="{Binding Preparations}" Placeholder="Potřebná příprava" FontSize="Medium" Margin="0" MinimumHeightRequest="300"/>
 			
 			
 				<Label Text="Vybavení"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
+				<!--
 				<StackLayout Orientation="Vertical">
 					<StackLayout Orientation="Horizontal">
 						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Truhla s pokladem"/>
@@ -122,6 +132,7 @@
 						<Button Text="-"></Button>
 					</StackLayout>
 				</StackLayout>
+				-->
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
 
@@ -136,10 +147,12 @@
 					HorizontalOptions="Fill"
 					BackgroundColor="Gray" />
 			
+				<!--
 				<StackLayout Orientation="Horizontal">
 					<Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
 					<Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
 				</StackLayout>
+				-->
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>

@@ -20,12 +20,14 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewActivityPage : ContentPage
 	{
+
+
 		public LarpActivity Activity { get; set; }
 
-		public NewActivityPage()
+		public NewActivityPage(Action<LarpActivity> createNewActivity)
         {
             InitializeComponent();
-			BindingContext = new NewActivityViewModel();
+			BindingContext = new NewActivityViewModel(Navigation, createNewActivity);
 
             MapHandler.Instance.MapViewSetupAdding(mapView);
 		}
