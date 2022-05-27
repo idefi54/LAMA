@@ -197,6 +197,13 @@ namespace LAMA.Communicator
                     listener = new Thread(StartListening);
                     listener.Start();
                 }
+                catch (SocketException e)
+                {
+                    if (e.Message == "Connection refused")
+                    {
+                        throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
+                    }
+                }
                 catch (Exception e)
                 {
                     return false;

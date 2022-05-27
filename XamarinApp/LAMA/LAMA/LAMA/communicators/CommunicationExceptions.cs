@@ -66,4 +66,13 @@ namespace LAMA.Communicator
         public WrongPortException(string message, Exception inner)
             : base(message, inner) { }
     }
+
+    public class ServerConnectionRefusedException : Exception
+    {
+        public ServerConnectionRefusedException() { }
+        public ServerConnectionRefusedException(string message)
+            : base(message) { }
+        public ServerConnectionRefusedException(string message, Exception inner)
+            : base(message, inner) { }
+    }
 }
