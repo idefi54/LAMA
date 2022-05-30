@@ -269,6 +269,7 @@ namespace LAMA.Models
                     break;
                 case 5:
                     _prerequisiteIDs = Helpers.readIntField(value);
+                    _prerequisiteIDs.dataChanged += onPrerequisiteChange;
                     break;
                 case 6:
                     _duration.setRawMinutes( Helpers.readInt(value));
@@ -287,15 +288,28 @@ namespace LAMA.Models
                     break;
                 case 11:
                     _requiredItems = Helpers.readIntPairField(value);
+                    _requiredItems.dataChanged += requiredItemsChange;
                     break;
                 case 12:
                     _roles = Helpers.readStringIntPairField(value);
+                    _roles.dataChanged += rolesChange;
                     break;
                 case 13:
                     _registrationByRole = Helpers.readIntStringPairField(value);
+                    _registrationByRole.dataChanged += registrationByRoleChanged;
                     break;
 
             }
+        }
+
+        private void _requiredItems_dataChanged()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void _prerequisiteIDs_dataChanged()
+        {
+            throw new NotImplementedException();
         }
 
         public void buildFromStrings(string[] input)

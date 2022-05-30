@@ -67,6 +67,14 @@ namespace LAMA
 
             sql.addData(myID, data, true);
         }*/
+
+        /// <summary>
+        /// adds the data to the database
+        /// returns false if it fails (usually because of duplicate ID)
+        /// </summary>
+        /// <param name="data"> data to be added</param>
+        /// <param name="invokeEvent"> should the network be notified about the change?</param>
+        /// <returns></returns>
         public bool add(T data, bool invokeEvent = true)
         {
             if (IDToIndex.ContainsKey(data.getID()))
@@ -104,6 +112,33 @@ namespace LAMA
             return cache[IDToIndex[id]];
         }
 
+
+        List<Pair<int, int>> IDIntervals = new List<Pair<int, int>>();
+
+        public int nextID()
+        {
+            if(IDIntervals.Count == 0)
+            {
+                IDIntervals.Add(getNextIDInterval());
+            }
+
+            for (int i = 0; i < IDIntervals.Count; ++i) 
+            {
+                for (int j = IDIntervals[i].first; j < IDIntervals[i].second; ++j)
+                {
+                    if (!IDToIndex.ContainsKey(j))
+                        return j;
+                }
+            }
+
+            IDIntervals.Add(getNextIDInterval());
+            return IDIntervals[IDIntervals.Count - 1].first;
+
+        }
+        private Pair<int,int> getNextIDInterval()
+        {
+            throw new Exception("not implemented, call network to give me another interval");
+        }
 
     }
 

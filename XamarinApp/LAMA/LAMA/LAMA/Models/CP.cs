@@ -116,6 +116,7 @@ namespace LAMA.Models
                 case 2: _nick = value;
                     break;
                 case 3: _roles = Helpers.readStringField(value);
+                    _roles.dataChanged += onRolesChange;
                     break;
                 case 4: _phone = Helpers.readInt(value);
                     break;
