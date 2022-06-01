@@ -1,18 +1,12 @@
-﻿using LAMA.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LAMA
 {
-
-    
-    public class RememberedList<T> where T : Serializable, new()
-    {
-        
-        Dictionary<int, int> IDToIndex = new Dictionary<int, int>();
+    class RememberedStringDictionary<T> where T : SerializableDictionaryItem, new()
+    {        
+        Dictionary<string, int> KeyToIndex = new Dictionary<string, int>();
 
         static StringBuilder ID = new StringBuilder();
 
@@ -20,10 +14,10 @@ namespace LAMA
         public string tableName { get { return myID; } }
 
         List<T> cache = new List<T>();
-        OurSQL<T> sql;
-        public OurSQL<T> sqlConnection { get { return sql; } }
+        OurSQLDictionary<T> sql;
+        public OurSQLDictionary<T> sqlConnection { get { return sql; } }
 
-        public RememberedList(OurSQL<T> sql)
+        public RememberedStringDictionary(OurSQLDictionary<T> sql)
         {
             this.sql = sql;
 
@@ -42,26 +36,24 @@ namespace LAMA
 
         void loadData()
         {
-
             cache = sql.ReadData(myID);
 
             int i = 0;
-            foreach(var a in cache)
+            foreach (var a in cache)
             {
-                IDToIndex.Add(a.getID(), i);
+                KeyToIndex.Add(a.getKey(), i);
                 ++i;
             }
         }
 
         public T this[int index]
         {
-
             get { return cache[index]; }
         }
 
         /*public void add(T data)
         {
-            
+
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
@@ -77,13 +69,13 @@ namespace LAMA
         /// <returns></returns>
         public bool add(T data, bool invokeEvent = true)
         {
-            if (IDToIndex.ContainsKey(data.getID()))
+            if (KeyToIndex.ContainsKey(data.getKey()))
                 return false;
 
             cache.Add(data);
-            IDToIndex.Add(data.getID(), cache.Count - 1);
+            KeyToIndex.Add(data.getKey(), cache.Count - 1);
 
-            sql.addData(myID, data, invokeEvent);
+            sql.addData(myID, data);
             return true;
         }
 
@@ -93,11 +85,11 @@ namespace LAMA
         {
             if (index < 0 || index >= cache.Count)
                 return;
-            
-            IDToIndex.Remove(cache[index].getID());
-            for (int i = index + 1; i < cache.Count; ++i) 
+
+            KeyToIndex.Remove(cache[index].getKey());
+            for (int i = index + 1; i < cache.Count; ++i)
             {
-                --IDToIndex[cache[i].getID()];
+                --KeyToIndex[cache[i].getKey()];
             }
             var who = cache[index];
             cache.RemoveAt(index);
@@ -105,57 +97,25 @@ namespace LAMA
             sql.removeAt(myID, who);
         }
 
-        //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)
-        public void removeByID(int ID)
+        public void removeByKey(string key)
         {
-            if (IDToIndex.ContainsKey(ID))
+            if (KeyToIndex.ContainsKey(key))
             {
-                int internalIndex = IDToIndex[ID];
+                int internalIndex = KeyToIndex[key];
                 removeAt(internalIndex);
             }
         }
 
-        //I think, that it should be if (!IDToIndex.ContainsKey(id)), but you should check it yourself
-        public T getByID(int id)
+        public T getByKey(string key)
         {
-            if (IDToIndex.ContainsKey(id))
+            if (!KeyToIndex.ContainsKey(key))
                 return default(T);
-            return cache[IDToIndex[id]];
+            return cache[KeyToIndex[key]];
         }
 
-
-        List<Pair<int, int>> IDIntervals = new List<Pair<int, int>>();
-
-        public int nextID()
+        public bool containsKey(string key)
         {
-            if(IDIntervals.Count == 0)
-            {
-                IDIntervals.Add(getNextIDInterval());
-            }
-
-            for (int i = 0; i < IDIntervals.Count; ++i) 
-            {
-                for (int j = IDIntervals[i].first; j < IDIntervals[i].second; ++j)
-                {
-                    if (!IDToIndex.ContainsKey(j))
-                        return j;
-                }
-            }
-
-            IDIntervals.Add(getNextIDInterval());
-            return IDIntervals[IDIntervals.Count - 1].first;
-
+            return KeyToIndex.ContainsKey(key);
         }
-        private Pair<int,int> getNextIDInterval()
-        {
-            throw new Exception("not implemented, call network to give me another interval");
-        }
-
     }
-
-
-
-
-
 }
-

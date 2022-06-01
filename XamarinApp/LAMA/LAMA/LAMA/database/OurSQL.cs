@@ -200,6 +200,7 @@ namespace LAMA
         }
 
         
+        //TODO - make the input safe (new attribute value can contain special characters and ruid the query through SQLinjection or just mistake)
         public void changeData(string tableName, int attributeIndex, string newAttributeValue, T who)
         {
             SQLiteCommand command = connection.CreateCommand();
@@ -238,6 +239,182 @@ namespace LAMA
             while(reader.Read())
             {
                 output.Add(reader.GetInt32(0));
+            }
+            return output;
+        }
+
+        public bool containsTable(string name)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + name + "'";
+            var reader = command.ExecuteReader();
+            return reader.HasRows;
+        }
+    }
+
+    public class OurSQLDictionary<T> where T : SerializableDictionaryItem, new()
+    {
+
+        SQLiteConnection connection { get; }
+
+
+        public OurSQLDictionary(string path)
+        {
+
+            if (SQLConnectionWrapper.connection == null)
+                SQLConnectionWrapper.makeConnection(path);
+            connection = SQLConnectionWrapper.connection;
+
+
+        }
+
+
+
+        public void makeTable(string tableName)
+        {
+            SQLiteCommand command;
+
+            command = connection.CreateCommand();
+
+            StringBuilder commandText = new StringBuilder();
+
+            commandText.Append("CREATE TABLE " + tableName + "(");
+
+            var columns = (new T()).getAttributeNames();
+
+            bool first = true;
+            foreach (var column in columns)
+            {
+                if (!first)
+                {
+                    commandText.Append(", ");
+                }
+                else
+                    first = false;
+                commandText.Append(column + " " + "TEXT");
+            }
+
+            // last change parameter, so we can get items since some time
+            commandText.Append(", lastChange INTEGER");
+
+
+            commandText.Append(")");
+            command.CommandText = commandText.ToString();
+
+            command.ExecuteNonQuery();
+
+        }
+
+        public void addData(string table, T value)
+        {
+            if (value == null)
+                return;
+
+            SQLiteCommand command = connection.CreateCommand();
+            StringBuilder commandText = new StringBuilder();
+
+            commandText.Append("INSERT INTO " + table + " (");
+
+            var columns = value.getAttributeNames();
+
+
+            bool first = true;
+            foreach (var a in columns)
+            {
+                if (first)
+                    first = false;
+                else
+                    commandText.Append(", ");
+                commandText.Append(a);
+            }
+            commandText.Append(", lastChange");
+            commandText.Append(") VALUES(");
+
+            first = true;
+            foreach (var a in value.getAttributes())
+            {
+                if (first)
+                    first = false;
+                else
+                    commandText.Append(", ");
+                commandText.Append("'" + a + "'");
+            }
+
+
+            commandText.Append(", " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
+
+            commandText.Append(")");
+            command.CommandText = commandText.ToString();
+
+
+            command.ExecuteNonQuery();
+        }
+
+
+
+
+        // when called with wrong index or data type this will crash
+        public List<T> ReadData(string tableName)
+        {
+            SQLiteDataReader reader;
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM " + tableName;
+
+            reader = command.ExecuteReader();
+
+            List<T> output = new List<T>();
+            int size = 0;
+            while (reader.Read())
+            {
+                ++size;
+                T newStuff = new T();
+
+
+                for (int i = 0; i < newStuff.numOfAttributes(); ++i)
+                {
+                    newStuff.setAttribute(i, reader.GetString(i));
+                }
+                output.Add(newStuff);
+            }
+
+            return output;
+        }
+
+
+        public void changeData(string tableName, int attributeIndex, string newAttributeValue, T who)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+
+            string attributeName = who.getAttributeNames()[attributeIndex];
+
+            command.CommandText = "UPDATE " + tableName + " SET " + attributeName + " = " + "'" + newAttributeValue + "'" +
+                ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE ID = " + "'" + who.getKey() + "'";
+            command.ExecuteNonQuery();
+        }
+
+        public void removeAt(string table, T who)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            StringBuilder commandText = new StringBuilder();
+
+            commandText.Append("DELETE FROM " + table + " WHERE ID = " + "'" + who.getKey() + "'");
+            command.CommandText = commandText.ToString();
+            command.ExecuteNonQuery();
+        }
+
+
+        public List<string> getDataSince(string tableName, long when)
+        {
+
+            SQLiteDataReader reader;
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT ID FROM " + tableName + "WHERE lastChange < " + when;
+
+            reader = command.ExecuteReader();
+            List<string> output = new List<string>();
+            while (reader.Read())
+            {
+                output.Add(reader.GetString(0));
             }
             return output;
         }

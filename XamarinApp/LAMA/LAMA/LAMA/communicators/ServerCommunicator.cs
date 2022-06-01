@@ -14,16 +14,16 @@ namespace LAMA.Communicator
     {
         static byte[] buffer = new byte[8 * 1024];
         static Socket serverSocket;
-        public Thread server;
-        public static ServerCommunicator THIS;
+        private Thread server;
+        private static ServerCommunicator THIS;
 
-        public Dictionary<string, Command> objectsCache = new Dictionary<string, Command>();
-        public Dictionary<string, TimeValue> attributesCache = new Dictionary<string, TimeValue>();
+        private RememberedStringDictionary<TimeValue> attributesCache;
+        private RememberedStringDictionary<Command> objectsCache;
 
-        public object socketsLock = new object();
+        private object socketsLock = new object();
         private static List<Socket> clientSockets = new List<Socket>();
 
-        public object commandsLock = new object();
+        private object commandsLock = new object();
         private Queue<Command> commandsToBroadCast = new Queue<Command>();
         private Command currentCommand = null;
 
@@ -173,6 +173,8 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
+            attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
             if (!nameRegex.IsMatch(name))
@@ -230,9 +232,9 @@ namespace LAMA.Communicator
             SQLEvents.dataDeleted += OnItemDeleted;
         }
 
-        private void SendCommand(string commandText)
+        private void SendCommand(string commandText, string objectID)
         {
-            Command command = new Command(commandText, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            Command command = new Command(commandText, DateTimeOffset.Now.ToUnixTimeMilliseconds(), objectID);
             lock (commandsLock)
             {
                 commandsToBroadCast.Enqueue(command);
@@ -254,19 +256,19 @@ namespace LAMA.Communicator
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            attributesCache[attributeID].value = changed.getAttribute(attributeIndex);
-            attributesCache[attributeID].time = updateTime;
+            attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
+            attributesCache.getByKey(attributeID).time = updateTime;
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            THIS.SendCommand(new Command(command, updateTime));
+            THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
         public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
-            if (attributesCache.ContainsKey(attributeID) && attributesCache[attributeID].time <= updateTime)
+            if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
-                attributesCache[attributeID].value = value;
-                attributesCache[attributeID].time = updateTime;
+                attributesCache.getByKey(attributeID).value = value;
+                attributesCache.getByKey(attributeID).time = updateTime;
 
                 /*
                  * TO DO - update game data (once there is a way for me to access it)
@@ -282,7 +284,7 @@ namespace LAMA.Communicator
                 }
             }
             // Notify every CP
-            THIS.SendCommand(new Command(command, updateTime));
+            THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
         public void OnItemCreated(Serializable changed)
@@ -295,15 +297,15 @@ namespace LAMA.Communicator
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
 
-            if (!objectsCache.ContainsKey(objectCacheID))
+            if (!objectsCache.containsKey(objectCacheID))
             {
-                objectsCache[objectCacheID] = new Command(command, updateTime);
+                objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributes[i]);
+                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
                 }
                 // Notify every CP of item creation
-                THIS.SendCommand(new Command(command, updateTime));
+                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
             }
         }
 
@@ -316,19 +318,19 @@ namespace LAMA.Communicator
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
 
-                if (!objectsCache.ContainsKey(objectID))
+                if (!objectsCache.containsKey(objectID))
                 {
-                    objectsCache[objectID] = new Command(command, updateTime);
+                    objectsCache.add(new Command(command, updateTime, objectID));
                     /*
                      * TO DO - update game data once there is access to it
                      */
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime));
+                    THIS.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else
                 {
@@ -345,16 +347,16 @@ namespace LAMA.Communicator
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
-                if (!objectsCache.ContainsKey(objectID))
+                if (!objectsCache.containsKey(objectID))
                 {
-                    objectsCache[objectID] = new Command(command, updateTime);
+                    objectsCache.add(new Command(command, updateTime, objectID));
                     DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime));
+                    THIS.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else
                 {
@@ -375,14 +377,15 @@ namespace LAMA.Communicator
             string[] attributes = changed.getAttributes();
             string command = "ItemDeleted" + ";" + objectType + ";" + objectID;
 
-            if (objectsCache.ContainsKey(objectCacheID))
+            if (objectsCache.containsKey(objectCacheID))
             {
-                objectsCache[objectCacheID] = new Command(command, updateTime);
+                objectsCache.getByKey(objectCacheID).command = command;
+                objectsCache.getByKey(objectCacheID).time = updateTime;
                 // Notify every CP of item deletion
-                THIS.SendCommand(new Command(command, updateTime));
+                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.Remove(objectID + ";" + i);
+                    attributesCache.removeByKey(objectID + ";" + i);
                 }
             }
         }
@@ -390,7 +393,7 @@ namespace LAMA.Communicator
         public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
         {
             string objectCacheID = objectType + ";" + objectID;
-            if (objectsCache.ContainsKey(objectCacheID))
+            if (objectsCache.containsKey(objectCacheID))
             {
                 /*
                  * TO DO - Find object and its attributes
@@ -403,9 +406,9 @@ namespace LAMA.Communicator
                     int nAttributes = removedItemActivity.numOfAttributes();
                     for (int i = 0; i < nAttributes; i++)
                     {
-                        attributesCache.Remove(objectID + ";" + i);
+                        attributesCache.removeByKey(objectID + ";" + i);
                     }
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeAt(objectID);
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeByID(objectID);
                 }
 
                 Models.CP removedItemCP;
@@ -414,26 +417,28 @@ namespace LAMA.Communicator
                     int nAttributes = removedItemCP.numOfAttributes();
                     for (int i = 0; i < nAttributes; i++)
                     {
-                        attributesCache.Remove(objectID + ";" + i);
+                        attributesCache.removeByKey(objectID + ";" + i);
                     }
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeAt(objectID);
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
                 }
-                objectsCache.Remove(objectCacheID);
+                objectsCache.getByKey(objectCacheID).command = command;
+                objectsCache.getByKey(objectCacheID).time = updateTime;
 
                 // Notify every CP of deletion
-                THIS.SendCommand(new Command(command, updateTime));
+                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
             }
         }
 
         public void SendUpdate(Socket current, long lastUpdateTime)
         {
-            foreach (KeyValuePair<string, Command> entry in objectsCache)
+            for (int i = 0; i < objectsCache.Count; i++)
             {
-                if (entry.Value.time > lastUpdateTime)
+                Command entry = objectsCache[i];
+                if (entry.time > lastUpdateTime)
                 {
                     try
                     {
-                        current.Send(entry.Value.Encode());
+                        current.Send(entry.Encode());
                     }
                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {
@@ -442,16 +447,17 @@ namespace LAMA.Communicator
                 }
             }
 
-            foreach (KeyValuePair<string, TimeValue> entry in attributesCache)
+            for (int i = 0; i < attributesCache.Count; i++)
             {
-                if (entry.Value.time > lastUpdateTime)
+                TimeValue entry = attributesCache[i];
+                if (entry.time > lastUpdateTime)
                 {
-                    string value = entry.Value.value;
-                    string[] keyParts = entry.Key.Split(';');
+                    string value = entry.value;
+                    string[] keyParts = entry.key.Split(';');
                     string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
                     try
                     {
-                        current.Send((new Command(command, entry.Value.time)).Encode());
+                        current.Send((new Command(command, entry.time, keyParts[0] + ";" + keyParts[1])).Encode());
                     }
                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {

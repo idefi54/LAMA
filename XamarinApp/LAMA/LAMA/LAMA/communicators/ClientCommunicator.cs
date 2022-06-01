@@ -14,9 +14,9 @@ namespace LAMA.Communicator
     public class ClientCommunicator
     {
         static Socket s;
-        public object socketLock = new object();
-        public Thread listener;
-        public long lastUpdate;
+        private object socketLock = new object();
+        private Thread listener;
+        private long lastUpdate;
         private static string CPName;
         private static string assignedEvent = "";
         private IPAddress _IP;
@@ -25,12 +25,12 @@ namespace LAMA.Communicator
         private bool _IPv4 = false;
 
         static byte[] buffer = new byte[8 * 1024];
-        public static ClientCommunicator THIS;
-        public Dictionary<string, Command> objectsCache = new Dictionary<string, Command>();
-        public Dictionary<string, TimeValue> attributesCache = new Dictionary<string, TimeValue>();
+        private static ClientCommunicator THIS;
+        private RememberedStringDictionary<Command> objectsCache;
+        private RememberedStringDictionary<TimeValue> attributesCache;
         static Random rd = new Random();
 
-        public object commandsLock = new object();
+        private object commandsLock = new object();
         private Queue<Command> commandsToBroadCast = new Queue<Command>();
 
         private void ProcessBroadcast()
@@ -150,7 +150,7 @@ namespace LAMA.Communicator
             string q = lastUpdate.ToString() + ";";
             q += "Update;";
             q += CPName + ";";
-            SendCommand(new Command(q));
+            SendCommand(new Command(q, "-1"));
         }
 
         private void StartListening()
@@ -220,6 +220,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {
@@ -288,20 +289,20 @@ namespace LAMA.Communicator
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            attributesCache[attributeID].value = changed.getAttribute(attributeIndex);
-            attributesCache[attributeID].time = updateTime;
+            attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
+            attributesCache.getByKey(attributeID).time = updateTime;
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            THIS.SendCommand(new Command(command, updateTime));
+            THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
         public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
         {
             lastUpdate = updateTime;
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
-            if (attributesCache.ContainsKey(attributeID) && attributesCache[attributeID].time <= updateTime)
+            if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
-                attributesCache[attributeID].value = value;
-                attributesCache[attributeID].time = updateTime;
+                attributesCache.getByKey(attributeID).value = value;
+                attributesCache.getByKey(attributeID).time = updateTime;
 
                 if (objectType == "LarpActivity")
                 {
@@ -325,14 +326,14 @@ namespace LAMA.Communicator
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
 
-            if (!objectsCache.ContainsKey(objectCacheID))
+            if (!objectsCache.containsKey(objectCacheID))
             {
-                objectsCache[objectCacheID] = new Command(command, updateTime);
+                objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributes[i]);
+                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
                 }
-                THIS.SendCommand(new Command(command, updateTime));
+                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
             }
         }
 
@@ -346,13 +347,13 @@ namespace LAMA.Communicator
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
 
-                if (!objectsCache.ContainsKey(objectID))
+                if (!objectsCache.containsKey(objectID))
                 {
-                    objectsCache[objectID] = new Command(command, updateTime);
+                    objectsCache.add(new Command(command, updateTime, objectID));
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                 }
             }
@@ -364,13 +365,13 @@ namespace LAMA.Communicator
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
-                if (!objectsCache.ContainsKey(objectID))
+                if (!objectsCache.containsKey(objectID))
                 {
-                    objectsCache[objectID] = new Command(command, updateTime);
+                    objectsCache.add(new Command(command, updateTime, objectID));
                     DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache[objectID + ";" + i] = new TimeValue(updateTime, attributtes[i]);
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                 }
             }
@@ -386,13 +387,14 @@ namespace LAMA.Communicator
             string[] attributes = changed.getAttributes();
             string command = "ItemDeleted" + ";" + objectType + ";" + objectID;
 
-            if (objectsCache.ContainsKey(objectCacheID))
+            if (objectsCache.containsKey(objectCacheID))
             {
-                objectsCache[objectCacheID] = new Command(command, updateTime);
-                THIS.SendCommand(new Command(command, updateTime));
+                objectsCache.getByKey(objectCacheID).command = command;
+                objectsCache.getByKey(objectCacheID).time = updateTime;
+                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.Remove(objectID + ";" + i);
+                    attributesCache.removeByKey(objectID + ";" + i);
                 }
             }
         }
@@ -401,25 +403,26 @@ namespace LAMA.Communicator
         {
             lastUpdate = updateTime;
             string objectCacheID = objectType + ";" + objectID;
-            if (objectsCache.ContainsKey(objectCacheID))
+            if (objectsCache.containsKey(objectCacheID))
             {
                 int nAttributes = 0;
                 Models.LarpActivity removedActivity;
                 if (objectType == "LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null) {
                     nAttributes = removedActivity.numOfAttributes();
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeAt(objectID);
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeByID(objectID);
                 }
                 Models.CP removedCP;
                 if (objectType == "CP" && (removedCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedCP.numOfAttributes();
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeAt(objectID);
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
                 }
                 for (int i = 0; i < nAttributes; i++)
                 {
-                    attributesCache.Remove(objectID + ";" + i);
+                    attributesCache.removeByKey(objectID + ";" + i);
                 }
-                objectsCache.Remove(objectCacheID);
+                objectsCache.getByKey(objectCacheID).command = command;
+                objectsCache.getByKey(objectCacheID).time = updateTime;
             }
         }
     }

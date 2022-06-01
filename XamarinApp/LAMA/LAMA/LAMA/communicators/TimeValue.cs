@@ -4,27 +4,115 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
-    public class TimeValue
+    public class TimeValue : SerializableDictionaryItem
     {
-        public long time;
-        public string value;
+        private string _key;
+        public string key { get { return _key; } }
 
-        public TimeValue(string init)
+        private long _time;
+        public long time
         {
-            string[] initParts = init.Split(';');
-            time = Int64.Parse(initParts[0]);
-            value = initParts[1];
+            get { return _time; }
+            set 
+            { 
+                _time = value;
+                updateValue(1, value.ToString());
+            }
         }
 
-        public TimeValue(long initTime, string initValue)
+        private string _value;
+        public string value
         {
-            time = initTime;
-            value = initValue;
+            get { return _value; }
+            set
+            {
+                _value = value;
+                updateValue(2, value);
+            }
+        }
+
+        public TimeValue(string init, string key)
+        {
+            string[] initParts = init.Split(';');
+            _time = Int64.Parse(initParts[0]);
+            _value = initParts[1];
+            _key = key;
+        }
+
+        public TimeValue(long initTime, string initValue, string key)
+        {
+            _time = initTime;
+            _value = initValue;
+            _key = key;
+        }
+
+        public TimeValue() {}
+
+        static string[] attributes = new string[] { "key", "time", "value" };
+
+        void updateValue(int index, string newVal)
+        {
+            var list = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
+            list.sqlConnection.changeData(list.tableName, index, newVal, this);
+        }
+
+        public void buildFromStrings(string[] input)
+        {
+            _key = input[0];
+            _time = Int64.Parse(input[1]);
+            _value = input[2];
+        }
+
+        public string getAttribute(int index)
+        {
+            switch (index)
+            {
+                case 0: return _key.ToString();
+                case 1: return _time.ToString();
+                case 2: return _value;
+            }
+            throw new Exception("wrong index called");
+        }
+
+        public string[] getAttributeNames()
+        {
+            return attributes;
+        }
+
+        public string[] getAttributes()
+        {
+            List<string> output = new List<string>();
+            for (int i = 0; i < numOfAttributes(); ++i)
+            {
+                output.Add(getAttribute(i));
+            }
+            return output.ToArray();
+        }
+
+        public int numOfAttributes()
+        {
+            return attributes.Length;
+        }
+
+        public void setAttribute(int index, string value)
+        {
+            switch (index)
+            {
+                case 0: throw new Exception("Can not change key of TimeValue");
+                case 1: _time = Int64.Parse(value); break;
+                case 2: _value = value; break;
+            }
+            throw new Exception("wrong index called");
         }
 
         public override string ToString()
         {
-            return time.ToString() + ";" + value;
+            return _time.ToString() + ";" + _value;
+        }
+
+        public string getKey()
+        {
+            return _key;
         }
     }
 }
