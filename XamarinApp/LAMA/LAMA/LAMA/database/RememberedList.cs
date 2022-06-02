@@ -115,10 +115,9 @@ namespace LAMA
             }
         }
 
-        //I think, that it should be if (!IDToIndex.ContainsKey(id)), but you should check it yourself
         public T getByID(int id)
         {
-            if (IDToIndex.ContainsKey(id))
+            if (!IDToIndex.ContainsKey(id))
                 return default(T);
             return cache[IDToIndex[id]];
         }
@@ -126,8 +125,36 @@ namespace LAMA
 
         List<Pair<int, int>> IDIntervals = new List<Pair<int, int>>();
 
+
+        public void NewIntervalReceived(Pair<int, int> input)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        public delegate void GiveNewIntervalDelegate<U>();
+        public event GiveNewIntervalDelegate<T> GiveNewInterval;
+
         public int nextID()
         {
+
+            /*if(málo id zbejvá = půlka posledního intervalu je plná)
+             * {
+             * invoke event (typ)
+             * 
+             * }
+             * 
+             * */
+
+
+           /*
+            if (došly ID)
+           {
+           počkat na server
+           }
+            */
+
             if(IDIntervals.Count == 0)
             {
                 IDIntervals.Add(getNextIDInterval());
@@ -146,6 +173,9 @@ namespace LAMA
             return IDIntervals[IDIntervals.Count - 1].first;
 
         }
+
+        // TODO   asynch await  protože bude trvat než dostanu odpověď
+        // TODO   žádat o novej interval před tim než sem zaplněnej
         private Pair<int,int> getNextIDInterval()
         {
             throw new Exception("not implemented, call network to give me another interval");
