@@ -313,6 +313,11 @@ namespace LAMA.Communicator
                 {
                     DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
+
+                if (objectType == "InventoryItem")
+                {
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
             }
         }
 
@@ -375,6 +380,24 @@ namespace LAMA.Communicator
                     }
                 }
             }
+
+            if (objectType == "InventoryItem")
+            {
+                Models.InventoryItem ii = new Models.InventoryItem();
+                string[] attributtes = serializedObject.Split(',');
+                ii.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + ii.getID();
+
+                if (!objectsCache.containsKey(objectID))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.add(ii, false);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                }
+            }
         }
 
         public void OnItemDeleted(Serializable changed)
@@ -416,6 +439,12 @@ namespace LAMA.Communicator
                 {
                     nAttributes = removedCP.numOfAttributes();
                     DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
+                }
+                Models.InventoryItem removedInventoryItem;
+                if (objectType == "InventoryItem" && (removedInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedInventoryItem.numOfAttributes();
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.removeByID(objectID);
                 }
                 for (int i = 0; i < nAttributes; i++)
                 {

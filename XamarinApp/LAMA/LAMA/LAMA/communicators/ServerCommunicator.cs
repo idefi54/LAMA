@@ -282,6 +282,11 @@ namespace LAMA.Communicator
                 {
                     DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
+
+                if (objectType == "InventoryItem")
+                {
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
             }
             // Notify every CP
             THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
@@ -365,6 +370,32 @@ namespace LAMA.Communicator
                      */
                 }
             }
+
+            else if (objectType == "InventoryItem")
+            {
+                Models.InventoryItem ii = new Models.InventoryItem();
+                string[] attributtes = serializedObject.Split(',');
+                ii.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + ii.getID();
+
+                if (!objectsCache.containsKey(objectID))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.add(ii, false);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                    // Notify every CP of item creation
+                    THIS.SendCommand(new Command(command, updateTime, objectID));
+                }
+                else
+                {
+                    /*
+                     * TO DO - notify sender of unsuccessful creation
+                     */
+                }
+            }
         }
 
         public void OnItemDeleted(Serializable changed)
@@ -420,6 +451,17 @@ namespace LAMA.Communicator
                         attributesCache.removeByKey(objectID + ";" + i);
                     }
                     DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
+                }
+
+                Models.InventoryItem removedItemInventoryItem;
+                if (objectType == "InventoryItem" && (removedItemInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    int nAttributes = removedItemInventoryItem.numOfAttributes();
+                    for (int i = 0; i < nAttributes; i++)
+                    {
+                        attributesCache.removeByKey(objectID + ";" + i);
+                    }
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.removeByID(objectID);
                 }
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
