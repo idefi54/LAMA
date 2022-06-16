@@ -27,6 +27,8 @@ namespace LAMA.Communicator
         private Queue<Command> commandsToBroadCast = new Queue<Command>();
         private Command currentCommand = null;
 
+        private int maxClientID;
+
         private void StartServer()
         {
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
@@ -128,14 +130,14 @@ namespace LAMA.Communicator
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    THIS.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                 }));
             }
             if (messageParts[1] == "ItemCreated")
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    THIS.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                 }));
             }
             if (messageParts[1] == "ItemDeleted")
@@ -150,6 +152,20 @@ namespace LAMA.Communicator
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.SendUpdate(current, Int64.Parse(messageParts[0]));
+                }));
+            }
+            if (messageParts[1] == "Interval")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                }));
+            }
+            if (messageParts[1] == "GiveID")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.GiveNewClientID(current);
                 }));
             }
             try {
@@ -221,6 +237,7 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
+            maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
             serverSocket.Listen(64);
@@ -230,6 +247,7 @@ namespace LAMA.Communicator
             SQLEvents.dataChanged += OnDataUpdated;
             SQLEvents.created += OnItemCreated;
             SQLEvents.dataDeleted += OnItemDeleted;
+            //DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += OnIntervalRequested;
         }
 
         private void SendCommand(string commandText, string objectID)
@@ -249,6 +267,80 @@ namespace LAMA.Communicator
             }
         }
 
+        private void GiveNewClientID(Socket current)
+        {
+            maxClientID += 1;
+            string command = "GiveID;";
+            command += maxClientID;
+            try
+            {
+                current.Send((new Command(command, "None")).Encode());
+            }
+            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+            {
+                return;
+            }
+        }
+
+        private void OnIntervalRequestCP()
+        {
+            OnIntervalRequest("CP");
+        }
+
+        private void OnIntervalRequestInventoryItem()
+        {
+            OnIntervalRequest("InventoryItem");
+        }
+
+        private void OnIntervalRequestLarpActivity()
+        {
+            OnIntervalRequest("LarpActivity");
+        }
+
+        private void OnIntervalRequest(string type)
+        {
+            Pair<int, int> interval = new Pair<int, int>(0, 0);
+            if (type == "LarpActivity")
+            {
+                interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0);
+            }
+            else if (type == "CP")
+            {
+                interval = database.IntervalManager<Models.CP>.GiveNewInterval(0);
+            }
+            else if (type == "InventoryItem")
+            {
+                interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0);
+            }
+            string command = "Interval" + ";" + "Add" + ";" + type + ";" + interval.first + ";" + interval.second;
+            SendCommand(new Command(command, "None"));
+        }
+
+        private void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
+        {
+            if (intervalCommand == "Request")
+            {
+                if (objectType == "LarpActivity")
+                {
+                    Pair<int, int> interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id);
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    SendCommand(new Command(commandToSend, "None"));
+                }
+                else if (objectType == "CP")
+                {
+                    Pair<int, int> interval = database.IntervalManager<Models.CP>.GiveNewInterval(id);
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    SendCommand(new Command(commandToSend, "None"));
+                }
+                else if (objectType == "InventoryItem")
+                {
+                    Pair<int, int> interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    SendCommand(new Command(commandToSend, "None"));
+                }
+            }
+        }
+
         public void OnDataUpdated(Serializable changed, int attributeIndex)
         {
             int objectID = changed.getID();
@@ -262,7 +354,7 @@ namespace LAMA.Communicator
             THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
-        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
+        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
@@ -270,9 +362,6 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
 
-                /*
-                 * TO DO - update game data (once there is a way for me to access it)
-                 */
                 if (objectType == "LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
@@ -287,9 +376,27 @@ namespace LAMA.Communicator
                 {
                     DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
+                // Notify every CP
+                THIS.SendCommand(new Command(command, updateTime, attributeID));
             }
-            // Notify every CP
-            THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
+            else if (attributesCache.containsKey(attributeID))
+            {
+                //Rollback
+                string rollbackCommand = "Rollback;";
+                rollbackCommand += command;
+                rollbackCommand += ";";
+                rollbackCommand += attributeID;
+                rollbackCommand += ";";
+                rollbackCommand += attributesCache.getByKey(attributeID).value;
+                try
+                {
+                    current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
+                }
+                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                {
+                    return;
+                }
+            }
         }
 
         public void OnItemCreated(Serializable changed)
@@ -314,7 +421,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void ItemCreated(string objectType, string serializedObject, long updateTime, string command)
+        public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
             if (objectType == "LarpActivity")
             {
@@ -342,6 +449,20 @@ namespace LAMA.Communicator
                     /*
                      * TO DO - notify sender of unsuccessful creation
                      */
+                    string rollbackCommand = "Rollback;";
+                    rollbackCommand += command;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectID;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectsCache.getByKey(objectID).command;
+                    try
+                    {
+                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                    }
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -368,6 +489,20 @@ namespace LAMA.Communicator
                     /*
                      * TO DO - notify sender of unsuccessful creation
                      */
+                    string rollbackCommand = "Rollback;";
+                    rollbackCommand += command;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectID;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectsCache.getByKey(objectID).command;
+                    try
+                    {
+                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                    }
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -394,6 +529,20 @@ namespace LAMA.Communicator
                     /*
                      * TO DO - notify sender of unsuccessful creation
                      */
+                    string rollbackCommand = "Rollback;";
+                    rollbackCommand += command;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectID;
+                    rollbackCommand += ";";
+                    rollbackCommand += objectsCache.getByKey(objectID).command;
+                    try
+                    {
+                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                    }
+                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -499,7 +648,7 @@ namespace LAMA.Communicator
                     string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
                     try
                     {
-                        current.Send((new Command(command, entry.time, keyParts[0] + ";" + keyParts[1])).Encode());
+                        current.Send((new Command(command, entry.time, entry.key)).Encode());
                     }
                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {

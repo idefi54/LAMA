@@ -33,6 +33,7 @@ namespace LAMA.Communicator
         private object commandsLock = new object();
         private Queue<Command> commandsToBroadCast = new Queue<Command>();
 
+        private int id;
         private void ProcessBroadcast()
         {
             if (s.Connected)
@@ -121,6 +122,31 @@ namespace LAMA.Communicator
                     THIS.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
+            if (messageParts[1] == "Interval")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                }));
+            }
+            if (messageParts[1] == "GiveID")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.ReceiveID(Int32.Parse(messageParts[2]));
+                }));
+            }
+            if (messageParts[1] == "Rollback")
+            {
+                if (messageParts[2] == "DataUpdated")
+                {
+
+                }
+                if (messageParts[2] == "ItemCreated")
+                {
+
+                }
+            }
             try
             {
                 current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
@@ -135,6 +161,49 @@ namespace LAMA.Communicator
             }
         }
 
+
+        private void OnIntervalRequestCP()
+        {
+            OnIntervalRequest("CP");
+        }
+
+        private void OnIntervalRequestInventoryItem()
+        {
+            OnIntervalRequest("InventoryItem");
+        }
+
+        private void OnIntervalRequestLarpActivity()
+        {
+            OnIntervalRequest("LarpActivity");
+        }
+
+        private void OnIntervalRequest(string type)
+        {
+            string command = "Interval" + ";" + "Request" + ";" + type + ";" + 0 + ";" + 0 + ";" + id;
+            SendCommand(new Command(command, "None"));
+        }
+
+        private void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
+        {
+            if (intervalCommand == "Add" && id == this.id)
+            {
+                if (objectType == "LarpActivity")
+                {
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                }
+
+                if (objectType == "CP")
+                {
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                }
+
+                if (objectType == "InventoryItem")
+                {
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                }
+            }
+        }
+
         /*
         private void SendConnectionInfo()
         {
@@ -145,12 +214,17 @@ namespace LAMA.Communicator
         }
         */
 
+        private void ReceiveID(int id)
+        {
+            this.id = id;
+        }
+
         private void RequestUpdate()
         {
             string q = lastUpdate.ToString() + ";";
             q += "Update;";
             q += CPName + ";";
-            SendCommand(new Command(q, "-1"));
+            SendCommand(new Command(q, "None"));
         }
 
         private void StartListening()
@@ -194,6 +268,7 @@ namespace LAMA.Communicator
                 {
                     InitSocket();
                     s.Connect(_IP, _port);
+                    SendCommand(new Command("GiveID", "None"));
                     listener = new Thread(StartListening);
                     listener.Start();
                 }
@@ -279,6 +354,12 @@ namespace LAMA.Communicator
                     Connect();
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
+                SQLEvents.dataChanged += OnDataUpdated;
+                SQLEvents.created += OnItemCreated;
+                SQLEvents.dataDeleted += OnItemDeleted;
+                DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestCP;
+                DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestInventoryItem;
+                DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestLarpActivity;
             }
         }
 
