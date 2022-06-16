@@ -140,11 +140,11 @@ namespace LAMA.Communicator
             {
                 if (messageParts[2] == "DataUpdated")
                 {
-
+                    THIS.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }
                 if (messageParts[2] == "ItemCreated")
                 {
-
+                    THIS.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }
             }
             try
@@ -402,6 +402,32 @@ namespace LAMA.Communicator
             }
         }
 
+        public void RollbackDataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
+        {
+            lastUpdate = updateTime;
+            string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
+            if (attributesCache.containsKey(attributeID))
+            {
+                attributesCache.getByKey(attributeID).value = value;
+                attributesCache.getByKey(attributeID).time = updateTime;
+
+                if (objectType == "LarpActivity")
+                {
+                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "CP")
+                {
+                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "InventoryItem")
+                {
+                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+            }
+        }
+
         public void OnItemCreated(Serializable changed)
         {
             int objectID = changed.getID();
@@ -476,6 +502,80 @@ namespace LAMA.Communicator
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                }
+            }
+        }
+
+        public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
+        {
+            lastUpdate = updateTime;
+            if (objectType == "LarpActivity")
+            {
+                Models.LarpActivity activity = new Models.LarpActivity();
+                string[] attributtes = serializedObject.Split(',');
+                activity.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + activity.getID();
+                int activityID = activity.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    activity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(activityID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    activity.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
+                    }
+                }
+            }
+
+            if (objectType == "CP")
+            {
+                Models.CP cp = new Models.CP();
+                string[] attributtes = serializedObject.Split(',');
+                cp.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cp.getID();
+
+                int cpID = cp.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    cp = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(cpID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    cp.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
+                    }
+                }
+            }
+
+            if (objectType == "InventoryItem")
+            {
+                Models.InventoryItem ii = new Models.InventoryItem();
+                string[] attributtes = serializedObject.Split(',');
+                ii.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + ii.getID();
+                int itemID = ii.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    ii = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(itemID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    ii.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
                     }
                 }
             }

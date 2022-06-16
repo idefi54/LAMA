@@ -383,11 +383,7 @@ namespace LAMA.Communicator
             {
                 //Rollback
                 string rollbackCommand = "Rollback;";
-                rollbackCommand += command;
-                rollbackCommand += ";";
-                rollbackCommand += attributeID;
-                rollbackCommand += ";";
-                rollbackCommand += attributesCache.getByKey(attributeID).value;
+                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
                 try
                 {
                     current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
@@ -450,10 +446,6 @@ namespace LAMA.Communicator
                      * TO DO - notify sender of unsuccessful creation
                      */
                     string rollbackCommand = "Rollback;";
-                    rollbackCommand += command;
-                    rollbackCommand += ";";
-                    rollbackCommand += objectID;
-                    rollbackCommand += ";";
                     rollbackCommand += objectsCache.getByKey(objectID).command;
                     try
                     {
