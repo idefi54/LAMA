@@ -10,7 +10,7 @@ using Xamarin.Essentials;
 
 namespace LAMA.Communicator
 {
-    public class ServerCommunicator
+    public class ServerCommunicator : Communicator
     {
         static byte[] buffer = new byte[8 * 1024];
         static Socket serverSocket;
@@ -26,6 +26,8 @@ namespace LAMA.Communicator
         private object commandsLock = new object();
         private Queue<Command> commandsToBroadCast = new Queue<Command>();
         private Command currentCommand = null;
+
+        private ModelChangesManager modelChangesManager;
 
         private int maxClientID;
 
@@ -130,21 +132,21 @@ namespace LAMA.Communicator
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                 }));
             }
             if (messageParts[1] == "ItemCreated")
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                 }));
             }
             if (messageParts[1] == "ItemDeleted")
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
             if (messageParts[1] == "Update")
@@ -244,9 +246,10 @@ namespace LAMA.Communicator
             server = new Thread(StartServer);
             server.Start();
             THIS = this;
-            SQLEvents.dataChanged += OnDataUpdated;
-            SQLEvents.created += OnItemCreated;
-            SQLEvents.dataDeleted += OnItemDeleted;
+            modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
+            SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
+            SQLEvents.created += modelChangesManager.OnItemCreated;
+            SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
             //DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += OnIntervalRequested;
         }
 
@@ -259,7 +262,7 @@ namespace LAMA.Communicator
             }
         }
 
-        private void SendCommand(Command command)
+        public void SendCommand(Command command)
         {
             lock (commandsLock)
             {
@@ -338,277 +341,6 @@ namespace LAMA.Communicator
                     string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.first + ";" + interval.second + ";" + id;
                     SendCommand(new Command(commandToSend, "None"));
                 }
-            }
-        }
-
-        public void OnDataUpdated(Serializable changed, int attributeIndex)
-        {
-            int objectID = changed.getID();
-            string objectType = changed.GetType().ToString();
-            string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
-
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
-            attributesCache.getByKey(attributeID).time = updateTime;
-            string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            THIS.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
-        }
-
-        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
-        {
-            string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
-            if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
-            {
-                attributesCache.getByKey(attributeID).value = value;
-                attributesCache.getByKey(attributeID).time = updateTime;
-
-                if (objectType == "LarpActivity")
-                {
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
-                }
-
-                if (objectType == "CP")
-                {
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
-                }
-
-                if (objectType == "InventoryItem")
-                {
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
-                }
-                // Notify every CP
-                THIS.SendCommand(new Command(command, updateTime, attributeID));
-            }
-            else if (attributesCache.containsKey(attributeID))
-            {
-                //Rollback
-                string rollbackCommand = "Rollback;";
-                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
-                try
-                {
-                    current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
-                }
-                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                {
-                    return;
-                }
-            }
-        }
-
-        public void OnItemCreated(Serializable changed)
-        {
-            int objectID = changed.getID();
-            string objectType = changed.GetType().ToString();
-            string objectCacheID = objectType + ";" + objectID;
-
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string[] attributes = changed.getAttributes();
-            string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
-
-            if (!objectsCache.containsKey(objectCacheID))
-            {
-                objectsCache.add(new Command(command, updateTime, objectCacheID));
-                for (int i = 0; i < attributes.Length; i++)
-                {
-                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
-                }
-                // Notify every CP of item creation
-                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
-            }
-        }
-
-        public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
-        {
-            if (objectType == "LarpActivity")
-            {
-                Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split(',');
-                activity.buildFromStrings(attributtes);
-                string objectID = objectType + ";" + activity.getID();
-
-                if (!objectsCache.containsKey(objectID))
-                {
-                    objectsCache.add(new Command(command, updateTime, objectID));
-                    /*
-                     * TO DO - update game data once there is access to it
-                     */
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
-                    for (int i = 0; i < attributtes.Length; i++)
-                    {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
-                    }
-                    // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime, objectID));
-                }
-                else
-                {
-                    /*
-                     * TO DO - notify sender of unsuccessful creation
-                     */
-                    string rollbackCommand = "Rollback;";
-                    rollbackCommand += objectsCache.getByKey(objectID).command;
-                    try
-                    {
-                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
-                    }
-                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                    {
-                        return;
-                    }
-                }
-            }
-
-            else if (objectType == "CP")
-            {
-                Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split(',');
-                cp.buildFromStrings(attributtes);
-                string objectID = objectType + ";" + cp.getID();
-
-                if (!objectsCache.containsKey(objectID))
-                {
-                    objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
-                    for (int i = 0; i < attributtes.Length; i++)
-                    {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
-                    }
-                    // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime, objectID));
-                }
-                else
-                {
-                    /*
-                     * TO DO - notify sender of unsuccessful creation
-                     */
-                    string rollbackCommand = "Rollback;";
-                    rollbackCommand += command;
-                    rollbackCommand += ";";
-                    rollbackCommand += objectID;
-                    rollbackCommand += ";";
-                    rollbackCommand += objectsCache.getByKey(objectID).command;
-                    try
-                    {
-                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
-                    }
-                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                    {
-                        return;
-                    }
-                }
-            }
-
-            else if (objectType == "InventoryItem")
-            {
-                Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split(',');
-                ii.buildFromStrings(attributtes);
-                string objectID = objectType + ";" + ii.getID();
-
-                if (!objectsCache.containsKey(objectID))
-                {
-                    objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.add(ii, false);
-                    for (int i = 0; i < attributtes.Length; i++)
-                    {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
-                    }
-                    // Notify every CP of item creation
-                    THIS.SendCommand(new Command(command, updateTime, objectID));
-                }
-                else
-                {
-                    /*
-                     * TO DO - notify sender of unsuccessful creation
-                     */
-                    string rollbackCommand = "Rollback;";
-                    rollbackCommand += command;
-                    rollbackCommand += ";";
-                    rollbackCommand += objectID;
-                    rollbackCommand += ";";
-                    rollbackCommand += objectsCache.getByKey(objectID).command;
-                    try
-                    {
-                        current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
-                    }
-                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
-        public void OnItemDeleted(Serializable changed)
-        {
-            int objectID = changed.getID();
-            string objectType = changed.GetType().ToString();
-            string objectCacheID = objectType + ";" + objectID;
-
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string[] attributes = changed.getAttributes();
-            string command = "ItemDeleted" + ";" + objectType + ";" + objectID;
-
-            if (objectsCache.containsKey(objectCacheID))
-            {
-                objectsCache.getByKey(objectCacheID).command = command;
-                objectsCache.getByKey(objectCacheID).time = updateTime;
-                // Notify every CP of item deletion
-                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
-                for (int i = 0; i < attributes.Length; i++)
-                {
-                    attributesCache.removeByKey(objectID + ";" + i);
-                }
-            }
-        }
-
-        public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
-        {
-            string objectCacheID = objectType + ";" + objectID;
-            if (objectsCache.containsKey(objectCacheID))
-            {
-                /*
-                 * TO DO - Find object and its attributes
-                 * Delete attributes from cache
-                 * Delete object
-                 */
-                Models.LarpActivity removedItemActivity;
-                if (objectType == "LarpActivity" && (removedItemActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null)
-                {
-                    int nAttributes = removedItemActivity.numOfAttributes();
-                    for (int i = 0; i < nAttributes; i++)
-                    {
-                        attributesCache.removeByKey(objectID + ";" + i);
-                    }
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeByID(objectID);
-                }
-
-                Models.CP removedItemCP;
-                if (objectType == "CP" && (removedItemCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
-                {
-                    int nAttributes = removedItemCP.numOfAttributes();
-                    for (int i = 0; i < nAttributes; i++)
-                    {
-                        attributesCache.removeByKey(objectID + ";" + i);
-                    }
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
-                }
-
-                Models.InventoryItem removedItemInventoryItem;
-                if (objectType == "InventoryItem" && (removedItemInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
-                {
-                    int nAttributes = removedItemInventoryItem.numOfAttributes();
-                    for (int i = 0; i < nAttributes; i++)
-                    {
-                        attributesCache.removeByKey(objectID + ";" + i);
-                    }
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.removeByID(objectID);
-                }
-                objectsCache.getByKey(objectCacheID).command = command;
-                objectsCache.getByKey(objectCacheID).time = updateTime;
-
-                // Notify every CP of deletion
-                THIS.SendCommand(new Command(command, updateTime, objectCacheID));
             }
         }
 
