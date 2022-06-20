@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using SQLite;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,51 +33,41 @@ namespace LAMA
 
     }
 
+    //singleton connection 
     class SQLConnectionWrapper
     {
 
         
 
-        public static SQLiteConnection connection {get{ return _connection; } }
-        private static SQLiteConnection _connection;
+        public static SQLiteAsyncConnection connection {get{ return _connection; } }
+        private static SQLiteAsyncConnection _connection;
 
-        public static SQLiteConnection makeConnection (string path, bool makeNew)
+        public static SQLiteAsyncConnection makeConnection ()
         {
-            if(!File.Exists(path))
+            string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string path = Path.Combine(directory, "database.db");
+
+            if (!File.Exists(path))
                 File.Create(path);
 
-            _connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + (makeNew ? "True" : "False") +
-                "; Compress = True; ");
-            try
-            {
-                _connection.Open();
-            }
-            catch (Exception e)
-            {
-                //TODO   show a real error message
-
-                Console.Out.WriteLine(e.ToString());
-                _connection = null;
-            }
+            _connection = new SQLiteAsyncConnection(path);
+            
             return _connection;
         }
-        public static SQLiteConnection makeConnection(string path)
-        {
-            return makeConnection(path, !File.Exists(path));
-        }
+        
     }
 
-    public class OurSQL<T> where T : Serializable, new()
+    public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage: LAMA.database.StorageInterface, new()
     {
 
-        SQLiteConnection connection { get; }
+        SQLiteAsyncConnection connection { get; }
 
 
         public OurSQL(string path)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection(path);
+                SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
             
@@ -86,183 +75,111 @@ namespace LAMA
 
 
 
-        public void makeTable(string tableName)
+        public void makeTable()
         {
-            SQLiteCommand command;
 
-            command = connection.CreateCommand();
-
-            StringBuilder commandText = new StringBuilder();
-
-            commandText.Append("CREATE TABLE " + tableName + "(");
-
-            var columns = (new T()).getAttributeNames();
-
-            bool first = true;
-            foreach (var column in columns)
-            {
-                if (!first)
-                {
-                    commandText.Append(", ");
-                }
-                else
-                    first = false;
-                commandText.Append(column + " " + "TEXT");
-            }
-
-            // last change parameter, so we can get items since some time
-            commandText.Append(", lastChange INTEGER");
-
-
-            commandText.Append(")");
-            command.CommandText = commandText.ToString();
-
-            command.ExecuteNonQuery();
+            connection.CreateTableAsync<Storage>().Wait();
 
         }
 
-        public void addData(string table, T value, bool invoke)
+        public void addData(Data value, bool invoke)
         {
             if (value == null)
                 return;
+            Storage storage = new Storage();
+            storage.makeFromStrings(value.getAttributes());
+            storage.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
+            connection.InsertAsync(storage).Wait();
 
-            SQLiteCommand command = connection.CreateCommand();
-            StringBuilder commandText = new StringBuilder();
-
-            commandText.Append("INSERT INTO " + table + " (");
-
-            var columns = value.getAttributeNames();
-
-
-            bool first = true;
-            foreach (var a in columns)
-            {
-                if (first)
-                    first = false;
-                else
-                    commandText.Append(", ");
-                commandText.Append(a);
-            }
-            commandText.Append(", lastChange");
-            commandText.Append(") VALUES(");
-
-            first = true;
-            foreach (var a in value.getAttributes())
-            {
-                if (first)
-                    first = false;
-                else
-                    commandText.Append(", ");
-                commandText.Append("'"+a+"'");
-            }
-
-
-            commandText.Append(", " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
-
-            commandText.Append(")");
-            command.CommandText = commandText.ToString();
-
-            
-           command.ExecuteNonQuery();
 
             if(invoke)
                 SQLEvents.invokeCreated(value);
+            
         }
 
 
 
 
         // when called with wrong index or data type this will crash
-        public List<T> ReadData(string tableName)
+        public List<Data> ReadData()
         {
-            SQLiteDataReader reader;
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM " + tableName;
 
-            reader = command.ExecuteReader();
+            var data =  connection.Table<Storage>();
 
-            List<T> output = new List<T>();
-            int size = 0;
-            while (reader.Read())
+
+            var listData = data.ToArrayAsync();
+            listData.Wait();
+
+            var result = listData.Result;
+
+            List<Data> output = new List<Data>();
+            for (int i = 0; i < result.Length; ++i)
             {
-                ++size;
-                T newStuff = new T();
-
-
-                for (int i = 0; i < newStuff.numOfAttributes(); ++i)
-                {
-                    newStuff.setAttribute(i, reader.GetString(i));
-                }
-                output.Add(newStuff);
+                Data toAdd = new Data();
+                toAdd.buildFromStrings(result[i].getStrings());
             }
-
             return output;
         }
 
         
         //TODO - make the input safe (new attribute value can contain special characters and ruid the query through SQLinjection or just mistake)
-        public void changeData(string tableName, int attributeIndex, string newAttributeValue, T who)
+        public void changeData(int attributeIndex, string newAttributeValue, Data who)
         {
-            SQLiteCommand command = connection.CreateCommand();
+            Storage update = new Storage();
+            update.makeFromStrings(who.getAttributes());
+            update.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            string attributeName = who.getAttributeNames()[attributeIndex];
-
-            command.CommandText = "UPDATE " + tableName + " SET " + attributeName + " = " + newAttributeValue + 
-                ", lastChange = "+ DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE ID = " + who.getID();
-            command.ExecuteNonQuery();
-
+            connection.UpdateAsync(update).Wait();
             SQLEvents.invokeChanged(who, attributeIndex);
         }
 
-        public void removeAt(string table, T who)
+        public void removeAt(Data who)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            StringBuilder commandText = new StringBuilder();
-
-            commandText.Append("DELETE FROM " + table + " WHERE ID = " + who.getID());
-            command.CommandText = commandText.ToString();
-            command.ExecuteNonQuery();
+            
+            connection.DeleteAsync<Storage>(who.getID()).Wait(); 
 
             SQLEvents.invokeDeleted(who);
         }
         
 
-        public List<int> getDataSince(string tableName, long when)
+        public List<int> getDataSince(long when)
         {
 
-            SQLiteDataReader reader;
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT ID FROM " + tableName + "WHERE lastChange < " + when;
-
-            reader = command.ExecuteReader();
             List<int> output = new List<int>();
-            while(reader.Read())
+
+            var storages = connection.Table<Storage>().Where(a => a.lastChange >= when);
+
+            var task = storages.ToArrayAsync();
+            var arr = task.Result;
+            
+            foreach(var a in arr)
             {
-                output.Add(reader.GetInt32(0));
+                output.Add(a.getID());
             }
+
             return output;
         }
 
         public bool containsTable(string name)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + name + "'";
-            var reader = command.ExecuteReader();
-            return reader.HasRows;
+
+            var a = connection.GetTableInfoAsync(name);
+            a.Wait();
+            return a.Result.Count > 0;
         }
     }
 
-    public class OurSQLDictionary<T> where T : SerializableDictionaryItem, new()
+    public class OurSQLDictionary<Data, Storage> where Data : SerializableDictionaryItem, new() where Storage : LAMA.database.StorageInterface, new()
     {
 
-        SQLiteConnection connection { get; }
+        SQLiteAsyncConnection connection { get; }
 
 
         public OurSQLDictionary(string path)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection(path);
+                SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
 
@@ -272,159 +189,88 @@ namespace LAMA
 
         public void makeTable(string tableName)
         {
-            SQLiteCommand command;
-
-            command = connection.CreateCommand();
-
-            StringBuilder commandText = new StringBuilder();
-
-            commandText.Append("CREATE TABLE " + tableName + "(");
-
-            var columns = (new T()).getAttributeNames();
-
-            bool first = true;
-            foreach (var column in columns)
-            {
-                if (!first)
-                {
-                    commandText.Append(", ");
-                }
-                else
-                    first = false;
-                commandText.Append(column + " " + "TEXT");
-            }
-
-            // last change parameter, so we can get items since some time
-            commandText.Append(", lastChange INTEGER");
-
-
-            commandText.Append(")");
-            command.CommandText = commandText.ToString();
-
-            command.ExecuteNonQuery();
+            connection.CreateTableAsync<Storage>().Wait();
 
         }
 
-        public void addData(string table, T value)
+        public void addData(Data value)
         {
             if (value == null)
                 return;
+            Storage storage = new Storage();
+            storage.makeFromStrings(value.getAttributes());
+            storage.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
+            connection.InsertAsync(storage).Wait();
 
-            SQLiteCommand command = connection.CreateCommand();
-            StringBuilder commandText = new StringBuilder();
-
-            commandText.Append("INSERT INTO " + table + " (");
-
-            var columns = value.getAttributeNames();
-
-
-            bool first = true;
-            foreach (var a in columns)
-            {
-                if (first)
-                    first = false;
-                else
-                    commandText.Append(", ");
-                commandText.Append(a);
-            }
-            commandText.Append(", lastChange");
-            commandText.Append(") VALUES(");
-
-            first = true;
-            foreach (var a in value.getAttributes())
-            {
-                if (first)
-                    first = false;
-                else
-                    commandText.Append(", ");
-                commandText.Append("'" + a + "'");
-            }
-
-
-            commandText.Append(", " + DateTimeOffset.Now.ToUnixTimeMilliseconds());
-
-            commandText.Append(")");
-            command.CommandText = commandText.ToString();
-
-
-            command.ExecuteNonQuery();
         }
 
 
 
 
         // when called with wrong index or data type this will crash
-        public List<T> ReadData(string tableName)
+        public List<Data> ReadData()
         {
-            SQLiteDataReader reader;
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM " + tableName;
 
-            reader = command.ExecuteReader();
+            var data = connection.Table<Storage>();
 
-            List<T> output = new List<T>();
-            int size = 0;
-            while (reader.Read())
+
+            var listData = data.ToArrayAsync();
+            listData.Wait();
+
+            var result = listData.Result;
+
+            List<Data> output = new List<Data>();
+            for (int i = 0; i < result.Length; ++i)
             {
-                ++size;
-                T newStuff = new T();
-
-
-                for (int i = 0; i < newStuff.numOfAttributes(); ++i)
-                {
-                    newStuff.setAttribute(i, reader.GetString(i));
-                }
-                output.Add(newStuff);
+                Data toAdd = new Data();
+                toAdd.buildFromStrings(result[i].getStrings());
             }
-
             return output;
         }
 
 
-        public void changeData(string tableName, int attributeIndex, string newAttributeValue, T who)
+        //TODO - make the input safe (new attribute value can contain special characters and ruid the query through SQLinjection or just mistake)
+        public void changeData(int attributeIndex, string newAttributeValue, Data who)
         {
-            SQLiteCommand command = connection.CreateCommand();
+            Storage update = new Storage();
+            update.makeFromStrings(who.getAttributes());
+            update.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            string attributeName = who.getAttributeNames()[attributeIndex];
-
-            command.CommandText = "UPDATE " + tableName + " SET " + attributeName + " = " + "'" + newAttributeValue + "'" +
-                ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE ID = " + "'" + who.getKey() + "'";
-            command.ExecuteNonQuery();
+            connection.UpdateAsync(update).Wait();
         }
 
-        public void removeAt(string table, T who)
+        public void removeAt(Data who)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            StringBuilder commandText = new StringBuilder();
 
-            commandText.Append("DELETE FROM " + table + " WHERE ID = " + "'" + who.getKey() + "'");
-            command.CommandText = commandText.ToString();
-            command.ExecuteNonQuery();
+            connection.DeleteAsync<Storage>(who.getID()).Wait();
+
         }
 
 
-        public List<string> getDataSince(string tableName, long when)
+        public List<int> getDataSince(long when)
         {
 
-            SQLiteDataReader reader;
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT ID FROM " + tableName + "WHERE lastChange < " + when;
+            List<int> output = new List<int>();
 
-            reader = command.ExecuteReader();
-            List<string> output = new List<string>();
-            while (reader.Read())
+            var storages = connection.Table<Storage>().Where(a => a.lastChange >= when);
+
+            var task = storages.ToArrayAsync();
+            var arr = task.Result;
+
+            foreach (var a in arr)
             {
-                output.Add(reader.GetString(0));
+                output.Add(a.getID());
             }
+
             return output;
         }
 
         public bool containsTable(string name)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + name + "'";
-            var reader = command.ExecuteReader();
-            return reader.HasRows;
+
+            var a = connection.GetTableInfoAsync(name);
+            a.Wait();
+            return a.Result.Count > 0;
         }
     }
 }

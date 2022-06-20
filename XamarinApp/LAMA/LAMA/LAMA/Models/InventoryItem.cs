@@ -61,8 +61,8 @@ namespace LAMA.Models
 
         void updateValue(int i, string data)
         {
-            var list = DatabaseHolder<InventoryItem>.Instance.rememberedList;
-            list.sqlConnection.changeData(list.tableName, i, data, this);
+            var list = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
+            list.sqlConnection.changeData(i, data, this);
         }
 
         public InventoryItem()

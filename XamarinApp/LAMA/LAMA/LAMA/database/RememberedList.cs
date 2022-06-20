@@ -9,33 +9,19 @@ namespace LAMA
 {
 
     
-    public class RememberedList<T> where T : Serializable, new()
+    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : database.StorageInterface, new()
     {
         
         Dictionary<int, int> IDToIndex = new Dictionary<int, int>();
 
-        static StringBuilder ID = new StringBuilder();
-
-        string myID;
-        public string tableName { get { return myID; } }
-
+        
         List<T> cache = new List<T>();
-        OurSQL<T> sql;
-        public OurSQL<T> sqlConnection { get { return sql; } }
+        OurSQL<T, Storage> sql;
+        public OurSQL<T, Storage> sqlConnection { get { return sql; } }
 
-        public RememberedList(OurSQL<T> sql)
+        public RememberedList(OurSQL<T, Storage> sql)
         {
             this.sql = sql;
-
-            if (ID.Length == 0)
-                ID.Append(typeof(T).Name);
-            if (ID[ID.Length - 1] < 'Z')
-                ++ID[ID.Length - 1];
-            else
-                ID.Append('a');
-            myID = ID.ToString();
-            if (!sql.containsTable(myID))
-                sql.makeTable(myID);
 
             loadData();
         }
@@ -43,7 +29,7 @@ namespace LAMA
         void loadData()
         {
 
-            cache = sql.ReadData(myID);
+            cache = sql.ReadData();
 
             int i = 0;
             foreach(var a in cache)
@@ -83,7 +69,7 @@ namespace LAMA
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
-            sql.addData(myID, data, invokeEvent);
+            sql.addData(data, invokeEvent);
             return true;
         }
 
@@ -102,7 +88,7 @@ namespace LAMA
             var who = cache[index];
             cache.RemoveAt(index);
 
-            sql.removeAt(myID, who);
+            sql.removeAt(who);
         }
 
         //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)

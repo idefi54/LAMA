@@ -85,8 +85,8 @@ namespace LAMA.Models
 
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolder<CP>.Instance.rememberedList;
-            list.sqlConnection.changeData(list.tableName, index, newVal, this);
+            var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+            list.sqlConnection.changeData(index, newVal, this);
         }
 
 

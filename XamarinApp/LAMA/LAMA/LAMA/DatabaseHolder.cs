@@ -2,15 +2,15 @@
 
 namespace LAMA
 {
-    internal class DatabaseHolder<T> where T : Serializable, new()
+    internal class DatabaseHolder<T, Storage> where T : Serializable, new() where Storage : database.StorageInterface, new()
     {
         // Singleton
-        private static DatabaseHolder<T> _instance;
-        public static DatabaseHolder<T> Instance
+        private static DatabaseHolder<T, Storage> _instance;
+        public static DatabaseHolder<T, Storage> Instance
         {
             get
             {
-                if (_instance == null) _instance = new DatabaseHolder<T>();
+                if (_instance == null) _instance = new DatabaseHolder<T, Storage>();
                 return _instance;
             }
         }
@@ -18,22 +18,22 @@ namespace LAMA
         // Object Specific
         private DatabaseHolder()
         {
-            var sql = new OurSQL<T>(".\\database.db");
-            rememberedList = new RememberedList<T>(sql);
+            var sql = new OurSQL<T, Storage>(".\\database.db");
+            rememberedList = new RememberedList<T, Storage>(sql);
         }
 
-        public RememberedList<T> rememberedList;
+        public RememberedList<T, Storage> rememberedList;
     }
 
-    internal class DatabaseHolderStringDictionary<T> where T : SerializableDictionaryItem, new()
+    internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : database.StorageInterface, new()
     {
         // Singleton
-        private static DatabaseHolderStringDictionary<T> _instance;
-        public static DatabaseHolderStringDictionary<T> Instance
+        private static DatabaseHolderStringDictionary<T, Storage> _instance;
+        public static DatabaseHolderStringDictionary<T, Storage> Instance
         {
             get
             {
-                if (_instance == null) _instance = new DatabaseHolderStringDictionary<T>();
+                if (_instance == null) _instance = new DatabaseHolderStringDictionary<T, Storage>();
                 return _instance;
             }
         }
@@ -41,10 +41,10 @@ namespace LAMA
         // Object Specific
         private DatabaseHolderStringDictionary()
         {
-            var sql = new OurSQLDictionary<T>(".\\database.db");
-            rememberedDictionary = new RememberedStringDictionary<T>(sql);
+            var sql = new OurSQLDictionary<T, Storage>(".\\database.db");
+            rememberedDictionary = new RememberedStringDictionary<T, Storage>(sql);
         }
 
-        public RememberedStringDictionary<T> rememberedDictionary;
+        public RememberedStringDictionary<T, Storage> rememberedDictionary;
     }
 }
