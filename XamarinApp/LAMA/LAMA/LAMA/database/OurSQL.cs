@@ -47,7 +47,7 @@ namespace LAMA
             if(!File.Exists(path))
                 File.Create(path);
 
-            _connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + (makeNew ? "True" : "False") +
+            _connection = new SQLiteConnection("Data Source=" + path + "; Version = 3; New = " + ("True") +
                 "; Compress = True; ");
             try
             {

@@ -7,6 +7,7 @@ using Mapsui.UI.Forms;
 using Mapsui.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xamarin.Essentials;
 
@@ -16,15 +17,19 @@ namespace LAMA.Services
     {
         // Private fields
         private List<Feature> _symbols;
-        private Dictionary<int, Pin> _events;
+        private Dictionary<int, Pin> _activities;
         private Dictionary<ulong, Pin> _notifications;
         private List<Pin> _pins;
         private Pin _pin;
         private ulong _notificationID;
         private static MapHandler _instance;
+        private Stopwatch _stopwatch;
+        private long _time;
+        private long _prevTime;
+        private const long _doubleClickTime = 500;
 
         // Events
-        public delegate void PinClick(PinClickedEventArgs e);
+        public delegate void PinClick(PinClickedEventArgs e, int activityID, bool doubleClick);
         public delegate void MapClick(MapClickedEventArgs e);
         public event PinClick OnPinClick;
         public event MapClick OnMapClick;
@@ -51,11 +56,15 @@ namespace LAMA.Services
         {
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
-            _events = new Dictionary<int, Pin>();
+            _activities = new Dictionary<int, Pin>();
             _notifications = new Dictionary<ulong, Pin>();
             _pin = new Pin();
             _pin.Label = "temp";
             _notificationID = 0;
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
+            _time = 0;
+            _prevTime = 0;
         }
 
         // Static methods do not need the map, they just work with given mapView.
@@ -82,7 +91,7 @@ namespace LAMA.Services
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
-            foreach (Pin pin in _events.Values)
+            foreach (Pin pin in _activities.Values)
                 view.Pins.Add(pin);
 
             foreach (Pin pin in _notifications.Values)
@@ -104,7 +113,7 @@ namespace LAMA.Services
             if (!view.Pins.Contains(_pin))
                 view.Pins.Add(_pin);
 
-            foreach (Pin pin in _events.Values)
+            foreach (Pin pin in _activities.Values)
                 view.Pins.Add(pin);
 
             foreach (Pin pin in _notifications.Values)
@@ -120,7 +129,7 @@ namespace LAMA.Services
             view.Pins.Clear();
             view.HideCallouts();
 
-            foreach (Pin pin in _events.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _activities.Values) view.Pins.Add(pin);
             foreach (Pin pin in _notifications.Values) view.Pins.Add(pin);
             foreach (Pin pin in _pins) view.Pins.Add(pin);
         }
@@ -170,13 +179,15 @@ namespace LAMA.Services
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
-        /// <param name="eventID"></param>
+        /// <param name="activityID"></param>
         /// <param name="view"></param>
-        public void AddEvent(double lon, double lat, int eventID, MapView view = null)
+        public void AddActivity(double lon, double lat, int activityID, MapView view = null)
         {
             Pin pin = CreatePin(lon, lat, "normal");
-            _events.Add(eventID, pin);
-            pin.Callout.Title = $"TO BE DONE... EVENT ID: {eventID}\n HOLD TO GO TO EVENT PAGE?";
+            _activities.Add(activityID, pin);
+            pin.Callout.Title =
+                $"Activity id: {activityID}\n" +
+                $"Double click to show the activity";
             pin.Color = Xamarin.Forms.Color.Green;
             view?.Pins.Add(pin);
         }
@@ -206,12 +217,12 @@ namespace LAMA.Services
         /// Removes the event from the internal data.
         /// Also removes it from MapView if specified.
         /// </summary>
-        /// <param name="eventID"></param>
+        /// <param name="activityID"></param>
         /// <param name="view"></param>
-        public void RemoveEvent(int eventID, MapView view = null)
+        public void RemoveActivity(int activityID, MapView view = null)
         {
-            view?.Pins.Remove(_events[eventID]);
-            _events.Remove(eventID);
+            view?.Pins.Remove(_activities[activityID]);
+            _activities.Remove(activityID);
         }
 
         /// <summary>
@@ -250,6 +261,9 @@ namespace LAMA.Services
                 return;
 
             var location = await Geolocation.GetLastKnownLocationAsync();
+            if (location == null)
+                return;
+
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude));
         }
 
@@ -306,6 +320,7 @@ namespace LAMA.Services
             Pin p = new Pin();
             p.Label = label;
             p.Position = new Position(lat, lon);
+            p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
             return p;
         }
 
@@ -313,14 +328,21 @@ namespace LAMA.Services
         //===================
         private void HandlePinClicked(object sender, PinClickedEventArgs e)
         {
+            _time = _stopwatch.ElapsedMilliseconds;
+
             if (e.NumOfTaps == 1 && e.Pin.Label != "temp")
                 if (e.Pin.Callout.IsVisible)
                     e.Pin.HideCallout();
                 else
                     e.Pin.ShowCallout();
 
-            OnPinClick?.Invoke(e);
-            
+            foreach (int id in _activities.Keys)
+                if (_activities[id] == e.Pin)
+                {
+                    OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                    break;
+                }
+            _prevTime = _time;
             e.Handled = true;
         }
         private void HandleMapClicked(object sender, MapClickedEventArgs e)
