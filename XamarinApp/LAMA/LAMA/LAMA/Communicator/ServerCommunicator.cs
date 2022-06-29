@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -21,13 +22,14 @@ namespace LAMA.Communicator
         private RememberedStringDictionary<Command> objectsCache;
 
         private object socketsLock = new object();
-        private static List<Socket> clientSockets = new List<Socket>();
+        private static Dictionary<int, Socket> clientSockets = new Dictionary<int, Socket>();
 
         private object commandsLock = new object();
-        private Queue<Command> commandsToBroadCast = new Queue<Command>();
+        private Queue<Command> commandsToBroadcast = new Queue<Command>();
         private Command currentCommand = null;
 
         private ModelChangesManager modelChangesManager;
+        private IntervalCommunicationManagerServer intervalsManager;
 
         private int maxClientID;
 
@@ -37,48 +39,78 @@ namespace LAMA.Communicator
             var timer = new System.Threading.Timer((e) =>
             {
                 ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
         }
 
         private void ProcessBroadcast()
         {
-            lock (commandsLock)
+            while (true)
             {
-                if (commandsToBroadCast.Count > 0)
+                lock (commandsLock)
                 {
-                    currentCommand = commandsToBroadCast.Dequeue();
-                }
-                else
-                {
-                    currentCommand = null;
-                }
-            }
-            if (currentCommand != null)
-            {
-                byte[] data = currentCommand.Encode();
-                foreach (var client in clientSockets)
-                {
-                    if (client.Connected)
+                    if (commandsToBroadcast.Count > 0)
                     {
-                        try
-                        {
-                            client.Send(data);
-                        }
-                        catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                        {
-                            lock (socketsLock)
-                            {
-                                client.Close();
-                                clientSockets.Remove(client);
-                            }
-                        }
+                        currentCommand = commandsToBroadcast.Dequeue();
                     }
                     else
                     {
-                        lock (socketsLock)
+                        break;
+                    }
+                }
+                if (currentCommand != null)
+                {
+                    byte[] data = currentCommand.Encode();
+                    List<int> socketsToRemove = new List<int>();
+                    lock (socketsLock)
+                    {
+                        if (currentCommand.receiverID == 0)
                         {
-                            client.Close();
-                            clientSockets.Remove(client);
+                            foreach (KeyValuePair<int, Socket> entry in clientSockets)
+                            {
+                                Socket client = entry.Value;
+                                if (client.Connected)
+                                {
+                                    try
+                                    {
+                                        client.Send(data);
+                                    }
+                                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                                    {
+                                        client.Close();
+                                        socketsToRemove.Add(entry.Key);
+                                    }
+                                }
+                                else
+                                {
+                                    client.Close();
+                                    socketsToRemove.Add(entry.Key);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Socket client = clientSockets[currentCommand.receiverID];
+                            if (client.Connected)
+                            {
+                                try
+                                {
+                                    client.Send(data);
+                                }
+                                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                                {
+                                    client.Close();
+                                    socketsToRemove.Add(currentCommand.receiverID);
+                                }
+                            }
+                            else
+                            {
+                                client.Close();
+                                socketsToRemove.Add(currentCommand.receiverID);
+                            }
+                        }
+                        foreach (int i in socketsToRemove)
+                        {
+                            clientSockets.Remove(i);
                         }
                     }
                 }
@@ -88,10 +120,6 @@ namespace LAMA.Communicator
         private static void AcceptCallback(IAsyncResult AR)
         {
             Socket socket = serverSocket.EndAccept(AR);
-            lock (THIS.socketsLock)
-            {
-                clientSockets.Add(socket);
-            }
             try
             {
                 socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
@@ -101,7 +129,10 @@ namespace LAMA.Communicator
                 lock (THIS.socketsLock)
                 {
                     socket.Close();
-                    clientSockets.Remove(socket);
+                    foreach (var item in clientSockets.Where(x => x.Value == socket).ToList())
+                    {
+                        clientSockets.Remove(item.Key);
+                    }
                 }
             }
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
@@ -120,7 +151,10 @@ namespace LAMA.Communicator
                 lock (THIS.socketsLock)
                 {
                     current.Close();
-                    clientSockets.Remove(current);
+                    foreach (var item in clientSockets.Where(x => x.Value == current).ToList())
+                    {
+                        clientSockets.Remove(item.Key);
+                    }
                 }
                 return;
             }
@@ -153,14 +187,14 @@ namespace LAMA.Communicator
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.SendUpdate(current, Int64.Parse(messageParts[0]));
+                    THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                 }));
             }
             if (messageParts[1] == "Interval")
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                    THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
             if (messageParts[1] == "GiveID")
@@ -168,6 +202,13 @@ namespace LAMA.Communicator
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.GiveNewClientID(current);
+                }));
+            }
+            if (messageParts[1] == "ClientConnected")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.NewClientConnected(Int32.Parse(messageParts[2]), current);
                 }));
             }
             try {
@@ -178,7 +219,10 @@ namespace LAMA.Communicator
                 lock (THIS.socketsLock)
                 {
                     current.Close();
-                    clientSockets.Remove(current);
+                    foreach (var item in clientSockets.Where(x => x.Value == current).ToList())
+                    {
+                        clientSockets.Remove(item.Key);
+                    }
                 }
                 return;
             }
@@ -247,10 +291,13 @@ namespace LAMA.Communicator
             server.Start();
             THIS = this;
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
+            intervalsManager = new IntervalCommunicationManagerServer(this);
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-            //DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += OnIntervalRequested;
+            DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+            DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+            DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
         }
 
         private void SendCommand(string commandText, string objectID)
@@ -258,7 +305,7 @@ namespace LAMA.Communicator
             Command command = new Command(commandText, DateTimeOffset.Now.ToUnixTimeMilliseconds(), objectID);
             lock (commandsLock)
             {
-                commandsToBroadCast.Enqueue(command);
+                commandsToBroadcast.Enqueue(command);
             }
         }
 
@@ -266,7 +313,7 @@ namespace LAMA.Communicator
         {
             lock (commandsLock)
             {
-                commandsToBroadCast.Enqueue(command);
+                commandsToBroadcast.Enqueue(command);
             }
         }
 
@@ -275,90 +322,31 @@ namespace LAMA.Communicator
             maxClientID += 1;
             string command = "GiveID;";
             command += maxClientID;
-            try
+            lock (THIS.socketsLock)
             {
-                current.Send((new Command(command, "None")).Encode());
+                clientSockets[maxClientID] = current;
             }
-            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-            {
-                return;
-            }
+            SendCommand(new Command(command, "None", maxClientID));
+            SendCommand(new Command("Connected", "None", maxClientID));
         }
 
-        private void OnIntervalRequestCP()
+        private void NewClientConnected(int id, Socket current)
         {
-            OnIntervalRequest("CP");
-        }
-
-        private void OnIntervalRequestInventoryItem()
-        {
-            OnIntervalRequest("InventoryItem");
-        }
-
-        private void OnIntervalRequestLarpActivity()
-        {
-            OnIntervalRequest("LarpActivity");
-        }
-
-        private void OnIntervalRequest(string type)
-        {
-            Pair<int, int> interval = new Pair<int, int>(0, 0);
-            if (type == "LarpActivity")
+            lock (THIS.socketsLock)
             {
-                interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0);
+                clientSockets[id] = current;
             }
-            else if (type == "CP")
-            {
-                interval = database.IntervalManager<Models.CP>.GiveNewInterval(0);
-            }
-            else if (type == "InventoryItem")
-            {
-                interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0);
-            }
-            string command = "Interval" + ";" + "Add" + ";" + type + ";" + interval.first + ";" + interval.second;
-            SendCommand(new Command(command, "None"));
+            SendCommand(new Command("Connected", "None", id));
         }
 
-        private void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
-        {
-            if (intervalCommand == "Request")
-            {
-                if (objectType == "LarpActivity")
-                {
-                    Pair<int, int> interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.first + ";" + interval.second + ";" + id;
-                    SendCommand(new Command(commandToSend, "None"));
-                }
-                else if (objectType == "CP")
-                {
-                    Pair<int, int> interval = database.IntervalManager<Models.CP>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.first + ";" + interval.second + ";" + id;
-                    SendCommand(new Command(commandToSend, "None"));
-                }
-                else if (objectType == "InventoryItem")
-                {
-                    Pair<int, int> interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.first + ";" + interval.second + ";" + id;
-                    SendCommand(new Command(commandToSend, "None"));
-                }
-            }
-        }
-
-        public void SendUpdate(Socket current, long lastUpdateTime)
+        public void SendUpdate(Socket current, int id, long lastUpdateTime)
         {
             for (int i = 0; i < objectsCache.Count; i++)
             {
                 Command entry = objectsCache[i];
                 if (entry.time > lastUpdateTime)
                 {
-                    try
-                    {
-                        current.Send(entry.Encode());
-                    }
-                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                    {
-                        return;
-                    }
+                    SendCommand(new Command(entry.command, entry.time, entry.getKey(), id));
                 }
             }
 
@@ -370,14 +358,7 @@ namespace LAMA.Communicator
                     string value = entry.value;
                     string[] keyParts = entry.key.Split(';');
                     string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
-                    try
-                    {
-                        current.Send((new Command(command, entry.time, entry.key)).Encode());
-                    }
-                    catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-                    {
-                        return;
-                    }
+                    SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
         }

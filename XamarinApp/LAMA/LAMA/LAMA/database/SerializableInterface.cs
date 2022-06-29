@@ -27,8 +27,6 @@ namespace LAMA
     public interface SerializableDictionaryItem
     {
         void setAttribute(int index, string value);
-
-        //THERE HAS TO BE AN ATTRIBUTE CALLED ID
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();

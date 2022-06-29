@@ -9,6 +9,9 @@ namespace LAMA.Communicator
         private string _key;
         public string key { get { return _key; } }
 
+        private int _receiverID;
+        public int receiverID { get { return _receiverID; } }
+
         private string _command;
         public string command
         {
@@ -34,6 +37,7 @@ namespace LAMA.Communicator
         {
             _command = "";
             _time = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _receiverID = 0;
         }
 
         public Command(string text, string key)
@@ -42,6 +46,7 @@ namespace LAMA.Communicator
             _command = text;
             _time = Int64.Parse(messageParts[0]);
             _key = key;
+            _receiverID = 0;
         }
 
         public Command(string text, long initTime, string key)
@@ -49,9 +54,27 @@ namespace LAMA.Communicator
             _command = text;
             _time = initTime;
             _key = key;
+            _receiverID = 0;
         }
 
-        static string[] attributes = new string[] { "key", "time", "command" };
+        public Command(string text, string key, int id)
+        {
+            string[] messageParts = text.Split(';');
+            _command = text;
+            _time = Int64.Parse(messageParts[0]);
+            _key = key;
+            _receiverID = id;
+        }
+
+        public Command(string text, long initTime, string key, int id)
+        {
+            _command = text;
+            _time = initTime;
+            _key = key;
+            _receiverID = id;
+        }
+
+        static string[] attributes = new string[] { "key", "time", "command", "receiverID" };
 
         void updateValue(int index, string newVal)
         {
@@ -69,6 +92,7 @@ namespace LAMA.Communicator
             _key = input[0];
             _time = Int64.Parse(input[1]);
             _command = input[2];
+            _receiverID = Int32.Parse(input[3]);
         }
 
         public string getAttribute(int index)
@@ -78,6 +102,7 @@ namespace LAMA.Communicator
                 case 0: return _key.ToString();
                 case 1: return _time.ToString();
                 case 2: return _command;
+                case 3: return _receiverID.ToString();
             }
             throw new Exception("wrong index called");
         }
@@ -109,6 +134,7 @@ namespace LAMA.Communicator
                 case 0: throw new Exception("Can not change key of Command");
                 case 1: _time = Int64.Parse(value); break;
                 case 2: _command = value; break;
+                case 3: _receiverID = Int32.Parse(value); break;
             }
             throw new Exception("wrong index called");
         }

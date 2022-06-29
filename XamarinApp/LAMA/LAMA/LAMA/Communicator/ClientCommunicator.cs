@@ -13,6 +13,11 @@ namespace LAMA.Communicator
 {
     public class ClientCommunicator : Communicator
     {
+        private bool _connected = false;
+        public bool connected
+        {
+            get { return _connected; }
+        }
         static Socket s;
         private object socketLock = new object();
         private Thread listener;
@@ -29,24 +34,29 @@ namespace LAMA.Communicator
         private RememberedStringDictionary<Command> objectsCache;
         private RememberedStringDictionary<TimeValue> attributesCache;
         private ModelChangesManager modelChangesManager;
+        private IntervalCommunicationManagerClient intervalsManager;
         static Random rd = new Random();
 
         private object commandsLock = new object();
-        private Queue<Command> commandsToBroadCast = new Queue<Command>();
+        private Queue<Command> commandsToBroadcast = new Queue<Command>();
 
-        private int id;
+        private Timer connectionTimer;
+        private Timer broadcastTimer;
+
+        private int _id;
+        public int id { get { return _id; } }
         private void ProcessBroadcast()
         {
-            if (s.Connected)
+            lock (socketLock)
             {
-                lock (commandsLock)
+                if (connected && s.Connected)
                 {
-                    while (commandsToBroadCast.Count > 0)
+                    lock (commandsLock)
                     {
-                        Command currentCommand = commandsToBroadCast.Dequeue();
-                        byte[] data = currentCommand.Encode();
-                        lock (socketLock)
+                        while (commandsToBroadcast.Count > 0)
                         {
+                            Command currentCommand = commandsToBroadcast.Peek();
+                            byte[] data = currentCommand.Encode();
                             try
                             {
                                 s.Send(data);
@@ -54,31 +64,20 @@ namespace LAMA.Communicator
                             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                             {
                                 s.Close();
+                                break;
                             }
+                            commandsToBroadcast.Dequeue();
                         }
                     }
                 }
             }
         }
 
-        internal static string CreateString(int stringLength)
-        {
-            const string allowedChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789!@$?_-";
-            char[] chars = new char[stringLength];
-
-            for (int i = 0; i < stringLength; i++)
-            {
-                chars[i] = allowedChars[rd.Next(0, allowedChars.Length)];
-            }
-
-            return new string(chars);
-        }
-
         public void SendCommand(Command command)
         {
             lock (commandsLock)
             {
-                commandsToBroadCast.Enqueue(command);
+                commandsToBroadcast.Enqueue(command);
             }
         }
 
@@ -130,7 +129,7 @@ namespace LAMA.Communicator
             {
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
-                    THIS.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                    THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
                 }));
             }
             if (messageParts[1] == "GiveID")
@@ -138,6 +137,13 @@ namespace LAMA.Communicator
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.ReceiveID(Int32.Parse(messageParts[2]));
+                }));
+            }
+            if (messageParts[1] == "Connected")
+            {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.Connected();
                 }));
             }
             if (messageParts[1] == "Rollback")
@@ -168,61 +174,9 @@ namespace LAMA.Communicator
         }
 
 
-        private void OnIntervalRequestCP()
-        {
-            OnIntervalRequest("CP");
-        }
-
-        private void OnIntervalRequestInventoryItem()
-        {
-            OnIntervalRequest("InventoryItem");
-        }
-
-        private void OnIntervalRequestLarpActivity()
-        {
-            OnIntervalRequest("LarpActivity");
-        }
-
-        private void OnIntervalRequest(string type)
-        {
-            string command = "Interval" + ";" + "Request" + ";" + type + ";" + 0 + ";" + 0 + ";" + id;
-            SendCommand(new Command(command, "None"));
-        }
-
-        private void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
-        {
-            if (intervalCommand == "Add" && id == this.id)
-            {
-                if (objectType == "LarpActivity")
-                {
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
-                }
-
-                if (objectType == "CP")
-                {
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
-                }
-
-                if (objectType == "InventoryItem")
-                {
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
-                }
-            }
-        }
-
-        /*
-        private void SendConnectionInfo()
-        {
-            string q = "ClientConnected;";
-            q += CPName + ";";
-            byte[] data = Encoding.Default.GetBytes(q);
-            s.Send(data);
-        }
-        */
-
         private void ReceiveID(int id)
         {
-            this.id = id;
+            _id = id;
         }
 
         private void RequestUpdate()
@@ -236,10 +190,10 @@ namespace LAMA.Communicator
         private void StartListening()
         {
             RequestUpdate();
-            var timer = new System.Threading.Timer((e) =>
+            broadcastTimer = new System.Threading.Timer((e) =>
             {
                 ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
             lock (THIS.socketLock)
             {
                 try
@@ -256,41 +210,70 @@ namespace LAMA.Communicator
 
         private void InitSocket()
         {
-            if (_IPv6)
+            lock (THIS.socketLock)
             {
-                s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            }
-            else
-            {
-                s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                if (_IPv6)
+                {
+                    s = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                }
+                else
+                {
+                    s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                }
             }
         }
 
         private bool Connect()
         {
-            if (!s.Connected)
+            lock (THIS.socketLock)
             {
-                try
+                if (!s.Connected)
                 {
-                    InitSocket();
-                    s.Connect(_IP, _port);
-                    SendCommand(new Command("GiveID", "None"));
-                    listener = new Thread(StartListening);
-                    listener.Start();
-                }
-                catch (SocketException e)
-                {
-                    if (e.Message == "Connection refused")
+                    if (broadcastTimer != null)
                     {
-                        throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
+                        broadcastTimer.Dispose();
                     }
-                }
-                catch (Exception e)
-                {
-                    return false;
+                    if (listener != null)
+                    {
+                        listener.Abort();
+                    }
+                    try
+                    {
+                        InitSocket();
+                        s.Connect(_IP, _port);
+                        SendCommand(new Command("GiveID", "None"));
+                        listener = new Thread(StartListening);
+                        listener.Start();
+                    }
+                    catch (SocketException e)
+                    {
+                        if (e.Message == "Connection refused")
+                        {
+                            throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
+                        }
+                    }
+                    catch
+                    {
+                        MainThread.BeginInvokeOnMainThread(new Action(() =>
+                        {
+                            THIS._connected = false;
+                        }));
+                        return false;
+                    }
                 }
             }
             return true;
+        }
+
+        private void Connected()
+        {
+            _connected = true;
+        }
+
+        public void SendClientInfo()
+        {
+            string command = "ClientConnected" + ";" + id;
+            SendCommand(new Command(command, "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
@@ -301,6 +284,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
@@ -352,21 +336,21 @@ namespace LAMA.Communicator
                     throw new NotAnIPAddressException("Server IP address not valid");
                 }
                 _port = int.Parse(array[1]);
-                CPName = CreateString(10);
                 InitSocket();
                 Connect();
-                var timer = new System.Threading.Timer((e) =>
+                connectionTimer = new System.Threading.Timer((e) =>
                 {
                     Connect();
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
+                intervalsManager = new IntervalCommunicationManagerClient(this);
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-                DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestCP;
-                DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestInventoryItem;
-                DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += OnIntervalRequestLarpActivity;
+                DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+                DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+                DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
             }
         }
     }
