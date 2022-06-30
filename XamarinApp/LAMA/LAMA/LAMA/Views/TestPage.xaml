@@ -2,19 +2,25 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.TestPage">
-    <ContentPage.Content>
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="auto" />
-				<RowDefinition Height="auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="auto" />
-				<ColumnDefinition Width="auto" />
-				<ColumnDefinition Width="auto" />
-			</Grid.ColumnDefinitions>
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<Style TargetType="Button">
+				<Setter Property="HorizontalOptions" Value="StartAndExpand" />
+				<Setter Property="VerticalOptions" Value="Center" />
+				<Setter Property="Padding" Value="10,10,10,10" />
+				<Setter Property="MinimumWidthRequest" Value="300" />
+			</Style>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	<ContentPage.Content>
+		<ScrollView>
+			<StackLayout Spacing="10">
 
-			<Button Grid.Row="0" Grid.Column="0" Text="DisplayActivity" Clicked="OnDisplayActivity"/>
-		</Grid>
+				<Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
+				<Button Text="NewActivity" Clicked="OnNewActivity"/>
+				<Button Text="EditActivity" Clicked="OnEditActivity"/>
+				
+			</StackLayout>
+		</ScrollView>
     </ContentPage.Content>
 </ContentPage>

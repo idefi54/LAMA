@@ -33,5 +33,35 @@ namespace LAMA.Views
             //await Shell.Current.GoToAsync($"//{nameof(DisplayActivityPage)}");
             await Navigation.PushAsync(new DisplayActivityPage(activity));
         }
+
+        async void OnNewActivity(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity));
+        }
+
+        async void OnEditActivity(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity, activity));
+        }
+
+
+        private void DummyUpdateActivity(LarpActivity larpActivity)
+        {
+            //activity.name = larpActivity.name;
+            //activity.description = larpActivity.description;
+
+
+            //activity.duration = larpActivity.duration;
+            //activity.start = larpActivity.start;
+            //activity.day = larpActivity.day;
+            //activity.preparationNeeded = larpActivity.preparationNeeded;
+            //activity.place = larpActivity.place;
+
+
+
+            activity = new LarpActivity(activity.ID, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
+                larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
+                larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+        }
     }
 }
