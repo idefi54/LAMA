@@ -1,7 +1,9 @@
 ﻿using LAMA.Models;
+using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -21,7 +23,6 @@ namespace LAMA.ViewModels
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
-		private List<string> _typeList;
 
 
 		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
@@ -42,8 +43,17 @@ namespace LAMA.ViewModels
 
 		LarpActivity _activity;
 
-        public DisplayActivityViewModel(LarpActivity activity)
+
+		public Command SignUpCommand { get; }
+		public Command EditCommand { get; }
+
+
+		INavigation Navigation;
+
+		public DisplayActivityViewModel(INavigation navigation, LarpActivity activity)
         {
+			Navigation = navigation;
+
             _activity = activity;
             ActivityName = _activity.name;
 
@@ -52,9 +62,38 @@ namespace LAMA.ViewModels
 			Type = _activity.eventType.ToString();
 			Duration = _activity.duration.hours + "h " + _activity.duration.minutes + "m";
 			Start = _activity.start.hours + ":" + _activity.start.minutes;
-			DayIndex = _activity.day + "#";
+			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
-        }
-    }
+
+
+
+			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
+			EditCommand = new Xamarin.Forms.Command(OnEdit);
+		}
+
+		private async void OnEdit()
+		{
+			await Navigation.PushAsync(new NewActivityPage(UpdateActivity,_activity));
+		}
+
+		private async void OnSignUp()
+		{
+			await Shell.Current.GoToAsync("..");
+		}
+
+		private void UpdateActivity(LarpActivity larpActivity)
+		{
+			Name = larpActivity.name;
+			Description = larpActivity.description;
+			Preparations = larpActivity.preparationNeeded;
+
+
+			Duration = larpActivity.duration.hours + "h " + larpActivity.duration.minutes + "m";
+			Start = larpActivity.start.hours + ":" + larpActivity.start.minutes;
+			DayIndex = (larpActivity.day + 1) + ".";
+			Preparations = larpActivity.preparationNeeded;
+			Location = larpActivity.place.ToString();
+		}
+	}
 }

@@ -24,10 +24,11 @@ namespace LAMA.Views
 
 		public LarpActivity Activity { get; set; }
 
-		public NewActivityPage(Action<LarpActivity> createNewActivity)
+		public NewActivityPage(Action<LarpActivity> createNewActivity, LarpActivity activity = null)
         {
             InitializeComponent();
-			BindingContext = new NewActivityViewModel(Navigation, createNewActivity);
+            Activity = activity;
+			BindingContext = new NewActivityViewModel(Navigation, createNewActivity, activity);
 
             MapHandler.Instance.MapViewSetupAdding(mapView);
 		}

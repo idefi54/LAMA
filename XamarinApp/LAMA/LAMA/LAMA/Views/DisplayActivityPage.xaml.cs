@@ -17,7 +17,7 @@ namespace LAMA.Views
         public DisplayActivityPage(LarpActivity activity)
         {
             InitializeComponent();
-            BindingContext = new DisplayActivityViewModel(activity);
+            BindingContext = new DisplayActivityViewModel(Navigation,activity);
         }
     }
 }
