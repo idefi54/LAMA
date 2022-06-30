@@ -14,6 +14,8 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command AddActivityCommand { get; }
         public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
+        public Command<LarpActivity> LarpActivityTapped { get; }
+
         INavigation Navigation;
 
         int maxId = 0;
@@ -63,12 +65,29 @@ namespace LAMA.ViewModels
             //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
 
             AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
+            LarpActivityTapped = new Command<LarpActivity>(DisplayActivity);
 
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Přepad karavanu", start = new Time(60 * 14 + 15), eventType = LarpActivity.EventType.normal });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava záchrany", start = new Time(60 * 14), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Záchrana kupce", start = new Time(60 * 16 + 10), eventType = LarpActivity.EventType.normal });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Úklid mrtvol hráčů", start = new Time(60 * 16 + 15), eventType = LarpActivity.EventType.preparation });
+        }
+
+        private async void DisplayActivity(LarpActivity obj)
+        {
+            App.Current.MainPage.DisplayAlert("Message", "Test message.", "OK");
+
+
+            if (obj.GetType() != typeof(LarpActivity))
+            {
+                Console.WriteLine("-------------------------------------------------\nWrong Type inside ActivityList");
+                return;
+            }
+
+            LarpActivity activity = (LarpActivity)obj;
+
+            await Navigation.PushAsync(new DisplayActivityPage(activity));
         }
 
         private async void OnAddActivityListItem(object obj)

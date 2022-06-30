@@ -1,13 +1,126 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.DisplayActivityPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Zobrazení aktivity WIP!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-			<Label Text="{Binding ActivityName, Mode=TwoWay}"/>
-		</StackLayout>
-    </ContentPage.Content>
+             x:Class="LAMA.Views.DisplayActivityPage"
+			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
+             Title="Display Activity"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 x:DataType="viewmodel:DisplayActivityViewModel">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Přihlásit se" Command="{Binding SignUpCommand}"/>
+		<ToolbarItem Text="Upravit" Command="{Binding EditCommand}"/>
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
+		<ScrollView>
+			<StackLayout  Padding="30,15,30,15" >
+				<Label Text="Název aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Name}" FontSize="Default"   Padding="0,0,0,20"/>
+
+
+
+				<Label Text="Popis aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Description}"  Margin="0"  Padding="0,0,0,20"/>
+
+
+				<Label Text="Typ aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Type}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+
+
+				<Label Text="Časové rozmezí"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+				<Grid Padding="0,0,0,20">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="20" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<Label Grid.Row="0" Grid.Column="0" Text="Den konání:" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Label Grid.Row="0" Grid.Column="2" Text="{Binding DayIndex}" HorizontalOptions="Start" VerticalOptions="Center"/>
+
+					<Label Grid.Row="1" Grid.Column="0" Text="Začátek:" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Label Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Start}"/>
+					<Label Grid.Row="2" Grid.Column="0" Text="Délka trvání:" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Label Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Duration}"/>
+				</Grid>
+
+
+				<Label Text="Role"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Grid Padding="0,0,0,20">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="20" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					
+					<Label Grid.Row="0" Grid.Column="0" Text="Kupec"/>
+					<Label Grid.Row="0" Grid.Column="2" Text="1" MinimumWidthRequest="100" WidthRequest="100"/>
+					<Label Grid.Row="1" Grid.Column="0" Text="Bandita"/>
+					<Label Grid.Row="1" Grid.Column="2" Text="4" MinimumWidthRequest="100" WidthRequest="100"/>
+				</Grid>
+
+
+				<Label Text="Potřebná příprava"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Preparations}"  Margin="0" MinimumHeightRequest="300" Padding="0,0,0,20"/>
+
+
+				<Label Text="Vybavení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Grid Padding="0,0,0,20">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="20" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<Label Grid.Row="0" Grid.Column="0" Text="Truhla s pokladem"/>
+					<Label Grid.Row="0" Grid.Column="2" Text="1" MinimumWidthRequest="100" WidthRequest="100"/>
+					<Label Grid.Row="1" Grid.Column="0" Text="Povoz"/>
+					<Label Grid.Row="1" Grid.Column="2" Text="4" MinimumWidthRequest="100" WidthRequest="100"/>
+				</Grid>
+
+
+				<Label Text="Lokace"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<mapsui:MapView
+					x:Name="mapView"
+					Grid.Row="1"
+					VerticalOptions="Start"
+					HeightRequest="300"
+					HorizontalOptions="Fill"
+					BackgroundColor="Gray" />
+			</StackLayout>
+		</ScrollView>
+	</ContentPage.Content>
 </ContentPage>

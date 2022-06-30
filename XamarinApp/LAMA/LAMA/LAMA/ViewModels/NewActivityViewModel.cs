@@ -54,8 +54,22 @@ namespace LAMA.ViewModels
 		INavigation _navigation;
 		Action<LarpActivity> _createNewActivity;
 
-        public NewActivityViewModel(INavigation navigation, Action<LarpActivity> createNewActivity)
+        public NewActivityViewModel(INavigation navigation, Action<LarpActivity> createNewActivity, LarpActivity activity = null)
         {
+			if(activity != null)
+            {
+				Id = activity.ID.ToString();
+				Name = activity.name;
+				Description = activity.description;
+				Type = activity.eventType.ToString();
+				TypeIndex = (int)activity.eventType;
+				Duration = new DateTime(2000,1,1,  activity.duration.hours,activity.duration.minutes,0);
+				Start = new DateTime(2000, 1, 1, activity.start.hours, activity.start.minutes, 0);
+				Day = activity.day;
+				Preparations = activity.preparationNeeded;
+				
+			}
+
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
 			SaveCommand = new Xamarin.Forms.Command(OnSave);
