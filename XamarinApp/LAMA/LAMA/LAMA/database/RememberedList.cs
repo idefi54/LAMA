@@ -9,25 +9,30 @@ namespace LAMA
 {
 
     
-    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : database.StorageInterface, new()
+    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
-        
-        Dictionary<int, int> IDToIndex = new Dictionary<int, int>();
+        SortedDictionary<int, int> IDToIndex = new SortedDictionary<int, int>();
 
         
         List<T> cache = new List<T>();
         OurSQL<T, Storage> sql;
+        OurSQLInterval intervalsSQL;
         public OurSQL<T, Storage> sqlConnection { get { return sql; } }
+        int typeID = -1;
 
         public RememberedList(OurSQL<T, Storage> sql)
         {
+            intervalsSQL = new OurSQLInterval();
             this.sql = sql;
-
+            typeID = new T().getTypeID();
             loadData();
         }
 
         void loadData()
         {
+            
+            IDIntervals = intervalsSQL.ReadData(typeID);
+            
 
             cache = sql.ReadData();
 
@@ -109,64 +114,68 @@ namespace LAMA
         }
 
 
-        List<Pair<int, int>> IDIntervals = new List<Pair<int, int>>();
+        List<Database.Interval> IDIntervals = new List<Database.Interval>();
+        bool askedForMore = false;
+        int currentIntervalNum = 0;
 
-
-        public void NewIntervalReceived(Pair<int, int> input)
+        public void NewIntervalReceived(Database.Interval input)
         {
-            throw new NotImplementedException();
+            askedForMore = false;
+            IDIntervals.Add(input);
+            intervalsSQL.addData(input);
         }
 
 
 
-        public delegate void GiveNewIntervalDelegate<U>();
+        public delegate void GiveNewIntervalDelegate<U>(int typeID);
         public event GiveNewIntervalDelegate<T> GiveNewInterval;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
         public int nextID()
-        {
+        {   
 
-            /*if(málo id zbejvá = půlka posledního intervalu je plná)
-             * {
-             * invoke event (typ)
-             * 
-             * }
-             * 
-             * */
+            Database.Interval currentInterval = null;
 
-
-           /*
-            if (došly ID)
-           {
-           počkat na server
-           }
-            */
-
-            if(IDIntervals.Count == 0)
+            // find first interval with space 
+            for (int i = currentIntervalNum; i < IDIntervals.Count; ++i) 
             {
-                IDIntervals.Add(getNextIDInterval());
-            }
-
-            for (int i = 0; i < IDIntervals.Count; ++i) 
-            {
-                for (int j = IDIntervals[i].first; j < IDIntervals[i].second; ++j)
+                if (IDIntervals[i].lastTaken < IDIntervals[i].end - 1)
                 {
-                    if (!IDToIndex.ContainsKey(j))
-                        return j;
-                }
+                    currentInterval = IDIntervals[i];
+                    currentIntervalNum = i;
+                    break;
+                }    
             }
 
-            IDIntervals.Add(getNextIDInterval());
-            return IDIntervals[IDIntervals.Count - 1].first;
+            Database.Interval lastInterval = null;
+            if (IDIntervals.Count != 0)
+                lastInterval = IDIntervals[IDIntervals.Count - 1];
+            // running out of IDs, so I need to ask the server for more
+            if (currentInterval == null || 
+                (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
+            {
+                if (askedForMore)
+                {
+                    GiveNewInterval.Invoke(new T().getTypeID());
+                    askedForMore = true;
+                }
+                //if i am out of IDs just return null
+                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end) 
+                    return -1;
+            }
 
+            //now i know i have anough space for at least one more ID
+
+            currentInterval.lastTaken++;
+            intervalsSQL.Update(currentInterval);
+            return currentInterval.lastTaken;
+          
         }
 
-        // TODO   asynch await  protože bude trvat než dostanu odpověď
-        // TODO   žádat o novej interval před tim než sem zaplněnej
-        private Pair<int,int> getNextIDInterval()
-        {
-            throw new Exception("not implemented, call network to give me another interval");
-        }
-
+        
     }
 
 

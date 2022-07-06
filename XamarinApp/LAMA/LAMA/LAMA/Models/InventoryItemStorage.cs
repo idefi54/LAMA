@@ -4,7 +4,7 @@ using System.Text;
 using SQLite;
 namespace LAMA.Models
 {
-    internal class InventoryItemStorage : database.StorageInterface
+    internal class InventoryItemStorage : Database.StorageInterface
     {
 
         //{ "ID", "name", "description", "taken", "free", "takenBy" };

@@ -5,7 +5,7 @@ using SQLite;
 
 namespace LAMA.Models
 {
-    internal class LarpActivityStorage : database.StorageInterface
+    internal class LarpActivityStorage : Database.StorageInterface
     {
         //{ "ID", "name", "description", "preparationNeeded", "eventType", "prerequisiteIDs",
             //"duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole" };

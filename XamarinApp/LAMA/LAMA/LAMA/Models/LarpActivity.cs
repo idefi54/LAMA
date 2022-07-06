@@ -320,8 +320,10 @@ namespace LAMA.Models
             }
         }
 
-        //TODO 
-        //konstruktor
+        public int getTypeID()
+        {
+            return 3;
+        }
 
     }
 }

@@ -5,7 +5,7 @@ using SQLite;
 
 namespace LAMA.Models
 {
-    internal class CPStorage: database.StorageInterface
+    internal class CPStorage: Database.StorageInterface
     {
         [PrimaryKey]
         public int ID { get; set; } 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LAMA.database
+namespace LAMA.Database
 {
     public interface StorageInterface
     {

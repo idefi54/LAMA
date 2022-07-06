@@ -151,6 +151,9 @@ namespace LAMA.Models
             }
         }
 
-
+        public int getTypeID()
+        {
+            return 2;
+        }
     }
 }

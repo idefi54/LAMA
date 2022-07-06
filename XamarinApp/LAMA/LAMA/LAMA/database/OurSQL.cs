@@ -57,20 +57,92 @@ namespace LAMA
         
     }
 
-    public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage: LAMA.database.StorageInterface, new()
+
+    public class OurSQLInterval 
+    {
+        
+
+        SQLiteAsyncConnection connection { get; }
+        public OurSQLInterval()
+        {
+            if (SQLConnectionWrapper.connection == null)
+                SQLConnectionWrapper.makeConnection();
+            connection = SQLConnectionWrapper.connection;
+
+            if (connection.Table<Database.Interval>() == null)
+                connection.CreateTableAsync<Database.Interval>().Wait();
+        }
+
+        public void addData(Database.Interval value)
+        {
+            if (value == null)
+                return;
+            connection.InsertAsync(value).Wait();
+        }
+        public List<Database.Interval> ReadData(int typeID)
+        {
+
+            var data = connection.Table<Database.Interval>();
+
+
+            var listData = data.ToArrayAsync();
+            listData.Wait();
+
+            var result = listData.Result;
+
+            List<Database.Interval> output = new List<Database.Interval>();
+            for (int i = 0; i < result.Length; ++i)
+            {
+                if(result[i].typeID == typeID)
+                    output.Add(result[i]);
+            }
+            return output;
+        }
+        public List<Database.Interval> ReadData()
+        {
+
+            var data = connection.Table<Database.Interval>();
+
+
+            var listData = data.ToArrayAsync();
+            listData.Wait();
+
+            var result = listData.Result;
+
+            List<Database.Interval> output = new List<Database.Interval>();
+            for (int i = 0; i < result.Length; ++i)
+            {
+                output.Add(result[i]);
+            }
+            return output;
+        }
+        public void Update(Database.Interval update)
+        {
+            connection.UpdateAsync(update).Wait();
+        }
+    }
+
+
+
+
+
+
+
+    public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage: LAMA.Database.StorageInterface, new()
     {
 
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQL(string path)
+        public OurSQL()
         {
 
             if (SQLConnectionWrapper.connection == null)
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-            
+            if (connection.Table<Storage>() == null)
+                makeTable();
         }
 
 
@@ -122,7 +194,7 @@ namespace LAMA
         }
 
         
-        //TODO - make the input safe (new attribute value can contain special characters and ruid the query through SQLinjection or just mistake)
+        
         public void changeData(int attributeIndex, string newAttributeValue, Data who)
         {
             Storage update = new Storage();
@@ -169,25 +241,26 @@ namespace LAMA
         }
     }
 
-    public class OurSQLDictionary<Data, Storage> where Data : SerializableDictionaryItem, new() where Storage : LAMA.database.StorageInterface, new()
+    public class OurSQLDictionary<Data, Storage> where Data : SerializableDictionaryItem, new() where Storage : LAMA.Database.StorageInterface, new()
     {
 
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQLDictionary(string path)
+        public OurSQLDictionary()
         {
 
             if (SQLConnectionWrapper.connection == null)
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-
+            if (connection.Table<Storage>() == null)
+                makeTable();
         }
 
 
 
-        public void makeTable(string tableName)
+        public void makeTable()
         {
             connection.CreateTableAsync<Storage>().Wait();
 

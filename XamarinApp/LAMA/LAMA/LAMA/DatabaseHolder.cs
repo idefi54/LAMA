@@ -2,7 +2,7 @@
 
 namespace LAMA
 {
-    internal class DatabaseHolder<T, Storage> where T : Serializable, new() where Storage : database.StorageInterface, new()
+    internal class DatabaseHolder<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
         // Singleton
         private static DatabaseHolder<T, Storage> _instance;
@@ -18,14 +18,14 @@ namespace LAMA
         // Object Specific
         private DatabaseHolder()
         {
-            var sql = new OurSQL<T, Storage>(".\\database.db");
+            var sql = new OurSQL<T, Storage>();
             rememberedList = new RememberedList<T, Storage>(sql);
         }
 
         public RememberedList<T, Storage> rememberedList;
     }
 
-    internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : database.StorageInterface, new()
+    internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.StorageInterface, new()
     {
         // Singleton
         private static DatabaseHolderStringDictionary<T, Storage> _instance;
@@ -41,7 +41,7 @@ namespace LAMA
         // Object Specific
         private DatabaseHolderStringDictionary()
         {
-            var sql = new OurSQLDictionary<T, Storage>(".\\database.db");
+            var sql = new OurSQLDictionary<T, Storage>();
             rememberedDictionary = new RememberedStringDictionary<T, Storage>(sql);
         }
 
