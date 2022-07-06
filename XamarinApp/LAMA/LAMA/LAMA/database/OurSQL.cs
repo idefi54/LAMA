@@ -37,12 +37,12 @@ namespace LAMA
     class SQLConnectionWrapper
     {
 
-        
 
-        public static SQLiteAsyncConnection connection {get{ return _connection; } }
+
+        public static SQLiteAsyncConnection connection { get { return _connection; } }
         private static SQLiteAsyncConnection _connection;
 
-        public static SQLiteAsyncConnection makeConnection ()
+        public static SQLiteAsyncConnection makeConnection()
         {
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(directory, "database.db");
@@ -51,16 +51,16 @@ namespace LAMA
                 File.Create(path);
 
             _connection = new SQLiteAsyncConnection(path);
-            
+
             return _connection;
         }
-        
+
     }
 
 
-    public class OurSQLInterval 
+    public class OurSQLInterval
     {
-        
+
 
         SQLiteAsyncConnection connection { get; }
         public OurSQLInterval()
@@ -68,9 +68,7 @@ namespace LAMA
             if (SQLConnectionWrapper.connection == null)
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
-
-            if (connection.Table<Database.Interval>() == null)
-                connection.CreateTableAsync<Database.Interval>().Wait();
+            connection.CreateTableAsync<Database.Interval>().Wait();
         }
 
         public void addData(Database.Interval value)
@@ -93,7 +91,7 @@ namespace LAMA
             List<Database.Interval> output = new List<Database.Interval>();
             for (int i = 0; i < result.Length; ++i)
             {
-                if(result[i].typeID == typeID)
+                if (result[i].typeID == typeID)
                     output.Add(result[i]);
             }
             return output;
@@ -128,7 +126,7 @@ namespace LAMA
 
 
 
-    public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage: LAMA.Database.StorageInterface, new()
+    public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage : LAMA.Database.StorageInterface, new()
     {
 
         SQLiteAsyncConnection connection { get; }
@@ -141,18 +139,10 @@ namespace LAMA
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-            if (connection.Table<Storage>() == null)
-                makeTable();
-        }
-
-
-
-        public void makeTable()
-        {
-
             connection.CreateTableAsync<Storage>().Wait();
-
         }
+
+
 
         public void addData(Data value, bool invoke)
         {
@@ -164,9 +154,9 @@ namespace LAMA
             connection.InsertAsync(storage).Wait();
 
 
-            if(invoke)
+            if (invoke)
                 SQLEvents.invokeCreated(value);
-            
+
         }
 
 
@@ -176,7 +166,7 @@ namespace LAMA
         public List<Data> ReadData()
         {
 
-            var data =  connection.Table<Storage>();
+            var data = connection.Table<Storage>();
 
 
             var listData = data.ToArrayAsync();
@@ -189,12 +179,13 @@ namespace LAMA
             {
                 Data toAdd = new Data();
                 toAdd.buildFromStrings(result[i].getStrings());
+                output.Add(toAdd);
             }
             return output;
         }
 
-        
-        
+
+
         public void changeData(int attributeIndex, string newAttributeValue, Data who)
         {
             Storage update = new Storage();
@@ -207,12 +198,12 @@ namespace LAMA
 
         public void removeAt(Data who)
         {
-            
-            connection.DeleteAsync<Storage>(who.getID()).Wait(); 
+
+            connection.DeleteAsync<Storage>(who.getID()).Wait();
 
             SQLEvents.invokeDeleted(who);
         }
-        
+
 
         public List<int> getDataSince(long when)
         {
@@ -223,8 +214,8 @@ namespace LAMA
 
             var task = storages.ToArrayAsync();
             var arr = task.Result;
-            
-            foreach(var a in arr)
+
+            foreach (var a in arr)
             {
                 output.Add(a.getID());
             }
@@ -254,8 +245,8 @@ namespace LAMA
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-            if (connection.Table<Storage>() == null)
-                makeTable();
+
+            makeTable();
         }
 
 
@@ -297,6 +288,7 @@ namespace LAMA
             {
                 Data toAdd = new Data();
                 toAdd.buildFromStrings(result[i].getStrings());
+                output.Add(toAdd);
             }
             return output;
         }
