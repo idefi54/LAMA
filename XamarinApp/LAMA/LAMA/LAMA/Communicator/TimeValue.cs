@@ -70,8 +70,8 @@ namespace LAMA.Communicator
                 case 0: return _key.ToString();
                 case 1: return _time.ToString();
                 case 2: return _value;
+                default: throw new Exception("wrong index called");
             }
-            throw new Exception("wrong index called");
         }
 
         public string[] getAttributeNames()
@@ -98,11 +98,11 @@ namespace LAMA.Communicator
         {
             switch (index)
             {
-                case 0: throw new Exception("Can not change key of TimeValue");
+                case 0: _key = value; break;
                 case 1: _time = Int64.Parse(value); break;
                 case 2: _value = value; break;
+                default: throw new Exception("wrong index called");
             }
-            throw new Exception("wrong index called");
         }
 
         public override string ToString()

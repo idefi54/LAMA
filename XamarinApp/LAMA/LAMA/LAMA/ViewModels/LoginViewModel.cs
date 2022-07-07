@@ -81,7 +81,9 @@ namespace LAMA.ViewModels
             //password - libovolné, klienti ho pak musí opakovat (u existujícího serveru [jméno] to pak při správném hesle edituje hodnoty)
             try
             {
+                Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, IP, port, password);
+                Console.WriteLine("Communicator launched");
 
             }
             catch (Exception e)
