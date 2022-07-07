@@ -86,8 +86,6 @@ namespace LAMA.ViewModels
 		{
 			Name = larpActivity.name;
 			Description = larpActivity.description;
-			Preparations = larpActivity.preparationNeeded;
-
 
 			Duration = larpActivity.duration.hours + "h " + larpActivity.duration.minutes + "m";
 			Start = larpActivity.start.hours + ":" + larpActivity.start.minutes;
