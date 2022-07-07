@@ -29,5 +29,10 @@ namespace LAMA
             base.RemoveAt(where);
             dataChanged?.Invoke();
         }
+
+        public void AddWithoutEvent(T what)
+        {
+            base.Add(what);
+        }
     }
 }

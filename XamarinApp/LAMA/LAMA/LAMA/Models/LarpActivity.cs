@@ -182,8 +182,8 @@ namespace LAMA.Models
         //helper function to update values inside SQL
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolder<LarpActivity>.Instance.rememberedList;
-            list.sqlConnection.changeData(list.tableName, index, newVal, this);
+            var list = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+            list.sqlConnection.changeData(index, newVal, this);
         }
 
         // interface Serializable implementation
@@ -320,8 +320,10 @@ namespace LAMA.Models
             }
         }
 
-        //TODO 
-        //konstruktor
+        public int getTypeID()
+        {
+            return 3;
+        }
 
     }
 }

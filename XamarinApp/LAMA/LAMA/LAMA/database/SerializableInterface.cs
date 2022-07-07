@@ -14,14 +14,11 @@ namespace LAMA
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
-        //TODO
         int getID();
-        //TODO
         void buildFromStrings(string[] input);
-        //TODO 
         string getAttribute(int index);
+        int getTypeID();
         
-
     }
 
     public interface SerializableDictionaryItem
@@ -29,14 +26,12 @@ namespace LAMA
         void setAttribute(int index, string value);
 
         //THERE HAS TO BE AN ATTRIBUTE CALLED ID
+        int getID();
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
-        //TODO
         string getKey();
-        //TODO
         void buildFromStrings(string[] input);
-        //TODO 
         string getAttribute(int index);
     }
 }

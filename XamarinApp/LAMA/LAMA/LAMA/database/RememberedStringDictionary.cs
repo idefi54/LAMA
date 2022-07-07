@@ -4,39 +4,24 @@ using System.Text;
 
 namespace LAMA
 {
-    class RememberedStringDictionary<T> where T : SerializableDictionaryItem, new()
+    class RememberedStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage:Database.StorageInterface, new()
     {        
         Dictionary<string, int> KeyToIndex = new Dictionary<string, int>();
 
-        static StringBuilder ID = new StringBuilder();
-
-        string myID;
-        public string tableName { get { return myID; } }
-
         List<T> cache = new List<T>();
-        OurSQLDictionary<T> sql;
-        public OurSQLDictionary<T> sqlConnection { get { return sql; } }
+        OurSQLDictionary<T, Storage> sql;
+        public OurSQLDictionary<T, Storage> sqlConnection { get { return sql; } }
 
-        public RememberedStringDictionary(OurSQLDictionary<T> sql)
+        public RememberedStringDictionary(OurSQLDictionary<T, Storage> sql)
         {
             this.sql = sql;
-
-            if (ID.Length == 0)
-                ID.Append(typeof(T).Name);
-            if (ID[ID.Length - 1] < 'Z')
-                ++ID[ID.Length - 1];
-            else
-                ID.Append('a');
-            myID = ID.ToString();
-            if (!sql.containsTable(myID))
-                sql.makeTable(myID);
 
             loadData();
         }
 
         void loadData()
         {
-            cache = sql.ReadData(myID);
+            cache = sql.ReadData();
 
             int i = 0;
             foreach (var a in cache)
@@ -75,7 +60,7 @@ namespace LAMA
             cache.Add(data);
             KeyToIndex.Add(data.getKey(), cache.Count - 1);
 
-            sql.addData(myID, data);
+            sql.addData(data);
             return true;
         }
 
@@ -94,7 +79,7 @@ namespace LAMA
             var who = cache[index];
             cache.RemoveAt(index);
 
-            sql.removeAt(myID, who);
+            sql.removeAt(who);
         }
 
         public void removeByKey(string key)
