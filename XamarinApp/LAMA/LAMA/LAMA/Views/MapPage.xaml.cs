@@ -23,7 +23,16 @@ namespace LAMA.Views
 		{
 			InitializeComponent();
             MapHandler.Instance.MapViewSetup(mapView);
-            MapHandler.Instance.AddEvent(0, 0, 125, mapView);
+            MapHandler.Instance.AddActivity(0, 0, 125, mapView);
+            MapHandler.Instance.OnPinClick += OnPinClicked;
+        }
+
+        private async void OnPinClicked(Mapsui.UI.Forms.PinClickedEventArgs e, int activityID, bool doubleClick)
+        {
+            if (!doubleClick)
+                return;
+            Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(activityID);
+            await Navigation.PushAsync(new DisplayActivityPage(activity));
         }
 
         protected async override void OnAppearing()
