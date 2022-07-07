@@ -42,7 +42,7 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            Debug.WriteLine(command);
+            //Debug.WriteLine(command);
             communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
@@ -124,7 +124,7 @@ namespace LAMA.Communicator
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
-            Debug.WriteLine(command);
+            //Debug.WriteLine(command);
             if (!objectsCache.containsKey(objectCacheID))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));

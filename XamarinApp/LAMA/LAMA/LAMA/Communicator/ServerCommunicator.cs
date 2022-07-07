@@ -240,7 +240,7 @@ namespace LAMA.Communicator
             objectsCache = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
-            Debug.WriteLine("Created client, loaded dictionaries");
+            //Debug.WriteLine("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
                 throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 charcters");
@@ -285,7 +285,7 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
-            Debug.WriteLine("No exceptions");
+            //Debug.WriteLine("No exceptions");
             maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
@@ -295,14 +295,14 @@ namespace LAMA.Communicator
             THIS = this;
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
             intervalsManager = new IntervalCommunicationManagerServer(this);
-            Debug.WriteLine("Subscribing to events");
+            //Debug.WriteLine("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
             DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
             DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
             DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
-            Debug.WriteLine("Initialization finished");
+            //Debug.WriteLine("Initialization finished");
         }
 
         private void SendCommand(string commandText, string objectID)
