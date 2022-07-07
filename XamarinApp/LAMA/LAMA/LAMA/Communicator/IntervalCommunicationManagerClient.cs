@@ -15,17 +15,17 @@ namespace LAMA.Communicator
 
         public void OnIntervalRequestCP()
         {
-            OnIntervalRequest("CP");
+            OnIntervalRequest("LAMA.Models.CP");
         }
 
         public void OnIntervalRequestInventoryItem()
         {
-            OnIntervalRequest("InventoryItem");
+            OnIntervalRequest("LAMA.Models.InventoryItem");
         }
 
         public void OnIntervalRequestLarpActivity()
         {
-            OnIntervalRequest("LarpActivity");
+            OnIntervalRequest("LAMA.Models.LarpActivity");
         }
 
         private void OnIntervalRequest(string type)

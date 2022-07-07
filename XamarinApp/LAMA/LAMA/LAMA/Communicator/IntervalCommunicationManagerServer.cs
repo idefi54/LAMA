@@ -14,31 +14,31 @@ namespace LAMA.Communicator
         }
         public void OnIntervalRequestCP()
         {
-            OnIntervalRequest("CP");
+            OnIntervalRequest("LAMA.Models.CP");
         }
 
         public void OnIntervalRequestInventoryItem()
         {
-            OnIntervalRequest("InventoryItem");
+            OnIntervalRequest("LAMA.Models.InventoryItem");
         }
 
         public void OnIntervalRequestLarpActivity()
         {
-            OnIntervalRequest("LarpActivity");
+            OnIntervalRequest("LAMA.Models.LarpActivity");
         }
 
         private void OnIntervalRequest(string type)
         {
             Pair<int, int> interval = new Pair<int, int>(0, 0);
-            if (type == "LarpActivity")
+            if (type == "LAMA.Models.LarpActivity")
             {
                 interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0);
             }
-            else if (type == "CP")
+            else if (type == "LAMA.Models.CP")
             {
                 interval = database.IntervalManager<Models.CP>.GiveNewInterval(0);
             }
-            else if (type == "InventoryItem")
+            else if (type == "LAMA.Models.InventoryItem")
             {
                 interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0);
             }
@@ -50,19 +50,19 @@ namespace LAMA.Communicator
         {
             if (intervalCommand == "Request")
             {
-                if (objectType == "LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity")
                 {
                     Pair<int, int> interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id);
                     string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.first + ";" + interval.second + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
-                else if (objectType == "CP")
+                else if (objectType == "LAMA.Models.CP")
                 {
                     Pair<int, int> interval = database.IntervalManager<Models.CP>.GiveNewInterval(id);
                     string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.first + ";" + interval.second + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
-                else if (objectType == "InventoryItem")
+                else if (objectType == "LAMA.Models.InventoryItem")
                 {
                     Pair<int, int> interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
                     string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.first + ";" + interval.second + ";" + id;
