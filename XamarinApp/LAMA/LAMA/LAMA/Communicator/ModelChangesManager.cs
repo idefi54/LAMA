@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Diagnostics;
 
 namespace LAMA.Communicator
 {
@@ -27,9 +28,21 @@ namespace LAMA.Communicator
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
-            attributesCache.getByKey(attributeID).time = updateTime;
+            if (!attributesCache.containsKey(attributeID))
+            {
+                Console.WriteLine(attributesCache.Count);
+                Console.WriteLine(objectsCache.Count);
+                Console.WriteLine(attributeID);
+
+                attributesCache.add(new TimeValue(updateTime, changed.getAttribute(attributeIndex), attributeID));
+            }
+            else
+            {
+                attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
+                attributesCache.getByKey(attributeID).time = updateTime;
+            }
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
+            Debug.WriteLine(command);
             communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
@@ -41,17 +54,17 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
 
-                if (objectType == "LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
-                if (objectType == "CP")
+                if (objectType == "LAMA.Models.CP")
                 {
                     DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
-                if (objectType == "InventoryItem")
+                if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
@@ -85,17 +98,17 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
 
-                if (objectType == "LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
-                if (objectType == "CP")
+                if (objectType == "LAMA.Models.CP")
                 {
                     DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
-                if (objectType == "InventoryItem")
+                if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
@@ -111,7 +124,7 @@ namespace LAMA.Communicator
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
-
+            Debug.WriteLine(command);
             if (!objectsCache.containsKey(objectCacheID))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
@@ -126,7 +139,7 @@ namespace LAMA.Communicator
 
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
-            if (objectType == "LarpActivity")
+            if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
                 string[] attributtes = serializedObject.Split(',');
@@ -147,7 +160,7 @@ namespace LAMA.Communicator
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
 
-            if (objectType == "CP")
+            if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
                 string[] attributtes = serializedObject.Split(',');
@@ -168,7 +181,7 @@ namespace LAMA.Communicator
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
 
-            if (objectType == "InventoryItem")
+            if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
                 string[] attributtes = serializedObject.Split(',');
@@ -206,7 +219,7 @@ namespace LAMA.Communicator
 
         public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
-            if (objectType == "LarpActivity")
+            if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
                 string[] attributtes = serializedObject.Split(',');
@@ -229,7 +242,7 @@ namespace LAMA.Communicator
                 }
             }
 
-            if (objectType == "CP")
+            if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
                 string[] attributtes = serializedObject.Split(',');
@@ -253,7 +266,7 @@ namespace LAMA.Communicator
                 }
             }
 
-            if (objectType == "InventoryItem")
+            if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
                 string[] attributtes = serializedObject.Split(',');
@@ -307,19 +320,19 @@ namespace LAMA.Communicator
             {
                 int nAttributes = 0;
                 Models.LarpActivity removedActivity;
-                if (objectType == "LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedActivity.numOfAttributes();
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeByID(objectID);
                 }
                 Models.CP removedCP;
-                if (objectType == "CP" && (removedCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.CP" && (removedCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedCP.numOfAttributes();
                     DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
                 }
                 Models.InventoryItem removedInventoryItem;
-                if (objectType == "InventoryItem" && (removedInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.InventoryItem" && (removedInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedInventoryItem.numOfAttributes();
                     DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.removeByID(objectID);

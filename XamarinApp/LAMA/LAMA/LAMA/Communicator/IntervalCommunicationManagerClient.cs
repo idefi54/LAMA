@@ -38,17 +38,17 @@ namespace LAMA.Communicator
         {
             if (intervalCommand == "Add" && communicator.id == id)
             {
-                if (objectType == "LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
                 }
 
-                if (objectType == "CP")
+                if (objectType == "LAMA.Models.CP")
                 {
                     DatabaseHolder<Models.CP>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
                 }
 
-                if (objectType == "InventoryItem")
+                if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
                 }

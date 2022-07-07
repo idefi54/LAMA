@@ -45,8 +45,12 @@ namespace LAMA.Communicator
 
         private int _id;
         public int id { get { return _id; } }
-        private void ProcessBroadcast()
+        private async void ProcessBroadcast()
         {
+            await MainThread.InvokeOnMainThreadAsync(new Action(() =>
+            {
+                LoadCommandQueue();
+            }));
             lock (socketLock)
             {
                 if (connected && s.Connected)
@@ -71,14 +75,24 @@ namespace LAMA.Communicator
                     }
                 }
             }
+            MainThread.BeginInvokeOnMainThread(new Action(() =>
+            {
+                SaveCommandQueue();
+            }));
         }
 
         public void SendCommand(Command command)
         {
+            int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
+            string key = "CommandQueue" + savedQueueLength;
+            objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
+            objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
+            /*
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
             }
+            */
         }
 
         private static void ReceiveData(IAsyncResult AR)
@@ -172,7 +186,6 @@ namespace LAMA.Communicator
                 return;
             }
         }
-
 
         private void ReceiveID(int id)
         {
@@ -270,7 +283,46 @@ namespace LAMA.Communicator
             _connected = true;
         }
 
-        public void SendClientInfo()
+        private void SaveCommandQueue()
+        {
+            List<Command> commandsToSave = new List<Command>();
+            lock (commandsLock) {
+                commandsToSave = commandsToBroadcast.ToList();
+            }
+            for (int i = 0; i < commandsToSave.Count; i++)
+            {
+                string key = "CommandQueue" + i;
+                if (objectsCache.getByKey(key) != null)
+                {
+                    objectsCache.getByKey(key).command = commandsToSave[i].command;
+                }
+                else
+                {
+                    objectsCache.add(new Command(commandsToSave[i].command, commandsToSave[i].time, key, commandsToSave[i].receiverID));
+                }
+            }
+        }
+
+        private void LoadCommandQueue()
+        {
+            List<Command> commandsLoaded = new List<Command>();
+            int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
+            for (int i = 0; i < savedQueueLength; i++)
+            {
+                string key = "CommandQueue" + i;
+                if (objectsCache.getByKey(key) != null)
+                {
+                    commandsLoaded.Add(objectsCache.getByKey(key));
+                }
+            }
+
+            lock (commandsLock)
+            {
+                commandsToBroadcast = new Queue<Command>(commandsLoaded);
+            }
+        }
+
+        private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + id;
             SendCommand(new Command(command, "None"));
@@ -286,6 +338,12 @@ namespace LAMA.Communicator
         {
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
+            if (objectsCache.getByKey("CommandQueueLength") == null)
+            {
+                objectsCache.add(new Command("0", "CommandQueueLength"));
+            }
+            LoadCommandQueue();
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {

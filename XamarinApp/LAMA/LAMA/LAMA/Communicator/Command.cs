@@ -103,8 +103,8 @@ namespace LAMA.Communicator
                 case 1: return _time.ToString();
                 case 2: return _command;
                 case 3: return _receiverID.ToString();
+                default: throw new Exception("wrong index called");
             }
-            throw new Exception("wrong index called");
         }
 
         public string[] getAttributeNames()
@@ -131,12 +131,12 @@ namespace LAMA.Communicator
         {
             switch (index)
             {
-                case 0: throw new Exception("Can not change key of Command");
+                case 0: _key = value; break;
                 case 1: _time = Int64.Parse(value); break;
                 case 2: _command = value; break;
                 case 3: _receiverID = Int32.Parse(value); break;
+                default: throw new Exception("wrong index called");
             }
-            throw new Exception("wrong index called");
         }
 
 

@@ -67,7 +67,7 @@ namespace LAMA
         /// <param name="data"> data to be added</param>
         /// <param name="invokeEvent"> should the network be notified about the change?</param>
         /// <returns></returns>
-        public bool add(T data, bool invokeEvent = true)
+        public bool add(T data)
         {
             if (KeyToIndex.ContainsKey(data.getKey()))
                 return false;

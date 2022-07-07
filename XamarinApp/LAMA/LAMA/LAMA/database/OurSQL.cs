@@ -388,7 +388,7 @@ namespace LAMA
             string attributeName = who.getAttributeNames()[attributeIndex];
 
             command.CommandText = "UPDATE " + tableName + " SET " + attributeName + " = " + "'" + newAttributeValue + "'" +
-                ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE ID = " + "'" + who.getKey() + "'";
+                ", lastChange = " + DateTimeOffset.Now.ToUnixTimeMilliseconds() + " WHERE KEY = " + "'" + who.getKey() + "'";
             command.ExecuteNonQuery();
         }
 
@@ -397,7 +397,7 @@ namespace LAMA
             SQLiteCommand command = connection.CreateCommand();
             StringBuilder commandText = new StringBuilder();
 
-            commandText.Append("DELETE FROM " + table + " WHERE ID = " + "'" + who.getKey() + "'");
+            commandText.Append("DELETE FROM " + table + " WHERE KEY = " + "'" + who.getKey() + "'");
             command.CommandText = commandText.ToString();
             command.ExecuteNonQuery();
         }
