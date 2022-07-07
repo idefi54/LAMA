@@ -9,41 +9,32 @@ namespace LAMA
 {
 
     
-    public class RememberedList<T> where T : Serializable, new()
+    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
+        SortedDictionary<int, int> IDToIndex = new SortedDictionary<int, int>();
+
         
-        Dictionary<int, int> IDToIndex = new Dictionary<int, int>();
-
-        static StringBuilder ID = new StringBuilder();
-
-        string myID;
-        public string tableName { get { return myID; } }
-
         List<T> cache = new List<T>();
-        OurSQL<T> sql;
-        public OurSQL<T> sqlConnection { get { return sql; } }
+        OurSQL<T, Storage> sql;
+        OurSQLInterval intervalsSQL;
+        public OurSQL<T, Storage> sqlConnection { get { return sql; } }
+        int typeID = -1;
 
-        public RememberedList(OurSQL<T> sql)
+        public RememberedList(OurSQL<T, Storage> sql)
         {
+            intervalsSQL = new OurSQLInterval();
             this.sql = sql;
-
-            if (ID.Length == 0)
-                ID.Append(typeof(T).Name);
-            if (ID[ID.Length - 1] < 'Z')
-                ++ID[ID.Length - 1];
-            else
-                ID.Append('a');
-            myID = ID.ToString();
-            if (!sql.containsTable(myID))
-                sql.makeTable(myID);
-
+            typeID = new T().getTypeID();
             loadData();
         }
 
         void loadData()
         {
+            
+            IDIntervals = intervalsSQL.ReadData(typeID);
+            
 
-            cache = sql.ReadData(myID);
+            cache = sql.ReadData();
 
             int i = 0;
             foreach(var a in cache)
@@ -83,7 +74,7 @@ namespace LAMA
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
-            sql.addData(myID, data, invokeEvent);
+            sql.addData(data, invokeEvent);
             return true;
         }
 
@@ -102,7 +93,7 @@ namespace LAMA
             var who = cache[index];
             cache.RemoveAt(index);
 
-            sql.removeAt(myID, who);
+            sql.removeAt(who);
         }
 
         //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)
@@ -123,64 +114,68 @@ namespace LAMA
         }
 
 
-        List<Pair<int, int>> IDIntervals = new List<Pair<int, int>>();
+        List<Database.Interval> IDIntervals = new List<Database.Interval>();
+        bool askedForMore = false;
+        int currentIntervalNum = 0;
 
-
-        public void NewIntervalReceived(Pair<int, int> input)
+        public void NewIntervalReceived(Database.Interval input)
         {
-            throw new NotImplementedException();
+            askedForMore = false;
+            IDIntervals.Add(input);
+            intervalsSQL.addData(input);
         }
 
 
 
-        public delegate void GiveNewIntervalDelegate<U>();
+        public delegate void GiveNewIntervalDelegate<U>(int typeID);
         public event GiveNewIntervalDelegate<T> GiveNewInterval;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
         public int nextID()
-        {
+        {   
 
-            /*if(málo id zbejvá = půlka posledního intervalu je plná)
-             * {
-             * invoke event (typ)
-             * 
-             * }
-             * 
-             * */
+            Database.Interval currentInterval = null;
 
-
-           /*
-            if (došly ID)
-           {
-           počkat na server
-           }
-            */
-
-            if(IDIntervals.Count == 0)
+            // find first interval with space 
+            for (int i = currentIntervalNum; i < IDIntervals.Count; ++i) 
             {
-                IDIntervals.Add(getNextIDInterval());
-            }
-
-            for (int i = 0; i < IDIntervals.Count; ++i) 
-            {
-                for (int j = IDIntervals[i].first; j < IDIntervals[i].second; ++j)
+                if (IDIntervals[i].lastTaken < IDIntervals[i].end - 1)
                 {
-                    if (!IDToIndex.ContainsKey(j))
-                        return j;
-                }
+                    currentInterval = IDIntervals[i];
+                    currentIntervalNum = i;
+                    break;
+                }    
             }
 
-            IDIntervals.Add(getNextIDInterval());
-            return IDIntervals[IDIntervals.Count - 1].first;
+            Database.Interval lastInterval = null;
+            if (IDIntervals.Count != 0)
+                lastInterval = IDIntervals[IDIntervals.Count - 1];
+            // running out of IDs, so I need to ask the server for more
+            if (currentInterval == null || 
+                (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
+            {
+                if (askedForMore)
+                {
+                    GiveNewInterval.Invoke(new T().getTypeID());
+                    askedForMore = true;
+                }
+                //if i am out of IDs just return null
+                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end) 
+                    return -1;
+            }
 
+            //now i know i have anough space for at least one more ID
+
+            currentInterval.lastTaken++;
+            intervalsSQL.Update(currentInterval);
+            return currentInterval.lastTaken;
+          
         }
 
-        // TODO   asynch await  protože bude trvat než dostanu odpověď
-        // TODO   žádat o novej interval před tim než sem zaplněnej
-        private Pair<int,int> getNextIDInterval()
-        {
-            throw new Exception("not implemented, call network to give me another interval");
-        }
-
+        
     }
 
 

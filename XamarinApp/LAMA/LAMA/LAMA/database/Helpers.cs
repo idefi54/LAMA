@@ -8,6 +8,18 @@ namespace LAMA
 {
     class Helpers
     {
+        public static long readLong (string input)
+        {
+            int offset = 0;
+            long num = 0;
+            while (offset < input.Length && char.IsDigit(input[offset]))
+            {
+                num *= 10;
+                num += input[offset] - '0';
+                ++offset;
+            }
+            return num;
+        }
         public static int readInt(string input, ref int offset)
         {
             int num = 0;
