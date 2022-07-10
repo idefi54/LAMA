@@ -31,8 +31,8 @@ namespace LAMA.Communicator
 
         static byte[] buffer = new byte[8 * 1024];
         private static ClientCommunicator THIS;
-        private RememberedStringDictionary<Command> objectsCache;
-        private RememberedStringDictionary<TimeValue> attributesCache;
+        private RememberedStringDictionary<Command, CommandStorage> objectsCache;
+        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private ModelChangesManager modelChangesManager;
         private IntervalCommunicationManagerClient intervalsManager;
         static Random rd = new Random();
@@ -337,8 +337,8 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             _connected = false;
-            attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
+            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
@@ -406,9 +406,9 @@ namespace LAMA.Communicator
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-                DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-                DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-                DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequest;
+                DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequest;
+                DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequest;
             }
         }
     }

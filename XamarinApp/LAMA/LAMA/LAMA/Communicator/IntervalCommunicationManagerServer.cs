@@ -12,37 +12,23 @@ namespace LAMA.Communicator
         {
             this.communicator = communicator;
         }
-        public void OnIntervalRequestCP()
-        {
-            OnIntervalRequest("LAMA.Models.CP");
-        }
 
-        public void OnIntervalRequestInventoryItem()
+        public void OnIntervalRequest<T>(T type)
         {
-            OnIntervalRequest("LAMA.Models.InventoryItem");
-        }
-
-        public void OnIntervalRequestLarpActivity()
-        {
-            OnIntervalRequest("LAMA.Models.LarpActivity");
-        }
-
-        private void OnIntervalRequest(string type)
-        {
-            Pair<int, int> interval = new Pair<int, int>(0, 0);
-            if (type == "LAMA.Models.LarpActivity")
+            Database.Interval interval = new Database.Interval(0, 0, 0, 0);
+            if (typeof(T).FullName == "LAMA.Models.LarpActivity")
             {
-                interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0);
+                interval = Database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0, (new Models.LarpActivity()).getTypeID());
             }
-            else if (type == "LAMA.Models.CP")
+            else if (typeof(T).FullName == "LAMA.Models.CP")
             {
-                interval = database.IntervalManager<Models.CP>.GiveNewInterval(0);
+                interval = Database.IntervalManager<Models.CP>.GiveNewInterval(0, (new Models.CP()).getTypeID());
             }
-            else if (type == "LAMA.Models.InventoryItem")
+            else if (typeof(T).FullName == "LAMA.Models.InventoryItem")
             {
-                interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0);
+                interval = Database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0, (new Models.InventoryItem()).getTypeID());
             }
-            string command = "Interval" + ";" + "Add" + ";" + type + ";" + interval.first + ";" + interval.second;
+            string command = "Interval" + ";" + "Add" + ";" + type + ";" + interval.start + ";" + interval.end;
             communicator.SendCommand(new Command(command, "None"));
         }
 
@@ -52,20 +38,20 @@ namespace LAMA.Communicator
             {
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
-                    Pair<int, int> interval = database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    Database.Interval interval = Database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id, (new Models.LarpActivity()).getTypeID());
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
                 else if (objectType == "LAMA.Models.CP")
                 {
-                    Pair<int, int> interval = database.IntervalManager<Models.CP>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    Database.Interval interval = Database.IntervalManager<Models.CP>.GiveNewInterval(id, (new Models.CP()).getTypeID());
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
                 else if (objectType == "LAMA.Models.InventoryItem")
                 {
-                    Pair<int, int> interval = database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.first + ";" + interval.second + ";" + id;
+                    Database.Interval interval = Database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id, (new Models.InventoryItem()).getTypeID());
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
             }

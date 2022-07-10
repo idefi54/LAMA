@@ -12,7 +12,7 @@ namespace LAMA.Communicator
         {
             this.communicator = communicator;
         }
-
+        /*
         public void OnIntervalRequestCP()
         {
             OnIntervalRequest("LAMA.Models.CP");
@@ -27,10 +27,10 @@ namespace LAMA.Communicator
         {
             OnIntervalRequest("LAMA.Models.LarpActivity");
         }
-
-        private void OnIntervalRequest(string type)
+        */
+        public void OnIntervalRequest<T>(T type)
         {
-            string command = "Interval" + ";" + "Request" + ";" + type + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            string command = "Interval" + ";" + "Request" + ";" + typeof(T).FullName + ";" + 0 + ";" + 0 + ";" + communicator.id;
             communicator.SendCommand(new Command(command, "None"));
         }
 
@@ -40,17 +40,17 @@ namespace LAMA.Communicator
             {
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, (new Models.LarpActivity()).getTypeID(), id));
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, (new Models.CP()).getTypeID(), id));
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.NewIntervalReceived(new Pair<int, int>(lowerLimit, upperLimit));
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, (new Models.InventoryItem()).getTypeID(), id));
                 }
             }
         }
