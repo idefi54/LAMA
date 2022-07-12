@@ -25,7 +25,7 @@ namespace LAMA
         public RememberedList<T, Storage> rememberedList;
     }
 
-    internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.StorageInterface, new()
+    internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.DictionaryStorageInterface, new()
     {
         // Singleton
         private static DatabaseHolderStringDictionary<T, Storage> _instance;

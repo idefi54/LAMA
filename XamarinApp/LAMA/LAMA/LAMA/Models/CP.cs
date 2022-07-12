@@ -167,6 +167,7 @@ namespace LAMA.Models
             }
             return output.ToArray();
         }
+        public const int typeID = 1;
         public int getTypeID()
         {
             return 1;

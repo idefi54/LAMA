@@ -1,30 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using SQLite;
 namespace LAMA.Communicator
 {
-    internal class TimeValueStorage : Database.StorageInterface
+    internal class TimeValueStorage: Database.DictionaryStorageInterface
     {
+        /*
+         _key = input[0];
+            _time = Int64.Parse(input[1]);
+            _value = input[2];*/
+        [PrimaryKey]
         public string key { get; set; }
+        public Int64 time { get; set; }
         public string value { get; set; }
-        public long time { get; set; }
+        
 
-        public long lastChange { get; set; }
+        public string getKey()
+        { return key; }
 
+        public string[] getStrings()
+        {
+            return new string[] { key, time.ToString(), value };
+        }
         public void makeFromStrings(string[] input)
         {
             key = input[0];
             time = Int64.Parse(input[1]);
             value = input[2];
-        }
-        public string[] getStrings()
-        {
-            return new string[] { key, time.ToString(), value };
-        }
-        public int getID()
-        {
-            throw new NotImplementedException();
         }
     }
 }

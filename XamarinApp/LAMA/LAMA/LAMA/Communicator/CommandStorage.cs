@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SQLite;
 
 namespace LAMA.Communicator
 {
-    internal class CommandStorage : Database.StorageInterface
+    internal class CommandStorage: Database.DictionaryStorageInterface
     {
+        
+        [PrimaryKey]
         public string key { get; set; }
-        public int receiverID { get; set; }
+        public Int64 time { get; set; }
         public string command { get; set; }
-        public long time { get; set; }
+        public Int32 receiverID { get; set; }
 
-        public long lastChange { get; set; }
+
 
         public void makeFromStrings(string[] input)
         {
@@ -24,9 +27,10 @@ namespace LAMA.Communicator
         {
             return new string[] { key, time.ToString(), command, receiverID.ToString() };
         }
-        public int getID()
+        public string getKey()
         {
-            throw new NotImplementedException();
+            return key;
         }
+
     }
 }
