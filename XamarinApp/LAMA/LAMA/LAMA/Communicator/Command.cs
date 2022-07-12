@@ -78,8 +78,8 @@ namespace LAMA.Communicator
 
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
-            list.sqlConnection.changeData(list.tableName, index, newVal, this);
+            var list = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+            list.sqlConnection.changeData(index, newVal, this);
         }
 
         public byte[] Encode()

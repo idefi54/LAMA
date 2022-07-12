@@ -14,12 +14,12 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
-        static public Interval GiveNewInterval(int toWho, int typeID)
+        static public Interval GiveNewInterval(int toWho)
         {
             if (endOfLast == 0)
                 initialize();
 
-            Interval newInterval = new Interval(endOfLast, endOfLast + IntervalLength,typeID, toWho);
+            Interval newInterval = new Interval(endOfLast, endOfLast + IntervalLength, toWho);
             endOfLast += IntervalLength;
 
             if (intervalsGivenToClients.ContainsKey(toWho))

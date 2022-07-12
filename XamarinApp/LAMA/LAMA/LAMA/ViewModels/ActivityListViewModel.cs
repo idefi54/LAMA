@@ -26,9 +26,9 @@ namespace LAMA.ViewModels
 
             LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
 
-            for (int i = 0; i < DatabaseHolder<LarpActivity>.Instance.rememberedList.Count; i++)
+            for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
-                LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity>.Instance.rememberedList[i]));
+                LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]));
             }
 
             foreach(ActivityListItemViewModel item in LarpActivityListItems)
@@ -110,7 +110,7 @@ namespace LAMA.ViewModels
                 larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
-            DatabaseHolder<LarpActivity>.Instance.rememberedList.add(activity);
+            DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);
         }
     }
 }

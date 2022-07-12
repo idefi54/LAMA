@@ -121,14 +121,15 @@ namespace LAMA
         public void NewIntervalReceived(Database.Interval input)
         {
             askedForMore = false;
+            input.typeID = new T().getTypeID();
             IDIntervals.Add(input);
             intervalsSQL.addData(input);
         }
 
 
 
-        public delegate void GiveNewIntervalDelegate<U>(int typeID);
-        public event GiveNewIntervalDelegate<T> GiveNewInterval;
+        public delegate void GiveNewIntervalDelegate();
+        public event GiveNewIntervalDelegate GiveNewInterval;
 
         /// <summary>
         /// 
@@ -159,7 +160,7 @@ namespace LAMA
             {
                 if (askedForMore)
                 {
-                    GiveNewInterval.Invoke(new T().getTypeID());
+                    GiveNewInterval.Invoke();
                     askedForMore = true;
                 }
                 //if i am out of IDs just return null
