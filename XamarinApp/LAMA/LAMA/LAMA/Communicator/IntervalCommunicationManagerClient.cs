@@ -22,12 +22,24 @@ namespace LAMA.Communicator
         {
             OnIntervalRequest("LAMA.Models.InventoryItem");
         }
+        */
+        public void OnIntervalRequestCP()
+        {
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.CP" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            communicator.SendCommand(new Command(command, "None"));
+        }
+        public void OnIntervalRequestInventoryItem()
+        {
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.InventoryItem" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            communicator.SendCommand(new Command(command, "None"));
+        }
 
         public void OnIntervalRequestLarpActivity()
         {
-            OnIntervalRequest("LAMA.Models.LarpActivity");
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.LarpActivity" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            communicator.SendCommand(new Command(command, "None"));
         }
-        */
+
         public void OnIntervalRequest<T>(T type)
         {
             string command = "Interval" + ";" + "Request" + ";" + typeof(T).FullName + ";" + 0 + ";" + 0 + ";" + communicator.id;
