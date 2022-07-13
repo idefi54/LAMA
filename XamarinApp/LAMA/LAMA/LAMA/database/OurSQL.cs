@@ -139,7 +139,12 @@ namespace LAMA
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-            connection.CreateTableAsync<Storage>().Wait();
+            var mappingTask = connection.GetMappingAsync<Storage>();
+            mappingTask.Wait();
+            var mappingCount = mappingTask.Result.Columns.Length;
+
+            if(mappingCount == 0)
+                connection.CreateTableAsync<Storage>().Wait();
         }
 
 
