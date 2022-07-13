@@ -48,6 +48,7 @@ namespace LAMA.Communicator
 
         public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
         {
+            communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {id}");
             if (intervalCommand == "Add" && communicator.id == id)
             {
                 if (objectType == "LAMA.Models.LarpActivity")

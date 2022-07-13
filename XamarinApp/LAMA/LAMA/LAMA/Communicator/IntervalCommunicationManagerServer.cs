@@ -36,24 +36,25 @@ namespace LAMA.Communicator
 
         public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
         {
+            communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {id}");
             if (intervalCommand == "Request")
             {
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
                     var interval = Database.IntervalManager<Models.LarpActivity>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LarpActivity" + ";" + interval.start + ";" + interval.end + ";" + id;
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LAMA.Models.LarpActivity" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
                 else if (objectType == "LAMA.Models.CP")
                 {
                     var interval = Database.IntervalManager<Models.CP>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "CP" + ";" + interval.start + ";" + interval.end + ";" + id;
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LAMA.Models.CP" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
                 else if (objectType == "LAMA.Models.InventoryItem")
                 {
                     var interval = Database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
-                    string commandToSend = "Interval" + ";" + "Add" + ";" + "InventoryItem" + ";" + interval.start + ";" + interval.end + ";" + id;
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LAMA.Models.InventoryItem" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, "None"));
                 }
             }

@@ -14,6 +14,11 @@ namespace LAMA.Communicator
 {
     public class ServerCommunicator : Communicator
     {
+        public DebugLogger logger;
+        public DebugLogger Logger
+        {
+            get { return logger; }
+        }
         static byte[] buffer = new byte[8 * 1024];
         static Socket serverSocket;
         private Thread server;
@@ -60,6 +65,7 @@ namespace LAMA.Communicator
                 }
                 if (currentCommand != null)
                 {
+                    logger.LogWrite($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode();
                     List<int> socketsToRemove = new List<int>();
                     lock (socketsLock)
@@ -114,6 +120,7 @@ namespace LAMA.Communicator
                             clientSockets.Remove(i);
                         }
                     }
+                    logger.LogWrite($"Finished Sending: {currentCommand.command}");
                 }
             }
         }
@@ -162,6 +169,7 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             string message = Encoding.Default.GetString(data);
+            THIS.logger.LogWrite($"Message Received: {message}");
             string[] messageParts = message.Split(';');
             if (messageParts[1] == "DataUpdated")
             {
@@ -236,11 +244,13 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
+            Debug.WriteLine("Server communicator created");
+            logger = new DebugLogger(true);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
-            //Debug.WriteLine("Created client, loaded dictionaries");
+            logger.LogWrite("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
                 throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 charcters");
@@ -285,7 +295,7 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
-            //Debug.WriteLine("No exceptions");
+            logger.LogWrite("No exceptions");
             maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
@@ -293,21 +303,24 @@ namespace LAMA.Communicator
             server = new Thread(StartServer);
             server.Start();
             THIS = this;
+            logger.LogWrite("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
             intervalsManager = new IntervalCommunicationManagerServer(this);
-            //Debug.WriteLine("Subscribing to events");
+            logger.LogWrite("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
             DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
             DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
-            //Debug.WriteLine("Initialization finished");
+            logger.LogWrite("Initialization finished");
         }
 
         private void SendCommand(string commandText, string objectID)
         {
-            Command command = new Command(commandText, DateTimeOffset.Now.ToUnixTimeMilliseconds(), objectID);
+            long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            Command command = new Command(commandText, time, objectID);
+            logger.LogWrite($"Sending Command: {commandText} | {time} | {objectID}");
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -316,6 +329,7 @@ namespace LAMA.Communicator
 
         public void SendCommand(Command command)
         {
+            logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key}");
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -337,6 +351,7 @@ namespace LAMA.Communicator
 
         private void NewClientConnected(int id, Socket current)
         {
+            logger.LogWrite($"New Client Connected: {id}");
             lock (THIS.socketsLock)
             {
                 clientSockets[id] = current;
@@ -346,6 +361,7 @@ namespace LAMA.Communicator
 
         public void SendUpdate(Socket current, int id, long lastUpdateTime)
         {
+            logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
             for (int i = 0; i < objectsCache.Count; i++)
             {
                 Command entry = objectsCache[i];
