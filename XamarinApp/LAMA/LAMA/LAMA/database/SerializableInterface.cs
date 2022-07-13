@@ -10,7 +10,7 @@ namespace LAMA
     {
         void setAttribute(int index, string value);
 
-        //THERE HAS TO BE AN ATTRIBUTE CALLED ID
+        
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
@@ -18,6 +18,7 @@ namespace LAMA
         void buildFromStrings(string[] input);
         string getAttribute(int index);
         int getTypeID();
+       
         
     }
 

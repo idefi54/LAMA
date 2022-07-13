@@ -232,7 +232,7 @@ namespace LAMA
         }
     }
 
-    public class OurSQLDictionary<Data, Storage> where Data : SerializableDictionaryItem, new() where Storage : LAMA.Database.StorageInterface, new()
+    public class OurSQLDictionary<Data, Storage> where Data : SerializableDictionaryItem, new() where Storage : LAMA.Database.DictionaryStorageInterface, new()
     {
 
         SQLiteAsyncConnection connection { get; }
@@ -263,7 +263,6 @@ namespace LAMA
                 return;
             Storage storage = new Storage();
             storage.makeFromStrings(value.getAttributes());
-            storage.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
             connection.InsertAsync(storage).Wait();
 
         }
@@ -299,7 +298,6 @@ namespace LAMA
         {
             Storage update = new Storage();
             update.makeFromStrings(who.getAttributes());
-            update.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             connection.UpdateAsync(update).Wait();
         }
@@ -307,28 +305,12 @@ namespace LAMA
         public void removeAt(Data who)
         {
 
-            connection.DeleteAsync<Storage>(who.getID()).Wait();
+            connection.DeleteAsync<Storage>(who.getKey()).Wait();
 
         }
 
 
-        public List<int> getDataSince(long when)
-        {
-
-            List<int> output = new List<int>();
-
-            var storages = connection.Table<Storage>().Where(a => a.lastChange >= when);
-
-            var task = storages.ToArrayAsync();
-            var arr = task.Result;
-
-            foreach (var a in arr)
-            {
-                output.Add(a.getID());
-            }
-
-            return output;
-        }
+        
 
         public bool containsTable(string name)
         {

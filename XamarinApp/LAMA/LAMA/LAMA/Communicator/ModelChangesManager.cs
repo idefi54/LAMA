@@ -9,11 +9,11 @@ namespace LAMA.Communicator
     class ModelChangesManager
     {
         private Communicator communicator;
-        private RememberedStringDictionary<Command> objectsCache;
-        private RememberedStringDictionary<TimeValue> attributesCache;
+        private RememberedStringDictionary<Command, CommandStorage> objectsCache;
+        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private bool server;
 
-        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command> objectsCache, RememberedStringDictionary<TimeValue> attributesCache, bool server = false)
+        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false)
         {
             this.server = server;
             this.objectsCache = objectsCache;
@@ -56,17 +56,17 @@ namespace LAMA.Communicator
 
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
                 if (server)
                 {
@@ -100,17 +100,17 @@ namespace LAMA.Communicator
 
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.add(activity, false);
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.add(activity, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
@@ -170,7 +170,7 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.add(cp, false);
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
@@ -191,7 +191,7 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.add(ii, false);
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.add(ii, false);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
@@ -230,7 +230,7 @@ namespace LAMA.Communicator
                 if (objectsCache.containsKey(objectID))
                 {
 
-                    activity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(activityID);
+                    activity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
                     objectsCache.getByKey(objectID).command = command;
                     objectsCache.getByKey(objectID).time = updateTime;
                     activity.buildFromStrings(attributtes);
@@ -254,7 +254,7 @@ namespace LAMA.Communicator
                 if (objectsCache.containsKey(objectID))
                 {
 
-                    cp = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(cpID);
+                    cp = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID);
                     objectsCache.getByKey(objectID).command = command;
                     objectsCache.getByKey(objectID).time = updateTime;
                     cp.buildFromStrings(attributtes);
@@ -277,7 +277,7 @@ namespace LAMA.Communicator
                 if (objectsCache.containsKey(objectID))
                 {
 
-                    ii = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(itemID);
+                    ii = DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(itemID);
                     objectsCache.getByKey(objectID).command = command;
                     objectsCache.getByKey(objectID).time = updateTime;
                     ii.buildFromStrings(attributtes);
@@ -320,22 +320,22 @@ namespace LAMA.Communicator
             {
                 int nAttributes = 0;
                 Models.LarpActivity removedActivity;
-                if (objectType == "LAMA.Models.LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.LarpActivity" && (removedActivity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedActivity.numOfAttributes();
-                    DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.removeByID(objectID);
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.removeByID(objectID);
                 }
                 Models.CP removedCP;
-                if (objectType == "LAMA.Models.CP" && (removedCP = DatabaseHolder<Models.CP>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.CP" && (removedCP = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedCP.numOfAttributes();
-                    DatabaseHolder<Models.CP>.Instance.rememberedList.removeByID(objectID);
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.removeByID(objectID);
                 }
                 Models.InventoryItem removedInventoryItem;
-                if (objectType == "LAMA.Models.InventoryItem" && (removedInventoryItem = DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.getByID(objectID)) != null)
+                if (objectType == "LAMA.Models.InventoryItem" && (removedInventoryItem = DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID)) != null)
                 {
                     nAttributes = removedInventoryItem.numOfAttributes();
-                    DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.removeByID(objectID);
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.removeByID(objectID);
                 }
                 for (int i = 0; i < nAttributes; i++)
                 {

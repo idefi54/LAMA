@@ -31,7 +31,7 @@ namespace LAMA.Views
         {
             if (!doubleClick)
                 return;
-            Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.getByID(activityID);
+            Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
             await Navigation.PushAsync(new DisplayActivityPage(activity));
         }
 

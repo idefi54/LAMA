@@ -19,8 +19,8 @@ namespace LAMA.Communicator
         private Thread server;
         private static ServerCommunicator THIS;
 
-        private RememberedStringDictionary<TimeValue> attributesCache;
-        private RememberedStringDictionary<Command> objectsCache;
+        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
+        private RememberedStringDictionary<Command, CommandStorage> objectsCache;
 
         private object socketsLock = new object();
         private static Dictionary<int, Socket> clientSockets = new Dictionary<int, Socket>();
@@ -236,8 +236,8 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            attributesCache = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command>.Instance.rememberedDictionary;
+            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
             //Debug.WriteLine("Created client, loaded dictionaries");
@@ -299,9 +299,9 @@ namespace LAMA.Communicator
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-            DatabaseHolder<Models.CP>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-            DatabaseHolder<Models.InventoryItem>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-            DatabaseHolder<Models.LarpActivity>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
             //Debug.WriteLine("Initialization finished");
         }
 

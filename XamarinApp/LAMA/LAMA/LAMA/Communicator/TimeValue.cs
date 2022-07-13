@@ -52,8 +52,8 @@ namespace LAMA.Communicator
 
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolderStringDictionary<TimeValue>.Instance.rememberedDictionary;
-            list.sqlConnection.changeData(list.tableName, index, newVal, this);
+            var list = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            list.sqlConnection.changeData(index, newVal, this);
         }
 
         public void buildFromStrings(string[] input)

@@ -319,7 +319,7 @@ namespace LAMA.Models
                 setAttribute(i, input[i]);
             }
         }
-
+        public const int typeID = 3;
         public int getTypeID()
         {
             return 3;

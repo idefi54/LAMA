@@ -15,4 +15,13 @@ namespace LAMA.Database
         int getID();
 
     }
+
+    public interface DictionaryStorageInterface
+    {
+        void makeFromStrings(string[] input);
+        string[] getStrings();
+        string getKey();
+
+        
+    }
 }
