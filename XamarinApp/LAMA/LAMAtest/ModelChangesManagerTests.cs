@@ -29,9 +29,9 @@ namespace LAMAtest
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(345, "testItem", "test inventory item", 2, 3);
             string command3 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join(",", inventoryItem.getAttributes())}";
 
-            manager.ProcessCommand(command, null, true);
-            manager.ProcessCommand(command2, null, true);
-            manager.ProcessCommand(command3, null, true);
+            manager.ProcessCommand(command, null);
+            manager.ProcessCommand(command2, null);
+            manager.ProcessCommand(command3, null);
 
             LAMA.RememberedList<LAMA.Models.LarpActivity, LAMA.Models.LarpActivityStorage> larpActivityList =  LAMA.DatabaseHolder<LAMA.Models.LarpActivity, LAMA.Models.LarpActivityStorage>.Instance.rememberedList;
             LAMA.RememberedList<LAMA.Models.CP, LAMA.Models.CPStorage> cpList = LAMA.DatabaseHolder<LAMA.Models.CP, LAMA.Models.CPStorage>.Instance.rememberedList;
@@ -77,9 +77,9 @@ namespace LAMAtest
             string command5 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemDeleted;{cp.GetType().ToString()};{cp.getID()}";
             string command6 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemDeleted;{inventoryItem.GetType().ToString()};{inventoryItem.getID()}";
 
-            manager.ProcessCommand(command4, null, true);
-            manager.ProcessCommand(command5, null, true);
-            manager.ProcessCommand(command6, null, true);
+            manager.ProcessCommand(command4, null);
+            manager.ProcessCommand(command5, null);
+            manager.ProcessCommand(command6, null);
 
             activityStored = larpActivityList.getByID(activity.getID());
         }
