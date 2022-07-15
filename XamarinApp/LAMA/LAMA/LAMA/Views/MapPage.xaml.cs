@@ -54,11 +54,13 @@ namespace LAMA.Views
                 }
 
                 MapHandler.Instance.SetLocationVisible(mapView, false);
+                await Navigation.PushAsync(new MapLimitsPage());
                 return;
             }
 
             MapHandler.Instance.UpdateLocation(mapView);
             MapHandler.Instance.SetLocationVisible(mapView, true);
+            //MapHandler.globalZoomLimit = 500;
         }
     }
 }
