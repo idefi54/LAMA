@@ -60,7 +60,7 @@ namespace LAMA.Views
 
             MapHandler.Instance.UpdateLocation(mapView);
             MapHandler.Instance.SetLocationVisible(mapView, true);
-            //MapHandler.globalZoomLimit = 500;
+            MapHandler.globalZoomLimit = 500;
         }
     }
 }
