@@ -1,12 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.MapLimitsPage">
+             x:Class="LAMA.Views.MapLimitsPage"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
+            <Label Text="Location was unavailable. Please, zoom on whole location, where the Event will take place."
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
+
+            <Button Text="SaveLimits" Clicked="OnSaveLimits"/>
+
+            <mapsui:MapView
+                x:Name="mapView"
+                Grid.Row="1"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="Fill"
+                BackgroundColor="Gray" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
