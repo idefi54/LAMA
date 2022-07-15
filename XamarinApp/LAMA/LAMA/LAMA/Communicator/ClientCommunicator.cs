@@ -27,7 +27,12 @@ namespace LAMA.Communicator
         static Socket s;
         private object socketLock = new object();
         private Thread listener;
-        private long lastUpdate;
+        public long lastUpdate;
+        public long LastUpdate
+        {
+            get { return lastUpdate; }
+            set { lastUpdate = value; }
+        }
         //private static string CPName;
         //private static string assignedEvent = "";
         private IPAddress _IP;

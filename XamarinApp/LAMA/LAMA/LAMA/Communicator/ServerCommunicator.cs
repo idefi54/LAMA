@@ -19,6 +19,13 @@ namespace LAMA.Communicator
         {
             get { return logger; }
         }
+
+        public long LastUpdate
+        {
+            get { return DateTimeOffset.Now.ToUnixTimeSeconds(); }
+            set { }
+        }
+
         static byte[] buffer = new byte[8 * 1024];
         static Socket serverSocket;
         private Thread server;

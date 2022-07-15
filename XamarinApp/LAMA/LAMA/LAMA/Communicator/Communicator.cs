@@ -6,6 +6,7 @@ namespace LAMA.Communicator
 {
     interface Communicator
     {
+        long LastUpdate { get; set; }
         DebugLogger Logger { get; }
         void SendCommand(Command command);
     }

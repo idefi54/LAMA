@@ -21,7 +21,43 @@ namespace LAMA.Communicator
             communicator = initCommunicator;
         }
 
-        public void OnDataUpdated(Serializable changed, int attributeIndex)
+        public void ProcessCommand(string command, Socket current, bool noCommandSending = false)
+        {
+            string[] messageParts = command.Split(';');
+            if (!server)
+            {
+                if (messageParts[1] == "DataUpdated")
+                {
+                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), current, noCommandSending);
+                }
+                if (messageParts[1] == "ItemCreated")
+                {
+                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), current, noCommandSending);
+                }
+                if (messageParts[1] == "ItemDeleted")
+                {
+                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), noCommandSending);
+                }
+                if (!server && (messageParts[1] == "Rollback"))
+                {
+                    if (messageParts[2] == "DataUpdated")
+                    {
+                        communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                        RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), noCommandSending);
+                    }
+                    if (messageParts[2] == "ItemCreated")
+                    {
+                        communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                        RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), noCommandSending);
+                    }
+                }
+            }
+        }
+
+        public void OnDataUpdated(Serializable changed, int attributeIndex, bool noCommandSending = false)
         {
             int objectID = changed.getID();
             string objectType = changed.GetType().ToString();
@@ -33,11 +69,6 @@ namespace LAMA.Communicator
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             if (!attributesCache.containsKey(attributeID))
             {
-                /*
-                Console.WriteLine(attributesCache.Count);
-                Console.WriteLine(objectsCache.Count);
-                Console.WriteLine(attributeID);
-                */
                 attributesCache.add(new TimeValue(updateTime, changed.getAttribute(attributeIndex), attributeID));
             }
             else
@@ -46,11 +77,10 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            //Debug.WriteLine(command);
-            communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
+            if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
-        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
+        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current, bool noCommandSending = false)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
@@ -76,7 +106,7 @@ namespace LAMA.Communicator
                 if (server)
                 {
                     // Notify every client
-                    communicator.SendCommand(new Command(command, updateTime, attributeID));
+                    if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, attributeID));
                 }
             }
             else if (attributesCache.containsKey(attributeID) && server)
@@ -86,7 +116,7 @@ namespace LAMA.Communicator
                 rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
                 try
                 {
-                    current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
+                    if (!noCommandSending) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
@@ -95,7 +125,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void RollbackDataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
+        public void RollbackDataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, bool noCommandSending = false)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
@@ -121,7 +151,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void OnItemCreated(Serializable changed)
+        public void OnItemCreated(Serializable changed, bool noCommandSending = false)
         {
             int objectID = changed.getID();
             string objectType = changed.GetType().ToString();
@@ -132,7 +162,6 @@ namespace LAMA.Communicator
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
 
             communicator.Logger.LogWrite($"OnItemCreated: {command}");
-            //Debug.WriteLine(command);
             if (!objectsCache.containsKey(objectCacheID))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
@@ -140,12 +169,12 @@ namespace LAMA.Communicator
                 {
                     attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
                 }
-                communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+                if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
             }
         }
 
 
-        public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
+        public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current, bool noCommandSending = false)
         {
             communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
@@ -164,7 +193,7 @@ namespace LAMA.Communicator
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -185,7 +214,7 @@ namespace LAMA.Communicator
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -206,20 +235,20 @@ namespace LAMA.Communicator
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
         }
 
-        private void ItemCreatedSendRollback(string objectID, Socket current)
+        private void ItemCreatedSendRollback(string objectID, Socket current, bool noCommandSending = false)
         {
             communicator.Logger.LogWrite($"ItemCreatedSendRollback: {objectID}");
             string rollbackCommand = "Rollback;";
             rollbackCommand += objectsCache.getByKey(objectID).command;
             try
             {
-                current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                if (!noCommandSending) current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
@@ -227,7 +256,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
+        public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command, bool noCommandSending = false)
         {
             communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
@@ -301,7 +330,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void OnItemDeleted(Serializable changed)
+        public void OnItemDeleted(Serializable changed, bool noCommandSending = false)
         {
             int objectID = changed.getID();
             string objectType = changed.GetType().ToString();
@@ -317,7 +346,7 @@ namespace LAMA.Communicator
             {
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
-                communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+                if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
                     attributesCache.removeByKey(objectID + ";" + i);
@@ -326,7 +355,7 @@ namespace LAMA.Communicator
         }
 
 
-        public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
+        public void ItemDeleted(string objectType, int objectID, long updateTime, string command, bool noCommandSending = false)
         {
             communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
             string objectCacheID = objectType + ";" + objectID;
@@ -360,7 +389,7 @@ namespace LAMA.Communicator
 
                 if (server)
                 {
-                    communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+                    if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
                 }
             }
         }
