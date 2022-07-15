@@ -28,6 +28,9 @@ namespace LAMA.Services
         private long _prevTime;
         private const long _doubleClickTime = 500;
 
+        public static double globalZoomLimit = 500;
+        public static BoundingBox globalPanLimt = new BoundingBox(-1000, -1000, 1000, 1000);
+
         // Events
         public delegate void PinClick(PinClickedEventArgs e, int activityID, bool doubleClick);
         public delegate void MapClick(MapClickedEventArgs e);
@@ -77,6 +80,11 @@ namespace LAMA.Services
             view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
         }
 
+        public static void ApplyGlobalLimits(MapView view)
+        {
+            SetZoomLimits(view, 1, globalZoomLimit);
+            SetPanLimits(view, globalPanLimt.Bottom, globalPanLimt.Left, globalPanLimt.Top, globalPanLimt.Right);
+        }
 
         // Public methods need to work with the map.
         //============================================
