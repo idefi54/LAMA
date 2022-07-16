@@ -35,10 +35,9 @@ namespace LAMA
         {
             
             IDIntervals = intervalsSQL.ReadData(typeID);
-            Debug.WriteLine("After intervals read data");
 
             cache = sql.ReadData();
-            Debug.WriteLine("After sql read data");
+
             int i = 0;
             foreach(var a in cache)
             {

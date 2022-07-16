@@ -272,13 +272,13 @@ namespace LAMA.Models
                     _prerequisiteIDs.dataChanged += onPrerequisiteChange;
                     break;
                 case 6:
-                    _duration.setRawMinutes( Helpers.readInt(value));
+                    _duration.setRawMinutes( Helpers.readInt(value), false);
                     break;
                 case 7:
                     _day = Helpers.readInt(value);
                     break;
                 case 8:
-                    _start.setRawMinutes(Helpers.readInt(value));
+                    _start.setRawMinutes(Helpers.readInt(value), false);
                     break;
                 case 9:
                     _place = Helpers.readDoublePair(value);

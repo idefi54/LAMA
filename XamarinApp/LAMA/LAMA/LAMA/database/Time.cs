@@ -23,6 +23,12 @@ namespace LAMA
             _minutes = input;
             dataChanged?.Invoke();
         }
+        public void setRawMinutes(int input, bool invoke)
+        {
+            _minutes = input;
+            if(invoke)
+                dataChanged?.Invoke();
+        }
 
         public int hours { get { return _minutes / 60; } set { _minutes = value * 60 + _minutes%60; dataChanged?.Invoke(); } }
         public int minutes { get { return _minutes % 60; }  set { _minutes = value + _minutes / 60; dataChanged?.Invoke(); }}
