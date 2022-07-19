@@ -30,7 +30,7 @@ namespace LAMA.Models
         {
             return new string[] { ID.ToString(), name, description, taken, free, takenBy};
         }
-        public int getID()
+        public long getID()
         {
             return ID;
         }

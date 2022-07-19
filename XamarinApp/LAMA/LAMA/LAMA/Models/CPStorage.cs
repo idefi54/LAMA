@@ -36,7 +36,7 @@ namespace LAMA.Models
         {
             return new string[] { ID.ToString(), name, nick, roles, phone, facebook, discord, location, notes};
         }
-        public int getID()
+        public long getID()
         {
             return ID;
         }
