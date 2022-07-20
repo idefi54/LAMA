@@ -23,25 +23,6 @@ namespace LAMA.Views
         {
             InitializeComponent();
             _draggedButton = null;
-        }
-
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            _editButton.Text = (_editButton.Text == EditText) ? FinishEditText : EditText;
-            Grid grid = Content as Grid;
-            foreach (var child in grid.Children)
-            {
-                var button = child as Button;
-                if (button == null || button == _editButton)
-                    continue;
-
-                button.IsEnabled = _editButton.Text == EditText;
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
 
             Grid g = Content as Grid;
 
@@ -80,9 +61,28 @@ namespace LAMA.Views
                 TextColor = Color.White,
             };
             _editButton.Clicked += Button_Clicked;
-
             g.Children.Add(_editButton);
+        }
 
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            _editButton.Text = (_editButton.Text == EditText) ? FinishEditText : EditText;
+            Grid grid = Content as Grid;
+            foreach (var child in grid.Children)
+            {
+                var button = child as Button;
+                if (button == null || button == _editButton)
+                    continue;
+
+                button.IsEnabled = _editButton.Text == EditText;
+            }
+
+
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
         }
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)
