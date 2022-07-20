@@ -45,7 +45,7 @@ namespace LAMA.Views
             indicator.IsRunning = false;
         }
 
-        async void OnSaveLimits(object sender, EventArgs e)
+        async void OnSaveLocation(object sender, EventArgs e)
         {
             Mapsui.Geometries.Point p = Mapsui.Projection.SphericalMercator.ToLonLat(mapView.Viewport.Center.X, mapView.Viewport.Center.Y);
             Location loc = new Location
@@ -56,7 +56,9 @@ namespace LAMA.Views
             MapHandler.Instance.CurrentLocation = loc;
             (Content as StackLayout).Children.Remove(mapView);
             mapView = null;
-            await Navigation.PushAsync(new MapPage());
+
+            await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
+            await Navigation.PopModalAsync();
         }
 
 

@@ -68,7 +68,7 @@ namespace LAMA.Views
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
                 await DisplayAlert("Location not available", "If you want your location to be visible on the map, please have your location turned on and grant the permission to use it.", "OK");
-                await Navigation.PushAsync(new MapLimitsPage(), false);
+                await Navigation.PushModalAsync(new MapLimitsPage());
                 layout.Children.Remove(activityIndicator);
                 return;
             }
