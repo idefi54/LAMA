@@ -5,11 +5,11 @@
              xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Please, zoom on whole location, where the Event will take place."
+            <Label Text="Please, zoom on the location, where the Event will take place."
                 VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand" />
 
-            <Button Text="SaveLimits" Clicked="OnSaveLimits"/>
+            <Button Text="SaveLocation" Clicked="OnSaveLocation"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
