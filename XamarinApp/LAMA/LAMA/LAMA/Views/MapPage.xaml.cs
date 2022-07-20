@@ -1,66 +1,110 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
-using Mapsui;
-using Mapsui.Projection;
-using Mapsui.Utilities;
 using LAMA.Services;
 using Xamarin.Essentials;
+using Mapsui.UI.Forms;
 
 namespace LAMA.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class MapPage : ContentPage
-	{
-        private bool UserAnswered = false;
-		public MapPage()
-		{
-			InitializeComponent();
-            MapHandler.Instance.MapViewSetup(mapView);
-            MapHandler.Instance.AddActivity(0, 0, 125, mapView);
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class MapPage : ContentPage
+    {
+        private MapView _mapView;
+
+        public MapPage()
+        {
+            InitializeComponent();
             MapHandler.Instance.OnPinClick += OnPinClicked;
         }
 
-        private async void OnPinClicked(Mapsui.UI.Forms.PinClickedEventArgs e, int activityID, bool doubleClick)
+        private async void OnPinClicked(PinClickedEventArgs e, int activityID, bool doubleClick)
         {
             if (!doubleClick)
                 return;
             Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
             await Navigation.PushAsync(new DisplayActivityPage(activity));
+            e.Handled = true;
+        }
+
+        private async Task<bool> CheckLocationAvailable()
+        {
+            PermissionStatus status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+            if (status != PermissionStatus.Granted)
+                return false;
+
+            // try if the location is truly ON
+            try
+            {
+                await Geolocation.GetLocationAsync();
+            } catch (FeatureNotEnabledException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            var layout = (Content as StackLayout);
 
+            // Add activity indicator
+            var activityIndicator = new ActivityIndicator
+            {
+                VerticalOptions = LayoutOptions.CenterAndExpand,
+                HorizontalOptions = LayoutOptions.CenterAndExpand
+            };
+            activityIndicator.IsRunning = true;
+            layout.Children.Add(activityIndicator);
 
-            // Just to be sure but it did not fixed the problem.
+            // Handle permissions and location
             await Permissions.RequestAsync<Permissions.StorageWrite>();
             await Permissions.RequestAsync<Permissions.StorageRead>();
+            bool locationAvailable = await CheckLocationAvailable();
 
-            if (status != PermissionStatus.Granted)
+            if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
-                if (!UserAnswered)
-                {
-                    await DisplayAlert("Location not available", "If you want your location to be visible on the map, please have your location turned on and grant the permission to use it.", "OK");
-                    UserAnswered = true;
-                }
-
-                MapHandler.Instance.SetLocationVisible(mapView, false);
-                await Navigation.PushAsync(new MapLimitsPage());
+                await DisplayAlert("Location not available", "If you want your location to be visible on the map, please have your location turned on and grant the permission to use it.", "OK");
+                await Navigation.PushAsync(new MapLimitsPage(), false);
+                layout.Children.Remove(activityIndicator);
                 return;
             }
 
-            MapHandler.Instance.UpdateLocation(mapView);
-            MapHandler.Instance.SetLocationVisible(mapView, true);
-            MapHandler.globalZoomLimit = 500;
+            // Handle the fucking map
+            await Task.Delay(500);
+
+            // Init Map View
+            _mapView = new MapView
+            {
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                BackgroundColor = Color.Gray
+            };
+            MapHandler.Instance.MapViewSetup(_mapView);
+            MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
+            MapHandler.Instance.SetLocationVisible(_mapView, locationAvailable);
+            MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
+            MapHandler.Zoom(_mapView, 75);
+            MapHandler.SetZoomLimits(_mapView, 1, 100);
+
+            layout.Children.Add(_mapView);
+            layout.Children.Remove(activityIndicator);
+           
+            // test
+            MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (_mapView == null)
+                return;
+
+            (Content as StackLayout).Children.Remove(_mapView);
+            _mapView = null;
         }
     }
 }
