@@ -1,4 +1,4 @@
-﻿
+﻿using System.Diagnostics;
 
 namespace LAMA
 {
@@ -10,7 +10,12 @@ namespace LAMA
         {
             get
             {
-                if (_instance == null) _instance = new DatabaseHolder<T, Storage>();
+                if (_instance == null)
+                {
+                    _instance = new DatabaseHolder<T, Storage>();
+                    Debug.WriteLine("setting instance");
+                    Debug.WriteLine(_instance);
+                }
                 return _instance;
             }
         }
@@ -18,8 +23,11 @@ namespace LAMA
         // Object Specific
         private DatabaseHolder()
         {
+            Debug.WriteLine("Database Holder");
             var sql = new OurSQL<T, Storage>();
+            Debug.WriteLine("OurSQL finished");
             rememberedList = new RememberedList<T, Storage>(sql);
+            Debug.WriteLine("Remembered list initialized");
         }
 
         public RememberedList<T, Storage> rememberedList;

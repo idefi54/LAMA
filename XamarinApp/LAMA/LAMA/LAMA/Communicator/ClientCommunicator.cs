@@ -8,11 +8,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using System.Diagnostics;
 
 namespace LAMA.Communicator
 {
     public class ClientCommunicator : Communicator
     {
+        public DebugLogger logger;
+        public DebugLogger Logger
+        {
+            get { return logger; }
+        }
         private bool _connected = false;
         public bool connected
         {
@@ -21,9 +27,14 @@ namespace LAMA.Communicator
         static Socket s;
         private object socketLock = new object();
         private Thread listener;
-        private long lastUpdate;
-        private static string CPName;
-        private static string assignedEvent = "";
+        public long lastUpdate;
+        public long LastUpdate
+        {
+            get { return lastUpdate; }
+            set { lastUpdate = value; }
+        }
+        //private static string CPName;
+        //private static string assignedEvent = "";
         private IPAddress _IP;
         private int _port;
         private bool _IPv6 = false;
@@ -60,6 +71,7 @@ namespace LAMA.Communicator
                         while (commandsToBroadcast.Count > 0)
                         {
                             Command currentCommand = commandsToBroadcast.Peek();
+                            logger.LogWrite($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
                             {
@@ -71,6 +83,7 @@ namespace LAMA.Communicator
                                 break;
                             }
                             commandsToBroadcast.Dequeue();
+                            logger.LogWrite($"Finished Sending: {currentCommand.command}");
                         }
                     }
                 }
@@ -86,6 +99,7 @@ namespace LAMA.Communicator
             int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
             string key = "CommandQueue" + savedQueueLength;
             objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
+            logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key} | {command.receiverID}");
             objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
             /*
             lock (commandsLock)
@@ -114,6 +128,7 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             string message = Encoding.Default.GetString(data);
+            THIS.logger.LogWrite($"Message Received: {message}");
             string[] messageParts = message.Split(';');
             if (messageParts[1] == "DataUpdated")
             {
@@ -196,7 +211,7 @@ namespace LAMA.Communicator
         {
             string q = lastUpdate.ToString() + ";";
             q += "Update;";
-            q += CPName + ";";
+            q += id + ";";
             SendCommand(new Command(q, "None"));
         }
 
@@ -257,6 +272,7 @@ namespace LAMA.Communicator
                         SendCommand(new Command("GiveID", "None"));
                         listener = new Thread(StartListening);
                         listener.Start();
+                        logger.LogWrite("Connected");
                     }
                     catch (SocketException e)
                     {
@@ -336,9 +352,12 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            Debug.WriteLine("client communicator");
+            logger = new DebugLogger(true);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+            logger.LogWrite("Created dictionaries");
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
@@ -377,6 +396,7 @@ namespace LAMA.Communicator
             }
             else
             {
+                logger.LogWrite("No exceptions");
                 string[] array = responseString.Split(',');
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
                 {
@@ -403,12 +423,15 @@ namespace LAMA.Communicator
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
+                THIS = this;
+                logger.LogWrite("Subscribing to events");
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
                 DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
                 DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+                logger.LogWrite("Initialization finished");
             }
         }
     }

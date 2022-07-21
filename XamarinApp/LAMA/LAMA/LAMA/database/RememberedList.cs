@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LAMA
 {
@@ -23,8 +24,10 @@ namespace LAMA
         public RememberedList(OurSQL<T, Storage> sql)
         {
             intervalsSQL = new OurSQLInterval();
+            Debug.WriteLine("Interval constructor called");
             this.sql = sql;
             typeID = new T().getTypeID();
+            Debug.WriteLine("Before load data");
             loadData();
         }
 
@@ -32,7 +35,6 @@ namespace LAMA
         {
             
             IDIntervals = intervalsSQL.ReadData(typeID);
-            
 
             cache = sql.ReadData();
 
