@@ -1,16 +1,115 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TouchTracking;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using LAMA.Models;
 
 namespace LAMA.Views
 {
+    class ActivityButton
+    {
+        public Button Button { get; private set; }
+        public LarpActivity Activity { get; private set; }
+
+        public ActivityButton(LarpActivity activity, INavigation navigation, float spaceWidth, float spaceOffsetX, float spaceOffsetY, float rowSize, int totalMinutes)
+        {
+            Activity = activity;
+            int durationMinutes = activity.duration.getRawMinutes();
+            Button = new Button()
+            {
+                IsEnabled = true,
+                Text = activity.name,
+                WidthRequest = durationMinutes,
+                HeightRequest = rowSize,
+                TranslationX = (float)activity.start.getRawMinutes() / totalMinutes * spaceWidth + spaceOffsetX,
+                TranslationY = spaceOffsetY,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                TextColor = Color.Black,
+                BackgroundColor = GetColor(activity.status),
+                CornerRadius = GetCornerRadius(activity.eventType)
+            };
+            Button.Clicked += (object sender, EventArgs args) => navigation.PushAsync(new DisplayActivityPage(activity));
+        }
+
+        private int GetCornerRadius(LarpActivity.EventType type)
+        {
+            if (type == LarpActivity.EventType.preparation)
+                return 20;
+
+            if (type == LarpActivity.EventType.normal)
+                return 0;
+
+            return 0;
+        }
+
+        private Color GetColor(LarpActivity.Status status)
+        {
+            switch (status)
+            {
+                case LarpActivity.Status.awaitingPrerequisites:
+                    return Color.White;
+                case LarpActivity.Status.readyToLaunch:
+                    return Color.LightBlue;
+                case LarpActivity.Status.launched:
+                    return Color.LightGreen;
+                case LarpActivity.Status.inProgress:
+                    return Color.PeachPuff;
+                case LarpActivity.Status.completed:
+                    return Color.Gray;
+                default:
+                    return Color.White;
+            }
+        }
+
+        private static float ConvertToPixels(SKCanvasView view, float x)
+        {
+            return (float)(view.CanvasSize.Width * x / view.Width);
+        }
+
+        public static void DrawConnection(SKCanvasView view, SKCanvas canvas, ActivityButton a, ActivityButton b)
+        {
+            SKRect aBox = a.Button.Bounds.Offset(a.Button.TranslationX, a.Button.TranslationY).ToSKRect();
+            SKRect bBox = b.Button.Bounds.Offset(b.Button.TranslationX, b.Button.TranslationY).ToSKRect();
+            aBox.Top = ConvertToPixels(view, aBox.Top);
+            aBox.Left = ConvertToPixels(view, aBox.Left);
+            aBox.Bottom = ConvertToPixels(view, aBox.Bottom);
+            aBox.Right = ConvertToPixels(view, aBox.Right);
+
+            bBox.Top = ConvertToPixels(view, bBox.Top);
+            bBox.Left = ConvertToPixels(view, bBox.Left);
+            bBox.Bottom = ConvertToPixels(view, bBox.Bottom);
+            bBox.Right = ConvertToPixels(view, bBox.Right);
+
+
+            float xDist = aBox.MidX - bBox.MidX;
+            float yDist = aBox.MidY - bBox.MidY;
+
+            var paint = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                Color = SKColors.Red,
+                StrokeWidth = 3
+            };
+
+            if (Math.Abs(xDist) > Math.Abs(yDist))
+            {
+                canvas.DrawLine(aBox.MidX, aBox.MidY, bBox.MidX, bBox.MidY, paint);
+                //canvas.DrawLine(aBox.MidX, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY, paint);
+                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, paint);
+                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, bBox.MidX, bBox.MidY, paint);
+            } else
+            {
+                //canvas.DrawLine(aBox.MidX, aBox.MidY, aBox.Right + xDist / 2, aBox.MidY, paint);
+                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, paint);
+                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, bBox.Left, bBox.MidY, paint);
+            }
+
+        }
+    }
+
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ActivityGraphPage : ContentPage
     {
@@ -18,6 +117,14 @@ namespace LAMA.Views
         private Button _draggedButton;
         private const string EditText = "Edit";
         private const string FinishEditText = "Finish Edit";
+        public const int Minutes = 24 * 60;
+        public const float Length = 1800;
+        public const int RowSize = 50;
+        public const int OffsetX = 20;
+        public const int OffsetY = 20;
+        private ActivityButton _button1;
+        private ActivityButton _button2;
+        private SKPoint mousePosition;
 
         public ActivityGraphPage()
         {
@@ -26,29 +133,45 @@ namespace LAMA.Views
 
             Grid g = Content as Grid;
 
-            g.Children.Add(new Button
-            {
-                IsEnabled = true,
-                Text = $"Button1",
-                TranslationX = 20,
-                TranslationY = 20,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                TextColor = Color.White
-            });
+            var activity = new LarpActivity(
+                ID: 1,
+                name: "TestActivity",
+                description: "Description",
+                preparation: "No Preparation",
+                eventType: LarpActivity.EventType.normal,
+                prerequisiteIDs: new EventList<int>(),
+                duration: new Time(60),
+                day: 0,
+                start: new Time(120),
+                place: new Pair<double, double>(0, 0),
+                status: LarpActivity.Status.awaitingPrerequisites,
+                requiredItems: new EventList<Pair<int, int>>(),
+                roles: new EventList<Pair<string, int>>(),
+                registrations: new EventList<Pair<int, string>>()
+                );
 
+            _button1 = new ActivityButton(activity, Navigation, Length, OffsetX, OffsetY, RowSize, Minutes);
+            g.Children.Add(_button1.Button);
 
-            g.Children.Add(new Button
-            {
-                IsEnabled = true,
-                Text = $"Button2",
-                TranslationX = 200,
-                TranslationY = 200,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                TextColor = Color.White
-            });
+            var activity2 = new LarpActivity(
+                ID: 1,
+                name: "TestActivity",
+                description: "Description",
+                preparation: "No Preparation",
+                eventType: LarpActivity.EventType.preparation,
+                prerequisiteIDs: new EventList<int>(),
+                duration: new Time(60),
+                day: 0,
+                start: new Time(240),
+                place: new Pair<double, double>(0, 0),
+                status: LarpActivity.Status.inProgress,
+                requiredItems: new EventList<Pair<int, int>>(),
+                roles: new EventList<Pair<string, int>>(),
+                registrations: new EventList<Pair<int, string>>()
+                );
 
+            _button2 = new ActivityButton(activity2, Navigation, Length, OffsetX, OffsetY, RowSize, Minutes);
+            g.Children.Add(_button2.Button);
 
             _editButton = new Button
             {
@@ -76,8 +199,6 @@ namespace LAMA.Views
 
                 button.IsEnabled = _editButton.Text == EditText;
             }
-
-
         }
 
         protected override void OnAppearing()
@@ -87,6 +208,7 @@ namespace LAMA.Views
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
+            mousePosition = new SKPoint(args.Location.X, args.Location.Y);
             if (args.Type == TouchActionType.Released)
             {
                 _draggedButton = null;
@@ -114,6 +236,8 @@ namespace LAMA.Views
                     break;
                 }
             }
+
+            this.canvasView.InvalidateSurface();
         }
 
         void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
@@ -128,18 +252,28 @@ namespace LAMA.Views
                 Color = Color.Blue.ToSKColor(),
                 StrokeWidth = 3
             };
-            canvas.DrawLine(0, 10, (float)args.Info.Width, 10, paint);
-            for (int i = 0; i < 20; i++)
+            canvas.DrawLine(
+                OffsetX,
+                10,
+                OffsetX + Length,
+                10,
+                paint
+            );
+
+            for (int i = 0; i <= 23; i++)
             {
                 canvas.DrawLine(
-                    args.Info.Width / 20 * i,
+                    Length / 23 * i + OffsetX,
                     5,
-                    args.Info.Width / 20 * i,
+                    Length / 23 * i + OffsetX,
                     15,
                     paint);
             }
 
             _editButton.TranslationX = Application.Current.MainPage.Width - 100;
+
+            ActivityButton.DrawConnection(canvasView, canvas, _button1, _button2);
+            canvas.DrawCircle(mousePosition, 5, paint);
         }
     }
 }
