@@ -8,30 +8,50 @@ using LAMA.Models;
 
 namespace LAMA.Views
 {
-    class ActivityButton
+    class DrawSurface
     {
-        public Button Button { get; private set; }
-        public LarpActivity Activity { get; private set; }
+        public float CanvasScale;
+        public float OffsetX;
+        public float OffsetY;
+        public float Width;
+        public float ColumnWidth => Width / 24;
+        public float RowHeight;
+        public float TotalMinutes;
+        public SKCanvas Canvas;
 
-        public ActivityButton(LarpActivity activity, INavigation navigation, float spaceWidth, float spaceOffsetX, float spaceOffsetY, float rowSize, int totalMinutes)
+        public float XamOffsetX => FromPixels(OffsetX);
+        public float XamOffsetY => FromPixels(OffsetY);
+        public float XamWidth => FromPixels(Width);
+        public float XamRowHeight => FromPixels(RowHeight);
+
+        public float ToPixels(float x) => x * CanvasScale;
+        public float FromPixels(float x) => x / CanvasScale;
+    };
+
+    class ActivityButton : Button
+    {
+        public DrawSurface DrawSurface { get; set; }
+        public LarpActivity Activity { get; private set; }
+        public ActivityButton(LarpActivity activity, DrawSurface surface, INavigation navigation) : base()
         {
+            DrawSurface = surface;
             Activity = activity;
-            int durationMinutes = activity.duration.getRawMinutes();
-            Button = new Button()
-            {
-                IsEnabled = true,
-                Text = activity.name,
-                WidthRequest = durationMinutes,
-                HeightRequest = rowSize,
-                TranslationX = (float)activity.start.getRawMinutes() / totalMinutes * spaceWidth + spaceOffsetX,
-                TranslationY = spaceOffsetY,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                TextColor = Color.Black,
-                BackgroundColor = GetColor(activity.status),
-                CornerRadius = GetCornerRadius(activity.eventType)
-            };
-            Button.Clicked += (object sender, EventArgs args) => navigation.PushAsync(new DisplayActivityPage(activity));
+            IsEnabled = true;
+            Clicked += (object sender, EventArgs args) => navigation.PushAsync(new DisplayActivityPage(activity));
+        }
+
+        public void UpdateVisual()
+        {
+            Text = Activity.name;
+            WidthRequest = DrawSurface.FromPixels(Activity.duration.getRawMinutes() / 60.0f * DrawSurface.ColumnWidth);
+            HeightRequest = DrawSurface.XamRowHeight;
+            TranslationX = DrawSurface.FromPixels(Activity.start.getRawMinutes() / DrawSurface.TotalMinutes + DrawSurface.OffsetX);
+            TranslationY = DrawSurface.XamOffsetY;
+            HorizontalOptions = LayoutOptions.Start;
+            VerticalOptions = LayoutOptions.Start;
+            TextColor = Color.Black;
+            BackgroundColor = GetColor(Activity.status);
+            CornerRadius = GetCornerRadius(Activity.eventType);
         }
 
         private int GetCornerRadius(LarpActivity.EventType type)
@@ -64,49 +84,34 @@ namespace LAMA.Views
             }
         }
 
-        private static float ConvertToPixels(SKCanvasView view, float x)
+        public static void DrawConnection(DrawSurface surface, ActivityButton a, ActivityButton b)
         {
-            return (float)(view.CanvasSize.Width * x / view.Width);
-        }
+            float ax = surface.ToPixels((float)a.TranslationX);
+            float ay = surface.ToPixels((float)a.TranslationY);
+            float aWidth = surface.ToPixels((float)a.Width);
+            float aHeight = surface.ToPixels((float)a.Height);
+            var aRect = new SKRect(ax, ay, ax + aWidth, ay + aHeight);
 
-        public static void DrawConnection(SKCanvasView view, SKCanvas canvas, ActivityButton a, ActivityButton b)
-        {
-            SKRect aBox = a.Button.Bounds.Offset(a.Button.TranslationX, a.Button.TranslationY).ToSKRect();
-            SKRect bBox = b.Button.Bounds.Offset(b.Button.TranslationX, b.Button.TranslationY).ToSKRect();
-            aBox.Top = ConvertToPixels(view, aBox.Top);
-            aBox.Left = ConvertToPixels(view, aBox.Left);
-            aBox.Bottom = ConvertToPixels(view, aBox.Bottom);
-            aBox.Right = ConvertToPixels(view, aBox.Right);
+            float bx = surface.ToPixels((float)b.TranslationX);
+            float by = surface.ToPixels((float)b.TranslationY);
+            float bWidth = surface.ToPixels((float)b.Width);
+            float bHeight = surface.ToPixels((float)b.Height);
+            var bRect = new SKRect(bx, by, bx + bWidth, by + bHeight);
 
-            bBox.Top = ConvertToPixels(view, bBox.Top);
-            bBox.Left = ConvertToPixels(view, bBox.Left);
-            bBox.Bottom = ConvertToPixels(view, bBox.Bottom);
-            bBox.Right = ConvertToPixels(view, bBox.Right);
+            float xDist = bx - ax;
+            float yDist = by - ay;
 
-
-            float xDist = aBox.MidX - bBox.MidX;
-            float yDist = aBox.MidY - bBox.MidY;
-
-            var paint = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                Color = SKColors.Red,
-                StrokeWidth = 3
-            };
+            var paint = new SKPaint();
+            paint.Color = SKColors.WhiteSmoke;
+            paint.Style = SKPaintStyle.Stroke;
+            paint.StrokeWidth = 2;
 
             if (Math.Abs(xDist) > Math.Abs(yDist))
             {
-                canvas.DrawLine(aBox.MidX, aBox.MidY, bBox.MidX, bBox.MidY, paint);
-                //canvas.DrawLine(aBox.MidX, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY, paint);
-                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, paint);
-                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, bBox.MidX, bBox.MidY, paint);
-            } else
-            {
-                //canvas.DrawLine(aBox.MidX, aBox.MidY, aBox.Right + xDist / 2, aBox.MidY, paint);
-                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY, aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, paint);
-                //canvas.DrawLine(aBox.MidX + xDist / 2, aBox.MidY + yDist / 2, bBox.Left, bBox.MidY, paint);
+                surface.Canvas.DrawLine(aRect.MidX, aRect.MidY, aRect.MidX + xDist / 2, aRect.MidY, paint);
+                surface.Canvas.DrawLine(aRect.MidX + xDist / 2, aRect.MidY, aRect.MidX + xDist / 2, bRect.MidY, paint);
+                surface.Canvas.DrawLine(aRect.MidX + xDist / 2, bRect.MidY, bRect.MidX, bRect.MidY, paint);
             }
-
         }
     }
 
@@ -117,6 +122,7 @@ namespace LAMA.Views
         private Button _draggedButton;
         private const string EditText = "Edit";
         private const string FinishEditText = "Finish Edit";
+        private DrawSurface _surface;
         public const int Minutes = 24 * 60;
         public const float Length = 1800;
         public const int RowSize = 50;
@@ -125,11 +131,21 @@ namespace LAMA.Views
         private ActivityButton _button1;
         private ActivityButton _button2;
         private SKPoint mousePosition;
+        private bool _firstCall = true;
 
         public ActivityGraphPage()
         {
             InitializeComponent();
             _draggedButton = null;
+            _surface = new DrawSurface
+            {
+                CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width,
+                OffsetX = 20,
+                OffsetY = 20,
+                RowHeight = 50,
+                Width = 1500,
+                TotalMinutes = 24 * 60,
+            };
 
             Grid g = Content as Grid;
 
@@ -150,8 +166,8 @@ namespace LAMA.Views
                 registrations: new EventList<Pair<int, string>>()
                 );
 
-            _button1 = new ActivityButton(activity, Navigation, Length, OffsetX, OffsetY, RowSize, Minutes);
-            g.Children.Add(_button1.Button);
+            _button1 = new ActivityButton(activity, _surface, Navigation);
+            g.Children.Add(_button1);
 
             var activity2 = new LarpActivity(
                 ID: 1,
@@ -170,8 +186,8 @@ namespace LAMA.Views
                 registrations: new EventList<Pair<int, string>>()
                 );
 
-            _button2 = new ActivityButton(activity2, Navigation, Length, OffsetX, OffsetY, RowSize, Minutes);
-            g.Children.Add(_button2.Button);
+            _button2 = new ActivityButton(activity2, _surface, Navigation);
+            g.Children.Add(_button2);
 
             _editButton = new Button
             {
@@ -242,6 +258,17 @@ namespace LAMA.Views
 
         void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
+
+            _surface.CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width;
+            _surface.Canvas = args.Surface.Canvas;
+            if (_firstCall)
+            {
+                _button1.UpdateVisual();
+                _button2.UpdateVisual();
+            }
+
+            _firstCall = false;
+
             SKCanvas canvas = args.Surface.Canvas;
 
             canvas.Clear(SKColors.Black);
@@ -272,7 +299,7 @@ namespace LAMA.Views
 
             _editButton.TranslationX = Application.Current.MainPage.Width - 100;
 
-            ActivityButton.DrawConnection(canvasView, canvas, _button1, _button2);
+            ActivityButton.DrawConnection(_surface, _button1, _button2);
             canvas.DrawCircle(mousePosition, 5, paint);
         }
     }
