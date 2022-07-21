@@ -136,18 +136,11 @@
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
 
-				<Label Text="Lokace"
+                <Label Text="Lokace"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<mapsui:MapView
-					x:Name="mapView"
-					Grid.Row="1"
-					VerticalOptions="Start"
-					HeightRequest="300"
-					HorizontalOptions="Fill"
-					BackgroundColor="Gray" />
-			
-				<!--
+
+                <!--
 				<StackLayout Orientation="Horizontal">
 					<Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
 					<Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
