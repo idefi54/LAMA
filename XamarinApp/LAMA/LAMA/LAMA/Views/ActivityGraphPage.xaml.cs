@@ -144,7 +144,7 @@ namespace LAMA.Views
                 day: 0,
                 start: new Time(120),
                 place: new Pair<double, double>(0, 0),
-                status: LarpActivity.Status.awaitingPrerequisites,
+                status: LarpActivity.Status.launched,
                 requiredItems: new EventList<Pair<int, int>>(),
                 roles: new EventList<Pair<string, int>>(),
                 registrations: new EventList<Pair<int, string>>()
