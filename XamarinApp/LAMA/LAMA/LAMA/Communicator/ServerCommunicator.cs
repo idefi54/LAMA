@@ -252,7 +252,7 @@ namespace LAMA.Communicator
         public ServerCommunicator(string name, string IP, int port, string password)
         {
             Debug.WriteLine("Server communicator created");
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
@@ -260,7 +260,7 @@ namespace LAMA.Communicator
             logger.LogWrite("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
-                throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 charcters");
+                throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 characters");
             }
             if (port < 0 || port > 65535)
             {
@@ -286,6 +286,7 @@ namespace LAMA.Communicator
             {
                 var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
                 responseString = response.Result.Content.ReadAsStringAsync().Result;
+                logger.LogWrite(responseString);
             }
             catch (HttpRequestException)
             {

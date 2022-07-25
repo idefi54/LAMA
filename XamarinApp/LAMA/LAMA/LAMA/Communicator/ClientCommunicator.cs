@@ -353,7 +353,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -413,6 +413,7 @@ namespace LAMA.Communicator
                 {
                     throw new NotAnIPAddressException("Server IP address not valid");
                 }
+                THIS = this;
                 _port = int.Parse(array[1]);
                 InitSocket();
                 Connect();
@@ -423,7 +424,6 @@ namespace LAMA.Communicator
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
-                THIS = this;
                 logger.LogWrite("Subscribing to events");
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
