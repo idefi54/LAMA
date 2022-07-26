@@ -56,12 +56,8 @@ namespace LAMA.Communicator
 
         private int _id;
         public int id { get { return _id; } }
-        private async void ProcessBroadcast()
+        private void ProcessBroadcast()
         {
-            await MainThread.InvokeOnMainThreadAsync(new Action(() =>
-            {
-                LoadCommandQueue();
-            }));
             lock (socketLock)
             {
                 if (connected && s.Connected)
@@ -101,12 +97,11 @@ namespace LAMA.Communicator
             objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
             logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key} | {command.receiverID}");
             objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
-            /*
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
+                SaveCommandQueue();
             }
-            */
         }
 
         private static void ReceiveData(IAsyncResult AR)
@@ -354,7 +349,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
