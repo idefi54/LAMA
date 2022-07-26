@@ -269,13 +269,14 @@ namespace LAMA.Communicator
                     {
                         InitSocket();
                         s.Connect(_IP, _port);
+                        logger.LogWrite("Connected");
                         SendCommand(new Command("GiveID", "None"));
                         listener = new Thread(StartListening);
                         listener.Start();
-                        logger.LogWrite("Connected");
                     }
                     catch (SocketException e)
                     {
+                        logger.LogWrite(e.Message);
                         if (e.Message == "Connection refused")
                         {
                             throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
@@ -353,7 +354,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(false);
+            logger = new DebugLogger(true);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
