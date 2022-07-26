@@ -265,7 +265,7 @@ namespace LAMA.Communicator
                         InitSocket();
                         s.Connect(_IP, _port);
                         logger.LogWrite("Connected");
-                        SendCommand(new Command("GiveID", "None"));
+                        SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
                         listener = new Thread(StartListening);
                         listener.Start();
                     }
@@ -337,7 +337,7 @@ namespace LAMA.Communicator
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + id;
-            SendCommand(new Command(command, "None"));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>

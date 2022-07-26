@@ -259,7 +259,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            logger = new DebugLogger(false);
+            logger = new DebugLogger(true);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
@@ -360,8 +360,8 @@ namespace LAMA.Communicator
             {
                 clientSockets[maxClientID] = current;
             }
-            SendCommand(new Command(command, "None", maxClientID));
-            SendCommand(new Command("Connected", "None", maxClientID));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
         }
 
         private void NewClientConnected(int id, Socket current)
@@ -371,7 +371,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[id] = current;
             }
-            SendCommand(new Command("Connected", "None", id));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", id));
         }
 
         public void SendUpdate(Socket current, int id, long lastUpdateTime)
