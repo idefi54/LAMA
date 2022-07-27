@@ -60,7 +60,7 @@ namespace LAMA.Communicator
         {
             lock (socketLock)
             {
-                if (connected && s.Connected)
+                if (s.Connected)
                 {
                     lock (commandsLock)
                     {
