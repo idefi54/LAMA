@@ -18,7 +18,7 @@
 	</ContentPage.ToolbarItems>
 
 	<ContentPage.Content>
-			<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Padding="5,5,5,0">
+			<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
 				<ListView.ItemTemplate>
 					<DataTemplate>
 						<ViewCell>
