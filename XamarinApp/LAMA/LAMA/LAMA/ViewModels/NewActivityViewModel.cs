@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 using LAMA.Models;
+using System.Collections.ObjectModel;
 
 namespace LAMA.ViewModels
 {
@@ -19,7 +20,6 @@ namespace LAMA.ViewModels
 		private DateTime _duration;
 		private DateTime _start;
 		private int _day;
-		private List<string> _personale;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -35,7 +35,7 @@ namespace LAMA.ViewModels
 		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
 		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
 		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
-		public List<string> Personale { get { return _personale; } set { SetProperty(ref _personale , value); } }
+		public ObservableCollection<NewActivityRoleViewModel> Personale { get; }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -54,8 +54,14 @@ namespace LAMA.ViewModels
 		INavigation _navigation;
 		Action<LarpActivity> _createNewActivity;
 
+		public Command AddNewRoleCommand { get; private set; }
+		public Command<object> RemoveRoleCommand { get; private set; }
+
+
         public NewActivityViewModel(INavigation navigation, Action<LarpActivity> createNewActivity, LarpActivity activity = null)
         {
+			Personale = new ObservableCollection<NewActivityRoleViewModel>();
+
 			if(activity != null)
             {
 				Id = activity.ID.ToString();
@@ -80,6 +86,9 @@ namespace LAMA.ViewModels
 			}
 			TypeIndex = 0;
 			Type = ((LarpActivity.EventType)TypeIndex).ToString();
+
+			AddNewRoleCommand = new Xamarin.Forms.Command(OnAddNewRole);
+			RemoveRoleCommand = new Xamarin.Forms.Command<object>(OnRemoveRole);
 		}
 
 		private bool ValidateSave()
@@ -126,6 +135,21 @@ namespace LAMA.ViewModels
 
 			// This will pop the current page off the navigation stack
 			await Shell.Current.GoToAsync("..");
+        }
+
+		private void OnAddNewRole()
+        {
+			Personale.Add(new NewActivityRoleViewModel());
+        }
+
+		private void OnRemoveRole(object obj)
+        {
+			NewActivityRoleViewModel viewModel = obj as NewActivityRoleViewModel;
+
+			if (viewModel == null)
+				return;
+
+			Personale.Remove(viewModel);
         }
     }
 }

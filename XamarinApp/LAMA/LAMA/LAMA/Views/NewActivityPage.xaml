@@ -107,7 +107,33 @@
 					</StackLayout>
 				</StackLayout>
 				-->
-				<Button Text="+" HorizontalOptions="Start"></Button>
+
+				<ListView x:Name="RoleList" ItemsSource="{Binding Personale}" SelectionMode="None">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<ViewCell>
+								<Grid Padding="5" Margin="5" >
+									<Grid.RowDefinitions>
+										<RowDefinition Height="auto" />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="70" />
+										<ColumnDefinition Width="auto" />
+									</Grid.ColumnDefinitions>
+									<Entry Grid.Row="0" Grid.Column="0" Text="{Binding Name,Mode=TwoWay}" FontSize="Small" />
+									<!--<Entry Grid.Row="0" Grid.Column="1" Keyboard="Numeric" Text="{Binding Count, Mode=TwoWay}" />-->
+									<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="-" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+										Command="{Binding Path=BindingContext.RemoveRoleCommand, Source={x:Reference Name=RoleList}}"
+										CommandParameter="{Binding .}"/>
+								</Grid>
+							</ViewCell>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+
+
+				<Button Text="+" HorizontalOptions="Start" Command="{Binding AddNewRoleCommand}"></Button>
 
 
 				<Label Text="Potřebná příprava"
