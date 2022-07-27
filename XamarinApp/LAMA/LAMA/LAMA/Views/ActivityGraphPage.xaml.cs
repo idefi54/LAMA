@@ -90,7 +90,7 @@ namespace LAMA.Views
         {
             Row = (int)((y - surface.XamOffsetY) / surface.XamRowHeight);
             Row = Math.Max(0, Row);
-            Row = Math.Min(surface.Rows, Row);
+            Row = Math.Min(surface.Rows - 1, Row);
             double percentage = (x - surface.XamOffsetX) / surface.XamWidth;
             int minutes = (int)(percentage * surface.TotalMinutes);
             minutes = (int)Math.Max(Math.Min(minutes, surface.TotalMinutes - Activity.duration.getRawMinutes()), 0);
@@ -283,7 +283,7 @@ namespace LAMA.Views
         {
 
             _surface.CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width;
-            _surface.Rows = (int)(canvasView.CanvasSize.Height / _surface.RowHeight);
+            _surface.Rows = (int)((canvasView.CanvasSize.Height - _surface.OffsetY*2) / _surface.RowHeight);
             _surface.Canvas = args.Surface.Canvas;
             _button2.Update(_surface);
             _button1.Update(_surface);
@@ -326,7 +326,7 @@ namespace LAMA.Views
                 paint.PathEffect = SKPathEffect.CreateDash(new float[] { 20f, 8f }, 1);
                 paint.StrokeWidth = 1f;
                 paint.Color = paint.Color.WithAlpha(125);
-                for (int i = 0; i < _surface.Rows; i++)
+                for (int i = 1; i <= _surface.Rows; i++)
                 {
                     canvas.DrawLine(
                         _surface.OffsetX, i * _surface.RowHeight + _surface.OffsetY,
