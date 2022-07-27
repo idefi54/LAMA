@@ -16,6 +16,8 @@ namespace LAMA.ViewModels
 
         public Command<object> LarpActivityTapped { get; private set; }
 
+        public Command<object> RemoveLarpActivity { get; private set; }
+
         INavigation Navigation;
 
         int maxId = 0;
@@ -66,6 +68,7 @@ namespace LAMA.ViewModels
 
             AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
             LarpActivityTapped = new Command<object>(DisplayActivity);
+            RemoveLarpActivity = new Command<object>(RemoveActivity);
 
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Přepad karavanu", start = new Time(60 * 14 + 15), eventType = LarpActivity.EventType.normal });
@@ -88,6 +91,23 @@ namespace LAMA.ViewModels
             LarpActivity activity = activityViewModel.LarpActivity;
 
             await Navigation.PushAsync(new DisplayActivityPage(activity));
+        }
+
+        private async void RemoveActivity(object obj)
+        {
+            if (obj.GetType() != typeof(ActivityListItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+
+            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
+
+            bool result = await App.Current.MainPage.DisplayAlert("Smazat aktivitu", "Opravdu chcete smazat aktivitu " + activityViewModel.LarpActivity.name + ".", "Smazat", "zrušit");
+
+            if(result)
+                LarpActivityListItems.Remove(activityViewModel);
         }
 
         private async void OnAddActivityListItem(object obj)
