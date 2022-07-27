@@ -14,7 +14,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command AddActivityCommand { get; }
         public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
-        public Command<LarpActivity> LarpActivityTapped { get; }
+        public Command<object> LarpActivityTapped { get; private set; }
 
         INavigation Navigation;
 
@@ -65,7 +65,7 @@ namespace LAMA.ViewModels
             //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
 
             AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
-            LarpActivityTapped = new Command<LarpActivity>(DisplayActivity);
+            LarpActivityTapped = new Command<object>(DisplayActivity);
 
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Přepad karavanu", start = new Time(60 * 14 + 15), eventType = LarpActivity.EventType.normal });
@@ -74,18 +74,18 @@ namespace LAMA.ViewModels
             //LarpActivityListItems.Add(new LarpActivity() { name = "Úklid mrtvol hráčů", start = new Time(60 * 16 + 15), eventType = LarpActivity.EventType.preparation });
         }
 
-        private async void DisplayActivity(LarpActivity obj)
+        private async void DisplayActivity(object obj)
         {
-            App.Current.MainPage.DisplayAlert("Message", "Test message.", "OK");
-
-
-            if (obj.GetType() != typeof(LarpActivity))
+            if (obj.GetType() != typeof(ActivityListItemViewModel))
             {
-                Console.WriteLine("-------------------------------------------------\nWrong Type inside ActivityList");
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
                 return;
             }
 
-            LarpActivity activity = (LarpActivity)obj;
+            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
+
+            LarpActivity activity = activityViewModel.LarpActivity;
 
             await Navigation.PushAsync(new DisplayActivityPage(activity));
         }
