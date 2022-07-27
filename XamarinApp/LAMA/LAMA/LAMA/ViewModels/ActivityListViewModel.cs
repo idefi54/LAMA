@@ -107,7 +107,10 @@ namespace LAMA.ViewModels
             bool result = await App.Current.MainPage.DisplayAlert("Smazat aktivitu", "Opravdu chcete smazat aktivitu " + activityViewModel.LarpActivity.name + ".", "Smazat", "zrušit");
 
             if(result)
+            {
                 LarpActivityListItems.Remove(activityViewModel);
+                DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.removeByID(activityViewModel.LarpActivity.getID());
+            }
         }
 
         private async void OnAddActivityListItem(object obj)
