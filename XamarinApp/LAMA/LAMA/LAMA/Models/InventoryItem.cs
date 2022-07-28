@@ -83,7 +83,7 @@ namespace LAMA.Models
 
 
         static string[] attributeNames = new string[] { "ID", "name", "description", "taken", "free", "takenBy" };
-        public int getID()
+        public long getID()
         {
             return _ID;
         }

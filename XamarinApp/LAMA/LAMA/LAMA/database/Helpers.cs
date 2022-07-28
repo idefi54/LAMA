@@ -8,9 +8,33 @@ namespace LAMA
 {
     class Helpers
     {
+        public static EventList<long> readLongField(string input)
+        {
+            EventList<long> output = new EventList<long>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                output.Add(readLong(input, ref i));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
         public static long readLong (string input)
         {
             int offset = 0;
+            long num = 0;
+            while (offset < input.Length && char.IsDigit(input[offset]))
+            {
+                num *= 10;
+                num += input[offset] - '0';
+                ++offset;
+            }
+            return num;
+        }
+        public static long readLong(string input, ref int offset)
+        {
+            
             long num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
             {

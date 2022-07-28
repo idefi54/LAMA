@@ -209,10 +209,10 @@ namespace LAMA
         }
 
 
-        public List<int> getDataSince(long when)
+        public List<long> getDataSince(long when)
         {
 
-            List<int> output = new List<int>();
+            List<long> output = new List<long>();
 
             var storages = connection.Table<Storage>().Where(a => a.lastChange >= when);
 
