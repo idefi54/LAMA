@@ -18,12 +18,15 @@ namespace LAMA.Communicator
 
         public void LogWrite(string logMessage)
         {
-            string m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            lock (loggingLock)
+            if (shouldLog)
             {
-                using (StreamWriter w = File.AppendText(m_exePath + "\\" + "log.txt"))
+                string m_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                lock (loggingLock)
                 {
-                    Log(logMessage, w);
+                    using (StreamWriter w = File.AppendText(m_exePath + "\\" + "log.txt"))
+                    {
+                        Log(logMessage, w);
+                    }
                 }
             }
         }

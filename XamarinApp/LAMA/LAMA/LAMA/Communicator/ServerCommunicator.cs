@@ -30,6 +30,7 @@ namespace LAMA.Communicator
         static Socket serverSocket;
         private Thread server;
         private static ServerCommunicator THIS;
+        private Timer timer;
 
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
@@ -48,8 +49,10 @@ namespace LAMA.Communicator
 
         private void StartServer()
         {
+            logger.LogWrite("Starting Server");
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            var timer = new System.Threading.Timer((e) =>
+            logger.LogWrite("BeginAccept");
+            timer = new System.Threading.Timer((e) =>
             {
                 ProcessBroadcast();
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
@@ -141,6 +144,10 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
+                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                {
+                    THIS.logger.LogWrite("Client socket exception");
+                }));
                 lock (THIS.socketsLock)
                 {
                     socket.Close();
@@ -227,7 +234,8 @@ namespace LAMA.Communicator
                     THIS.NewClientConnected(Int32.Parse(messageParts[2]), current);
                 }));
             }
-            try {
+            try
+            {
                 current.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), current);
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
@@ -251,7 +259,6 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            Debug.WriteLine("Server communicator created");
             logger = new DebugLogger(true);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -260,7 +267,7 @@ namespace LAMA.Communicator
             logger.LogWrite("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
-                throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 charcters");
+                throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 characters");
             }
             if (port < 0 || port > 65535)
             {
@@ -286,6 +293,7 @@ namespace LAMA.Communicator
             {
                 var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
                 responseString = response.Result.Content.ReadAsStringAsync().Result;
+                logger.LogWrite(responseString);
             }
             catch (HttpRequestException)
             {
@@ -303,7 +311,7 @@ namespace LAMA.Communicator
             }
 
             logger.LogWrite("No exceptions");
-            maxClientID = 0;
+            //maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
             serverSocket.Listen(64);
@@ -352,8 +360,8 @@ namespace LAMA.Communicator
             {
                 clientSockets[maxClientID] = current;
             }
-            SendCommand(new Command(command, "None", maxClientID));
-            SendCommand(new Command("Connected", "None", maxClientID));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
         }
 
         private void NewClientConnected(int id, Socket current)
@@ -363,7 +371,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[id] = current;
             }
-            SendCommand(new Command("Connected", "None", id));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", id));
         }
 
         public void SendUpdate(Socket current, int id, long lastUpdateTime)

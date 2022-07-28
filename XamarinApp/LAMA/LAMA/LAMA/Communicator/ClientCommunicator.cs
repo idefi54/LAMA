@@ -56,15 +56,11 @@ namespace LAMA.Communicator
 
         private int _id;
         public int id { get { return _id; } }
-        private async void ProcessBroadcast()
+        private void ProcessBroadcast()
         {
-            await MainThread.InvokeOnMainThreadAsync(new Action(() =>
-            {
-                LoadCommandQueue();
-            }));
             lock (socketLock)
             {
-                if (connected && s.Connected)
+                if (s.Connected)
                 {
                     lock (commandsLock)
                     {
@@ -101,12 +97,11 @@ namespace LAMA.Communicator
             objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
             logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key} | {command.receiverID}");
             objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
-            /*
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
+                SaveCommandQueue();
             }
-            */
         }
 
         private static void ReceiveData(IAsyncResult AR)
@@ -269,13 +264,14 @@ namespace LAMA.Communicator
                     {
                         InitSocket();
                         s.Connect(_IP, _port);
-                        SendCommand(new Command("GiveID", "None"));
+                        logger.LogWrite("Connected");
+                        SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
                         listener = new Thread(StartListening);
                         listener.Start();
-                        logger.LogWrite("Connected");
                     }
                     catch (SocketException e)
                     {
+                        logger.LogWrite(e.Message);
                         if (e.Message == "Connection refused")
                         {
                             throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
@@ -341,7 +337,7 @@ namespace LAMA.Communicator
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + id;
-            SendCommand(new Command(command, "None"));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
@@ -353,7 +349,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -413,6 +409,7 @@ namespace LAMA.Communicator
                 {
                     throw new NotAnIPAddressException("Server IP address not valid");
                 }
+                THIS = this;
                 _port = int.Parse(array[1]);
                 InitSocket();
                 Connect();
@@ -423,7 +420,6 @@ namespace LAMA.Communicator
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
-                THIS = this;
                 logger.LogWrite("Subscribing to events");
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
