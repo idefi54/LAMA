@@ -39,7 +39,7 @@ namespace LAMA.Singletons
             }
         }
 
-        static public EventList<DateTime> Days = new EventList<DateTime>();
+        static public EventList<DateTimeOffset> Days = new EventList<DateTimeOffset>();
 
         public static string Name
         {
@@ -53,9 +53,25 @@ namespace LAMA.Singletons
 
         public LarpEvent()
         {
-            List<long> temp = new List<long>();
+            List<long> temp = Helpers.readLongField(Instance.days);
 
+            for (int i = 0; i < temp.Count; ++i) 
+            {
+                Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
+            }
 
+            Days.dataChanged += saveDays;
+
+        }
+        static void saveDays()
+        {
+            
+            StringBuilder output = new StringBuilder();
+            foreach (var day in Days)
+            {
+                output.Append("," + day.ToUnixTimeMilliseconds());
+            }
+            Instance.days = output.ToString();
         }
 
         [PrimaryKey]
