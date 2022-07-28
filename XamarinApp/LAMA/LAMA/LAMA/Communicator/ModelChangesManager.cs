@@ -169,7 +169,7 @@ namespace LAMA.Communicator
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
+                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + ";" + objectID + ";" + i));
                 }
                 if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
             }
