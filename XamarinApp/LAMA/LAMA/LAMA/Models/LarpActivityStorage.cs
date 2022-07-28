@@ -48,7 +48,7 @@ namespace LAMA.Models
             return new string[] { ID.ToString(), name, description, preparationNeeded, eventType, prerequisiteIDs, duration, day, start, place,
             status, requiredItems, roles, registrationByRole};
         }
-        public int getID()
+        public long getID()
         { return ID; }
     }
 }

@@ -187,7 +187,7 @@ namespace LAMA.Models
         }
 
         // interface Serializable implementation
-        public int getID()
+        public long getID()
         {
             return _ID;
         }
