@@ -67,6 +67,7 @@ namespace LAMA.Communicator
                         while (commandsToBroadcast.Count > 0)
                         {
                             Command currentCommand = commandsToBroadcast.Peek();
+                            if (!connected && currentCommand.command != "GiveID") break;
                             logger.LogWrite($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
@@ -200,23 +201,19 @@ namespace LAMA.Communicator
         private void ReceiveID(int id)
         {
             _id = id;
+            RequestUpdate();
         }
 
         private void RequestUpdate()
         {
-            string q = lastUpdate.ToString() + ";";
+            string q = "";
             q += "Update;";
             q += id + ";";
-            SendCommand(new Command(q, "None"));
+            SendCommand(new Command(q, lastUpdate, "None"));
         }
 
         private void StartListening()
         {
-            RequestUpdate();
-            broadcastTimer = new System.Threading.Timer((e) =>
-            {
-                ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
             lock (THIS.socketLock)
             {
                 try
@@ -229,6 +226,14 @@ namespace LAMA.Communicator
                     return;
                 }
             }
+        }
+
+        private void StartBroadcasting()
+        {
+            broadcastTimer = new System.Threading.Timer((e) =>
+            {
+                ProcessBroadcast();
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
         }
 
         private void InitSocket()
@@ -252,13 +257,15 @@ namespace LAMA.Communicator
             {
                 if (!s.Connected)
                 {
+                    /*
                     if (broadcastTimer != null)
                     {
                         broadcastTimer.Dispose();
                     }
+                    */
                     if (listener != null)
                     {
-                        listener.Abort();
+                        listener = null;
                     }
                     try
                     {
@@ -266,8 +273,15 @@ namespace LAMA.Communicator
                         s.Connect(_IP, _port);
                         logger.LogWrite("Connected");
                         SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
-                        listener = new Thread(StartListening);
-                        listener.Start();
+                        if (broadcastTimer == null)
+                        {
+                            StartBroadcasting();
+                        }
+                        if (listener == null)
+                        {
+                            listener = new Thread(StartListening);
+                            listener.Start();
+                        }
                     }
                     catch (SocketException e)
                     {
@@ -301,6 +315,7 @@ namespace LAMA.Communicator
             lock (commandsLock) {
                 commandsToSave = commandsToBroadcast.ToList();
             }
+            objectsCache.getByKey("CommandQueueLength").command = (commandsToBroadcast.Count).ToString();
             for (int i = 0; i < commandsToSave.Count; i++)
             {
                 string key = "CommandQueue" + i;
@@ -349,7 +364,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(false);
+            logger = new DebugLogger(true);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
