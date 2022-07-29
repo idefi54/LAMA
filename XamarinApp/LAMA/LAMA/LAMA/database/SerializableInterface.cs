@@ -14,7 +14,7 @@ namespace LAMA
         string[] getAttributeNames();
         string[] getAttributes();
         int numOfAttributes();
-        int getID();
+        long getID();
         void buildFromStrings(string[] input);
         string getAttribute(int index);
         int getTypeID();

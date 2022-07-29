@@ -61,7 +61,7 @@ namespace LAMA.Communicator
 
         public void OnDataUpdated(Serializable changed, int attributeIndex)
         {
-            int objectID = changed.getID();
+            long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
@@ -155,7 +155,7 @@ namespace LAMA.Communicator
 
         public void OnItemCreated(Serializable changed)
         {
-            int objectID = changed.getID();
+            long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
 
@@ -169,7 +169,7 @@ namespace LAMA.Communicator
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectID + ";" + i));
+                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + ";" + objectID + ";" + i));
                 }
                 if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
             }
@@ -267,7 +267,7 @@ namespace LAMA.Communicator
                 string[] attributtes = serializedObject.Split(',');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
-                int activityID = activity.getID();
+                long activityID = activity.getID();
 
                 if (objectsCache.containsKey(objectID))
                 {
@@ -291,7 +291,7 @@ namespace LAMA.Communicator
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
-                int cpID = cp.getID();
+                long cpID = cp.getID();
 
                 if (objectsCache.containsKey(objectID))
                 {
@@ -314,7 +314,7 @@ namespace LAMA.Communicator
                 string[] attributtes = serializedObject.Split(',');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
-                int itemID = ii.getID();
+                long itemID = ii.getID();
 
                 if (objectsCache.containsKey(objectID))
                 {
@@ -334,7 +334,7 @@ namespace LAMA.Communicator
 
         public void OnItemDeleted(Serializable changed)
         {
-            int objectID = changed.getID();
+            long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
 
