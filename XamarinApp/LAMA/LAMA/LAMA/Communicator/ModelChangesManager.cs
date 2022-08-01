@@ -163,6 +163,7 @@ namespace LAMA.Communicator
 
             if (objectIgnoreCreation == objectCacheID)
             {
+                communicator.Logger.LogWrite("Ignore Creation: " + objectIgnoreCreation);
                 objectIgnoreCreation = "";
                 return;
             }
@@ -179,8 +180,8 @@ namespace LAMA.Communicator
                 {
                     attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + ";" + objectID + ";" + i));
                 }
-                if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
             }
+            if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
         }
 
 
