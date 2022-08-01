@@ -96,6 +96,10 @@ namespace LAMA.Communicator
                                         client.Close();
                                         socketsToRemove.Add(entry.Key);
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        logger.LogWrite(ex.Message);
+                                    }
                                 }
                                 else
                                 {
@@ -118,6 +122,10 @@ namespace LAMA.Communicator
                                     client.Close();
                                     socketsToRemove.Add(currentCommand.receiverID);
                                 }
+                                catch (Exception ex)
+                                {
+                                    logger.LogWrite(ex.Message);
+                                }
                             }
                             else
                             {
@@ -127,6 +135,7 @@ namespace LAMA.Communicator
                         }
                         foreach (int i in socketsToRemove)
                         {
+                            logger.LogWrite($"Removing From Client Sockets: {i}");
                             clientSockets.Remove(i);
                         }
                     }
@@ -359,6 +368,7 @@ namespace LAMA.Communicator
             lock (THIS.socketsLock)
             {
                 clientSockets[maxClientID] = current;
+                logger.LogWrite($"Give new client ID: {maxClientID}");
             }
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
             SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
