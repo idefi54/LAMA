@@ -14,9 +14,8 @@ namespace LAMA.Views
         public float OffsetX;
         public float OffsetY;
         public float Width;
-        public int Rows;
+        public float Height;
         public float ColumnWidth => Width / 24;
-        public float RowHeight;
         public float TotalMinutes;
         public SKCanvas Canvas;
 
@@ -24,7 +23,7 @@ namespace LAMA.Views
         public float XamOffsetY => FromPixels(OffsetY);
         public float XamWidth => FromPixels(Width);
         public float XamColumnWidth => FromPixels(ColumnWidth);
-        public float XamRowHeight => FromPixels(RowHeight);
+        public float XamHeight => FromPixels(Height);
 
         public float ToPixels(float x) => x * CanvasScale;
         public float FromPixels(float x) => x / CanvasScale;
@@ -46,9 +45,7 @@ namespace LAMA.Views
         {
             Text = Activity.name;
             WidthRequest = Activity.duration.getRawMinutes() / 60.0f * surface.XamColumnWidth;
-            HeightRequest = surface.XamRowHeight;
             TranslationX = Activity.start.getRawMinutes() / surface.TotalMinutes * surface.XamWidth + surface.XamOffsetX;
-            TranslationY = surface.XamOffsetY + Row * surface.XamRowHeight;
             HorizontalOptions = LayoutOptions.Start;
             VerticalOptions = LayoutOptions.Start;
             TextColor = Color.Black;
@@ -88,9 +85,9 @@ namespace LAMA.Views
 
         public void Move(DrawSurface surface, double x, double y)
         {
-            Row = (int)((y - surface.XamOffsetY) / surface.XamRowHeight);
-            Row = Math.Max(0, Row);
-            Row = Math.Min(surface.Rows - 1, Row);
+            y = Math.Max(y, 0);
+            y = Math.Min(y, surface.Height - Height);
+            TranslationY = y;
             double percentage = (x - surface.XamOffsetX) / surface.XamWidth;
             int minutes = (int)(percentage * surface.TotalMinutes);
             minutes = (int)Math.Max(Math.Min(minutes, surface.TotalMinutes - Activity.duration.getRawMinutes()), 0);
@@ -160,8 +157,8 @@ namespace LAMA.Views
                 CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width,
                 OffsetX = 20,
                 OffsetY = 40,
-                RowHeight = 50,
                 Width = 1500,
+                Height = 900,
                 TotalMinutes = 24 * 60,
             };
 
@@ -185,6 +182,7 @@ namespace LAMA.Views
                 );
 
             _button1 = new ActivityButton(activity, Navigation);
+            _button1.TranslationY = _surface.OffsetY;
             g.Children.Add(_button1);
 
             var activity2 = new LarpActivity(
@@ -205,7 +203,7 @@ namespace LAMA.Views
                 );
 
             _button2 = new ActivityButton(activity2, Navigation);
-            _button2.Row = 1;
+            _button2.TranslationY = _surface.OffsetY + 20;
             g.Children.Add(_button2);
 
             _editButton = new Button
@@ -283,7 +281,7 @@ namespace LAMA.Views
         {
 
             _surface.CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width;
-            _surface.Rows = (int)((canvasView.CanvasSize.Height - _surface.OffsetY*2) / _surface.RowHeight);
+            _surface.Height = canvasView.CanvasSize.Height - _surface.OffsetY*2;
             _surface.Canvas = args.Surface.Canvas;
             _button2.Update(_surface);
             _button1.Update(_surface);
@@ -321,18 +319,20 @@ namespace LAMA.Views
                 }
             }
 
-            // Paint rows
+            // Paint columns
             {
                 paint.PathEffect = SKPathEffect.CreateDash(new float[] { 20f, 8f }, 1);
                 paint.StrokeWidth = 1f;
                 paint.Color = paint.Color.WithAlpha(125);
-                for (int i = 1; i <= _surface.Rows; i++)
+
+                for (int i = 0; i <= 24; i++)
                 {
                     canvas.DrawLine(
-                        _surface.OffsetX, i * _surface.RowHeight + _surface.OffsetY,
-                        _surface.OffsetX + _surface.Width, i * _surface.RowHeight + _surface.OffsetY,
-                        paint
-                        );
+                        _surface.Width / 24 * i + _surface.OffsetX,
+                        _surface.OffsetY + 5,
+                        _surface.Width / 24 * i + _surface.OffsetX,
+                        _surface.Height + _surface.OffsetY,
+                        paint);
                 }
             }
 
