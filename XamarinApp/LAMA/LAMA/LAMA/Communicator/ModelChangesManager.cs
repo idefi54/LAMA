@@ -13,6 +13,8 @@ namespace LAMA.Communicator
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private bool server;
         private bool noCommandSending;
+        private string objectIgnoreCreation = "";
+        private string objectIgnoreDeletion = "";
 
         public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool noCommandSending = false)
         {
@@ -159,6 +161,12 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
 
+            if (objectIgnoreCreation == objectCacheID)
+            {
+                objectIgnoreCreation = "";
+                return;
+            }
+
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
@@ -189,13 +197,17 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.add(activity, false);
+                    if (!server || noCommandSending)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.add(activity);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -210,13 +222,17 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp, false);
+                    if (!server || noCommandSending)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -231,13 +247,17 @@ namespace LAMA.Communicator
                 if (!objectsCache.containsKey(objectID))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.add(ii, false);
+                    if (!server || noCommandSending)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.add(ii);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
                     }
                     // Notify every client of item creation
-                    if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -338,6 +358,12 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
 
+            if (objectIgnoreDeletion == objectCacheID)
+            {
+                objectIgnoreDeletion = "";
+                return;
+            }
+
             communicator.Logger.LogWrite($"OnItemDeleted: {objectCacheID}");
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -389,9 +415,9 @@ namespace LAMA.Communicator
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
 
-                if (server)
+                if (!server || noCommandSending)
                 {
-                    if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+                    objectIgnoreDeletion = objectCacheID;
                 }
             }
         }
