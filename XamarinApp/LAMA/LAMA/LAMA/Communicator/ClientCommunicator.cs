@@ -66,23 +66,34 @@ namespace LAMA.Communicator
                     {
                         while (commandsToBroadcast.Count > 0)
                         {
+                            logger.LogWrite(commandsToBroadcast.Count.ToString());
+                            logger.LogWrite(connected.ToString());
                             Command currentCommand = commandsToBroadcast.Peek();
-                            if (!connected && currentCommand.command != "GiveID") break;
+                            if (!connected && currentCommand.command != "GiveID")
+                            {
+                                commandsToBroadcast.Dequeue();
+                                commandsToBroadcast.Enqueue(currentCommand);
+                                break;
+                            }
                             logger.LogWrite($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
                             {
                                 s.Send(data);
+                                commandsToBroadcast.Dequeue();
+                                logger.LogWrite($"Finished Sending: {currentCommand.command}");
                             }
                             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                             {
                                 s.Close();
                                 break;
                             }
-                            commandsToBroadcast.Dequeue();
-                            logger.LogWrite($"Finished Sending: {currentCommand.command}");
                         }
                     }
+                }
+                else
+                {
+                    s.Close();
                 }
             }
             MainThread.BeginInvokeOnMainThread(new Action(() =>
@@ -274,6 +285,7 @@ namespace LAMA.Communicator
                     }
                     try
                     {
+                        logger.LogWrite("Trying to connect");
                         InitSocket();
                         s.Connect(_IP, _port);
                         logger.LogWrite("Connected");
@@ -311,6 +323,7 @@ namespace LAMA.Communicator
 
         private void Connected()
         {
+            logger.LogWrite("connected set true");
             _connected = true;
         }
 
