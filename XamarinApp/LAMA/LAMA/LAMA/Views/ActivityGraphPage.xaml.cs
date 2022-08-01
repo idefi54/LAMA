@@ -45,7 +45,7 @@ namespace LAMA.Views
         {
             Text = Activity.name;
             WidthRequest = Activity.duration.getRawMinutes() / 60.0f * surface.XamColumnWidth;
-            TranslationX = Activity.start.getRawMinutes() / surface.TotalMinutes * surface.XamWidth + surface.XamOffsetX;
+            TranslationX = (Activity.start.getRawMinutes() / surface.TotalMinutes * surface.XamWidth + surface.XamOffsetX);
             HorizontalOptions = LayoutOptions.Start;
             VerticalOptions = LayoutOptions.Start;
             TextColor = Color.Black;
@@ -91,6 +91,7 @@ namespace LAMA.Views
             double percentage = (x - surface.XamOffsetX) / surface.XamWidth;
             int minutes = (int)(percentage * surface.TotalMinutes);
             minutes = (int)Math.Max(Math.Min(minutes, surface.TotalMinutes - Activity.duration.getRawMinutes()), 0);
+            minutes -= (minutes % 5);
             Activity.start = new Time(minutes);
         }
 
