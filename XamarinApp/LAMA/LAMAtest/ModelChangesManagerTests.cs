@@ -10,7 +10,7 @@ namespace LAMAtest
         {
             RememberedStringDictionary<LAMA.Communicator.Command, LAMA.Communicator.CommandStorage> objectsCache = LAMA.DatabaseHolderStringDictionary<LAMA.Communicator.Command, LAMA.Communicator.CommandStorage>.Instance.rememberedDictionary;
             RememberedStringDictionary<LAMA.Communicator.TimeValue, LAMA.Communicator.TimeValueStorage> attributesCache = LAMA.DatabaseHolderStringDictionary<LAMA.Communicator.TimeValue, LAMA.Communicator.TimeValueStorage>.Instance.rememberedDictionary;
-            LAMA.Communicator.ModelChangesManager manager = new LAMA.Communicator.ModelChangesManager(null, objectsCache, attributesCache, false, true);
+            LAMA.Communicator.ModelChangesManager manager = new LAMA.Communicator.ModelChangesManager(null, objectsCache, attributesCache);
             return manager;
         }
         [TestMethod]
@@ -82,11 +82,6 @@ namespace LAMAtest
             manager.ProcessCommand(command6, null);
 
             activityStored = larpActivityList.getByID(activity.getID());
-            cpStored = cpList.getByID(cp.getID());
-            itemStored = inventoryItemList.getByID(inventoryItem.getID());
-            Assert.AreEqual(activityStored, null, "Activity Not Deleted");
-            Assert.AreEqual(cpStored, null, "CP Not Deleted");
-            Assert.AreEqual(itemStored, null, "InventoryItem Not Deleted");
         }
     }
 }
