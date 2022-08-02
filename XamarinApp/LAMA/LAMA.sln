@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAMA.iOS", "LAMA\LAMA.iOS\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMA", "LAMA\LAMA\LAMA.csproj", "{0694E885-15BA-4398-88A2-585081FA6C32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAMAtest", "LAMAtest\LAMAtest.csproj", "{1A73B279-4FD6-43E2-B74F-CAB9923952A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMAtestCommunicator", "LAMAtest\LAMAtestCommunicator.csproj", "{1A73B279-4FD6-43E2-B74F-CAB9923952A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

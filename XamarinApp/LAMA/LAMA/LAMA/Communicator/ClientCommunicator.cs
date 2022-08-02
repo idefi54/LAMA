@@ -25,7 +25,7 @@ namespace LAMA.Communicator
             get { return _connected; }
         }
         static Socket s;
-        private object socketLock = new object();
+        private static object socketLock = new object();
         private Thread listener;
         public long lastUpdate;
         public long LastUpdate
@@ -67,6 +67,7 @@ namespace LAMA.Communicator
                         while (commandsToBroadcast.Count > 0)
                         {
                             Command currentCommand = commandsToBroadcast.Peek();
+                            if (!connected && currentCommand.command != "GiveID") break;
                             logger.LogWrite($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
@@ -108,7 +109,7 @@ namespace LAMA.Communicator
         {
             int received;
             Socket current = (Socket)AR.AsyncState;
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 try
                 {
@@ -122,65 +123,70 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            string message = Encoding.Default.GetString(data);
-            THIS.logger.LogWrite($"Message Received: {message}");
-            string[] messageParts = message.Split(';');
-            if (messageParts[1] == "DataUpdated")
+            string[] messages = Encoding.Default.GetString(data).Split('|');
+
+            for (int i = 0; i < messages.Length - 1; i++)
             {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                string message = messages[i];
+                THIS.logger.LogWrite($"Message Received: {message}");
+                string[] messageParts = message.Split(';');
+                if (messageParts[1] == "DataUpdated")
                 {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                }));
-            }
-            if (messageParts[1] == "ItemCreated")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                }));
-            }
-            if (messageParts[1] == "ItemDeleted")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
-                }));
-            }
-            if (messageParts[1] == "Interval")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
-                }));
-            }
-            if (messageParts[1] == "GiveID")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.ReceiveID(Int32.Parse(messageParts[2]));
-                }));
-            }
-            if (messageParts[1] == "Connected")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.Connected();
-                }));
-            }
-            if (messageParts[1] == "Rollback")
-            {
-                if (messageParts[2] == "DataUpdated")
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    }));
                 }
-                if (messageParts[2] == "ItemCreated")
+                if (messageParts[1] == "ItemCreated")
                 {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    }));
+                }
+                if (messageParts[1] == "ItemDeleted")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }));
+                }
+                if (messageParts[1] == "Interval")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                    }));
+                }
+                if (messageParts[1] == "GiveID")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.ReceiveID(Int32.Parse(messageParts[2]));
+                    }));
+                }
+                if (messageParts[1] == "Connected")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.Connected();
+                    }));
+                }
+                if (messageParts[1] == "Rollback")
+                {
+                    if (messageParts[2] == "DataUpdated")
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }
+                    if (messageParts[2] == "ItemCreated")
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }
                 }
             }
             try
@@ -189,7 +195,7 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                lock (THIS.socketLock)
+                lock (ClientCommunicator.socketLock)
                 {
                     current.Close();
                 }
@@ -200,24 +206,20 @@ namespace LAMA.Communicator
         private void ReceiveID(int id)
         {
             _id = id;
+            RequestUpdate();
         }
 
         private void RequestUpdate()
         {
-            string q = lastUpdate.ToString() + ";";
+            string q = "";
             q += "Update;";
             q += id + ";";
-            SendCommand(new Command(q, "None"));
+            SendCommand(new Command(q, lastUpdate, "None"));
         }
 
         private void StartListening()
         {
-            RequestUpdate();
-            broadcastTimer = new System.Threading.Timer((e) =>
-            {
-                ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 try
                 {
@@ -231,9 +233,17 @@ namespace LAMA.Communicator
             }
         }
 
+        private void StartBroadcasting()
+        {
+            broadcastTimer = new System.Threading.Timer((e) =>
+            {
+                ProcessBroadcast();
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
+        }
+
         private void InitSocket()
         {
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 if (_IPv6)
                 {
@@ -248,17 +258,19 @@ namespace LAMA.Communicator
 
         private bool Connect()
         {
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 if (!s.Connected)
                 {
+                    /*
                     if (broadcastTimer != null)
                     {
                         broadcastTimer.Dispose();
                     }
+                    */
                     if (listener != null)
                     {
-                        listener.Abort();
+                        listener = null;
                     }
                     try
                     {
@@ -266,8 +278,15 @@ namespace LAMA.Communicator
                         s.Connect(_IP, _port);
                         logger.LogWrite("Connected");
                         SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
-                        listener = new Thread(StartListening);
-                        listener.Start();
+                        if (broadcastTimer == null)
+                        {
+                            StartBroadcasting();
+                        }
+                        if (listener == null)
+                        {
+                            listener = new Thread(StartListening);
+                            listener.Start();
+                        }
                     }
                     catch (SocketException e)
                     {
@@ -301,6 +320,7 @@ namespace LAMA.Communicator
             lock (commandsLock) {
                 commandsToSave = commandsToBroadcast.ToList();
             }
+            objectsCache.getByKey("CommandQueueLength").command = (commandsToBroadcast.Count).ToString();
             for (int i = 0; i < commandsToSave.Count; i++)
             {
                 string key = "CommandQueue" + i;
@@ -349,7 +369,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(false);
+            logger = new DebugLogger(true);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
