@@ -12,14 +12,14 @@ namespace LAMA.Communicator
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private bool server;
-        private bool noCommandSending;
+        private bool testing;
         private string objectIgnoreCreation = "";
         private string objectIgnoreDeletion = "";
 
-        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool noCommandSending = false)
+        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool testing = false)
         {
             this.server = server;
-            this.noCommandSending = noCommandSending;
+            this.testing = testing;
             this.objectsCache = objectsCache;
             this.attributesCache = attributesCache;
             communicator = initCommunicator;
@@ -32,29 +32,29 @@ namespace LAMA.Communicator
             {
                 if (messageParts[1] == "DataUpdated")
                 {
-                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), current);
                 }
                 if (messageParts[1] == "ItemCreated")
                 {
-                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1), current);
                 }
                 if (messageParts[1] == "ItemDeleted")
                 {
-                    if (!server) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
                 }
                 if (!server && (messageParts[1] == "Rollback"))
                 {
                     if (messageParts[2] == "DataUpdated")
                     {
-                        communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                        if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                         RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
                     }
                     if (messageParts[2] == "ItemCreated")
                     {
-                        communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                        if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                         RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
                     }
                 }
@@ -81,7 +81,7 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
-            if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
+            if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
         public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
@@ -110,7 +110,7 @@ namespace LAMA.Communicator
                 if (server)
                 {
                     // Notify every client
-                    if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, attributeID));
+                    if (!testing) communicator.SendCommand(new Command(command, updateTime, attributeID));
                 }
             }
             else if (attributesCache.containsKey(attributeID) && server)
@@ -120,7 +120,7 @@ namespace LAMA.Communicator
                 rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
                 try
                 {
-                    if (!noCommandSending) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
+                    if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
@@ -170,10 +170,10 @@ namespace LAMA.Communicator
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             string[] attributes = changed.getAttributes();
-            string command = "ItemCreated" + ";" + objectType + ";" + String.Join(",", attributes);
+            string command = "ItemCreated" + ";" + objectType + ";" + String.Join("■", attributes);
 
             communicator.Logger.LogWrite($"OnItemCreated: {command}");
-            if (!objectsCache.containsKey(objectCacheID))
+            if (!objectsCache.containsKey(objectCacheID) || (objectsCache.getByKey(objectCacheID).command.StartsWith("ItemDeleted") && testing))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
@@ -181,24 +181,28 @@ namespace LAMA.Communicator
                     attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + ";" + objectID + ";" + i));
                 }
             }
-            if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+            else
+            {
+                Debug.WriteLine(objectsCache.getByKey(objectCacheID).command);
+            }
+            if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
         }
 
 
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
-            communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
+            if (!testing) communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
 
-                if (!objectsCache.containsKey(objectID))
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    if (!server || noCommandSending)
+                    if (!server || testing)
                     {
                         objectIgnoreCreation = objectID;
                     }
@@ -216,14 +220,14 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
-                if (!objectsCache.containsKey(objectID))
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    if (!server || noCommandSending)
+                    if (!server || testing)
                     {
                         objectIgnoreCreation = objectID;
                     }
@@ -241,14 +245,14 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
 
-                if (!objectsCache.containsKey(objectID))
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
                     objectsCache.add(new Command(command, updateTime, objectID));
-                    if (!server || noCommandSending)
+                    if (!server || testing)
                     {
                         objectIgnoreCreation = objectID;
                     }
@@ -271,7 +275,7 @@ namespace LAMA.Communicator
             rollbackCommand += objectsCache.getByKey(objectID).command;
             try
             {
-                if (!noCommandSending) current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                if (!testing) current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
@@ -375,7 +379,7 @@ namespace LAMA.Communicator
             {
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
-                if (!noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
+                if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
                     attributesCache.removeByKey(objectID + ";" + i);
@@ -386,7 +390,7 @@ namespace LAMA.Communicator
 
         public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
         {
-            communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
+            if (!testing) communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
             string objectCacheID = objectType + ";" + objectID;
             if (objectsCache.containsKey(objectCacheID))
             {
@@ -416,7 +420,7 @@ namespace LAMA.Communicator
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
 
-                if (!server || noCommandSending)
+                if (!server || testing)
                 {
                     objectIgnoreDeletion = objectCacheID;
                 }

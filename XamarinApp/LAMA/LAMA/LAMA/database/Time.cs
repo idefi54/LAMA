@@ -13,7 +13,7 @@ namespace LAMA
         public event DataChanged dataChanged;
 
 
-        int _minutes; 
+        int _minutes;
         public int getRawMinutes()
         {
             return _minutes;
@@ -26,12 +26,12 @@ namespace LAMA
         public void setRawMinutes(int input, bool invoke)
         {
             _minutes = input;
-            if(invoke)
+            if (invoke)
                 dataChanged?.Invoke();
         }
 
-        public int hours { get { return _minutes / 60; } set { _minutes = value * 60 + _minutes%60; dataChanged?.Invoke(); } }
-        public int minutes { get { return _minutes % 60; }  set { _minutes = value + _minutes / 60; dataChanged?.Invoke(); }}
+        public int hours { get { return _minutes / 60; } set { _minutes = value * 60 + _minutes % 60; dataChanged?.Invoke(); } }
+        public int minutes { get { return _minutes % 60; } set { _minutes = value + _minutes / 60; dataChanged?.Invoke(); } }
 
         public override string ToString()
         {
@@ -42,6 +42,40 @@ namespace LAMA
         public Time(int minutes)
         {
             _minutes = minutes;
+        }
+
+        public bool Equals(Time b)
+        {
+            return b.minutes == minutes && b.hours == hours;
+        }
+
+        public static bool operator ==(Time a, Time b) {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Time a, Time b)
+        {
+            return !(a.Equals(b));
+        }
+
+        public static bool operator <(Time a, Time b)
+        {
+            return a.hours < b.hours || (a.hours == b.hours && a.minutes < b.minutes);
+        }
+
+        public static bool operator >(Time a, Time b)
+        {
+            return a.hours > b.hours || (a.hours == b.hours && a.minutes > b.minutes);
+        }
+
+        public static bool operator <=(Time a, Time b)
+        {
+            return !(a.minutes > b.minutes);
+        }
+
+        public static bool operator >=(Time a, Time b)
+        {
+            return !(a._minutes < b._minutes);
         }
     }
 }
