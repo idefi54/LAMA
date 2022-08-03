@@ -109,25 +109,16 @@ namespace LAMA.Views
             float bHeight = surface.ToPixels((float)b.Height);
             var bRect = new SKRect(bx, by, bx + bWidth, by + bHeight);
 
-            float xDist = bx - ax;
-            float yDist = by - ay;
-
             var paint = new SKPaint();
             paint.Color = SKColors.WhiteSmoke;
             paint.Style = SKPaintStyle.Stroke;
             paint.StrokeWidth = 2;
 
-            if (Math.Abs(xDist) > Math.Abs(yDist))
-            {
-                surface.Canvas.DrawLine(aRect.MidX, aRect.MidY, aRect.MidX + xDist / 2, aRect.MidY, paint);
-                surface.Canvas.DrawLine(aRect.MidX + xDist / 2, aRect.MidY, aRect.MidX + xDist / 2, bRect.MidY, paint);
-                surface.Canvas.DrawLine(aRect.MidX + xDist / 2, bRect.MidY, bRect.MidX, bRect.MidY, paint);
-            } else
-            {
-                surface.Canvas.DrawLine(aRect.MidX, aRect.MidY, aRect.MidX, bRect.MidY, paint);
-                surface.Canvas.DrawLine(aRect.MidX, bRect.MidY, bRect.MidX, bRect.MidY, paint);
-            }
-
+            SKPath path = new SKPath();
+            paint.IsAntialias = true;
+            path.MoveTo(aRect.MidX, aRect.MidY);
+            path.QuadTo(aRect.MidX, bRect.MidY, bRect.MidX, bRect.MidY);
+            surface.Canvas.DrawPath(path, paint);
         }
     }
 
