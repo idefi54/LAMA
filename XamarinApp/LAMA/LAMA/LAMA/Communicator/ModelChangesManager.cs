@@ -87,7 +87,7 @@ namespace LAMA.Communicator
         public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
-            communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
                 attributesCache.getByKey(attributeID).value = value;
@@ -132,7 +132,7 @@ namespace LAMA.Communicator
         public void RollbackDataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
-            communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            if (!testing) communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (attributesCache.containsKey(attributeID))
             {
                 attributesCache.getByKey(attributeID).value = value;
@@ -285,11 +285,11 @@ namespace LAMA.Communicator
 
         public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
-            communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
+            if (!testing) communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
                 long activityID = activity.getID();
@@ -312,7 +312,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
@@ -336,7 +336,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split(',');
+                string[] attributtes = serializedObject.Split('■');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
                 long itemID = ii.getID();
