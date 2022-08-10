@@ -382,7 +382,7 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password, string clientName)
         {
             Debug.WriteLine("client communicator");
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;

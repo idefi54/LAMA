@@ -273,7 +273,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
