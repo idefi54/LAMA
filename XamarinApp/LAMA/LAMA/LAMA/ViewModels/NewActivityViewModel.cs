@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 using LAMA.Models;
+using LAMA.Services;
 
 namespace LAMA.ViewModels
 {
@@ -114,12 +115,13 @@ namespace LAMA.ViewModels
 
 				return;
             }
-
-            LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
+			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
+            
+			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				new EventList<int>(),
 				new Time(60 * Duration.Hour + Duration.Minute), Day, new Time(60 * Start.Hour + Start.Minute),
-				new Pair<double, double>(0, 0), LarpActivity.Status.readyToLaunch,
+				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 
 			_createNewActivity(larpActivity);
