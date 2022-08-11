@@ -127,6 +127,9 @@ namespace LAMA.Views
     {
         private Button _editButton;
         private ActivityButton _draggedButton;
+        private Label _timeLabel;
+        private Label _buttonTimeLabel;
+        private Label[] _segmentLabels;
         private const string EditText = "Edit";
         private const string FinishEditText = "Finish Edit";
         private DrawSurface _surface;
@@ -138,7 +141,6 @@ namespace LAMA.Views
         private ActivityButton _button1;
         private ActivityButton _button2;
         private SKPoint mousePosition;
-        private bool _firstCall = true;
 
         public ActivityGraphPage()
         {
@@ -148,7 +150,7 @@ namespace LAMA.Views
             {
                 CanvasScale = canvasView.CanvasSize.Width / (float)canvasView.Width,
                 OffsetX = 20,
-                OffsetY = 40,
+                OffsetY = 100,
                 Width = 1500,
                 Height = 900,
                 TotalMinutes = 24 * 60,
@@ -210,6 +212,26 @@ namespace LAMA.Views
             };
             _editButton.Clicked += Button_Clicked;
             g.Children.Add(_editButton);
+            
+            _timeLabel = new Label
+            {
+                Text = "Monday, 10.4.1995"
+            };
+            g.Children.Add(_timeLabel);
+
+            _buttonTimeLabel = new Label();
+            _buttonTimeLabel.IsVisible = false;
+            g.Children.Add(_buttonTimeLabel);
+
+
+            _segmentLabels = new Label[25];
+            for (int i = 0; i <= 24; i++)
+            {
+                var label = new Label();
+                label.Text = $"{i:00}:{00:00}";
+                _segmentLabels[i] = label;
+                g.Children.Add(label);
+            }
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -277,9 +299,9 @@ namespace LAMA.Views
             _surface.Canvas = args.Surface.Canvas;
             _button2.Update(_surface);
             _button1.Update(_surface);
+            _timeLabel.TranslationX = _surface.XamOffsetX;
             
 
-            _firstCall = false;
 
             SKCanvas canvas = args.Surface.Canvas;
             canvas.Clear(SKColors.Black);
@@ -308,6 +330,9 @@ namespace LAMA.Views
                         _surface.Width / 24 * i + _surface.OffsetX,
                         _surface.OffsetY + 5,
                         paint);
+
+                    _segmentLabels[i].TranslationX = _surface.XamWidth / 24 * i + _surface.XamOffsetX;// - _segmentLabels[i].Width / 2;
+                    _segmentLabels[i].TranslationY = _surface.XamOffsetY - 50;
                 }
             }
 
@@ -328,6 +353,8 @@ namespace LAMA.Views
                 }
             }
 
+
+            _buttonTimeLabel.IsVisible = false;
             if (_draggedButton != null)
             {
                 paint.Color = SKColors.Orange.WithAlpha(125);
@@ -351,13 +378,10 @@ namespace LAMA.Views
                 paint.TextSize = 20;
                 
                 string startTime = $"{_draggedButton.Activity.start.hours}:{_draggedButton.Activity.start.minutes:00}";
-                float offset = paint.MeasureText(startTime);
-                canvas.DrawText(
-                    startTime,
-                    _surface.ToPixels((float)_draggedButton.TranslationX) - offset,
-                    _surface.OffsetY - 10,
-                    paint
-                    );
+                _buttonTimeLabel.Text = startTime;
+                _buttonTimeLabel.TranslationX = _draggedButton.TranslationX;
+                _buttonTimeLabel.TranslationY = _surface.XamOffsetY - 20;
+                _buttonTimeLabel.IsVisible = true;
                 
             }
 
