@@ -210,6 +210,52 @@ namespace LAMA.ViewModels
             }
         }
 
+        private void PropagateCreated(Serializable created)
+        {
+            if (created == null || created.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)created;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+                return;
+
+            item = new ActivityListItemViewModel(activity);
+            LarpActivityListItems.Add(item);
+        }
+
+        private void PropagateChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed == null || changed.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)changed;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item == null)
+                return;
+
+            item.UpdateActivity(activity);
+        }
+
+        private void PropagateDeleted(Serializable deleted)
+        {
+            if (deleted == null || deleted.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)deleted;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+            {
+                LarpActivityListItems.Remove(item);
+            }
+        }
+
         private async void DisplayRemoveButton(object obj)
         {
 
