@@ -51,6 +51,8 @@ namespace LAMA.Singletons
             }
         }
 
+        public static EventList<string> ChatChannels = new EventList<string>();
+
         public LarpEvent()
         {
             List<long> temp = Helpers.readLongField(Instance.days);
@@ -61,6 +63,13 @@ namespace LAMA.Singletons
             }
 
             Days.dataChanged += saveDays;
+
+            List<string> channels = Helpers.readStringField(Instance.chatChannels);
+            for (int i = 0; i < channels.Count; ++i)
+            {
+                ChatChannels.Add(channels[i]);
+            }
+            ChatChannels.dataChanged += saveChatChannels;
 
         }
         static void saveDays()
@@ -73,10 +82,20 @@ namespace LAMA.Singletons
             }
             Instance.days = output.ToString();
         }
+        static void saveChatChannels()
+        {
+            StringBuilder output = new StringBuilder();
+            foreach (var channel in ChatChannels)
+            {
+                output.Append("," + channel);
+            }
+            Instance.chatChannels = output.ToString();
+        }
 
         [PrimaryKey]
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         public string name {get;set;}
         public string days { get; set; }
+        public string chatChannels { get; set; }
     }
 }

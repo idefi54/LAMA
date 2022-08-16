@@ -5,7 +5,7 @@ using System.Text;
 namespace LAMA.Models
 {
     //this should be a read only class since it only remembers what was sent and when
-    internal class ChatMessage: Serializable
+    public class ChatMessage: Serializable
     {
         string _from;
         public string from { get { return _from; } }
@@ -20,7 +20,6 @@ namespace LAMA.Models
         /// </summary>
         public long sentAt { get { return _sentAt; } }
 
-        //WARNING might have to change this to long instead of int
         public long getID()
         {
             return sentAt;
@@ -70,6 +69,20 @@ namespace LAMA.Models
             {
                 setAttribute(i, input[i]);
             }
+        }
+
+
+
+        //"from", "channel", "message", "sentAt" 
+
+        public ChatMessage()
+        { }
+        public ChatMessage(string from, int channel, string message, long sentAt)
+        {
+            _from = from;
+            _channel = channel;
+            _message = message;
+            _sentAt = sentAt;
         }
     }
 }
