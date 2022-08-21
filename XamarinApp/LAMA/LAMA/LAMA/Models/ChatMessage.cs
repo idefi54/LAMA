@@ -73,7 +73,7 @@ namespace LAMA.Models
 
 
 
-        //"from", "channel", "message", "sentAt" 
+        
 
         public ChatMessage()
         { }

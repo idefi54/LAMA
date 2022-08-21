@@ -160,7 +160,7 @@ namespace LAMA
             if (currentInterval == null || 
                 (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
             {
-                if (askedForMore)
+                if (!askedForMore)
                 {
                     GiveNewInterval.Invoke();
                     askedForMore = true;

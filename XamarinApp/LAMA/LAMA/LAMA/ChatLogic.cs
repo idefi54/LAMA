@@ -32,7 +32,7 @@ namespace LAMA
         {
             //SQLConnectionWrapper.connection.Table<Models.ChatMessageStorage>().
             var query = SQLConnectionWrapper.connection.QueryAsync<Models.ChatMessageStorage>(
-                "SELECT * FROM ChatMessageStorage WHERE (channel = ?) (AND sentAt < ?) ORDER BY sentAt DESC LIMIT ?",
+                "SELECT * FROM ChatMessageStorage WHERE (channel = ?) AND (sentAt > ?) ORDER BY sentAt DESC LIMIT ?",
                 new object[] { channelID, sinceWhen, howMany });
             query.Wait();
 

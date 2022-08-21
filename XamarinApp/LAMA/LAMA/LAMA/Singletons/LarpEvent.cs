@@ -53,6 +53,7 @@ namespace LAMA.Singletons
 
         public static EventList<string> ChatChannels = new EventList<string>();
 
+    //TODO event description 
         public LarpEvent()
         {
             List<long> temp = Helpers.readLongField(Instance.days);
