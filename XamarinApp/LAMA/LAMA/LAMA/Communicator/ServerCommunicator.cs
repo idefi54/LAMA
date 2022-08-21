@@ -146,6 +146,7 @@ namespace LAMA.Communicator
 
         private static void AcceptCallback(IAsyncResult AR)
         {
+            THIS.logger.LogWrite("accepting");
             Socket socket = serverSocket.EndAccept(AR);
             try
             {
@@ -273,7 +274,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            logger = new DebugLogger(false);
+            logger = new DebugLogger(true);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();

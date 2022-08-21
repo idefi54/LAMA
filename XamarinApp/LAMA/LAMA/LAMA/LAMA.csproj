@@ -31,6 +31,8 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MapLimitsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    <EmbeddedResource Update="Views\ChatTest.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MapPage.xaml">
       <Generator>MSBuild:Compile</Generator>
