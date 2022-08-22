@@ -79,6 +79,17 @@ namespace LAMA.Models
             _taken = taken;
             _free = free;
         }
+        public void updateWhole(string name, string description, int taken, int free)
+        {
+            if (name != _name)
+                this.name = name;
+            if (description != _description)
+                this.description = description;
+            if(taken != _taken)
+                this.taken = taken;
+            if(free != _free)
+                this.free = free;
+        }
 
 
 

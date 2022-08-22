@@ -174,7 +174,28 @@ namespace LAMA.Models
             initChangeListeners();
         }
 
-
+        public void UpdateWhole(string name, string description, string preparation, EventType eventType, Time duration, int day,
+            Time start, Pair<double, double> place, Status status)
+        {
+            if (name != _name)
+                this.name = name;
+            if(_description!=description)
+                this.description = description;
+            if(_preparationNeeded != preparation)
+                this.preparationNeeded = preparation;
+            if(_eventType != eventType)
+                this.eventType = eventType;
+            if(duration!=_duration)
+                this.duration = duration;
+            if (day != _day)
+                this.day = day;
+            if (start != _start)
+                this.start = start;
+            if (!place.Equals(_place))
+                this.place = place;
+            if (status != _status)
+                this.status = status;
+        }
 
 
 

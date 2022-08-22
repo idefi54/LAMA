@@ -7,6 +7,9 @@ namespace LAMA.Models
     //this should be a read only class since it only remembers what was sent and when
     public class ChatMessage: Serializable
     {
+
+        long _ID;
+        public long ID { get { return _ID; }}
         string _from;
         public string from { get { return _from; } }
         int _channel;
@@ -22,16 +25,16 @@ namespace LAMA.Models
 
         public long getID()
         {
-            return sentAt;
+            return _ID;
         }
-        static string[] attributes = new string[] { "from", "channel", "message", "sentAt" };
+        static string[] attributes = new string[] { "ID","from", "channel", "message", "sentAt" };
         public int getTypeID()
         {
             return 4;
         }
         public string[] getAttributes()
         {
-            return new string[] { from, channel.ToString(), message, sentAt.ToString() };
+            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString() };
         }
         public string[] getAttributeNames()
         {
@@ -41,16 +44,19 @@ namespace LAMA.Models
         {
             switch(which)
             {
-                case 0:
-                    _from = value;
+                case 0: 
+                    _ID = Helpers.readLong(value); 
                     break;
                 case 1:
-                    _channel = Helpers.readInt(value);
+                    _from = value;
                     break;
                 case 2:
+                    _channel = Helpers.readInt(value);
+                    break;
+                case 3:
                     _message = value;
                     break;
-                case 3: 
+                case 4: 
                     _sentAt = Helpers.readLong(value);
                     break;
 
@@ -83,6 +89,7 @@ namespace LAMA.Models
             _channel = channel;
             _message = message;
             _sentAt = sentAt;
+            _ID = _sentAt + LocalStorage.cpID * 1000000000000;
         }
     }
 }

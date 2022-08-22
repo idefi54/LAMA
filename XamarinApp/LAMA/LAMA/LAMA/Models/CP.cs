@@ -80,7 +80,19 @@ namespace LAMA.Models
             _location = location;
             _notes = notes;
         }
-
+        public void updateWhole(string name, string nick, int phone, string facebook, string discord, string notes)
+        {
+            if (name != _name)
+                this.name = name;
+            if(_nick != nick)
+                this.nick = nick;
+            if(phone != _phone)
+                this.phone = phone;
+            if(discord != _discord)
+                this.discord = discord;
+            if (notes != _notes)
+                this.notes = notes;
+        }
 
 
         void updateValue(int index, string newVal)
