@@ -168,5 +168,10 @@ namespace LAMA.Singletons
         {
             return 1234;
         }
+
+
+        public void removed()
+        { }
+        public void addedInto(object holder) { }
     }
 }

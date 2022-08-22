@@ -77,6 +77,7 @@ namespace LAMA
             IDToIndex.Add(data.getID(), cache.Count - 1);
 
             sql.addData(data, invokeEvent);
+            data.addedInto(this);
             return true;
         }
 
@@ -94,17 +95,18 @@ namespace LAMA
             }
             var who = cache[index];
             cache.RemoveAt(index);
-
+            who.removed();
             sql.removeAt(who);
         }
 
-        //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)
+
         public void removeByID(long ID)
         {
             if (IDToIndex.ContainsKey(ID))
             {
                 int internalIndex = IDToIndex[ID];
                 removeAt(internalIndex);
+
             }
         }
 

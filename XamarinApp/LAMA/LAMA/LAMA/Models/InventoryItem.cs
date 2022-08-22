@@ -57,12 +57,19 @@ namespace LAMA.Models
 
 
 
-
+        RememberedList<InventoryItem, InventoryItemStorage> list = null;
+        public void removed()
+        {
+            list = null;
+        }
+        public void addedInto(object holder)
+        {
+            list = holder as RememberedList<InventoryItem, InventoryItemStorage>;
+        }
 
         void updateValue(int i, string data)
         {
-            var list = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
-            list.sqlConnection.changeData(i, data, this);
+            list?.sqlConnection.changeData(i, data, this);
         }
 
         public InventoryItem()

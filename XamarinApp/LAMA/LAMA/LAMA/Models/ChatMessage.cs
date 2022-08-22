@@ -77,6 +77,15 @@ namespace LAMA.Models
             }
         }
 
+        RememberedList<ChatMessage, ChatMessageStorage> list = null;
+        public void addedInto(object holder)
+        {
+            list = (RememberedList<ChatMessage, ChatMessageStorage>)holder;
+        }
+        public void removed()
+        {
+            list = null;
+        }
 
 
         

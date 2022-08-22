@@ -198,13 +198,21 @@ namespace LAMA.Models
         }
 
 
-
+        RememberedList<LarpActivity, LarpActivityStorage> list = null;
+        public void removed()
+        {
+            list = null;
+        }
+        public void addedInto(object holder)
+        {
+            list = holder as RememberedList<LarpActivity, LarpActivityStorage>;
+        }
 
         //helper function to update values inside SQL
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
-            list.sqlConnection.changeData(index, newVal, this);
+            
+            list?.sqlConnection.changeData(index, newVal, this);
         }
 
         // interface Serializable implementation
