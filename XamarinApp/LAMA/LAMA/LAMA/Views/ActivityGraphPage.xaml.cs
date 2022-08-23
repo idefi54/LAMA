@@ -5,7 +5,7 @@ using TouchTracking;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using LAMA.Models;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace LAMA.Views
 {
@@ -38,26 +38,33 @@ namespace LAMA.Views
     {
         public LarpActivity Activity { get; private set; }
         public int Row { get; set; }
+        public float posY;
         public ActivityButton(LarpActivity activity, INavigation navigation) : base()
         {
             Activity = activity;
             IsEnabled = true;
             Clicked += (object sender, EventArgs args) => navigation.PushAsync(new DisplayActivityPage(activity));
             Row = 0;
+            Text = Activity.name;
+            HeightRequest = 50;
         }
 
         public void Update(DrawSurface surface)
         {
             Text = Activity.name;
             WidthRequest = Activity.duration.getRawMinutes() / 60.0f * surface.XamColumnWidth * surface.Zoom;
-            TranslationX = (Activity.start.getRawMinutes() / surface.TotalMinutes * surface.XamWidth * surface.Zoom + surface.XamOffsetX) + surface.FromPixels(surface.PositionX);
+            //HeightRequest = 50;
+            TranslationX = Activity.start.getRawMinutes() / surface.TotalMinutes * surface.XamWidth * surface.Zoom + surface.XamOffsetX + surface.FromPixels(surface.PositionX);
+            TranslationY = surface.FromPixels(posY * surface.Height * surface.Zoom + surface.PositionY) + surface.XamOffsetY;
+            TranslationY = Math.Min(surface.XamHeight * surface.Zoom + surface.XamOffsetY - Height, TranslationY);
+            TranslationY = Math.Max(surface.XamOffsetY, TranslationY);
             HorizontalOptions = LayoutOptions.Start;
             VerticalOptions = LayoutOptions.Start;
             TextColor = Color.Black;
             BackgroundColor = GetColor(Activity.status);
             CornerRadius = GetCornerRadius(Activity.eventType);
 
-            IsVisible = TranslationX < surface.XamOffsetX + surface.XamWidth;
+            IsVisible = TranslationX < surface.XamOffsetX + surface.XamWidth && TranslationY >= surface.XamOffsetY;
         }
 
         private int GetCornerRadius(LarpActivity.EventType type)
@@ -92,10 +99,10 @@ namespace LAMA.Views
 
         public void Move(DrawSurface surface, double x, double y)
         {
-            y = Math.Max(y, 0);
-            y = Math.Min(y, surface.Height - Height);
-            TranslationY = y;
-            double percentage = (x - surface.XamOffsetX) / surface.XamWidth / surface.Zoom;
+            posY = (surface.ToPixels((float)y - surface.XamOffsetY) - surface.PositionY) / surface.Height / surface.Zoom;
+            posY = Math.Max(0, Math.Min(1, posY));
+            TranslationY = Math.Min(surface.XamHeight*surface.Zoom + surface.XamOffsetY - Height, Math.Max(surface.XamOffsetY, y));
+            double percentage = (x - surface.XamOffsetX - surface.FromPixels(surface.PositionX)) / surface.XamWidth / surface.Zoom;
             int minutes = (int)(percentage * surface.TotalMinutes);
             minutes = (int)Math.Max(Math.Min(minutes, surface.TotalMinutes - Activity.duration.getRawMinutes()), 0);
             minutes -= (minutes % 5);
@@ -147,6 +154,7 @@ namespace LAMA.Views
         private SKPoint mousePosition;
         private bool _mouseDown;
 
+
         public ActivityGraphPage()
         {
             InitializeComponent();
@@ -161,7 +169,7 @@ namespace LAMA.Views
                 Width = 1500,
                 Height = 900,
                 TotalMinutes = 24 * 60,
-                Zoom = 2
+                Zoom = 1
             };
 
             Grid g = Content as Grid;
@@ -187,7 +195,7 @@ namespace LAMA.Views
                 );
 
             _button1 = new ActivityButton(activity, Navigation);
-            _button1.TranslationY = _surface.OffsetY;
+            _button1.posY = 0.2f;
             g.Children.Add(_button1);
 
             var activity2 = new LarpActivity(
@@ -208,7 +216,7 @@ namespace LAMA.Views
                 );
 
             _button2 = new ActivityButton(activity2, Navigation);
-            _button2.TranslationY = _surface.OffsetY + 20;
+            _button2.posY = 0.4f;
             g.Children.Add(_button2);
 
             _editButton = new Button
@@ -304,16 +312,17 @@ namespace LAMA.Views
                 return;
             }
 
-            //_surface.PositionX++;
-            /**/
             if (args.Type == TouchActionType.Moved && _draggedButton == null && _mouseDown)
             {
                 var pos = new SKPoint(args.Location.X, args.Location.Y);
-                var dist = pos.X - mousePosition.X;
-                _surface.PositionX += _surface.ToPixels(dist);
+                var distX = pos.X - mousePosition.X;
+                var distY = pos.Y - mousePosition.Y;
+                _surface.PositionX += _surface.ToPixels(distX);
+                _surface.PositionY += _surface.ToPixels(distY);
+                _surface.PositionY = Math.Min(0, _surface.PositionY);
+                _surface.PositionY = Math.Max(-_surface.OffsetY - _surface.Height, _surface.PositionY);
                 mousePosition = pos;
             }
-            //*/
 
             if (args.Type == TouchActionType.Moved && _draggedButton != null)
             {
@@ -375,12 +384,6 @@ namespace LAMA.Views
                     _surface.OffsetY,
                     paint
                 );
-
-                for (int i = 0; i <= 24; i++)
-                {
-                    if (_surface.Width / 24 * i * _surface.Zoom > _surface.Width)
-                        break;
-                }
             }
 
             // Paint columns
@@ -389,37 +392,34 @@ namespace LAMA.Views
                 paint.StrokeWidth = 1f;
                 paint.Color = paint.Color.WithAlpha(125);
 
-                int columnCount = (int)(24 / _surface.Zoom);
+                int columnCount = (int)Math.Round(_surface.Width / _surface.ColumnWidth / _surface.Zoom);
                 float columnOffset = _surface.PositionX % (_surface.ColumnWidth * _surface.Zoom);
-                //if (_surface.PositionX % (_surface.ColumnWidth) > 0) 
-                //    columnCount--;
+                if (columnOffset < 0) columnOffset += _surface.ColumnWidth * _surface.Zoom;
 
                 foreach (var label in _segmentLabels)
                     label.IsVisible = false;
 
-                for (int i = 1; i <= columnCount; i++)
+                for (int i = 0; i < columnCount; i++)
                 {
-                    if (_surface.Width / columnCount * i > _surface.Width)
-                        break;
                     canvas.DrawLine(
-                        _surface.Width / columnCount * i + _surface.OffsetX + columnOffset,
+                        _surface.ColumnWidth * _surface.Zoom * i + _surface.OffsetX + columnOffset,
                         _surface.OffsetY - 5,
-                        _surface.Width / columnCount * i + _surface.OffsetX + columnOffset,
+                        _surface.ColumnWidth * _surface.Zoom * i + _surface.OffsetX + columnOffset,
                         _surface.OffsetY + 5,
                         paint);
 
                     canvas.DrawLine(
-                        _surface.Width / columnCount * i + _surface.OffsetX + columnOffset,
+                        _surface.ColumnWidth * _surface.Zoom * i + _surface.OffsetX + columnOffset,
                         _surface.OffsetY + 5,
-                        _surface.Width / columnCount * i + _surface.OffsetX + columnOffset,
-                        _surface.Height + _surface.OffsetY,
+                        _surface.ColumnWidth * _surface.Zoom * i + _surface.OffsetX + columnOffset,
+                        _surface.Height * _surface.Zoom + _surface.OffsetY + _surface.PositionY,
                         paint);
                 }
                 
                 for (int j = 0; j <= 23; j++)
                 {
                     _segmentLabels[j].IsVisible = false;
-                    float offset = _surface.FromPixels(_surface.PositionX) + _surface.XamOffsetX * _surface.Zoom;
+                    float offset = _surface.FromPixels(_surface.PositionX) + _surface.XamOffsetX;
                     float col = j * _surface.XamColumnWidth * _surface.Zoom + offset;
                     col %= _surface.XamWidth * _surface.Zoom;
                     if (col < 0) col += _surface.XamWidth * _surface.Zoom;
@@ -428,14 +428,36 @@ namespace LAMA.Views
                     _segmentLabels[j].TranslationX = col;
                     _segmentLabels[j].TranslationY = _surface.XamOffsetY - 40;
 
+                    if (j == 0)
+                    {
+                        paint.Color = SKColors.Red;
+                        canvas.DrawLine(_surface.ToPixels(col),
+                            _surface.OffsetY,
+                            _surface.ToPixels(col),
+                            _surface.OffsetY + _surface.PositionY + _surface.Height * _surface.Zoom,
+                            paint);
+
+                        _timeLabel.TranslationX = col;
+                    }
                 }
 
-                paint.Color = SKColors.Red;
-                canvas.DrawLine(_surface.OffsetX + _surface.Width,
-                    _surface.OffsetY,
-                    _surface.OffsetX + _surface.Width,
-                    _surface.OffsetY + _surface.Height,
-                    paint);
+                _timeLabel.TranslationY = _surface.XamOffsetY - 80;
+            }
+
+            // Paint scroll bar
+            {
+                paint.Color = SKColors.Gray;
+                paint.PathEffect = null;
+                
+                canvas.DrawLine(5, _surface.OffsetY, 5, _surface.OffsetY + _surface.Height, paint);
+
+                var rect = new SKRect(
+                    0,
+                    -_surface.PositionY + _surface.OffsetY,
+                    10,
+                    -_surface.PositionY + _surface.OffsetY + 30
+                    );
+                canvas.DrawRoundRect(rect, 2, 2, paint);
             }
 
             _buttonTimeLabel.IsVisible = false;
@@ -446,14 +468,14 @@ namespace LAMA.Views
                     _surface.ToPixels((float)_draggedButton.TranslationX),
                     _surface.ToPixels((float)_draggedButton.TranslationY),
                     _surface.ToPixels((float)_draggedButton.TranslationX),
-                    _surface.OffsetY,
+                    _surface.OffsetY + _surface.PositionY,
                     paint);
 
                 canvas.DrawLine(
                     _surface.ToPixels((float)_draggedButton.TranslationX + (float)_draggedButton.Width),
                     _surface.ToPixels((float)_draggedButton.TranslationY),
                     _surface.ToPixels((float)_draggedButton.TranslationX + (float)_draggedButton.Width),
-                    _surface.OffsetY,
+                    _surface.OffsetY + _surface.PositionY,
                     paint);
 
 

@@ -7,7 +7,9 @@
     <ContentPage.Content>
         <Grid>
             <skia:SKCanvasView x:Name="canvasView"
-                           PaintSurface="OnCanvasViewPaintSurface" />
+                           PaintSurface="OnCanvasViewPaintSurface"
+                               TranslationX="0"
+                               TranslationY="0"/>
             <Grid.Effects>
                 <tt:TouchEffect Capture="True"
                             TouchAction="OnTouchEffectAction" />
