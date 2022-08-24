@@ -30,26 +30,24 @@ namespace LAMA.Models.DTO
             description = larpActivity.description;
             preparationNeeded = larpActivity.preparationNeeded;
             eventType = larpActivity.eventType;
-            prerequisiteIDs = new List<int>();
-            larpActivity.prerequisiteIDs.ForEach(x => prerequisiteIDs.Add(x));
+            prerequisiteIDs = larpActivity.prerequisiteIDs.Select(x => x).ToList();
             duration = larpActivity.duration;
             day = larpActivity.day;
             start = larpActivity.start;
             place = larpActivity.place;
             status = larpActivity.status;
-            requiredItems = new List<Pair<int, int>>();
-            larpActivity.requiredItems.ForEach(x => requiredItems.Add(x));
-            roles = new List<Pair<string, int>>();
-            larpActivity.roles.ForEach(x=>roles.Add(x));
-            registrationByRole = new List<Pair<int, string>>();
-            larpActivity.registrationByRole.ForEach(x => registrationByRole.Add(x));
+            requiredItems = larpActivity.requiredItems.Select(x => x).ToList();
+            roles = larpActivity.roles.Select(x=>x).ToList();
+            registrationByRole = larpActivity.registrationByRole.Select(x => x).ToList();
         }
 
         public LarpActivity CreateLarpActivity()
         {
             return new LarpActivity(ID, name, description, preparationNeeded, eventType,
-                new EventList<int>(prerequisiteIDs), duration, day, start, place, status,
-                new EventList<Pair<int, int>>(requiredItems), new EventList<Pair<string, int>>(roles),
+                new EventList<int>(prerequisiteIDs),
+                duration, day, start, place, status,
+                new EventList<Pair<int, int>>(requiredItems),
+                new EventList<Pair<string, int>>(roles),
                 new EventList<Pair<int, string>>(registrationByRole));
         }
     }
