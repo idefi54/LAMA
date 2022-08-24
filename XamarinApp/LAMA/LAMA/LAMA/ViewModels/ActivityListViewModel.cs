@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Models.DTO;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -162,13 +163,15 @@ namespace LAMA.ViewModels
             //LarpActivityListItems.Add(larpActivity);
         }
 
-        private void CreateNewActivity(LarpActivity larpActivity)
+        private void CreateNewActivity(LarpActivityDTO larpActivity)
         {
             //larpActivity.ID = ++maxId;
 
-            LarpActivity activity = new LarpActivity(++maxId, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
-                larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
-                larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+            //LarpActivity activity = new LarpActivity(++maxId, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
+            //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
+            //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+
+            LarpActivity activity = larpActivity.CreateLarpActivity();
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
             DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);

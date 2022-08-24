@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace LAMA.Views
         }
 
 
-        private void DummyUpdateActivity(LarpActivity larpActivity)
+        private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {
             //activity.name = larpActivity.name;
             //activity.description = larpActivity.description;
@@ -59,9 +60,11 @@ namespace LAMA.Views
 
 
 
-            activity = new LarpActivity(activity.ID, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
-                larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
-                larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+            //activity = new LarpActivity(activity.ID, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
+            //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
+            //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+
+            activity = larpActivity.CreateLarpActivity();
         }
     }
 }

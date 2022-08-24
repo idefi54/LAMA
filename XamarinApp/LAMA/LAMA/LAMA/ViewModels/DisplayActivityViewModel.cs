@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Models.DTO;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace LAMA.ViewModels
 			await Shell.Current.GoToAsync("..");
 		}
 
-		private void UpdateActivity(LarpActivity larpActivity)
+		private void UpdateActivity(LarpActivityDTO larpActivity)
 		{
 			Name = larpActivity.name;
 			Description = larpActivity.description;

@@ -6,7 +6,7 @@ using static LAMA.Models.LarpActivity;
 
 namespace LAMA.Models.DTO
 {
-    internal class LarpActivityDTO
+    public class LarpActivityDTO
     {
         public int ID {get; set;}
         public string name {get; set;}
