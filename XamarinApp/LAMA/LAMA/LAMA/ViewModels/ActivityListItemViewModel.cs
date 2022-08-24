@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace LAMA.ViewModels
 
         public LarpActivity LarpActivity => _larpActivity;
 
-        public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + (_larpActivity.eventType == LarpActivity.EventType.normal ? "(N)" : "(P)");
+        public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + (_larpActivity.eventType == Models.LarpActivity.EventType.normal ? "(N)" : "(P)");
 
         public string Detail => _larpActivity == null ? "" : "začíná za " + TimeFormat(_larpActivity.start.hours, _larpActivity.start.minutes);
 

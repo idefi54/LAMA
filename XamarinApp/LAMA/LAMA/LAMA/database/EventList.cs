@@ -34,5 +34,18 @@ namespace LAMA
         {
             base.Add(what);
         }
+
+        public EventList()
+        {
+            
+        }
+
+        public EventList(List<T> list)
+        {
+            foreach(T item in list)
+            {
+                this.Add(item);
+            }
+        }
     }
 }
