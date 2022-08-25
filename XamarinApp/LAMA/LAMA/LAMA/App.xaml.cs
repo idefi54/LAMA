@@ -13,7 +13,6 @@ namespace LAMA
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
             MainPage = new AppShell();
         }
 
