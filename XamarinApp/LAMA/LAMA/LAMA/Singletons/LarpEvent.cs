@@ -21,15 +21,18 @@ namespace LAMA.Singletons
                 }
                 else
                 {
+                    LarpEvent result = null;
                     string name = new LarpEvent().GetType().Name;
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
                     if (a.Result.Count == 0)
                         SQLConnectionWrapper.connection.CreateTableAsync<LarpEvent>().Wait();
-
-                    var getting = SQLConnectionWrapper.connection.GetAsync<LarpEvent>(0);
-                    getting.Wait();
-                    var result = getting.Result;
+                    else
+                    {
+                        var getting = SQLConnectionWrapper.connection.GetAsync<LarpEvent>(0);
+                        getting.Wait();
+                        result = getting.Result;
+                    }
                     if (result != null)
                         instance = result;
                     else
