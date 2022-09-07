@@ -8,9 +8,33 @@ namespace LAMA
 {
     class Helpers
     {
+        public static EventList<long> readLongField(string input)
+        {
+            EventList<long> output = new EventList<long>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                output.Add(readLong(input, ref i));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
         public static long readLong (string input)
         {
             int offset = 0;
+            long num = 0;
+            while (offset < input.Length && char.IsDigit(input[offset]))
+            {
+                num *= 10;
+                num += input[offset] - '0';
+                ++offset;
+            }
+            return num;
+        }
+        public static long readLong(string input, ref int offset)
+        {
+            
             long num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
             {
@@ -81,16 +105,18 @@ namespace LAMA
             int firstPart = readInt(input, ref offset);
             // skip the decimal . or ,
             ++offset;
+            int offset1 = offset;
             int secondPart = readInt(input, ref offset);
-
-            return (double)firstPart + ((double)secondPart) / Math.Pow(10, Math.Ceiling(Math.Log10(secondPart)));
+            offset1 = offset - offset1;
+            return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
         }
         public static Pair<double, double> readDoublePair(string input)
         {
             int i = 0;
             double first = readDouble(input, ref i);
             skipNonDigits(input, ref i);
-            return new Pair<double, double>(first, readDouble(input, ref i));
+            Pair<double, double> result = new Pair<double, double>(first, readDouble(input, ref i));
+            return result;
         }
 
         public static EventList<Pair<int, int>> readIntPairField(string input)

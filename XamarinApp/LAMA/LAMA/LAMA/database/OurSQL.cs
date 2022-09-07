@@ -139,7 +139,11 @@ namespace LAMA
                 SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
-            connection.CreateTableAsync<Storage>().Wait();
+            string name = new Storage().GetType().Name;
+            var a = connection.GetTableInfoAsync(name);
+            a.Wait();
+            if (a.Result.Count == 0)
+                connection.CreateTableAsync<Storage>().Wait();
         }
 
 
@@ -205,10 +209,10 @@ namespace LAMA
         }
 
 
-        public List<int> getDataSince(long when)
+        public List<long> getDataSince(long when)
         {
 
-            List<int> output = new List<int>();
+            List<long> output = new List<long>();
 
             var storages = connection.Table<Storage>().Where(a => a.lastChange >= when);
 

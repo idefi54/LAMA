@@ -8,22 +8,33 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using System.Diagnostics;
 
 namespace LAMA.Communicator
 {
     public class ClientCommunicator : Communicator
     {
+        public DebugLogger logger;
+        public DebugLogger Logger
+        {
+            get { return logger; }
+        }
         private bool _connected = false;
         public bool connected
         {
             get { return _connected; }
         }
         static Socket s;
-        private object socketLock = new object();
+        private static object socketLock = new object();
         private Thread listener;
-        private long lastUpdate;
-        private static string CPName;
-        private static string assignedEvent = "";
+        public long lastUpdate;
+        public long LastUpdate
+        {
+            get { return lastUpdate; }
+            set { lastUpdate = value; }
+        }
+        //private static string CPName;
+        //private static string assignedEvent = "";
         private IPAddress _IP;
         private int _port;
         private bool _IPv6 = false;
@@ -45,21 +56,19 @@ namespace LAMA.Communicator
 
         private int _id;
         public int id { get { return _id; } }
-        private async void ProcessBroadcast()
+        private void ProcessBroadcast()
         {
-            await MainThread.InvokeOnMainThreadAsync(new Action(() =>
-            {
-                LoadCommandQueue();
-            }));
             lock (socketLock)
             {
-                if (connected && s.Connected)
+                if (s.Connected)
                 {
                     lock (commandsLock)
                     {
                         while (commandsToBroadcast.Count > 0)
                         {
                             Command currentCommand = commandsToBroadcast.Peek();
+                            if (!connected && currentCommand.command != "GiveID") break;
+                            logger.LogWrite($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
                             {
@@ -71,6 +80,7 @@ namespace LAMA.Communicator
                                 break;
                             }
                             commandsToBroadcast.Dequeue();
+                            logger.LogWrite($"Finished Sending: {currentCommand.command}");
                         }
                     }
                 }
@@ -86,20 +96,20 @@ namespace LAMA.Communicator
             int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
             string key = "CommandQueue" + savedQueueLength;
             objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
+            logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key} | {command.receiverID}");
             objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
-            /*
             lock (commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
+                SaveCommandQueue();
             }
-            */
         }
 
         private static void ReceiveData(IAsyncResult AR)
         {
             int received;
             Socket current = (Socket)AR.AsyncState;
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 try
                 {
@@ -113,64 +123,70 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            string message = Encoding.Default.GetString(data);
-            string[] messageParts = message.Split(';');
-            if (messageParts[1] == "DataUpdated")
+            string[] messages = Encoding.Default.GetString(data).Split('|');
+
+            for (int i = 0; i < messages.Length - 1; i++)
             {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                string message = messages[i];
+                THIS.logger.LogWrite($"Message Received: {message}");
+                string[] messageParts = message.Split(';');
+                if (messageParts[1] == "DataUpdated")
                 {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                }));
-            }
-            if (messageParts[1] == "ItemCreated")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                }));
-            }
-            if (messageParts[1] == "ItemDeleted")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
-                }));
-            }
-            if (messageParts[1] == "Interval")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
-                }));
-            }
-            if (messageParts[1] == "GiveID")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.ReceiveID(Int32.Parse(messageParts[2]));
-                }));
-            }
-            if (messageParts[1] == "Connected")
-            {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
-                {
-                    THIS.Connected();
-                }));
-            }
-            if (messageParts[1] == "Rollback")
-            {
-                if (messageParts[2] == "DataUpdated")
-                {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    }));
                 }
-                if (messageParts[2] == "ItemCreated")
+                if (messageParts[1] == "ItemCreated")
                 {
-                    THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                    THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                    }));
+                }
+                if (messageParts[1] == "ItemDeleted")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }));
+                }
+                if (messageParts[1] == "Interval")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                    }));
+                }
+                if (messageParts[1] == "GiveID")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.ReceiveID(Int32.Parse(messageParts[2]));
+                    }));
+                }
+                if (messageParts[1] == "Connected")
+                {
+                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.Connected();
+                    }));
+                }
+                if (messageParts[1] == "Rollback")
+                {
+                    if (messageParts[2] == "DataUpdated")
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }
+                    if (messageParts[2] == "ItemCreated")
+                    {
+                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                    }
                 }
             }
             try
@@ -179,7 +195,7 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                lock (THIS.socketLock)
+                lock (ClientCommunicator.socketLock)
                 {
                     current.Close();
                 }
@@ -190,24 +206,20 @@ namespace LAMA.Communicator
         private void ReceiveID(int id)
         {
             _id = id;
+            RequestUpdate();
         }
 
         private void RequestUpdate()
         {
-            string q = lastUpdate.ToString() + ";";
+            string q = "";
             q += "Update;";
-            q += CPName + ";";
-            SendCommand(new Command(q, "None"));
+            q += id + ";";
+            SendCommand(new Command(q, lastUpdate, "None"));
         }
 
         private void StartListening()
         {
-            RequestUpdate();
-            broadcastTimer = new System.Threading.Timer((e) =>
-            {
-                ProcessBroadcast();
-            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 try
                 {
@@ -221,9 +233,17 @@ namespace LAMA.Communicator
             }
         }
 
+        private void StartBroadcasting()
+        {
+            broadcastTimer = new System.Threading.Timer((e) =>
+            {
+                ProcessBroadcast();
+            }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
+        }
+
         private void InitSocket()
         {
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 if (_IPv6)
                 {
@@ -238,28 +258,39 @@ namespace LAMA.Communicator
 
         private bool Connect()
         {
-            lock (THIS.socketLock)
+            lock (ClientCommunicator.socketLock)
             {
                 if (!s.Connected)
                 {
+                    /*
                     if (broadcastTimer != null)
                     {
                         broadcastTimer.Dispose();
                     }
+                    */
                     if (listener != null)
                     {
-                        listener.Abort();
+                        listener = null;
                     }
                     try
                     {
                         InitSocket();
                         s.Connect(_IP, _port);
-                        SendCommand(new Command("GiveID", "None"));
-                        listener = new Thread(StartListening);
-                        listener.Start();
+                        logger.LogWrite("Connected");
+                        SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                        if (broadcastTimer == null)
+                        {
+                            StartBroadcasting();
+                        }
+                        if (listener == null)
+                        {
+                            listener = new Thread(StartListening);
+                            listener.Start();
+                        }
                     }
                     catch (SocketException e)
                     {
+                        logger.LogWrite(e.Message);
                         if (e.Message == "Connection refused")
                         {
                             throw new ServerConnectionRefusedException("Server refused the connection, check your port forwarding and firewall settings");
@@ -289,6 +320,7 @@ namespace LAMA.Communicator
             lock (commandsLock) {
                 commandsToSave = commandsToBroadcast.ToList();
             }
+            objectsCache.getByKey("CommandQueueLength").command = (commandsToBroadcast.Count).ToString();
             for (int i = 0; i < commandsToSave.Count; i++)
             {
                 string key = "CommandQueue" + i;
@@ -325,7 +357,7 @@ namespace LAMA.Communicator
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + id;
-            SendCommand(new Command(command, "None"));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
@@ -336,9 +368,12 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            Debug.WriteLine("client communicator");
+            logger = new DebugLogger(true);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+            logger.LogWrite("Created dictionaries");
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
@@ -377,6 +412,7 @@ namespace LAMA.Communicator
             }
             else
             {
+                logger.LogWrite("No exceptions");
                 string[] array = responseString.Split(',');
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
                 {
@@ -393,6 +429,7 @@ namespace LAMA.Communicator
                 {
                     throw new NotAnIPAddressException("Server IP address not valid");
                 }
+                THIS = this;
                 _port = int.Parse(array[1]);
                 InitSocket();
                 Connect();
@@ -403,12 +440,14 @@ namespace LAMA.Communicator
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
+                logger.LogWrite("Subscribing to events");
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
                 DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
                 DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+                logger.LogWrite("Initialization finished");
             }
         }
     }

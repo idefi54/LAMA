@@ -87,14 +87,6 @@
 	<FlyoutItem Title="Map">
 		<ShellContent Route="MapPage" ContentTemplate="{DataTemplate local:MapPage}" />
 	</FlyoutItem>
-	<!--
-	<FlyoutItem Title="About" Icon="icon_about.png">
-        <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-	</FlyoutItem>
-	<FlyoutItem Title="Browse" Icon="icon_feed.png">
-		<ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:ItemsPage}" />
-	</FlyoutItem>
-	-->
 	<FlyoutItem Title="Seznam Aktivit" Icon="icon_feed.png">
 		<ShellContent Route="ActivityListPage" ContentTemplate="{DataTemplate local:ActivityListPage}" />
 	</FlyoutItem>

@@ -93,7 +93,7 @@ namespace LAMA.Models
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
             "discord", "location", "notes" };
 
-        public int getID()
+        public long getID()
         {
             return _ID;
         }

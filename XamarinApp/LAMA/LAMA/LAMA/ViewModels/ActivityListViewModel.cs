@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Models.DTO;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,13 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command AddActivityCommand { get; }
         public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
-        public Command<LarpActivity> LarpActivityTapped { get; }
+        public Command<object> LarpActivityTapped { get; private set; }
+
+        public Command<object> RemoveLarpActivity { get; private set; }
+
+        public Command<object> ShowRemoveButton { get; private set; }
+
+        ActivityListItemViewModel lastInteracterActivity = null;
 
         INavigation Navigation;
 
@@ -37,6 +44,7 @@ namespace LAMA.ViewModels
                     maxId = item.LarpActivity.ID;
             }
 
+            #region population of test database
             //LarpActivity activity = new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation };
 
             //LarpActivity larpActivity = new LarpActivity(0, "Příprava přepadu", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
@@ -64,30 +72,84 @@ namespace LAMA.ViewModels
             //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
             //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
 
-            AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
-            LarpActivityTapped = new Command<LarpActivity>(DisplayActivity);
-
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Přepad karavanu", start = new Time(60 * 14 + 15), eventType = LarpActivity.EventType.normal });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava záchrany", start = new Time(60 * 14), eventType = LarpActivity.EventType.preparation });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Záchrana kupce", start = new Time(60 * 16 + 10), eventType = LarpActivity.EventType.normal });
             //LarpActivityListItems.Add(new LarpActivity() { name = "Úklid mrtvol hráčů", start = new Time(60 * 16 + 15), eventType = LarpActivity.EventType.preparation });
+
+            #endregion
+
+            AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
+            LarpActivityTapped = new Command<object>(DisplayActivity);
+            RemoveLarpActivity = new Command<object>(RemoveActivity);
+            ShowRemoveButton = new Command<object>(DisplayRemoveButton);
         }
 
-        private async void DisplayActivity(LarpActivity obj)
+        private void UpdateLastInteracter(ActivityListItemViewModel alivm)
         {
-            App.Current.MainPage.DisplayAlert("Message", "Test message.", "OK");
-
-
-            if (obj.GetType() != typeof(LarpActivity))
+            if(lastInteracterActivity != null)
             {
-                Console.WriteLine("-------------------------------------------------\nWrong Type inside ActivityList");
+                lastInteracterActivity.ResetDisplay();
+            }
+            lastInteracterActivity = alivm;
+        }
+
+        private async void DisplayActivity(object obj)
+        {
+            if (obj.GetType() != typeof(ActivityListItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
                 return;
             }
 
-            LarpActivity activity = (LarpActivity)obj;
+            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
+            UpdateLastInteracter(activityViewModel);
+
+            LarpActivity activity = activityViewModel.LarpActivity;
 
             await Navigation.PushAsync(new DisplayActivityPage(activity));
+        }
+
+        private async void RemoveActivity(object obj)
+        {
+            if (obj.GetType() != typeof(ActivityListItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+
+            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
+            UpdateLastInteracter(activityViewModel);
+
+            bool result = await App.Current.MainPage.DisplayAlert("Smazat aktivitu", "Opravdu chcete smazat aktivitu " + activityViewModel.LarpActivity.name + ".", "Smazat", "zrušit");
+
+            if(result)
+            {
+                LarpActivityListItems.Remove(activityViewModel);
+                DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.removeByID(activityViewModel.LarpActivity.getID());
+            }
+        }
+
+        private async void DisplayRemoveButton(object obj)
+        {
+
+            if (obj.GetType() != typeof(ActivityListItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+
+            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
+            UpdateLastInteracter(activityViewModel);
+
+            await App.Current.MainPage.DisplayAlert("Message", activityViewModel.ShowDeleteButton.ToString(), "OK");
+            activityViewModel.ShowDeleteButton = true;
+            await App.Current.MainPage.DisplayAlert("Message", activityViewModel.ShowDeleteButton.ToString(), "OK");
+            
         }
 
         private async void OnAddActivityListItem(object obj)
@@ -101,13 +163,15 @@ namespace LAMA.ViewModels
             //LarpActivityListItems.Add(larpActivity);
         }
 
-        private void CreateNewActivity(LarpActivity larpActivity)
+        private void CreateNewActivity(LarpActivityDTO larpActivity)
         {
             //larpActivity.ID = ++maxId;
 
-            LarpActivity activity = new LarpActivity(++maxId, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
-                larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
-                larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+            //LarpActivity activity = new LarpActivity(++maxId, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
+            //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
+            //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
+
+            LarpActivity activity = larpActivity.CreateLarpActivity();
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
             DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);

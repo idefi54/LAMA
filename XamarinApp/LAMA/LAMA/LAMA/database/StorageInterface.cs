@@ -12,7 +12,7 @@ namespace LAMA.Database
         void makeFromStrings(string[] input);
         string[] getStrings();
 
-        int getID();
+        long getID();
 
     }
 

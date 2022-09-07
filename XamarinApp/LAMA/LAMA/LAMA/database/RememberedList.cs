@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LAMA
 {
@@ -11,7 +12,7 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
-        SortedDictionary<int, int> IDToIndex = new SortedDictionary<int, int>();
+        SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
 
         
         List<T> cache = new List<T>();
@@ -23,8 +24,10 @@ namespace LAMA
         public RememberedList(OurSQL<T, Storage> sql)
         {
             intervalsSQL = new OurSQLInterval();
+            Debug.WriteLine("Interval constructor called");
             this.sql = sql;
             typeID = new T().getTypeID();
+            Debug.WriteLine("Before load data");
             loadData();
         }
 
@@ -32,7 +35,6 @@ namespace LAMA
         {
             
             IDIntervals = intervalsSQL.ReadData(typeID);
-            
 
             cache = sql.ReadData();
 
@@ -97,7 +99,7 @@ namespace LAMA
         }
 
         //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)
-        public void removeByID(int ID)
+        public void removeByID(long ID)
         {
             if (IDToIndex.ContainsKey(ID))
             {
@@ -106,7 +108,7 @@ namespace LAMA
             }
         }
 
-        public T getByID(int id)
+        public T getByID(long id)
         {
             if (!IDToIndex.ContainsKey(id))
                 return default(T);
@@ -135,7 +137,7 @@ namespace LAMA
         /// 
         /// </summary>
         /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
-        public int nextID()
+        public long nextID()
         {   
 
             Database.Interval currentInterval = null;

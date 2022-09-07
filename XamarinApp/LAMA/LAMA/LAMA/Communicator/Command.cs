@@ -84,7 +84,7 @@ namespace LAMA.Communicator
 
         public byte[] Encode()
         {
-            return Encoding.Default.GetBytes(_time + ";" + _command);
+            return Encoding.Default.GetBytes(_time + ";" + _command + "|");
         }
 
         public void buildFromStrings(string[] input)
