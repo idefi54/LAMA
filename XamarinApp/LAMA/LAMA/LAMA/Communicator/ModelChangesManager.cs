@@ -107,6 +107,11 @@ namespace LAMA.Communicator
                 {
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
+
+                if (objectType == "LAMA.Models.ChatMessage")
+                {
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
                 if (server)
                 {
                     // Notify every client
@@ -151,6 +156,11 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Models.ChatMessage")
+                {
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
             }
         }
@@ -266,6 +276,31 @@ namespace LAMA.Communicator
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
+
+            if (objectType == "LAMA.Models.ChatMessage")
+            {
+                Models.ChatMessage cm = new Models.ChatMessage();
+                string[] attributtes = serializedObject.Split('■');
+                cm.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cm.getID();
+
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    if (!server || testing)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.add(cm);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                    // Notify every client of item creation
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                }
+                else if (server) ItemCreatedSendRollback(objectID, current);
+            }
         }
 
         private void ItemCreatedSendRollback(string objectID, Socket current)
@@ -355,6 +390,29 @@ namespace LAMA.Communicator
                     }
                 }
             }
+
+            if (objectType == "LAMA.Models.ChatMessage")
+            {
+                Models.ChatMessage cm = new Models.ChatMessage();
+                string[] attributtes = serializedObject.Split('■');
+                cm.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cm.getID();
+                long messageID = cm.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    cm = DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(messageID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    cm.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
+                    }
+                }
+            }
         }
 
         public void OnItemDeleted(Serializable changed)
@@ -412,6 +470,12 @@ namespace LAMA.Communicator
                 {
                     nAttributes = removedInventoryItem.numOfAttributes();
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.removeByID(objectID);
+                }
+                Models.ChatMessage removedChatMessage;
+                if (objectType == "LAMA.Models.ChatMessage" && (removedChatMessage = DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedChatMessage.numOfAttributes();
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.removeByID(objectID);
                 }
                 for (int i = 0; i < nAttributes; i++)
                 {

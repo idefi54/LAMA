@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using SQLite;
 
 namespace LAMA
 {
-
-
-
     public class LocalStorage
     {
 
@@ -16,29 +14,53 @@ namespace LAMA
             {
                 if (instance != null)
                 {
+                    Debug.WriteLine("before return existing instance");
                     return instance;
                 }
                 else
                 {
                     string name =  new LocalStorage().GetType().Name;
+                    Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
+                    Debug.WriteLine("After GetTableInfoAsync");
                     if (a.Result.Count == 0)
+                    {
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
-
-                    var getting = SQLConnectionWrapper.connection.GetAsync<LocalStorage>(0);
-                    getting.Wait();
-                    var result = getting.Result;
-                    if (result != null)
-                        instance = result;
+                        Debug.WriteLine("table created");
+                    }
                     else
                     {
-                        instance = new LocalStorage();
-                        SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
+                        Debug.WriteLine("not creating table");
                     }
-                    return instance;
+
+                    try
+                    {
+                        var getting = SQLConnectionWrapper.connection.GetAsync<LocalStorage>(0);
+                        Debug.WriteLine("Created getting task");
+                        getting.Wait();
+                        Debug.WriteLine("getting.Wait() finished");
+                        var result = getting.Result;
+                        Debug.WriteLine("Got local storage result");
+                        if (result != null)
+                            instance = result;
+                        else
+                        {
+                            instance = new LocalStorage();
+                            SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
+                        }
+                        Debug.WriteLine("before returning instance");
+                        return instance;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("Exception thrown ---------------------------------------------------------------");
+                        Debug.WriteLine(e.Message);
+                        throw e;
+                    }
                 }
-            } }
+            }
+        }
 
         public static string serverName 
         {
