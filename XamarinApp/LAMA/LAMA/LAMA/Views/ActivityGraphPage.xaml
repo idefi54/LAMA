@@ -4,16 +4,4 @@
              xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:tt="clr-namespace:TouchTracking.Forms;assembly=TouchTracking.Forms"
              x:Class="LAMA.Views.ActivityGraphPage">
-    <ContentPage.Content>
-        <Grid>
-            <skia:SKCanvasView x:Name="canvasView"
-                           PaintSurface="OnCanvasViewPaintSurface"
-                               TranslationX="0"
-                               TranslationY="0"/>
-            <Grid.Effects>
-                <tt:TouchEffect Capture="True"
-                            TouchAction="OnTouchEffectAction" />
-            </Grid.Effects>
-        </Grid>
-    </ContentPage.Content>
 </ContentPage>
