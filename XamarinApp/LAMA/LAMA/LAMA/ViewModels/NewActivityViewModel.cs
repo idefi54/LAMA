@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 using LAMA.Models;
 using LAMA.Services;
+using LAMA.Models.DTO;
 
 namespace LAMA.ViewModels
 {
@@ -53,9 +53,9 @@ namespace LAMA.ViewModels
 		//      }
 
 		INavigation _navigation;
-		Action<LarpActivity> _createNewActivity;
+		Action<LarpActivityDTO> _createNewActivity;
 
-        public NewActivityViewModel(INavigation navigation, Action<LarpActivity> createNewActivity, LarpActivity activity = null)
+        public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
         {
 			if(activity != null)
             {
@@ -124,7 +124,7 @@ namespace LAMA.ViewModels
 				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 
-			_createNewActivity(larpActivity);
+			_createNewActivity(new LarpActivityDTO(larpActivity));
 
 			// This will pop the current page off the navigation stack
 			await Shell.Current.GoToAsync("..");
