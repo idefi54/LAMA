@@ -1,5 +1,6 @@
 ﻿using System;
 using Foundation;
+using LAMA.Services;
 using UserNotifications;
 using Xamarin.Forms;
 
