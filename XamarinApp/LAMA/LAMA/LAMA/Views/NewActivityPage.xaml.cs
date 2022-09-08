@@ -10,10 +10,8 @@ using Xamarin.Forms.Xaml;
 using LAMA.Models;
 using LAMA.ViewModels;
 using LAMA.Services;
+using LAMA.Models.DTO;
 
-using Mapsui;
-using Mapsui.Projection;
-using Mapsui.Utilities;
 using Mapsui.UI.Forms;
 
 namespace LAMA.Views
@@ -25,7 +23,7 @@ namespace LAMA.Views
         private MapView _mapView;
 		public LarpActivity Activity { get; set; }
 
-		public NewActivityPage(Action<LarpActivity> createNewActivity, LarpActivity activity = null)
+		public NewActivityPage(Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
         {
             InitializeComponent();
             Activity = activity;
