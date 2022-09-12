@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using LAMA.Models;
 
 namespace LAMA.Communicator
 {
@@ -238,7 +239,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.GiveNewClientID(current);
+                        THIS.GiveNewClientID(current, messageParts[2]);
                     }));
                 }
                 if (messageParts[1] == "ClientConnected")
@@ -376,11 +377,25 @@ namespace LAMA.Communicator
             }
         }
 
-        private void GiveNewClientID(Socket current)
+        private void GiveNewClientID(Socket current, string clientName)
         {
             maxClientID += 1;
-            string command = "GiveID;";
-            command += maxClientID;
+            int cpID = -1;
+            for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
+            {
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                {
+                    cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
+                }
+            }
+            if (cpID == -1)
+            {
+                CP cp = new Models.CP((int)DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
+                    clientName, clientName, new EventList<string> {}, 0, "", "", new Pair<double, double>(0.0f, 0.0f), "");
+                cpID = cp.ID;
+            }
+            string command = $"GiveID;{maxClientID};{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[maxClientID] = current;

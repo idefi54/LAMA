@@ -1,9 +1,11 @@
 ﻿using LAMA.Models;
 using LAMA.Singletons;
 using Mapsui.Providers.ArcGIS.Dynamic;
+using Mapsui.Styles;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -18,6 +20,10 @@ namespace LAMA.ViewModels
         public string Text => chatMessage == null ? "" : chatMessage.message;
 
         public string Time => chatMessage == null ? "" : TimeFormat(DateTimeOffset.FromUnixTimeMilliseconds(chatMessage.sentAt));
+
+        public Xamarin.Forms.Color HeaderColor => chatMessage.from == LocalStorage.clientName ? Xamarin.Forms.Color.LightSkyBlue : Xamarin.Forms.Color.LightGray;
+
+        public Thickness Margin => chatMessage.from == LocalStorage.clientName ? new Thickness(100, 10, 20, 10) : new Thickness(20, 10, 100, 10);
        
         public ChatMessageViewModel(ChatMessage chatMessage)
         {

@@ -26,34 +26,34 @@ namespace LAMA.Communicator
         public void OnIntervalRequestCP()
         {
             communicator.logger.LogWrite($"OnIntervalRequestCP");
-            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.CP" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.CP" + ";" + 0 + ";" + 0 + ";" + LocalStorage.clientID;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
         public void OnIntervalRequestInventoryItem()
         {
             communicator.logger.LogWrite($"OnIntervalRequestInventoryItem");
-            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.InventoryItem" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.InventoryItem" + ";" + 0 + ";" + 0 + ";" + LocalStorage.clientID;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         public void OnIntervalRequestLarpActivity()
         {
             communicator.logger.LogWrite($"OnIntervalRequestLarpActivity");
-            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.LarpActivity" + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.LarpActivity" + ";" + 0 + ";" + 0 + ";" + LocalStorage.clientID;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         public void OnIntervalRequest<T>(T type)
         {
             communicator.logger.LogWrite($"OnIntervalRequest<T>");
-            string command = "Interval" + ";" + "Request" + ";" + typeof(T).FullName + ";" + 0 + ";" + 0 + ";" + communicator.id;
+            string command = "Interval" + ";" + "Request" + ";" + typeof(T).FullName + ";" + 0 + ";" + 0 + ";" + LocalStorage.clientID;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
         public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
         {
             communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {id}");
-            if (intervalCommand == "Add" && communicator.id == id)
+            if (intervalCommand == "Add" && +LocalStorage.clientID == id)
             {
                 if (objectType == "LAMA.Models.LarpActivity")
                 {

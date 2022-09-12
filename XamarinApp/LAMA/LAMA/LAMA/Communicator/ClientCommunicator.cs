@@ -53,9 +53,6 @@ namespace LAMA.Communicator
 
         private Timer connectionTimer;
         private Timer broadcastTimer;
-
-        private int _id;
-        public int id { get { return _id; } }
         private void ProcessBroadcast()
         {
             lock (socketLock)
@@ -176,7 +173,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.ReceiveID(Int32.Parse(messageParts[2]));
+                        THIS.ReceiveID(Int32.Parse(messageParts[2]), Int32.Parse(messageParts[3]));
                     }));
                 }
                 if (messageParts[1] == "Connected")
@@ -214,9 +211,9 @@ namespace LAMA.Communicator
             }
         }
 
-        private void ReceiveID(int id)
+        private void ReceiveID(int clientId, int cpId)
         {
-            _id = id;
+            LocalStorage.clientID = clientId;
             RequestUpdate();
         }
 
@@ -224,7 +221,7 @@ namespace LAMA.Communicator
         {
             string q = "";
             q += "Update;";
-            q += id + ";";
+            q += LocalStorage.clientID + ";";
             SendCommand(new Command(q, lastUpdate, "None"));
         }
 
@@ -289,7 +286,14 @@ namespace LAMA.Communicator
                         InitSocket();
                         s.Connect(_IP, _port);
                         logger.LogWrite("Connected");
-                        SendCommand(new Command("GiveID", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                        if (LocalStorage.clientID == -1)
+                        {
+                            SendCommand(new Command($"GiveID;{LocalStorage.clientName}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                        }
+                        else
+                        {
+                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                        }
                         if (broadcastTimer == null)
                         {
                             StartBroadcasting();
@@ -369,7 +373,7 @@ namespace LAMA.Communicator
 
         private void SendClientInfo()
         {
-            string command = "ClientConnected" + ";" + id;
+            string command = "ClientConnected" + ";" + LocalStorage.clientID;
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
@@ -450,6 +454,13 @@ namespace LAMA.Communicator
                 {
                     Connect();
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
+
+
+                LocalStorage.clientName = clientName;
+                LocalStorage.serverName = serverName;
+                LocalStorage.clientID = -1;
+
+
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);

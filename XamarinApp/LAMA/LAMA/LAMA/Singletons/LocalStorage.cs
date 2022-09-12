@@ -27,6 +27,7 @@ namespace LAMA
                     Debug.WriteLine("After GetTableInfoAsync");
                     if (a.Result.Count == 0)
                     {
+                        Debug.WriteLine("a.Result.Count != 0");
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
                         Debug.WriteLine("table created");
                     }

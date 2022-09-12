@@ -112,6 +112,11 @@ namespace LAMA.Communicator
                 {
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
+
+                if (objectType == "LAMA.Singletons.LarpEvent")
+                {
+                    Singletons.LarpEvent.Instance.setAttribute(indexAttribute, value);
+                }
                 if (server)
                 {
                     // Notify every client
@@ -161,6 +166,11 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Singletons.LarpEvent")
+                {
+                    Singletons.LarpEvent.Instance.setAttribute(indexAttribute, value);
                 }
             }
         }
