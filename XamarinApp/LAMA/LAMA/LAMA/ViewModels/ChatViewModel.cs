@@ -47,6 +47,10 @@ namespace LAMA.ViewModels
 
         public ChatViewModel(INavigation navigation)
         {
+            SQLEvents.created += PropagateCreated;
+            SQLEvents.dataChanged += PropagateChanged;
+            SQLEvents.dataDeleted += PropagateDeleted;
+
             Navigation = navigation;
             MessageSentCommand = new Xamarin.Forms.Command(OnMessageSent);
 

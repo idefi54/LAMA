@@ -448,17 +448,15 @@ namespace LAMA.Communicator
                 }
                 THIS = this;
                 _port = int.Parse(array[1]);
+                LocalStorage.clientName = clientName;
+                LocalStorage.serverName = serverName;
+                LocalStorage.clientID = -1;
                 InitSocket();
                 Connect();
                 connectionTimer = new System.Threading.Timer((e) =>
                 {
                     Connect();
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
-
-
-                LocalStorage.clientName = clientName;
-                LocalStorage.serverName = serverName;
-                LocalStorage.clientID = -1;
 
 
                 lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
