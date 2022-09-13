@@ -1,7 +1,4 @@
 ﻿using LAMA.Models;
-using LAMA.Singletons;
-using Mapsui.Providers.ArcGIS.Dynamic;
-using Mapsui.Styles;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +6,7 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    internal class ChatMessageViewModel
+    internal class ChatMessageViewModel : BaseViewModel
     {
         ChatMessage chatMessage;
 
@@ -34,6 +31,11 @@ namespace LAMA.ViewModels
         {
             string result = $"{time.Hour}:{time.Minute}:{time.Second} / {time.Day}.{time.Month} / {time.Year}";
             return result;
+        }
+
+        internal void UpdateMessage(ChatMessage message)
+        {
+            SetProperty(ref chatMessage, message);
         }
     }
 }

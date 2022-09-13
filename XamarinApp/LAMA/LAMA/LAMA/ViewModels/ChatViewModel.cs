@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace LAMA.ViewModels
 {
@@ -83,6 +84,54 @@ namespace LAMA.ViewModels
             #endregion
             */
             //AddMessageCommand = new Xamarin.Forms.Command(OnAddChatMessage);
+        }
+
+        private void PropagateCreated(Serializable created)
+        {
+            Debug.WriteLine("PropagateCreated");
+            Debug.WriteLine(created.GetType().FullName);
+            if (created == null || created.GetType() != typeof(ChatMessage))
+                return;
+
+            ChatMessage message = (ChatMessage)created;
+
+            ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
+
+            if (item != null)
+                return;
+
+            item = new ChatMessageViewModel(message);
+            ChatMessageListItems.Add(item);
+        }
+
+        private void PropagateChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed == null || changed.GetType() != typeof(ChatMessage))
+                return;
+
+            ChatMessage message = (ChatMessage)changed;
+
+            ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
+
+            if (item == null)
+                return;
+
+            item.UpdateMessage(message);
+        }
+
+        private void PropagateDeleted(Serializable deleted)
+        {
+            if (deleted == null || deleted.GetType() != typeof(LarpActivity))
+                return;
+
+            ChatMessage message = (ChatMessage)deleted;
+
+            ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
+
+            if (item != null)
+            {
+                ChatMessageListItems.Remove(item);
+            }
         }
     }
 }
