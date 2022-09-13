@@ -8,7 +8,8 @@ namespace LAMA.Database
     {
 
         static OurSQLInterval sql = new OurSQLInterval();
-        static Dictionary<int, List<Interval>> intervalsGivenToClients;
+        //Hopefully this fix works (= new Dictionary<int, List<Interval>>())
+        static Dictionary<int, List<Interval>> intervalsGivenToClients = new Dictionary<int, List<Interval>>();
         
         static List<Interval> intervalsTaken;
         static int endOfLast = 0;
@@ -22,7 +23,7 @@ namespace LAMA.Database
             Interval newInterval = new Interval(endOfLast, endOfLast + IntervalLength, toWho);
             endOfLast += IntervalLength;
 
-            if (intervalsGivenToClients.ContainsKey(toWho))
+            if (!intervalsGivenToClients.ContainsKey(toWho))
                 intervalsGivenToClients.Add(toWho, new List<Interval>());
             intervalsGivenToClients[toWho].Add(newInterval);
             intervalsTaken.Add(newInterval);
