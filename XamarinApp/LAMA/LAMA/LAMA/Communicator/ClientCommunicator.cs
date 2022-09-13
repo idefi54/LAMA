@@ -66,7 +66,7 @@ namespace LAMA.Communicator
                             logger.LogWrite(commandsToBroadcast.Count.ToString());
                             logger.LogWrite(connected.ToString());
                             Command currentCommand = commandsToBroadcast.Peek();
-                            if (!connected && currentCommand.command != "GiveID")
+                            if (!connected && !currentCommand.command.StartsWith("GiveID") && !currentCommand.command.StartsWith("Connected"))
                             {
                                 commandsToBroadcast.Dequeue();
                                 commandsToBroadcast.Enqueue(currentCommand);
