@@ -17,7 +17,7 @@ namespace LAMA.Communicator
         {
             communicator.logger.LogWrite($"OnIntervalRequestInventoryItem");
             var interval = Database.IntervalManager<Models.InventoryItem>.GiveNewInterval(0);
-            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.InventoryItem" + ";" + interval.start + ";" + interval.end;
+            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.InventoryItem" + ";" + interval.start + ";" + interval.end + ";" + 0;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
@@ -25,7 +25,7 @@ namespace LAMA.Communicator
         {
             communicator.logger.LogWrite($"OnIntervalRequestLarpActivity");
             var interval = Database.IntervalManager<Models.LarpActivity>.GiveNewInterval(0);
-            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.LarpActivity" + ";" + interval.start + ";" + interval.end;
+            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.LarpActivity" + ";" + interval.start + ";" + interval.end + ";" + 0;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
@@ -33,7 +33,7 @@ namespace LAMA.Communicator
         {
             communicator.logger.LogWrite($"OnIntervalRequestCP");
             var interval = Database.IntervalManager<Models.CP>.GiveNewInterval(0);
-            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.CP" + ";" + interval.start + ";" + interval.end;
+            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.CP" + ";" + interval.start + ";" + interval.end + ";" + 0;
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
