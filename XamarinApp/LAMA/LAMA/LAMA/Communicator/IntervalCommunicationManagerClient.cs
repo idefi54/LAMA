@@ -43,6 +43,13 @@ namespace LAMA.Communicator
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
+        public void OnIntervalRequestChatMessage()
+        {
+            communicator.logger.LogWrite($"OnIntervalRequestChatMessage");
+            string command = "Interval" + ";" + "Request" + ";" + "LAMA.Models.ChatMessage" + ";" + 0 + ";" + 0 + ";" + LocalStorage.clientID;
+            communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+        }
+
         public void OnIntervalRequest<T>(T type)
         {
             communicator.logger.LogWrite($"OnIntervalRequest<T>");
@@ -71,6 +78,12 @@ namespace LAMA.Communicator
                 {
                     
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                }
+
+                if (objectType == "LAMA.Models.ChatMessage")
+                {
+
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
                 }
             }
         }

@@ -135,6 +135,8 @@ namespace LAMA
         public delegate void GiveNewIntervalDelegate();
         public event GiveNewIntervalDelegate GiveNewInterval;
 
+        public void InvokeGiveNewInterval() { GiveNewInterval.Invoke(); }
+
         /// <summary>
         /// 
         /// </summary>

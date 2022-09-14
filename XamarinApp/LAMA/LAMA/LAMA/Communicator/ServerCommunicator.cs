@@ -326,6 +326,18 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
+            //Initialize Intervals
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+
+
+
             logger.LogWrite("No exceptions");
             //maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
@@ -348,12 +360,9 @@ namespace LAMA.Communicator
             LocalStorage.clientID = 0;
             if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
-                    new Models.CP(0, LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
+                    new Models.CP((int)DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
+                    LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
             }
-
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
             logger.LogWrite("Initialization finished");
         }
 

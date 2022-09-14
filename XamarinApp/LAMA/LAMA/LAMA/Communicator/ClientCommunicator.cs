@@ -391,6 +391,19 @@ namespace LAMA.Communicator
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             logger.LogWrite("Created dictionaries");
+
+
+            //Initialize Intervals
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+
+
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
@@ -466,9 +479,6 @@ namespace LAMA.Communicator
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-                DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-                DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
                 logger.LogWrite("Initialization finished");
             }
         }

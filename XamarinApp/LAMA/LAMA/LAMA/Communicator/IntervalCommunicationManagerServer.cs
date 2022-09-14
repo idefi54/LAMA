@@ -37,6 +37,14 @@ namespace LAMA.Communicator
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
+        public void OnIntervalRequestChatMessage()
+        {
+            communicator.logger.LogWrite($"OnIntervalRequestChatMessage");
+            var interval = Database.IntervalManager<Models.ChatMessage>.GiveNewInterval(0);
+            string command = "Interval" + ";" + "Add" + ";" + "LAMA.Models.ChatMessage" + ";" + interval.start + ";" + interval.end + ";" + 0;
+            communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+        }
+
         public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
         {
             communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {id}");
@@ -58,6 +66,12 @@ namespace LAMA.Communicator
                 {
                     var interval = Database.IntervalManager<Models.InventoryItem>.GiveNewInterval(id);
                     string commandToSend = "Interval" + ";" + "Add" + ";" + "LAMA.Models.InventoryItem" + ";" + interval.start + ";" + interval.end + ";" + id;
+                    communicator.SendCommand(new Command(commandToSend, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                }
+                else if (objectType == "LAMA.Models.ChatMessage")
+                {
+                    var interval = Database.IntervalManager<Models.ChatMessage>.GiveNewInterval(id);
+                    string commandToSend = "Interval" + ";" + "Add" + ";" + "LAMA.Models.ChatMessage" + ";" + interval.start + ";" + interval.end + ";" + id;
                     communicator.SendCommand(new Command(commandToSend, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
                 }
             }
