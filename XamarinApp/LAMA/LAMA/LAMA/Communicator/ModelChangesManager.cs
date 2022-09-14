@@ -84,7 +84,7 @@ namespace LAMA.Communicator
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
-        public void DataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
+        public void DataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
@@ -139,7 +139,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void RollbackDataUpdated(string objectType, int objectID, int indexAttribute, string value, long updateTime, string command)
+        public void RollbackDataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (!testing) communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
@@ -456,7 +456,7 @@ namespace LAMA.Communicator
         }
 
 
-        public void ItemDeleted(string objectType, int objectID, long updateTime, string command)
+        public void ItemDeleted(string objectType, long objectID, long updateTime, string command)
         {
             if (!testing) communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
             string objectCacheID = objectType + ";" + objectID;

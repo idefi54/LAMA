@@ -143,7 +143,7 @@ namespace LAMA.Communicator
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemCreated")
@@ -159,7 +159,7 @@ namespace LAMA.Communicator
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "Interval")
@@ -188,7 +188,7 @@ namespace LAMA.Communicator
                     if (messageParts[2] == "DataUpdated")
                     {
                         THIS.lastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }
                     if (messageParts[2] == "ItemCreated")
                     {

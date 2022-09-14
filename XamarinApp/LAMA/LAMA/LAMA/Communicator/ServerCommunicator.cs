@@ -204,7 +204,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemCreated")
@@ -218,7 +218,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "Update")
