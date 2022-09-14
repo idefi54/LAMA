@@ -80,7 +80,7 @@ namespace LAMA.Models
         public InventoryItem(int ID, string name, string description, int taken, int free)
         {
             _takenBy.dataChanged += onTakenUpdate;
-            _ID = ID; 
+            _ID = ID;
             _name = name;
             _description = description;
             _taken = taken;
@@ -107,7 +107,7 @@ namespace LAMA.Models
         }
         public void setAttribute(int i, string s)
         {
-            switch(i)
+            switch (i)
             {
                 case 0:
                     _ID = Helpers.readInt(s);
@@ -132,7 +132,7 @@ namespace LAMA.Models
         }
         public string getAttribute(int i)
         {
-            switch(i)
+            switch (i)
             {
                 case 0: return _ID.ToString();
                 case 1: return _name;
@@ -150,7 +150,7 @@ namespace LAMA.Models
         public string[] getAttributes()
         {
             List<string> output = new List<string>();
-            for (int i = 0; i < attributeNames.Length; ++i) 
+            for (int i = 0; i < attributeNames.Length; ++i)
             {
                 output.Add(getAttribute(i));
             }
@@ -163,7 +163,7 @@ namespace LAMA.Models
         }
         public void buildFromStrings(string[] input)
         {
-            for (int i = 0; i < input.Length; ++i) 
+            for (int i = 0; i < input.Length; ++i)
             {
                 setAttribute(i, input[i]);
             }
@@ -172,6 +172,27 @@ namespace LAMA.Models
         public int getTypeID()
         {
             return 2;
+        }
+
+
+
+
+
+        public void Borrow(int howMany)
+        {
+            if (howMany <= free)
+            {
+                free -= howMany;
+                taken += howMany;
+            }
+        }
+        public void Return (int howMany)
+        {
+            if(howMany <= taken)
+            {
+                taken -= howMany;
+                free += howMany;
+            }
         }
     }
 }
