@@ -171,6 +171,7 @@ namespace LAMA.ViewModels
             //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
             //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
 
+            larpActivity.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
             LarpActivity activity = larpActivity.CreateLarpActivity();
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
