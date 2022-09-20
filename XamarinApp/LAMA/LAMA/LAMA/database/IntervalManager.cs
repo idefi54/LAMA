@@ -14,7 +14,7 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
-        static int lastID = -1;
+        static long lastID = -1;
         static public Interval GiveNewInterval(int toWho)
         {
             if (endOfLast == 0)
