@@ -11,7 +11,7 @@ namespace LAMA.ViewModels
     public class InventoryViewModel 
     {
         public ObservableCollection<InventoryItemViewModel> ItemList { get; }
-
+        Dictionary<int, InventoryItemViewModel> IDToViewModel = new Dictionary<int, InventoryItemViewModel>();
 
         public Xamarin.Forms.Command AddItemCommand { get; }
 
@@ -35,13 +35,49 @@ namespace LAMA.ViewModels
             {
                 ItemList.Add(new InventoryItemViewModel(inventoryItems[i]));
                 maxId = Math.Max(maxId, inventoryItems[i].ID);
+                IDToViewModel.Add(inventoryItems[i].ID, ItemList[i]);
+                SQLEvents.dataChanged += OnChange;
             }
+            SQLEvents.created += OnCreated;
+            SQLEvents.dataDeleted += OnDeleted;
 
-
-            // AddItemCommand = new Xamarin.Forms.Command(OnCreateItem);
+            AddItemCommand = new Xamarin.Forms.Command(OnCreateItem);
             BorrowItem = new Command<object>(OnBorrowItem);
             ReturnItem = new Command<object>(OnReturnItem);
+
         }
+
+        private void OnChange(Serializable changed, int index)
+        {
+            if(changed.GetType() != typeof(InventoryItem))
+            {
+                return;
+            }
+            //REFRESH DATA
+        }
+        private void OnCreated(Serializable made)
+        {
+            if (made.GetType() != typeof(InventoryItem))
+            {
+                return;
+            }
+            var item = (InventoryItem)made;
+            ItemList.Add(new InventoryItemViewModel(item));
+            IDToViewModel.Add(item.ID, ItemList[ItemList.Count - 1]);
+
+        }
+        private void OnDeleted(Serializable deleted)
+        {
+            if (deleted.GetType() != typeof(InventoryItem))
+            {
+                return;
+            }
+            var item = (InventoryItem)deleted;
+
+            ItemList.Remove(IDToViewModel[item.ID]);
+            IDToViewModel.Remove(item.ID);
+        }
+        
 
         private async void OnBorrowItem(object obj)
         {
@@ -54,7 +90,7 @@ namespace LAMA.ViewModels
             var itemViewModel = (InventoryItemViewModel)obj;
             
             itemViewModel.Item.Borrow(1);
-            //UPDATE DATA
+            //UPDATE DISPLAY
         }
         private async void OnReturnItem(object obj)
         {
@@ -67,9 +103,12 @@ namespace LAMA.ViewModels
             var itemViewModel = (InventoryItemViewModel)obj;
 
             itemViewModel.Item.Return(1);
-            //UPDATE DATA
+            //UPDATE DISPLAY
         }
-
+        private async void OnCreateItem()
+        {
+            throw new NotImplementedException();
+        }
         
     }
 }
