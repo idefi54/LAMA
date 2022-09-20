@@ -20,7 +20,7 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
-        
+        static int lastID = -1;
         static public Interval GiveNewInterval(int toWho)
         {
             Debug.WriteLine($"Giving new interval to someone {toWho}, {typeof(T)}");
