@@ -16,13 +16,15 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
+        static int lastID = -1;
         static public Interval GiveNewInterval(int toWho)
         {
             Debug.WriteLine($"Giving new interval to someone {toWho}, {typeof(T)}");
             if (endOfLast == 0)
                 initialize();
 
-            Interval newInterval = new Interval(endOfLast, endOfLast + IntervalLength, toWho);
+            lastID++;
+            Interval newInterval = new Interval(lastID,endOfLast, endOfLast + IntervalLength, toWho);
             endOfLast += IntervalLength;
 
             if (!intervalsGivenToClients.ContainsKey(toWho))
@@ -51,9 +53,10 @@ namespace LAMA.Database
                     intervalsGivenToClients.Add(toWho, new List<Interval>());
                 Debug.WriteLine("Before add intervalsTaken");
                 intervalsGivenToClients[toWho].Add(intervalsTaken[i]);
-                Debug.WriteLine("initialize finished");
-
+                if(intervalsTaken[i].ID > lastID)
+                    lastID = intervalsTaken[i].ID;
             }
+
         }
 
     }

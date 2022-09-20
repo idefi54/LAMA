@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LAMA.Views.InventoryItemDetail">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="15" >
+                <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                <Label Text="{Binding Description}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                
+
+                <Label Text="Zapůjčeno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding NumBorrowed}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Label Text="Na skladě"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding NumFree}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Label Text="Detaily zapůjčení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text= "{Binding BorrowedBy}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Label Text="Detailní zapůjčení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Jméno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding BorrowerName}" Placeholder="John Doe" FontSize="Medium" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Kolik"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding HowManyBorrow}" Placeholder="0" FontSize="Medium" />
+                </StackLayout>
+                <Button Text="Půjčit" Command="{Binding DetailedBorrowCommand}" HorizontalOptions="FillAndExpand"></Button>
+                
+                <Label Text="Detailní vrácení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Jméno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding ReturnerName}" Placeholder="John Doe" FontSize="Medium" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Kolik"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding HowManyReturn}" Placeholder="0" FontSize="Medium" />
+                </StackLayout>
+                <Button Text="Vrátit" Command="{Binding DetailedReturnCommand}" HorizontalOptions="FillAndExpand"></Button>
+
+
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
