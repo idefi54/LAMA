@@ -8,7 +8,7 @@ namespace LAMA.Database
     public class Interval
     {
         [PrimaryKey]
-        public int ID { get; set; }
+        public long ID { get; set; }
         public int start { get; set; }
         public int end { get; set; }
         public int lastTaken { get; set; }
@@ -18,7 +18,7 @@ namespace LAMA.Database
         {
 
         }
-        public Interval(int ID, int start, int end, int ownerID)
+        public Interval(long ID, int start, int end, int ownerID)
         {
             this.ID = ID;
             this.start = start;
