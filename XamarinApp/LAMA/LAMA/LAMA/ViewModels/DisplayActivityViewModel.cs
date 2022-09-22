@@ -1,4 +1,5 @@
 ﻿using LAMA.Extensions;
+using LAMA.database;
 using LAMA.Models;
 using LAMA.Models.DTO;
 using LAMA.Views;
@@ -38,11 +39,17 @@ namespace LAMA.ViewModels
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 		
-
-
 		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
-
-
+		
+		private bool isRegistered => _activity.registrationByRole.FindIndex(p => p.first == LocalStorage.cpID) >= 0;
+		
+		public string SignUp
+		{
+			get
+			{
+				return isRegistered ? "Odhlásit se" : "Přihlásit se";
+			}
+		}
 
 
 
@@ -94,7 +101,11 @@ namespace LAMA.ViewModels
 
 		private async void OnSignUp()
 		{
-			await Shell.Current.GoToAsync("..");
+			if (isRegistered)
+				return;
+			_activity.registrationByRole.Add(new Pair<int, string>(LocalStorage.cpID,_activity.roles[0].first));
+
+			
 		}
 
 		private void UpdateActivity(LarpActivityDTO larpActivityDTO)

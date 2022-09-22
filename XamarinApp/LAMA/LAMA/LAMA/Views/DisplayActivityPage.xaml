@@ -9,7 +9,7 @@
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Přihlásit se" Command="{Binding SignUpCommand}"/>
+		<ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
 		<ToolbarItem Text="Upravit" Command="{Binding EditCommand}"/>
 	</ContentPage.ToolbarItems>
 	
