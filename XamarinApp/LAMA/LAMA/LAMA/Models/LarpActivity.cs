@@ -273,7 +273,7 @@ namespace LAMA.Models
                 case 2:
                     return _description;
                 case 3:
-                    return _preparationNeeded.ToString();
+                    return _preparationNeeded != null?_preparationNeeded.ToString():"";
                 case 4:
                     return _eventType.ToString();
                 case 5:
