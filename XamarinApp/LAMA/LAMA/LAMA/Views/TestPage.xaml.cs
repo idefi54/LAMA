@@ -48,6 +48,12 @@ namespace LAMA.Views
         {
             await Navigation.PushAsync(new InventoryView());
         }
+        
+        async void OnActivitySelector(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new ActivitySelectionPage());
+        }
+
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {

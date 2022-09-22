@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NewActivityDependencyPage : ContentPage
+    public partial class ActivitySelectionPage : ContentPage
     {
-        public NewActivityDependencyPage()
+        public ActivitySelectionPage()
         {
             InitializeComponent();
 
