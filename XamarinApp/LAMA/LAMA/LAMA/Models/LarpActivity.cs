@@ -20,7 +20,7 @@ namespace LAMA.Models
             get { return _name; }
             set
             {
-                name = value;
+                _name = value;
                 updateValue(1, value);
             }
         }
