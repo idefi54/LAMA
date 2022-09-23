@@ -12,9 +12,10 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class InventoryItemDetail : ContentPage
     {
-        public InventoryItemDetail()
+        public InventoryItemDetail(Models.InventoryItem item)
         {
             InitializeComponent();
+            BindingContext = new ViewModels.InventoryItemDetailViewModel(Navigation, item);
         }
     }
 }

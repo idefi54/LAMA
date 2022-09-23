@@ -5,6 +5,10 @@ using System.Text;
 
 namespace LAMA.Database
 {
+    internal class IDRememberer
+    {
+        public static long LastID = -1;
+    }
     internal class IntervalManager<T> where T : Serializable
     {
 
@@ -16,16 +20,15 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
-        static long lastID = -1;
+        
         static public Interval GiveNewInterval(int toWho)
         {
             Debug.WriteLine($"Giving new interval to someone {toWho}, {typeof(T)}");
             if (endOfLast == 0)
                 initialize();
 
-            lastID++;
-            Interval newInterval = new Interval(lastID,endOfLast, endOfLast + IntervalLength, toWho);
-            Debug.WriteLine($"ID: {newInterval.ID}, start: {newInterval.start}, end: {newInterval.end}, owner id: {newInterval.ownerID}");
+            IDRememberer.LastID++;
+            Interval newInterval = new Interval(IDRememberer.LastID, endOfLast, endOfLast + IntervalLength, toWho);
             endOfLast += IntervalLength;
 
             if (!intervalsGivenToClients.ContainsKey(toWho))
@@ -54,8 +57,8 @@ namespace LAMA.Database
                     intervalsGivenToClients.Add(toWho, new List<Interval>());
                 Debug.WriteLine("Before add intervalsTaken");
                 intervalsGivenToClients[toWho].Add(intervalsTaken[i]);
-                if(intervalsTaken[i].ID > lastID)
-                    lastID = intervalsTaken[i].ID;
+                if(intervalsTaken[i].ID > IDRememberer.LastID)
+                    IDRememberer.LastID = intervalsTaken[i].ID;
             }
 
         }

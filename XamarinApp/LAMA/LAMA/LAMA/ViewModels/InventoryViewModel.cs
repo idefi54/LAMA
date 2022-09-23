@@ -11,7 +11,7 @@ namespace LAMA.ViewModels
     public class InventoryViewModel 
     {
         public ObservableCollection<InventoryItemViewModel> ItemList { get; }
-        Dictionary<int, InventoryItemViewModel> IDToViewModel = new Dictionary<int, InventoryItemViewModel>();
+        Dictionary<long, InventoryItemViewModel> IDToViewModel = new Dictionary<long, InventoryItemViewModel>();
 
         public Xamarin.Forms.Command AddItemCommand { get; }
 
@@ -22,7 +22,7 @@ namespace LAMA.ViewModels
 
         INavigation Navigation;
 
-        int maxId = 0;
+        long maxId = 0;
 
 
         public InventoryViewModel(INavigation navigation)
@@ -31,7 +31,7 @@ namespace LAMA.ViewModels
             ItemList = new ObservableCollection<InventoryItemViewModel>();
 
             var inventoryItems = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
-            for(int i =0; i< inventoryItems.Count; ++i)
+            for (int i = 0; i < inventoryItems.Count; ++i) 
             {
                 ItemList.Add(new InventoryItemViewModel(inventoryItems[i]));
                 maxId = Math.Max(maxId, inventoryItems[i].ID);
@@ -54,6 +54,7 @@ namespace LAMA.ViewModels
                 return;
             }
             //REFRESH DATA
+            
         }
         private void OnCreated(Serializable made)
         {
@@ -107,8 +108,13 @@ namespace LAMA.ViewModels
         }
         private async void OnCreateItem()
         {
-            throw new NotImplementedException();
+            await Navigation.PushAsync(new CreateInventoryItemView());
         }
         
+        private async void OnItemClicked(InventoryItem item)
+        {
+            await Navigation.PushAsync(new InventoryItemDetail(item));
+        }
+            
     }
 }
