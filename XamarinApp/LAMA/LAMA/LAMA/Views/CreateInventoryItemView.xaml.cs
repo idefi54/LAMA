@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LAMA.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace LAMA.Views
         public CreateInventoryItemView()
         {
             InitializeComponent();
+            BindingContext = new CreateInventoryItemViewModel(Navigation);
         }
     }
 }
