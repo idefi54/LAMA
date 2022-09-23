@@ -4,6 +4,10 @@ using System.Text;
 
 namespace LAMA.Database
 {
+    internal class IDRememberer
+    {
+        public static long LastID = -1;
+    }
     internal class IntervalManager<T> where T : Serializable
     {
 
@@ -14,14 +18,14 @@ namespace LAMA.Database
         static int endOfLast = 0;
         public static int IntervalLength { get; set; } = 100;
 
-        static long lastID = -1;
+        
         static public Interval GiveNewInterval(int toWho)
         {
             if (endOfLast == 0)
                 initialize();
 
-            lastID++;
-            Interval newInterval = new Interval(lastID,endOfLast, endOfLast + IntervalLength, toWho);
+            IDRememberer.LastID++;
+            Interval newInterval = new Interval(IDRememberer.LastID, endOfLast, endOfLast + IntervalLength, toWho);
             endOfLast += IntervalLength;
 
             if (intervalsGivenToClients.ContainsKey(toWho))
@@ -42,8 +46,8 @@ namespace LAMA.Database
                 if (intervalsGivenToClients.ContainsKey(toWho))
                     intervalsGivenToClients.Add(toWho, new List<Interval>());
                 intervalsGivenToClients[toWho].Add(intervalsTaken[i]);
-                if(intervalsTaken[i].ID > lastID)
-                    lastID = intervalsTaken[i].ID;
+                if(intervalsTaken[i].ID > IDRememberer.LastID)
+                    IDRememberer.LastID = intervalsTaken[i].ID;
             }
 
         }

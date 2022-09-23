@@ -34,8 +34,16 @@ namespace LAMA
         void loadData()
         {
             
-            IDIntervals = intervalsSQL.ReadData(typeID);
-
+            var intervals = intervalsSQL.ReadData(typeID);
+            
+            IDIntervals = new List<Database.Interval>();
+            foreach (var interval in intervals)
+            {
+                if(interval.ownerID == database.LocalStorage.clientID)
+                    IDIntervals.Add(interval);
+            }
+            if (IDIntervals.Count == 0)
+                GiveNewInterval.Invoke();
             cache = sql.ReadData();
 
             int i = 0;
@@ -125,7 +133,9 @@ namespace LAMA
             askedForMore = false;
             input.typeID = new T().getTypeID();
             IDIntervals.Add(input);
-            intervalsSQL.addData(input);
+
+            if (database.LocalStorage.clientID != 0) 
+                intervalsSQL.addData(input);
         }
 
 
@@ -166,8 +176,8 @@ namespace LAMA
                     askedForMore = true;
                 }
                 //if i am out of IDs just return null
-                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end) 
-                    return -1;
+                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end)
+                    throw new Exception("Out of IDs.");
             }
 
             //now i know i have anough space for at least one more ID

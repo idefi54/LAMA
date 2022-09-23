@@ -78,6 +78,15 @@ namespace LAMA.database
             }
         }
 
+        public static int MaxClientID
+        {
+            get { return Instance._maxClientID; }
+            set 
+            { 
+                Instance._maxClientID = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
 
         [PrimaryKey]
         public int ID { get; set; } = 0;
@@ -85,6 +94,7 @@ namespace LAMA.database
         public string _clientName { get; set; }
         public int _clientID { get; set; }
         public int _cpID { get; set; } = -1;
+        public int _maxClientID { get; set; } = -1;
 
     }
 
