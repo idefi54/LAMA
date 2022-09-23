@@ -98,6 +98,7 @@ namespace LAMA.ViewModels
                 return;
             }
             //REFRESH DATA
+            
         }
         private void OnCreated(Serializable made)
         {
@@ -154,6 +155,11 @@ namespace LAMA.ViewModels
             await Navigation.PushAsync(new CreateInventoryItemView());
         }
         
+        private async void OnItemClicked(InventoryItem item)
+        {
+            await Navigation.PushAsync(new InventoryItemDetail(item));
+        }
+            
             
     }
 }
