@@ -19,6 +19,7 @@ namespace LAMA.ViewModels
         public Command<object> BorrowItem { get; private set; }
 
         public Command<object> ReturnItem { get; private set; }
+        public Command<object> OpenDetailCommand { get; private set; }
 
         INavigation Navigation;
 
@@ -44,9 +45,19 @@ namespace LAMA.ViewModels
             AddItemCommand = new Xamarin.Forms.Command(OnCreateItem);
             BorrowItem = new Command<object>(OnBorrowItem);
             ReturnItem = new Command<object>(OnReturnItem);
-
+            OpenDetailCommand = new Command<object>(OnOpenDetail);
         }
-
+        private async void OnOpenDetail(object obj)
+        {
+            if (obj.GetType() != typeof(InventoryItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(InventoryItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+            var viewModel = (InventoryItemViewModel)obj;
+            await Navigation.PushAsync(new InventoryItemDetail(viewModel.Item));
+        }
         private void OnChange(Serializable changed, int index)
         {
             if(changed.GetType() != typeof(InventoryItem))
@@ -111,10 +122,7 @@ namespace LAMA.ViewModels
             await Navigation.PushAsync(new CreateInventoryItemView());
         }
         
-        private async void OnItemClicked(InventoryItem item)
-        {
-            await Navigation.PushAsync(new InventoryItemDetail(item));
-        }
+        
             
     }
 }

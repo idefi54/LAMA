@@ -51,6 +51,7 @@ namespace LAMA.Singletons
             }
         }
 
+       
         public LarpEvent()
         {
             List<long> temp = Helpers.readLongField(Instance.days);
@@ -78,5 +79,7 @@ namespace LAMA.Singletons
         public int Id { get; set; }
         public string name {get;set;}
         public string days { get; set; }
+
+
     }
 }
