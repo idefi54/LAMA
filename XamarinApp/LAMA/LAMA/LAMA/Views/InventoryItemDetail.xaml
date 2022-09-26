@@ -43,7 +43,8 @@
                     <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Entry Text="{Binding BorrowerName}" Placeholder="John Doe" FontSize="Medium" />
+                    <Picker Title="Jméno " ItemsSource="{Binding CPNames}" SelectedIndex="{Binding BorrowerSelected}" HorizontalOptions="Start">
+                    </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Kolik"
@@ -60,7 +61,9 @@
                     <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Entry Text="{Binding ReturnerName}" Placeholder="John Doe" FontSize="Medium" />
+                    <Picker Title="Jméno" ItemsSource="{Binding CPNames}" SelectedIndex="{Binding ReturnerSelected}"  HorizontalOptions="Start">
+                        
+                    </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Kolik"

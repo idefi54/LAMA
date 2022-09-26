@@ -18,11 +18,14 @@ namespace LAMA.ViewModels
         int _numFree;
         string _borrowedBy;
 
-        string _borrowName;
+        int _borrowName;
         int _howManyBorrow;
-        string _returnName;
+        int _returnName;
         int _returnNum;
 
+        List<string> _CPNames;
+        Dictionary<int, string> CPs = new Dictionary<int, string>();
+        Dictionary<string, int> CPIDs = new Dictionary<string, int>();
 
         public string Name { get { return _name; } }
         public string Description { get { return _description; } }
@@ -33,9 +36,10 @@ namespace LAMA.ViewModels
         public Command DetailedBorrowCommand;
         public Command DetailedReturnCommand;
 
-        public string BorrowerName { get { return _borrowName; } set { SetProperty(ref _borrowName, value); } }
+        public List<string> CPNames { get { return _CPNames; } set { SetProperty(ref _CPNames, value); } }
+        public int BorrowerSelected { get { return _borrowName; } set { SetProperty(ref _borrowName, value); } }
         public string HowManyBorrow { get { return _howManyBorrow.ToString(); } set { SetProperty(ref _howManyBorrow, Helpers.readInt(value)); } }
-        public string ReturnerName { get { return _returnName; } set { SetProperty(ref _returnName, value); } }
+        public int ReturnerSelected { get { return _returnName; } set { SetProperty(ref _returnName, value); } }
         public string HowManyReturn { get { return _returnNum.ToString(); } set { SetProperty(ref _returnNum, Helpers.readInt(value)); } }
         //Name, Description, NumBorrowed, NumFree, BorrowedBy
 
@@ -58,22 +62,31 @@ namespace LAMA.ViewModels
 
             DetailedBorrowCommand = new Command(OnBorrow);
             DetailedReturnCommand = new Command(OnReturn);
+
+            var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+
+            for (int i =0; i< CPList.Count; ++i)
+            {
+                var CP = CPList[i];
+                CPs.Add(CP.ID, CP.name);
+                CPIDs.Add(CP.name, CP.ID);
+                CPNames.Add(CP.name);
+            }
         }
         public async void OnBorrow()
         {
-            //TADY DÁT TO VYJÍŽDĚCÍ OKNO
             if (_howManyBorrow < 1)
                 return;
-            
-            _item.Borrow(_howManyBorrow, _borrowName);
+
+            _item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]);
             _howManyBorrow = 0;
-            _borrowName = "";
+            _borrowName = 0;
         }
         public async void OnReturn()
         {
-            _item.Return(_returnNum, _returnName);
+            _item.Return(_returnNum, CPIDs[CPNames[ _returnName]]);
             _returnNum = 0;
-            _returnName = "";
+            _returnName = 0;
         }
 
     }

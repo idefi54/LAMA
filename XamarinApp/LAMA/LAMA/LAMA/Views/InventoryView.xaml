@@ -42,7 +42,7 @@
 
                                 <TapGestureRecognizer 
 										NumberOfTapsRequired="2"
-										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityListViewModel}}, Path=LarpActivityTapped}"		
+										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:InventoryViewModel}}, Path=OpenDetailCommand}"		
 										CommandParameter="{Binding .}">
                                 </TapGestureRecognizer>
                                 
