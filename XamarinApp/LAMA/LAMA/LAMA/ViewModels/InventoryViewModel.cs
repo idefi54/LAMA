@@ -90,7 +90,6 @@ namespace LAMA.ViewModels
             IDToViewModel.Remove(item.ID);
         }
         
-
         private void OnChange(Serializable changed, int index)
         {
             if(changed.GetType() != typeof(InventoryItem))
@@ -155,10 +154,7 @@ namespace LAMA.ViewModels
             await Navigation.PushAsync(new CreateInventoryItemView());
         }
         
-        private async void OnItemClicked(InventoryItem item)
-        {
-            await Navigation.PushAsync(new InventoryItemDetail(item));
-        }
+        
             
             
     }
