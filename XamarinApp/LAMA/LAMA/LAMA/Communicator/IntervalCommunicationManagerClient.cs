@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -63,18 +63,20 @@ namespace LAMA.Communicator
             if (intervalCommand == "Add" && LocalStorage.clientID == ownerID)
             {
                 if (objectType == "LAMA.Models.LarpActivity")
-                {                   
-                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID, lowerLimit, upperLimit, ownerID));
+                {
+                    
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived( new Database.Interval(999,lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.CP")
-                {                   
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID, lowerLimit, upperLimit, ownerID));
+                {
+                    
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(998,lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {                    
-                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID,lowerLimit, upperLimit, ownerID));
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(997,lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.ChatMessage")

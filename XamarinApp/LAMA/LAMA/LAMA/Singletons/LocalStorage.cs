@@ -29,8 +29,28 @@ namespace LAMA
                     {
                         Debug.WriteLine("a.Result.Count != 0");
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
-                        Debug.WriteLine("table created");
                     }
+
+                    var data = SQLConnectionWrapper.connection.Table<LocalStorage>();
+                    var listData = data.ToArrayAsync();
+                    listData.Wait();
+
+                    if(listData.Result.Length == 0)
+                    {
+                        instance = new LocalStorage();
+                        SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
+                    }
+                    else
+                    {
+                        instance = listData.Result[0];
+                    }
+                    return instance;
+                    /*
+                    var getting = SQLConnectionWrapper.connection.GetAsync<LocalStorage>(0);
+                    getting.Wait();
+                    var result = getting.Result;
+                    if (result != null)
+                        instance = result;
                     else
                     {
                         Debug.WriteLine("not creating table");
@@ -60,6 +80,8 @@ namespace LAMA
                         Debug.WriteLine(e.Message);
                         throw e;
                     }
+                    return instance;
+                    */
                 }
             }
         }

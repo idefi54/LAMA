@@ -12,6 +12,9 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
+        int maxID = 0;
+        static long IDOffset = (long)Math.Pow(2, 31);
+
         SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
 
         
@@ -42,7 +45,7 @@ namespace LAMA
                 if(interval.ownerID == database.LocalStorage.clientID)
                     IDIntervals.Add(interval);
             }
-            if (IDIntervals.Count == 0)
+            if (IDIntervals.Count == 0 && GiveNewInterval != null)
                 GiveNewInterval.Invoke();
             cache = sql.ReadData();
 
@@ -51,6 +54,8 @@ namespace LAMA
             {
                 IDToIndex.Add(a.getID(), i);
                 ++i;
+                if(a.getID() / IDOffset == database.LocalStorage.clientID && maxID< a.getID())
+                    maxID = (int)a.getID();
             }
         }
 
@@ -83,6 +88,8 @@ namespace LAMA
 
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
+            if (data.getID() > maxID && data.getID() / IDOffset == database.LocalStorage.clientID)
+                maxID = (int)data.getID();
 
             sql.addData(data, invokeEvent);
             data.addedInto(this);
@@ -155,8 +162,11 @@ namespace LAMA
         /// </summary>
         /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
         public long nextID()
-        {   
+        {
+            ++maxID;
+            return (long)(database.LocalStorage.clientID * IDOffset) + maxID;
 
+            /*
             Database.Interval currentInterval = null;
 
             // find first interval with space 
@@ -177,7 +187,7 @@ namespace LAMA
             if (currentInterval == null || 
                 (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
             {
-                if (!askedForMore)
+                if (!askedForMore && GiveNewInterval != null)
                 {
                     GiveNewInterval.Invoke();
                     askedForMore = true;
@@ -192,7 +202,7 @@ namespace LAMA
             currentInterval.lastTaken++;
             intervalsSQL.Update(currentInterval);
             return currentInterval.lastTaken;
-          
+          */
         }
 
         
