@@ -29,7 +29,7 @@ namespace LAMA.ViewModels
 
         INavigation Navigation;
 
-        int maxId = 0;
+        //int maxId = 0;
 
         public ActivityListViewModel(INavigation navigation)
         {
@@ -42,11 +42,11 @@ namespace LAMA.ViewModels
                 LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]));
             }
 
-            foreach(ActivityListItemViewModel item in LarpActivityListItems)
-            {
-                if(item.LarpActivity.ID > maxId)
-                    maxId = item.LarpActivity.ID;
-            }
+            //foreach(ActivityListItemViewModel item in LarpActivityListItems)
+            //{
+            //    if(item.LarpActivity.ID > maxId)
+            //        maxId = item.LarpActivity.ID;
+            //}
 
             #region population of test database
             //LarpActivity activity = new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation };
