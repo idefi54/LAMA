@@ -1,5 +1,6 @@
 ﻿using LAMA.Models;
 using LAMA.Models.DTO;
+using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,14 @@ namespace LAMA.Views
         
         async void OnActivitySelector(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new ActivitySelectionPage());
+			ActivitySelectionPage page = new ActivitySelectionPage();
+            await Navigation.PushAsync(page);
+            
+
+			ActivitySelectionViewModel viewModel = page.BindingContext as ActivitySelectionViewModel;
+
+            if(viewModel != null && viewModel.Activity != null)
+			    _ = DisplayAlert("Activity", viewModel.Activity.name, "OK");
         }
 
 
