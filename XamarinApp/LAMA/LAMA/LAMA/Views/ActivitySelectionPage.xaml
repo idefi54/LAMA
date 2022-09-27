@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.ActivitySelectionPage">
 	<ContentPage.Content>
-		<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
+		<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectedItem="{Binding SelectedItem}" SelectionMode="None" Margin="5,5,5,0">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<ViewCell>
@@ -23,9 +23,9 @@
 							<!--<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
 										Command="{Binding Path=BindingContext.LarpActivityTapped, Source={x:Reference Name=LarpActivityList}}"
 										CommandParameter="{Binding .}"/>-->
-							<Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+							<!--<Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
 										Command="{Binding Path=BindingContext.RemoveLarpActivity, Source={x:Reference Name=LarpActivityList}}"
-										CommandParameter="{Binding .}"/>
+										CommandParameter="{Binding .}"/>-->
 							<!--IsVisible="{Binding ShowDeleteButton}"/>-->
 
 							<Grid.GestureRecognizers>
