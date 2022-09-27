@@ -54,19 +54,19 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
                     
-                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived( new Database.Interval(lowerLimit, upperLimit, id));
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived( new Database.Interval(999,lowerLimit, upperLimit, id));
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
                     
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(998,lowerLimit, upperLimit, id));
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
                     
-                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(997,lowerLimit, upperLimit, id));
                 }
             }
         }

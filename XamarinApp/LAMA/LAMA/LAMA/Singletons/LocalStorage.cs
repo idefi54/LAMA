@@ -26,6 +26,21 @@ namespace LAMA.database
                     if (a.Result.Count == 0)
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
 
+                    var data = SQLConnectionWrapper.connection.Table<LocalStorage>();
+                    var listData = data.ToArrayAsync();
+                    listData.Wait();
+
+                    if(listData.Result.Length == 0)
+                    {
+                        instance = new LocalStorage();
+                        SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
+                    }
+                    else
+                    {
+                        instance = listData.Result[0];
+                    }
+                    return instance;
+                    /*
                     var getting = SQLConnectionWrapper.connection.GetAsync<LocalStorage>(0);
                     getting.Wait();
                     var result = getting.Result;
@@ -37,6 +52,7 @@ namespace LAMA.database
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
                     }
                     return instance;
+                    */
                 }
             } }
 
