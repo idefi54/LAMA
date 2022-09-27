@@ -19,6 +19,7 @@
 				<Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
 				<Button Text="NewActivity" Clicked="OnNewActivity"/>
 				<Button Text="EditActivity" Clicked="OnEditActivity"/>
+                <Button Text="Inventory" Clicked="OnInventory"/>
 				
 			</StackLayout>
 		</ScrollView>

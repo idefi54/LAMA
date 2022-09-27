@@ -1,12 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.InventoryView">
+             x:Class="LAMA.Views.InventoryView"
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Řadit" />
         <ToolbarItem Text="Filtr" />
-        <ToolbarItem Text="Přidat předmět" Command="{Binding AddItem}"/>
+        <ToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}"/>
     </ContentPage.ToolbarItems>
 
 
@@ -35,7 +36,7 @@
 										Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
 										CommandParameter="{Binding .}"/>
                             <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
-										Command="{Binding Path=BindingContext.ReturnIem, Source={x:Reference Name=ItemList}}"
+										Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
 										CommandParameter="{Binding .}"/>
                            
                             <Grid.GestureRecognizers>
