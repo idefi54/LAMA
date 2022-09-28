@@ -12,8 +12,10 @@ namespace LAMA.ViewModels
     public class ActivityListViewModel
     {
 
+        public Xamarin.Forms.Command TestChangeValues { get; }
+        public Xamarin.Forms.Command TestRefresh { get; }
         public Xamarin.Forms.Command AddActivityCommand { get; }
-        public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
         public Command<object> LarpActivityTapped { get; private set; }
 
@@ -31,7 +33,7 @@ namespace LAMA.ViewModels
         {
             Navigation = navigation;
 
-            LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
+            LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
@@ -84,9 +86,25 @@ namespace LAMA.ViewModels
             LarpActivityTapped = new Command<object>(DisplayActivity);
             RemoveLarpActivity = new Command<object>(RemoveActivity);
             ShowRemoveButton = new Command<object>(DisplayRemoveButton);
+
+            TestChangeValues = new Command(TestChangeLastActivityValues);
+            TestRefresh = new Command(RefreshCollection);
         }
 
-        private void UpdateLastInteracter(ActivityListItemViewModel alivm)
+		private void TestChangeLastActivityValues(object obj)
+		{
+            if(LarpActivityListItems.Count > 0)
+                LarpActivityListItems[0].SetName(LarpActivityListItems[0].LarpActivity.name + "x");
+                //LarpActivityListItems[0].LarpActivity.name = LarpActivityListItems[0].LarpActivity.name + "x";
+        }
+
+		private void RefreshCollection(object obj)
+		{
+            //LarpActivityListItems.Refresh();
+            
+        }
+
+		private void UpdateLastInteracter(ActivityListItemViewModel alivm)
         {
             if(lastInteracterActivity != null)
             {
