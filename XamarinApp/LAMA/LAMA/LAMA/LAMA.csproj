@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\ChatChannels.xaml.cs" />
+    <Compile Remove="Views\InventoryView.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Views\ChatChannels.xaml" />
+    <EmbeddedResource Remove="Views\InventoryView.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="marker.png" />
   </ItemGroup>
 
@@ -20,12 +30,6 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Views\ChatChannels.xaml.cs">
-      <DependentUpon>ChatChannels.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +48,6 @@
     <EmbeddedResource Update="Views\InventoryItemDetail.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\InventoryView.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Views\MapLimitsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     <EmbeddedResource Update="Views\ChatTest.xaml">
@@ -57,9 +58,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\ChatChannels.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\TestPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

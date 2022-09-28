@@ -25,6 +25,7 @@ namespace LAMA.Database
 
             lastID++;
             Interval newInterval = new Interval(lastID,endOfLast, endOfLast + IntervalLength, toWho);
+            Debug.WriteLine($"ID: {newInterval.ID}, start: {newInterval.start}, end: {newInterval.end}, owner id: {newInterval.ownerID}");
             endOfLast += IntervalLength;
 
             if (!intervalsGivenToClients.ContainsKey(toWho))

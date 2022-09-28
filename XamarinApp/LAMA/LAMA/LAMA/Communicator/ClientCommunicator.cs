@@ -166,7 +166,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), Int64.Parse(messageParts[7]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "GiveID")

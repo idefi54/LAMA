@@ -344,23 +344,16 @@ namespace LAMA.Communicator
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
             DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
-            try {
-                Debug.WriteLine("-------------------------------------0------------------------------------------");
-                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-                Debug.WriteLine("-------------------------------------1------------------------------------------");
-                DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-                Debug.WriteLine("-------------------------------------2------------------------------------------");
-                DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-                Debug.WriteLine("-------------------------------------3------------------------------------------");
-                DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-                Debug.WriteLine("-------------------------------------4------------------------------------------");
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Exception");
-                Debug.WriteLine(e.ToString());
-                throw e;
-            }
+            
+            Debug.WriteLine("-------------------------------------0------------------------------------------");
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------1------------------------------------------");
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------2------------------------------------------");
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------3------------------------------------------");
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------4------------------------------------------");
 
             logger.LogWrite("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;

@@ -57,33 +57,29 @@ namespace LAMA.Communicator
             communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
         }
 
-        public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int id, string command)
+        public void IntervalsUpdate(string intervalCommand, string objectType, int lowerLimit, int upperLimit, int ownerID, long intervalID, string command)
         {
-            communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {id}");
-            if (intervalCommand == "Add" && +LocalStorage.clientID == id)
+            communicator.logger.LogWrite($"{command}, {intervalCommand}, {objectType}, {lowerLimit}, {upperLimit}, {ownerID}, {intervalID}");
+            if (intervalCommand == "Add" && LocalStorage.clientID == ownerID)
             {
                 if (objectType == "LAMA.Models.LarpActivity")
-                {
-                    
-                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived( new Database.Interval(lowerLimit, upperLimit, id));
+                {                   
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID, lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.CP")
-                {
-                    
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                {                   
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID, lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
-                {
-                    
-                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                {                    
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID,lowerLimit, upperLimit, ownerID));
                 }
 
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
-
-                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(lowerLimit, upperLimit, id));
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.NewIntervalReceived(new Database.Interval(intervalID, lowerLimit, upperLimit, ownerID));
                 }
             }
         }
