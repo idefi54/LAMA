@@ -473,7 +473,7 @@ namespace LAMA.Communicator
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
 
 
-                lastUpdate = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
+                lastUpdate = 0;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
                 logger.LogWrite("Subscribing to events");

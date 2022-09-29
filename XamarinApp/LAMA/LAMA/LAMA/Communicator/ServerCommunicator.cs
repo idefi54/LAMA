@@ -412,6 +412,7 @@ namespace LAMA.Communicator
             {
                 CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
                     clientName, clientName, new EventList<string> {}, 0, "", "", new Pair<double, double>(0.0f, 0.0f), "");
+                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
             }
             string command = $"GiveID;{maxClientID};{cpID}";
