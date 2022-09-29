@@ -12,7 +12,7 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
-        int maxID = 0;
+        int maxID = -1;
         static long IDOffset = (long)Math.Pow(2, 31);
 
         SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
@@ -42,7 +42,7 @@ namespace LAMA
             IDIntervals = new List<Database.Interval>();
             foreach (var interval in intervals)
             {
-                if(interval.ownerID == database.LocalStorage.clientID)
+                if(interval.ownerID == LocalStorage.clientID)
                     IDIntervals.Add(interval);
             }
             if (IDIntervals.Count == 0 && GiveNewInterval != null)
@@ -54,7 +54,7 @@ namespace LAMA
             {
                 IDToIndex.Add(a.getID(), i);
                 ++i;
-                if(a.getID() / IDOffset == database.LocalStorage.clientID && maxID< a.getID())
+                if(a.getID() / IDOffset == LocalStorage.clientID && maxID< a.getID())
                     maxID = (int)a.getID();
             }
         }
@@ -88,7 +88,7 @@ namespace LAMA
 
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
-            if (data.getID() > maxID && data.getID() / IDOffset == database.LocalStorage.clientID)
+            if (data.getID() > maxID && data.getID() / IDOffset == LocalStorage.clientID)
                 maxID = (int)data.getID();
 
             sql.addData(data, invokeEvent);
@@ -143,7 +143,7 @@ namespace LAMA
             input.typeID = new T().getTypeID();
             IDIntervals.Add(input);
 
-            if (database.LocalStorage.clientID != 0) 
+            if (LocalStorage.clientID != 0) 
                 intervalsSQL.addData(input);
         }
 
@@ -164,7 +164,7 @@ namespace LAMA
         public long nextID()
         {
             ++maxID;
-            return (long)(database.LocalStorage.clientID * IDOffset) + maxID;
+            return (long)(LocalStorage.clientID * IDOffset) + maxID;
 
             /*
             Database.Interval currentInterval = null;

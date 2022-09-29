@@ -10,8 +10,8 @@ namespace LAMA.Models
     {
         public enum Status { ready, onBreak, onActivity};
 
-        int _ID;
-        public int ID { get { return _ID; } }
+        long _ID;
+        public long ID { get { return _ID; } }
         
         string _name;
         public string name
@@ -66,7 +66,7 @@ namespace LAMA.Models
         {
             _roles.dataChanged += onRolesChange;
         }
-        public CP(int ID, string name, string nick, EventList<string> roles, int phone,
+        public CP(long ID, string name, string nick, EventList<string> roles, int phone,
             string facebook, string discord, Pair<double, double> location, string notes)
         {
             _roles.dataChanged += onRolesChange;

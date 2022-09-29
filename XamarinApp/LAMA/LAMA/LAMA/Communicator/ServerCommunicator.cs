@@ -339,6 +339,7 @@ namespace LAMA.Communicator
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
             intervalsManager = new IntervalCommunicationManagerServer(this);
 
+            /*
             //Initialize Intervals
             DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
@@ -354,6 +355,7 @@ namespace LAMA.Communicator
             Debug.WriteLine("-------------------------------------3------------------------------------------");
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             Debug.WriteLine("-------------------------------------4------------------------------------------");
+            */
 
             logger.LogWrite("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
@@ -365,8 +367,10 @@ namespace LAMA.Communicator
             LocalStorage.cpID = 0;
             LocalStorage.clientID = 0;
             if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
+                long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
+                Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
-                    new Models.CP((int)DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
+                    new Models.CP(cpID, 
                     LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
             }
             logger.LogWrite("Initialization finished");
@@ -395,7 +399,7 @@ namespace LAMA.Communicator
         private void GiveNewClientID(Socket current, string clientName)
         {
             maxClientID += 1;
-            int cpID = -1;
+            long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
@@ -406,7 +410,7 @@ namespace LAMA.Communicator
             }
             if (cpID == -1)
             {
-                CP cp = new Models.CP((int)DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
+                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
                     clientName, clientName, new EventList<string> {}, 0, "", "", new Pair<double, double>(0.0f, 0.0f), "");
                 cpID = cp.ID;
             }

@@ -214,6 +214,7 @@ namespace LAMA.Communicator
         private void ReceiveID(int clientId, int cpId)
         {
             LocalStorage.clientID = clientId;
+            LocalStorage.cpID = cpId;
             RequestUpdate();
         }
 
@@ -392,7 +393,7 @@ namespace LAMA.Communicator
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             logger.LogWrite("Created dictionaries");
 
-
+            /*
             //Initialize Intervals
             DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
@@ -402,7 +403,7 @@ namespace LAMA.Communicator
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-
+            */
 
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {

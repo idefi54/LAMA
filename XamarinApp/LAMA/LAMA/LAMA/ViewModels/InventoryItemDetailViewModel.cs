@@ -24,8 +24,8 @@ namespace LAMA.ViewModels
         int _returnNum;
 
         List<string> _CPNames;
-        Dictionary<int, string> CPs = new Dictionary<int, string>();
-        Dictionary<string, int> CPIDs = new Dictionary<string, int>();
+        Dictionary<long, string> CPs = new Dictionary<long, string>();
+        Dictionary<string, long> CPIDs = new Dictionary<string, long>();
 
         public string Name { get { return _name; } }
         public string Description { get { return _description; } }

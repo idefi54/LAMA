@@ -7,12 +7,10 @@
 
   <ItemGroup>
     <Compile Remove="Views\ChatChannels.xaml.cs" />
-    <Compile Remove="Views\InventoryView.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Views\ChatChannels.xaml" />
-    <EmbeddedResource Remove="Views\InventoryView.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +45,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\InventoryItemDetail.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\InventoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MapLimitsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

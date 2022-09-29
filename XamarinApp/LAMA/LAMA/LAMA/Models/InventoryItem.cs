@@ -47,8 +47,8 @@ namespace LAMA.Models
             set { updateValue(4, value.ToString()); }
         }
 
-        EventList<Pair<int,int>> _takenBy = new EventList<Pair<int, int>>();
-        public EventList<Pair<int, int>> takenBy { get { return _takenBy; } }
+        EventList<Pair<long,int>> _takenBy = new EventList<Pair<long, int>>();
+        public EventList<Pair<long, int>> takenBy { get { return _takenBy; } }
         void onTakenUpdate()
         {
             updateValue(5, _takenBy.ToString());
@@ -125,7 +125,7 @@ namespace LAMA.Models
                     _free = Helpers.readInt(s);
                     break;
                 case 5:
-                    _takenBy = Helpers.readIntPairField(s);
+                    _takenBy = Helpers.readLongIntPairField(s);
                     _takenBy.dataChanged += onTakenUpdate;
                     break;
             }
@@ -187,7 +187,7 @@ namespace LAMA.Models
             }
         }
 
-        private int findBorrowerIndex(int borrower)
+        private int findBorrowerIndex(long borrower)
         {
             for (int i = 0; i < takenBy.Count; ++i) 
             {
@@ -197,7 +197,7 @@ namespace LAMA.Models
             return -1;
         }
 
-        public void Borrow(int howMany, int who)
+        public void Borrow(int howMany, long who)
         {
             if (howMany <= free)
             {
@@ -206,11 +206,11 @@ namespace LAMA.Models
                 int index = findBorrowerIndex(who);
                 if (index == -1)
                 {
-                    takenBy.Add(new Pair<int, int>(who, howMany));
+                    takenBy.Add(new Pair<long, int>(who, howMany));
                 }
                 else
                 {
-                    takenBy[index] = new Pair<int, int>(who, takenBy[index].second + howMany);
+                    takenBy[index] = new Pair<long, int>(who, takenBy[index].second + howMany);
                 }
             }
         }
@@ -222,7 +222,7 @@ namespace LAMA.Models
                 free += howMany;
             }
         }
-        public void Return (int howMany, int who)
+        public void Return (int howMany, long who)
         {
             int index = findBorrowerIndex(who);
             if (howMany <= taken && index != -1 && takenBy[index].second >= howMany) 
@@ -233,7 +233,7 @@ namespace LAMA.Models
                 if (takenBy[index].second == howMany)
                     takenBy.RemoveAt(index);
                 else
-                    takenBy[index] = new Pair<int, int>(who, takenBy[index].second - howMany);
+                    takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
             }
         }
     }

@@ -133,6 +133,52 @@ namespace LAMA
             }
             return output;
         }
+
+        public static EventList<Pair<long, long>> readLongPairField(string input)
+        {
+            EventList<Pair<long, long>> output = new EventList<Pair<long, long>>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                long first = readLong(input, ref i);
+                skipNonDigits(input, ref i);
+                output.Add(new Pair<long, long>(first, readLong(input, ref i)));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
+
+        public static EventList<Pair<long, int>> readLongIntPairField(string input)
+        {
+            EventList<Pair<long, int>> output = new EventList<Pair<long, int>>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                long first = readLong(input, ref i);
+                skipNonDigits(input, ref i);
+                output.Add(new Pair<long, int>(first, readInt(input, ref i)));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
+
+        public static EventList<Pair<int, long>> readIntLongPairField(string input)
+        {
+            EventList<Pair<int, long>> output = new EventList<Pair<int, long>>();
+            int i = 0;
+            skipNonDigits(input, ref i);
+            while (i < input.Length)
+            {
+                int first = readInt(input, ref i);
+                skipNonDigits(input, ref i);
+                output.Add(new Pair<int, long>(first, readLong(input, ref i)));
+                skipNonDigits(input, ref i);
+            }
+            return output;
+        }
+
         public static EventList<Pair<string, int>> readStringIntPairField(string input)
         {
             EventList<Pair<string, int>> output = new EventList<Pair<string, int>>();
