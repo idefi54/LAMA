@@ -46,5 +46,12 @@ namespace LAMA.Models
             NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, sender, sender, IndexOf((T)sender));
             OnCollectionChanged(args);
         }
+        public void Refresh()
+        {
+            foreach (T item in Items)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, item, IndexOf((T)item)));
+            }
+        }
     }
 }
