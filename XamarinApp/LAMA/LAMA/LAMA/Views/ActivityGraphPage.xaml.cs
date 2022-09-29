@@ -30,7 +30,7 @@ namespace LAMA.Views
         {
             var now = DateTime.Now;
             var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
-            var span = time - _activityGraph.TimeOffset;
+            var span = time - ActivityGraph.TimeOffset;
 
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY) + _activityGraph.XamOffset;
@@ -50,7 +50,7 @@ namespace LAMA.Views
             _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
 
             float minutes = x / _activityGraph.MinuteWidth / _activityGraph.Zoom;
-            DateTime newTime = _activityGraph.TimeOffset.AddMinutes(minutes);
+            DateTime newTime = ActivityGraph.TimeOffset.AddMinutes(minutes);
             _activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
             _activity.day = newTime.Day;
         }
@@ -155,7 +155,7 @@ namespace LAMA.Views
         // Public
         private float _zoom;
         public float Zoom { get { return _zoom; } set { _zoom = Math.Max(1, value); } }
-        public DateTime TimeOffset;
+        public static DateTime TimeOffset = DateTime.Now;
         public float MinuteWidth => _columnWidth / 60;
 
         public ActivityGraph(SKCanvasView canvasView, Label[] timeLabels, Label dateLabel, Button leftButton, Button rightButton)
@@ -163,7 +163,7 @@ namespace LAMA.Views
             _canvasView = canvasView;
             Zoom = 2;
             OffsetY = 0;
-            TimeOffset = DateTime.Now;
+            //TimeOffset = DateTime.Now;
             _timeLabels = timeLabels;
             _dateLabel = dateLabel;
             _activityButtons = new List<ActivityButton>();
@@ -318,6 +318,7 @@ namespace LAMA.Views
         private Button _minusButton;
         private Button _leftButton;
         private Button _rightButton;
+        private Button _calendarButton;
         private ActivityButton _draggedButton;
         private TouchTrackingPoint _mousePos;
         private bool _mouseDown = false;
@@ -375,7 +376,7 @@ namespace LAMA.Views
             _leftButton.HorizontalOptions = LayoutOptions.Start;
             _leftButton.TextColor = Color.Blue;
             _leftButton.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
-            _leftButton.Clicked += (object sender, EventArgs args) => { _graph.TimeOffset = _graph.TimeOffset.AddDays(-1); _canvasView.InvalidateSurface(); };
+            _leftButton.Clicked += (object sender, EventArgs args) => { ActivityGraph.TimeOffset = ActivityGraph.TimeOffset.AddDays(-1); _canvasView.InvalidateSurface(); };
             grid.Children.Add(_leftButton);
 
             _rightButton = new Button();
@@ -387,7 +388,7 @@ namespace LAMA.Views
             _rightButton.TextColor = Color.Blue;
             _rightButton.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
             _rightButton.Clicked += (object sender, EventArgs args) => {
-                _graph.TimeOffset = _graph.TimeOffset.AddDays(1); _canvasView.InvalidateSurface(); };
+                ActivityGraph.TimeOffset = ActivityGraph.TimeOffset.AddDays(1); _canvasView.InvalidateSurface(); };
             grid.Children.Add(_rightButton);
 
             _graph = new ActivityGraph(_canvasView, timeLabels, dateLabel, _leftButton, _rightButton);
@@ -408,6 +409,14 @@ namespace LAMA.Views
             _minusButton.Clicked += (object sender, EventArgs args) => { _graph.Zoom -= 0.25f; _canvasView.InvalidateSurface(); };
             grid.Children.Add(_minusButton);
 
+            _calendarButton = new Button();
+            _calendarButton.Text = "Calendar";
+            _calendarButton.VerticalOptions = LayoutOptions.Start;
+            _calendarButton.HorizontalOptions= LayoutOptions.Start;
+            _calendarButton.TranslationX = 100;
+            _calendarButton.Clicked += (object sender, EventArgs args) => { Navigation.PushModalAsync(new CalendarPage()); };
+            grid.Children.Add(_calendarButton);
+
             _editSwitch = new Switch();
             _editSwitch.IsToggled = false;
             _editSwitch.VerticalOptions = LayoutOptions.Start;
@@ -426,7 +435,7 @@ namespace LAMA.Views
                     var button = _graph.AddActivity(ActivityButton.CreateActivity(
                         60,
                         rnd.Next(10 * 60) + 7*60,
-                        _graph.TimeOffset.Day,
+                        ActivityGraph.TimeOffset.Day,
                         type: rnd.Next(2) == 0 ? LarpActivity.EventType.normal : LarpActivity.EventType.preparation,
                         status: (LarpActivity.Status)rnd.Next(5)
                         )) ;
