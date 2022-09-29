@@ -81,7 +81,7 @@ namespace LAMA.Views
                 _color = _daysInMonth[i].BackgroundColor;
 
                 _daysInMonth[i].Clicked += (object sender, EventArgs e) => {
-                    ActivityGraph.TimeOffset = _first.AddDays(int.Parse((sender as Button).Text) - 2); Navigation.PopModalAsync(); };
+                    ActivityGraph.TimeOffset = _first.AddDays(int.Parse((sender as Button).Text) - 1); Navigation.PopModalAsync(); };
                 grid.Children.Add(_daysInMonth[i], (i + (int)_first.DayOfWeek) % 7, (i + (int)_first.DayOfWeek) / 7 + 2);
             }
 
