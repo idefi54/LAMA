@@ -13,10 +13,10 @@ namespace LAMA.ViewModels
     public class ActivityListViewModel
     {
 
-        public Xamarin.Forms.Command TestChangeValues { get; }
-        public Xamarin.Forms.Command TestRefresh { get; }
-        public Xamarin.Forms.Command AddActivityCommand { get; }
-        public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        public Command TestChangeValues { get; }
+        public Command TestRefresh { get; }
+        public Command AddActivityCommand { get; }
+        public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
         public Command<object> LarpActivityTapped { get; private set; }
 
@@ -34,7 +34,7 @@ namespace LAMA.ViewModels
         {
             Navigation = navigation;
 
-            LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
+            LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
@@ -83,7 +83,7 @@ namespace LAMA.ViewModels
 
             #endregion
 
-            AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
+            AddActivityCommand = new Command(OnAddActivityListItem);
             LarpActivityTapped = new Command<object>(DisplayActivity);
             RemoveLarpActivity = new Command<object>(RemoveActivity);
             ShowRemoveButton = new Command<object>(DisplayRemoveButton);
