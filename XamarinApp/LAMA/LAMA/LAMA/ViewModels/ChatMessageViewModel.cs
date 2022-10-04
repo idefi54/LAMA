@@ -17,7 +17,7 @@ namespace LAMA.ViewModels
 
         public string Text => chatMessage == null ? "" : chatMessage.message;
 
-        public string Time => chatMessage == null ? "" : TimeFormat(DateTimeOffset.FromUnixTimeMilliseconds(chatMessage.sentAt));
+        public string Time => chatMessage == null ? "" : TimeFormat(DateTimeOffset.FromUnixTimeMilliseconds(chatMessage.sentAt).LocalDateTime);
 
         public Xamarin.Forms.Color HeaderColor => chatMessage.from == LocalStorage.clientName ? Xamarin.Forms.Color.LightSkyBlue : Xamarin.Forms.Color.LightGray;
 
