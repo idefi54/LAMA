@@ -18,7 +18,9 @@ namespace LAMA
         void buildFromStrings(string[] input);
         string getAttribute(int index);
         int getTypeID();
-       
+
+        void addedInto(Object list);
+        void removed();
         
     }
 

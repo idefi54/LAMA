@@ -12,6 +12,9 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
+        int maxID = -1;
+        static long IDOffset = (long)Math.Pow(2, 31);
+
         SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
 
         
@@ -34,8 +37,16 @@ namespace LAMA
         void loadData()
         {
             
-            IDIntervals = intervalsSQL.ReadData(typeID);
-
+            var intervals = intervalsSQL.ReadData(typeID);
+            
+            IDIntervals = new List<Database.Interval>();
+            foreach (var interval in intervals)
+            {
+                if(interval.ownerID == LocalStorage.clientID)
+                    IDIntervals.Add(interval);
+            }
+            if (IDIntervals.Count == 0 && GiveNewInterval != null)
+                GiveNewInterval.Invoke();
             cache = sql.ReadData();
 
             int i = 0;
@@ -43,6 +54,8 @@ namespace LAMA
             {
                 IDToIndex.Add(a.getID(), i);
                 ++i;
+                if(a.getID() / IDOffset == LocalStorage.clientID && maxID< a.getID())
+                    maxID = (int)a.getID();
             }
         }
 
@@ -75,8 +88,11 @@ namespace LAMA
 
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
+            if (data.getID() > maxID && data.getID() / IDOffset == LocalStorage.clientID)
+                maxID = (int)data.getID();
 
             sql.addData(data, invokeEvent);
+            data.addedInto(this);
             return true;
         }
 
@@ -94,17 +110,18 @@ namespace LAMA
             }
             var who = cache[index];
             cache.RemoveAt(index);
-
+            who.removed();
             sql.removeAt(who);
         }
 
-        //There was no way for me to do this with the original interface (I couldn't get the item index based on ID)
+
         public void removeByID(long ID)
         {
             if (IDToIndex.ContainsKey(ID))
             {
                 int internalIndex = IDToIndex[ID];
                 removeAt(internalIndex);
+
             }
         }
 
@@ -125,7 +142,9 @@ namespace LAMA
             askedForMore = false;
             input.typeID = new T().getTypeID();
             IDIntervals.Add(input);
-            intervalsSQL.addData(input);
+
+            if (LocalStorage.clientID != 0) 
+                intervalsSQL.addData(input);
         }
 
 
@@ -133,13 +152,21 @@ namespace LAMA
         public delegate void GiveNewIntervalDelegate();
         public event GiveNewIntervalDelegate GiveNewInterval;
 
+        public void InvokeGiveNewInterval() {
+            Debug.WriteLine("InvokeGiveNewInterval");
+            GiveNewInterval.Invoke();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
         public long nextID()
-        {   
+        {
+            ++maxID;
+            return (long)(LocalStorage.clientID * IDOffset) + maxID;
 
+            /*
             Database.Interval currentInterval = null;
 
             // find first interval with space 
@@ -160,14 +187,14 @@ namespace LAMA
             if (currentInterval == null || 
                 (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
             {
-                if (askedForMore)
+                if (!askedForMore && GiveNewInterval != null)
                 {
                     GiveNewInterval.Invoke();
                     askedForMore = true;
                 }
                 //if i am out of IDs just return null
-                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end) 
-                    return -1;
+                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end)
+                    throw new Exception("Out of IDs.");
             }
 
             //now i know i have anough space for at least one more ID
@@ -175,7 +202,7 @@ namespace LAMA
             currentInterval.lastTaken++;
             intervalsSQL.Update(currentInterval);
             return currentInterval.lastTaken;
-          
+          */
         }
 
         

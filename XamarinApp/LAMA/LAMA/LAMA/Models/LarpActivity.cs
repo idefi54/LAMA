@@ -174,16 +174,45 @@ namespace LAMA.Models
             initChangeListeners();
         }
 
+        public void UpdateWhole(string name, string description, string preparation, EventType eventType, Time duration, int day,
+            Time start, Pair<double, double> place, Status status)
+        {
+            if (name != _name)
+                this.name = name;
+            if(_description!=description)
+                this.description = description;
+            if(_preparationNeeded != preparation)
+                this.preparationNeeded = preparation;
+            if(_eventType != eventType)
+                this.eventType = eventType;
+            if(duration!=_duration)
+                this.duration = duration;
+            if (day != _day)
+                this.day = day;
+            if (start != _start)
+                this.start = start;
+            if (!place.Equals(_place))
+                this.place = place;
+            if (status != _status)
+                this.status = status;
+        }
 
 
-
-
+        RememberedList<LarpActivity, LarpActivityStorage> list = null;
+        public void removed()
+        {
+            list = null;
+        }
+        public void addedInto(object holder)
+        {
+            list = holder as RememberedList<LarpActivity, LarpActivityStorage>;
+        }
 
         //helper function to update values inside SQL
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
-            list.sqlConnection.changeData(index, newVal, this);
+            
+            list?.sqlConnection.changeData(index, newVal, this);
         }
 
         // interface Serializable implementation

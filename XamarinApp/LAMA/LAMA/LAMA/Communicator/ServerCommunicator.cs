@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using LAMA.Models;
 
 namespace LAMA.Communicator
 {
@@ -146,6 +147,7 @@ namespace LAMA.Communicator
 
         private static void AcceptCallback(IAsyncResult AR)
         {
+            THIS.logger.LogWrite("accepting");
             Socket socket = serverSocket.EndAccept(AR);
             try
             {
@@ -202,7 +204,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
+                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemCreated")
@@ -216,7 +218,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "Update")
@@ -237,7 +239,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.GiveNewClientID(current);
+                        THIS.GiveNewClientID(current, messageParts[2]);
                     }));
                 }
                 if (messageParts[1] == "ClientConnected")
@@ -324,6 +326,7 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
+
             logger.LogWrite("No exceptions");
             //maxClientID = 0;
             serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
@@ -335,13 +338,41 @@ namespace LAMA.Communicator
             logger.LogWrite("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
             intervalsManager = new IntervalCommunicationManagerServer(this);
+
+            /*
+            //Initialize Intervals
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
+            
+            Debug.WriteLine("-------------------------------------0------------------------------------------");
+            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------1------------------------------------------");
+            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------2------------------------------------------");
+            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------3------------------------------------------");
+            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
+            Debug.WriteLine("-------------------------------------4------------------------------------------");
+            */
+
             logger.LogWrite("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
+
+            LocalStorage.clientName = name;
+            LocalStorage.serverName = name;
+            LocalStorage.cpID = 0;
+            LocalStorage.clientID = 0;
+            if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
+                long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
+                Debug.WriteLine($"cpID = {cpID}");
+                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
+                    new Models.CP(cpID, 
+                    LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
+            }
             logger.LogWrite("Initialization finished");
         }
 
@@ -365,11 +396,26 @@ namespace LAMA.Communicator
             }
         }
 
-        private void GiveNewClientID(Socket current)
+        private void GiveNewClientID(Socket current, string clientName)
         {
             maxClientID += 1;
-            string command = "GiveID;";
-            command += maxClientID;
+            long cpID = -1;
+            for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
+            {
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                {
+                    cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
+                }
+            }
+            if (cpID == -1)
+            {
+                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
+                    clientName, clientName, new EventList<string> {}, 0, "", "", new Pair<double, double>(0.0f, 0.0f), "");
+                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
+                cpID = cp.ID;
+            }
+            string command = $"GiveID;{maxClientID};{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[maxClientID] = current;

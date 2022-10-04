@@ -8,10 +8,12 @@ namespace LAMA.Models
     internal class ChatMessageStorage: Database.StorageInterface
     {
 
+        [PrimaryKey]
+        public long ID { get; set; }
         public string from { get; set; }
         public int channel { get; set; }
         public string message { get; set; }
-        [PrimaryKey]
+        
         public long sentAt { get; set; }
 
         public long lastChange
@@ -21,14 +23,16 @@ namespace LAMA.Models
         }
         public void makeFromStrings(string[] input)
         {
-            from = input[0];
-            channel = Helpers.readInt(input[1]);
-            message = input[2];
-            sentAt = Helpers.readLong(input[3]);
+
+            ID = Helpers.readLong(input[0]);
+            from = input[1];
+            channel = Helpers.readInt(input[2]);
+            message = input[3];
+            sentAt = Helpers.readLong(input[4]);
         }
         public string[] getStrings()
         {
-            return new string[] { from, channel.ToString(), message, sentAt.ToString() };
+            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString() };
         }
         public long getID()
         {

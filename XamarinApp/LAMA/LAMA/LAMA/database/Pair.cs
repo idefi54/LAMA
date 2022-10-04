@@ -32,5 +32,15 @@ namespace LAMA
         {
             return _first.ToString() + ", " + _second.ToString();
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is Pair<A,B>)
+            {
+                Pair<A,B> other = (Pair<A,B>)obj;
+                return other.first.Equals(first) && other.second.Equals(second);
+            }
+            return false;
+            
+        }
     }
 }
