@@ -31,8 +31,9 @@ namespace LAMA.Communicator
         public long LastUpdate
         {
             get { return lastUpdate; }
-            set { lastUpdate = value; }
+            set { if (wasUpdated) { lastUpdate = value; } }
         }
+        private bool wasUpdated = false;
         //private static string CPName;
         //private static string assignedEvent = "";
         private IPAddress _IP;
@@ -142,7 +143,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
@@ -150,7 +151,6 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
@@ -158,7 +158,7 @@ namespace LAMA.Communicator
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
@@ -187,12 +187,12 @@ namespace LAMA.Communicator
                 {
                     if (messageParts[2] == "DataUpdated")
                     {
-                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }
                     if (messageParts[2] == "ItemCreated")
                     {
-                        THIS.lastUpdate = Int64.Parse(messageParts[0]);
+                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }
                 }
@@ -318,6 +318,7 @@ namespace LAMA.Communicator
                         MainThread.BeginInvokeOnMainThread(new Action(() =>
                         {
                             THIS._connected = false;
+                            THIS.wasUpdated = false;
                         }));
                         return false;
                     }
@@ -330,6 +331,7 @@ namespace LAMA.Communicator
         {
             logger.LogWrite("connected set true");
             _connected = true;
+            THIS.wasUpdated = true;
         }
 
         private void SaveCommandQueue()
@@ -474,6 +476,7 @@ namespace LAMA.Communicator
 
 
                 THIS.lastUpdate = 0;
+                THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 intervalsManager = new IntervalCommunicationManagerClient(this);
                 logger.LogWrite("Subscribing to events");
