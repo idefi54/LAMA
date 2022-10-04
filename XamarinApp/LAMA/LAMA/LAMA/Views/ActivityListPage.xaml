@@ -12,8 +12,8 @@
 	-->
 
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Řadit" />
-		<ToolbarItem Text="Filtr" />
+		<ToolbarItem Text="Řadit" Command="{Binding TestChangeValues}"/>
+		<ToolbarItem Text="Filtr" Command="{Binding TestRefresh}"/>
 		<ToolbarItem Text="Nová Aktivita" Command="{Binding AddActivityCommand}"/>
 	</ContentPage.ToolbarItems>
 
