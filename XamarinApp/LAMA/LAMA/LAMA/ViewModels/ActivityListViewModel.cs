@@ -4,6 +4,7 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -89,9 +90,64 @@ namespace LAMA.ViewModels
 
             TestChangeValues = new Command(TestChangeLastActivityValues);
             TestRefresh = new Command(RefreshCollection);
+
+
+
+            SQLEvents.created += PropagateCreated;
+            SQLEvents.dataChanged += PropagateChanged;
+            SQLEvents.dataDeleted += PropagateDeleted;
         }
 
-		private void TestChangeLastActivityValues(object obj)
+        #region Database Events
+        private void PropagateCreated(Serializable created)
+        {
+            if (created == null || created.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)created;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+                return;
+
+            item = new ActivityListItemViewModel(activity);
+            LarpActivityListItems.Add(item);
+        }
+
+        private void PropagateChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed == null || changed.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)changed;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item == null)
+                return;
+
+            item.UpdateActivity(activity);
+        }
+
+        private void PropagateDeleted(Serializable deleted)
+        {
+            if (deleted == null || deleted.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)deleted;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+            {
+                LarpActivityListItems.Remove(item);
+            }
+        }
+
+        #endregion
+
+        private void TestChangeLastActivityValues(object obj)
 		{
             if(LarpActivityListItems.Count > 0)
                 LarpActivityListItems[0].SetName(LarpActivityListItems[0].LarpActivity.name + "x");

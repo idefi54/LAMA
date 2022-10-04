@@ -63,5 +63,14 @@ namespace LAMA.ViewModels
         {
             ShowDeleteButton = false;
         }
+
+        internal void UpdateActivity(LarpActivity activity)
+        {
+            SetProperty(ref _larpActivity, activity);
+
+            OnPropertyChanged(nameof(Name));
+
+            OnPropertyChanged(nameof(Detail));
+        }
     }
 }
