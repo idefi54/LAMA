@@ -12,6 +12,8 @@ namespace LAMA.ViewModels
     {
         public LarpActivity Activity;
 
+        private Action<LarpActivity> _callback;
+
         public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
         private ActivityListItemViewModel _selectedItem;
@@ -21,13 +23,15 @@ namespace LAMA.ViewModels
                     return;
                 _selectedItem = value;
                 Activity = _selectedItem.LarpActivity;
+                _callback(Activity);
                 Close();
             }
         }
 
 
-        public ActivitySelectionViewModel()
+        public ActivitySelectionViewModel(Action<LarpActivity> callback)
 		{
+            _callback = callback;
             Activity = null;
             LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
 

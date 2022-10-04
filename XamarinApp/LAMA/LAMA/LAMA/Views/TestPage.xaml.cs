@@ -52,14 +52,20 @@ namespace LAMA.Views
         
         async void OnActivitySelector(object sender, EventArgs args)
         {
-			ActivitySelectionPage page = new ActivitySelectionPage();
+			ActivitySelectionPage page = new ActivitySelectionPage(_displayName);
             await Navigation.PushAsync(page);
             
 
-			ActivitySelectionViewModel viewModel = page.BindingContext as ActivitySelectionViewModel;
+            void _displayName(LarpActivity activity)
+			{
 
-            if(viewModel != null && viewModel.Activity != null)
-			    _ = DisplayAlert("Activity", viewModel.Activity.name, "OK");
+                if(activity != null)
+			        _ = DisplayAlert("Activity", activity.name, "OK");
+                else
+			        _ = DisplayAlert("Problem", "Something went wrong and no activity is present.", "BUMMER");
+
+
+			}
         }
 
 

@@ -1,4 +1,5 @@
-﻿using LAMA.ViewModels;
+﻿using LAMA.Models;
+using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,11 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ActivitySelectionPage : ContentPage
     {
-        public ActivitySelectionPage()
+        public ActivitySelectionPage(Action<LarpActivity> callback)
         {
             InitializeComponent();
 
-            BindingContext = new ActivitySelectionViewModel();
+            BindingContext = new ActivitySelectionViewModel(callback);
         }
     }
 }
