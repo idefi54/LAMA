@@ -98,7 +98,7 @@ namespace LAMA.ViewModels
             SQLEvents.dataDeleted += PropagateDeleted;
         }
 
-        #region Database Events
+        #region Database Propagate Events
         private void PropagateCreated(Serializable created)
         {
             if (created == null || created.GetType() != typeof(LarpActivity))
@@ -124,10 +124,13 @@ namespace LAMA.ViewModels
 
             ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
 
+            // here can be problem if created and changed of same activity come in wrong order (the change is not registered until future update)
+            // but creating it if it doesn't exist is bigger problem, because of changed and deleted combination in wrong order
             if (item == null)
                 return;
 
             item.UpdateActivity(activity);
+            LarpActivityListItems.RefreshItem(LarpActivityListItems.IndexOf(item)); //this should hopefuly update the single line... but I still advise using INotifyPropertyChange
         }
 
         private void PropagateDeleted(Serializable deleted)
