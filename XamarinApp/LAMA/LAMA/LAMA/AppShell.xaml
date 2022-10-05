@@ -93,6 +93,9 @@
 	<FlyoutItem Title="TestPage" Icon="icon_about.png">
 		<ShellContent Route="TestPage" ContentTemplate="{DataTemplate local:TestPage}" />
 	</FlyoutItem>
+    <FlyoutItem Title="ChatTest">
+        <ShellContent Route="ChatTest" ContentTemplate="{DataTemplate local:ChatTest}" />
+    </FlyoutItem>
 
     <FlyoutItem Title="Activity Graph" Icon="icon_about.png">
         <ShellContent Route="ActivityGraphPage" ContentTemplate="{DataTemplate local:ActivityGraphPage}" />

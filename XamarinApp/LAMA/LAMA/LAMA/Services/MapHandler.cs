@@ -5,6 +5,7 @@ using Mapsui.Providers;
 using Mapsui.Styles;
 using Mapsui.UI.Forms;
 using Mapsui.Utilities;
+using Mapsui.Projection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,13 +35,19 @@ namespace LAMA.Services
         public event PinClick OnPinClick;
         public event MapClick OnMapClick;
 
+        /// <summary>
+        /// Holds current location of this device.
+        /// Might be changed on UpdateLocation() call.
+        /// Can be set manually.
+        /// </summary>
+        public Location CurrentLocation { get; set; }
 
         /// <summary>
         /// <para>
         /// Instance holds internal data on events, notifications and such, that should show on the map.
         /// </para>
         /// 
-        /// Has methods that need to work with this data.
+        /// Has methods that need to work with such data.
         /// Static methods work just with a given MapView.
         /// </summary>
         public static MapHandler Instance
@@ -65,9 +72,10 @@ namespace LAMA.Services
             _stopwatch.Start();
             _time = 0;
             _prevTime = 0;
+            CurrentLocation = null;
         }
 
-        // Static methods do not need the map, they just work with given mapView.
+        // Static methods do not need map data, they just work with given mapView.
         public static void SetZoomLimits(MapView view, double min, double max)
         {
             view.Map.Limiter.ZoomLimits = new Mapsui.UI.MinMax(min, max);
@@ -76,9 +84,17 @@ namespace LAMA.Services
         {
             view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
         }
+        public static void CenterOn(MapView view, double longitude, double latitude)
+        {
+            Point p = SphericalMercator.FromLonLat(longitude, latitude);
+            view.Navigator.CenterOn(p);
+        }
+        public static void Zoom(MapView view, double resolution)
+        {
+            view.Navigator.ZoomTo(resolution);
+        }
 
-
-        // Public methods need to work with the map.
+        // Public methods need to work with map data.
         //============================================
 
         /// <summary>
@@ -88,6 +104,8 @@ namespace LAMA.Services
         public void MapViewSetup(MapView view)
         {
             view.Map = CreateMap();
+            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
+            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7], view.Map.Resolutions[2]);
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
@@ -184,7 +202,8 @@ namespace LAMA.Services
         public void AddActivity(double lon, double lat, int activityID, MapView view = null)
         {
             Pin pin = CreatePin(lon, lat, "normal");
-            _activities.Add(activityID, pin);
+            //_activities.Add(activityID, pin);
+            _activities[activityID] = pin;
             pin.Callout.Title =
                 $"Activity id: {activityID}\n" +
                 $"Double click to show the activity";
@@ -255,16 +274,13 @@ namespace LAMA.Services
         /// Needs to be async.
         /// </summary>
         /// <param name="view"></param>
-        public async void UpdateLocation(MapView view)
+        public async void UpdateLocation(MapView view, bool gpsAvailable = true)
         {
-            if (await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>() != PermissionStatus.Granted)
-                return;
-
-            var location = await Geolocation.GetLastKnownLocationAsync();
+            var location = gpsAvailable ? await Geolocation.GetLastKnownLocationAsync() : CurrentLocation;
             if (location == null)
                 return;
-
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude));
+            CurrentLocation = location;
         }
 
         /// <summary>
@@ -280,7 +296,11 @@ namespace LAMA.Services
         /// </summary>
         /// <param name="view"></param>
         /// <param name="visible"></param>
-        public void SetLocationVisible(MapView view, bool visible) => view.MyLocationEnabled = visible;
+        public void SetLocationVisible(MapView view, bool visible)
+        {
+            view.MyLocationEnabled = visible;
+            view.MyLocationLayer.Opacity = visible ? 1 : 0;
+        }
 
 
         // Private methods

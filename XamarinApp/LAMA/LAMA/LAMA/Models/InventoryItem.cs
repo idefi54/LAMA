@@ -6,8 +6,8 @@ namespace LAMA.Models
 {
     public class InventoryItem : Serializable
     {
-        int _ID;
-        public int ID { get { return _ID; } }
+        long _ID;
+        public long ID { get { return _ID; } }
 
         string _name;
         public string name
@@ -47,8 +47,8 @@ namespace LAMA.Models
             set { updateValue(4, value.ToString()); }
         }
 
-        EventList<int> _takenBy = new EventList<int>();
-        public EventList<int> takenBy { get { return _takenBy; } }
+        EventList<Pair<long,int>> _takenBy = new EventList<Pair<long, int>>();
+        public EventList<Pair<long, int>> takenBy { get { return _takenBy; } }
         void onTakenUpdate()
         {
             updateValue(5, _takenBy.ToString());
@@ -57,12 +57,19 @@ namespace LAMA.Models
 
 
 
-
+        RememberedList<InventoryItem, InventoryItemStorage> list = null;
+        public void removed()
+        {
+            list = null;
+        }
+        public void addedInto(object holder)
+        {
+            list = holder as RememberedList<InventoryItem, InventoryItemStorage>;
+        }
 
         void updateValue(int i, string data)
         {
-            var list = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
-            list.sqlConnection.changeData(i, data, this);
+            list?.sqlConnection.changeData(i, data, this);
         }
 
         public InventoryItem()
@@ -70,14 +77,25 @@ namespace LAMA.Models
             _takenBy.dataChanged += onTakenUpdate;
         }
 
-        public InventoryItem(int ID, string name, string description, int taken, int free)
+        public InventoryItem(long ID, string name, string description, int taken, int free)
         {
             _takenBy.dataChanged += onTakenUpdate;
-            _ID = ID; 
+            _ID = ID;
             _name = name;
             _description = description;
             _taken = taken;
             _free = free;
+        }
+        public void updateWhole(string name, string description, int taken, int free)
+        {
+            if (name != _name)
+                this.name = name;
+            if (description != _description)
+                this.description = description;
+            if(taken != _taken)
+                this.taken = taken;
+            if(free != _free)
+                this.free = free;
         }
 
 
@@ -89,7 +107,7 @@ namespace LAMA.Models
         }
         public void setAttribute(int i, string s)
         {
-            switch(i)
+            switch (i)
             {
                 case 0:
                     _ID = Helpers.readInt(s);
@@ -107,14 +125,14 @@ namespace LAMA.Models
                     _free = Helpers.readInt(s);
                     break;
                 case 5:
-                    _takenBy = Helpers.readIntField(s);
+                    _takenBy = Helpers.readLongIntPairField(s);
                     _takenBy.dataChanged += onTakenUpdate;
                     break;
             }
         }
         public string getAttribute(int i)
         {
-            switch(i)
+            switch (i)
             {
                 case 0: return _ID.ToString();
                 case 1: return _name;
@@ -132,7 +150,7 @@ namespace LAMA.Models
         public string[] getAttributes()
         {
             List<string> output = new List<string>();
-            for (int i = 0; i < attributeNames.Length; ++i) 
+            for (int i = 0; i < attributeNames.Length; ++i)
             {
                 output.Add(getAttribute(i));
             }
@@ -145,7 +163,7 @@ namespace LAMA.Models
         }
         public void buildFromStrings(string[] input)
         {
-            for (int i = 0; i < input.Length; ++i) 
+            for (int i = 0; i < input.Length; ++i)
             {
                 setAttribute(i, input[i]);
             }
@@ -154,6 +172,69 @@ namespace LAMA.Models
         public int getTypeID()
         {
             return 2;
+        }
+
+
+
+
+
+        public void Borrow(int howMany)
+        {
+            if (howMany <= free)
+            {
+                free -= howMany;
+                taken += howMany;
+            }
+        }
+
+        private int findBorrowerIndex(long borrower)
+        {
+            for (int i = 0; i < takenBy.Count; ++i) 
+            {
+                if(takenBy[i].first == borrower)
+                    return i;
+            }
+            return -1;
+        }
+
+        public void Borrow(int howMany, long who)
+        {
+            if (howMany <= free)
+            {
+                free -= howMany;
+                taken += howMany;
+                int index = findBorrowerIndex(who);
+                if (index == -1)
+                {
+                    takenBy.Add(new Pair<long, int>(who, howMany));
+                }
+                else
+                {
+                    takenBy[index] = new Pair<long, int>(who, takenBy[index].second + howMany);
+                }
+            }
+        }
+        public void Return (int howMany)
+        {
+            if(howMany <= taken)
+            {       
+                taken -= howMany;
+                free += howMany;
+            }
+        }
+        public void Return (int howMany, long who)
+        {
+            int index = findBorrowerIndex(who);
+            if (howMany <= taken && index != -1 && takenBy[index].second >= howMany) 
+            {
+                free += howMany;
+                taken -= howMany;
+
+                if (takenBy[index].second == howMany)
+                    takenBy.RemoveAt(index);
+                else
+                    takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
+            }
         }
     }
 }

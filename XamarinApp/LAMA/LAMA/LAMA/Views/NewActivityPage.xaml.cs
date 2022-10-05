@@ -7,15 +7,12 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-using Mapsui;
-using Mapsui.Projection;
-using Mapsui.Utilities;
-using Mapsui.UI.Forms;
-
 using LAMA.Models;
 using LAMA.ViewModels;
 using LAMA.Services;
 using LAMA.Models.DTO;
+
+using Mapsui.UI.Forms;
 
 namespace LAMA.Views
 {

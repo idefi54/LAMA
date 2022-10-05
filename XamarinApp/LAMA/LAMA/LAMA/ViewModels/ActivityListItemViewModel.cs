@@ -2,11 +2,12 @@
 using LAMA.Models.DTO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace LAMA.ViewModels
 {
-    public class ActivityListItemViewModel : BaseViewModel
+    public class ActivityListItemViewModel : BaseViewModel, INotifyPropertyChanged
     {
 
         LarpActivity _larpActivity;
@@ -20,6 +21,16 @@ namespace LAMA.ViewModels
 
         private bool _showDeleteButton;
         public bool ShowDeleteButton { get { return _showDeleteButton; } set { SetProperty(ref _showDeleteButton, value, nameof(ShowDeleteButton)); } }
+
+        public void SetName(string name)
+		{
+            if (_larpActivity == null)
+                return;
+
+            _larpActivity.name = name;
+
+            OnPropertyChanged(nameof(Name));
+		}
 
 
         public ActivityListItemViewModel(LarpActivity activity)
@@ -51,6 +62,15 @@ namespace LAMA.ViewModels
         internal void ResetDisplay()
         {
             ShowDeleteButton = false;
+        }
+
+        internal void UpdateActivity(LarpActivity activity)
+        {
+            SetProperty(ref _larpActivity, activity);
+
+            OnPropertyChanged(nameof(Name));
+
+            OnPropertyChanged(nameof(Detail));
         }
     }
 }

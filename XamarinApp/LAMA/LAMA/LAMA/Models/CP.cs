@@ -10,8 +10,8 @@ namespace LAMA.Models
     {
         public enum Status { ready, onBreak, onActivity};
 
-        int _ID;
-        public int ID { get { return _ID; } }
+        long _ID;
+        public long ID { get { return _ID; } }
         
         string _name;
         public string name
@@ -66,7 +66,7 @@ namespace LAMA.Models
         {
             _roles.dataChanged += onRolesChange;
         }
-        public CP(int ID, string name, string nick, EventList<string> roles, int phone,
+        public CP(long ID, string name, string nick, EventList<string> roles, int phone,
             string facebook, string discord, Pair<double, double> location, string notes)
         {
             _roles.dataChanged += onRolesChange;
@@ -80,13 +80,34 @@ namespace LAMA.Models
             _location = location;
             _notes = notes;
         }
+        public void updateWhole(string name, string nick, int phone, string facebook, string discord, string notes)
+        {
+            if (name != _name)
+                this.name = name;
+            if(_nick != nick)
+                this.nick = nick;
+            if(phone != _phone)
+                this.phone = phone;
+            if(discord != _discord)
+                this.discord = discord;
+            if (notes != _notes)
+                this.notes = notes;
+        }
 
 
+        RememberedList<CP, CPStorage> list = null;
+        public void addedInto(object holder)
+        {
+            list = holder as RememberedList<CP, CPStorage>;
+        }
+        public void removed()
+        {
+            list = null;
+        }
 
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
-            list.sqlConnection.changeData(index, newVal, this);
+            list?.sqlConnection.changeData(index, newVal, this);
         }
 
 
@@ -167,7 +188,7 @@ namespace LAMA.Models
             }
             return output.ToArray();
         }
-        public const int typeID = 1;
+        
         public int getTypeID()
         {
             return 1;

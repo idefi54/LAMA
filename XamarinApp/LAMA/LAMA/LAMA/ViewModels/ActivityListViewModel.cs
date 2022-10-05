@@ -4,6 +4,8 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -12,8 +14,10 @@ namespace LAMA.ViewModels
     public class ActivityListViewModel
     {
 
-        public Xamarin.Forms.Command AddActivityCommand { get; }
-        public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        public Command TestChangeValues { get; }
+        public Command TestRefresh { get; }
+        public Command AddActivityCommand { get; }
+        public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
         public Command<object> LarpActivityTapped { get; private set; }
 
@@ -31,7 +35,7 @@ namespace LAMA.ViewModels
         {
             Navigation = navigation;
 
-            LarpActivityListItems = new ObservableCollection<ActivityListItemViewModel>();
+            LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
@@ -80,13 +84,87 @@ namespace LAMA.ViewModels
 
             #endregion
 
-            AddActivityCommand = new Xamarin.Forms.Command(OnAddActivityListItem);
+            AddActivityCommand = new Command(OnAddActivityListItem);
             LarpActivityTapped = new Command<object>(DisplayActivity);
             RemoveLarpActivity = new Command<object>(RemoveActivity);
             ShowRemoveButton = new Command<object>(DisplayRemoveButton);
+
+            TestChangeValues = new Command(TestChangeLastActivityValues);
+            TestRefresh = new Command(RefreshCollection);
+
+
+
+            SQLEvents.created += PropagateCreated;
+            SQLEvents.dataChanged += PropagateChanged;
+            SQLEvents.dataDeleted += PropagateDeleted;
         }
 
-        private void UpdateLastInteracter(ActivityListItemViewModel alivm)
+        #region Database Propagate Events
+        private void PropagateCreated(Serializable created)
+        {
+            if (created == null || created.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)created;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+                return;
+
+            item = new ActivityListItemViewModel(activity);
+            LarpActivityListItems.Add(item);
+        }
+
+        private void PropagateChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed == null || changed.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)changed;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            // here can be problem if created and changed of same activity come in wrong order (the change is not registered until future update)
+            // but creating it if it doesn't exist is bigger problem, because of changed and deleted combination in wrong order
+            if (item == null)
+                return;
+
+            item.UpdateActivity(activity);
+            LarpActivityListItems.RefreshItem(LarpActivityListItems.IndexOf(item)); //this should hopefuly update the single line... but I still advise using INotifyPropertyChange
+        }
+
+        private void PropagateDeleted(Serializable deleted)
+        {
+            if (deleted == null || deleted.GetType() != typeof(LarpActivity))
+                return;
+
+            LarpActivity activity = (LarpActivity)deleted;
+
+            ActivityListItemViewModel item = LarpActivityListItems.Where(x => x.LarpActivity.ID == activity.ID).FirstOrDefault();
+
+            if (item != null)
+            {
+                LarpActivityListItems.Remove(item);
+            }
+        }
+
+        #endregion
+
+        private void TestChangeLastActivityValues(object obj)
+		{
+            if(LarpActivityListItems.Count > 0)
+                LarpActivityListItems[0].SetName(LarpActivityListItems[0].LarpActivity.name + "x");
+                //LarpActivityListItems[0].LarpActivity.name = LarpActivityListItems[0].LarpActivity.name + "x";
+        }
+
+		private void RefreshCollection(object obj)
+		{
+            //LarpActivityListItems.Refresh();
+            
+        }
+
+		private void UpdateLastInteracter(ActivityListItemViewModel alivm)
         {
             if(lastInteracterActivity != null)
             {
@@ -171,6 +249,7 @@ namespace LAMA.ViewModels
             //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
             //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
 
+            larpActivity.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
             LarpActivity activity = larpActivity.CreateLarpActivity();
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
