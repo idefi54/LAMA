@@ -319,6 +319,8 @@ namespace LAMA.Views
         private Button _leftButton;
         private Button _rightButton;
         private Button _calendarButton;
+        private Label _dateLabel;
+        private Label[] _timeLabels;
         private ActivityButton _draggedButton;
         private TouchTrackingPoint _mousePos;
         private bool _mouseDown = false;
@@ -327,38 +329,41 @@ namespace LAMA.Views
         {
             InitializeComponent();
 
-            var tEffect = new TouchEffect();
-            tEffect.Capture = true;
-            tEffect.TouchAction += OnTouchEffectAction;
+            var touchEffect = new TouchEffect();
+            touchEffect.Capture = true;
+            touchEffect.TouchAction += OnTouchEffectAction;
 
-            var children = new List<View>();
-
-            float offsetY = 100;
-            _canvasView = new SKCanvasView();
-            _canvasView.PaintSurface += OnCanvasViewPaintSurface;
-            _canvasView.TranslationX = 0;
-            _canvasView.TranslationY = offsetY;
-            _canvasView.HeightRequest = Application.Current.MainPage.Height - offsetY;
+            CreateCanvasView();
 
             var grid = new Grid
             {
-                Effects = {tEffect},
+                Effects = { touchEffect },
                 Children = { _canvasView }
             };
 
-            var timeLabels = new Label[24];
+            CreateLabels(grid);
+            CreateButtons(grid);
+
+            _graph = new ActivityGraph(_canvasView, _timeLabels, _dateLabel, _leftButton, _rightButton);
+            Content = grid;
+            _canvasView.InvalidateSurface();
+        }
+
+        private void CreateLabels(Grid grid)
+        {
+            _timeLabels = new Label[24];
             for (int i = 0; i < 24; i++)
             {
-                timeLabels[i] = new Label();
-                timeLabels[i].Text = $"00:00";
-                timeLabels[i].VerticalOptions = LayoutOptions.Start;
-                timeLabels[i].HorizontalOptions = LayoutOptions.Start;
+                _timeLabels[i] = new Label();
+                _timeLabels[i].Text = $"00:00";
+                _timeLabels[i].VerticalOptions = LayoutOptions.Start;
+                _timeLabels[i].HorizontalOptions = LayoutOptions.Start;
 
-                grid.Children.Add(timeLabels[i]);
+                grid.Children.Add(_timeLabels[i]);
             }
 
             var now = DateTime.Now;
-            var dateLabel = new Label
+            _dateLabel = new Label
             {
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.Start,
@@ -366,8 +371,11 @@ namespace LAMA.Views
                 TextColor = Color.Red,
                 Text = $"{now.Day:00}.{now.Month:00}.{now.Year:0000}"
             };
-            grid.Children.Add(dateLabel);
+            grid.Children.Add(_dateLabel);
+        }
 
+        private void CreateButtons(Grid grid)
+        {
             _leftButton = new Button();
             _leftButton.Text = "<";
             _leftButton.FontSize = 20;
@@ -388,10 +396,9 @@ namespace LAMA.Views
             _rightButton.TextColor = Color.Blue;
             _rightButton.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
             _rightButton.Clicked += (object sender, EventArgs args) => {
-                ActivityGraph.TimeOffset = ActivityGraph.TimeOffset.AddDays(1); _canvasView.InvalidateSurface(); };
+                ActivityGraph.TimeOffset = ActivityGraph.TimeOffset.AddDays(1); _canvasView.InvalidateSurface();
+            };
             grid.Children.Add(_rightButton);
-
-            _graph = new ActivityGraph(_canvasView, timeLabels, dateLabel, _leftButton, _rightButton);
 
             _plusButton = new Button();
             _plusButton.Text = "+";
@@ -412,7 +419,7 @@ namespace LAMA.Views
             _calendarButton = new Button();
             _calendarButton.Text = "Calendar";
             _calendarButton.VerticalOptions = LayoutOptions.Start;
-            _calendarButton.HorizontalOptions= LayoutOptions.Start;
+            _calendarButton.HorizontalOptions = LayoutOptions.Start;
             _calendarButton.TranslationX = 100;
             _calendarButton.Clicked += (object sender, EventArgs args) => { Navigation.PushModalAsync(new CalendarPage()); };
             grid.Children.Add(_calendarButton);
@@ -425,32 +432,16 @@ namespace LAMA.Views
             _editSwitch.TranslationY = 20;
             _editSwitch.Toggled += (object sender, ToggledEventArgs e) => { _graph.SwitchEditMode(e.Value); };
             grid.Children.Add(_editSwitch);
-
-            // just for testing
-            {
-                var rnd = new Random(0);
-
-                for (int i = 0; i < 10; i++)
-                {
-                    var button = _graph.AddActivity(ActivityButton.CreateActivity(
-                        60,
-                        rnd.Next(10 * 60) + 7*60,
-                        ActivityGraph.TimeOffset.Day,
-                        type: rnd.Next(2) == 0 ? LarpActivity.EventType.normal : LarpActivity.EventType.preparation,
-                        status: (LarpActivity.Status)rnd.Next(5)
-                        )) ;
-                    button.MoveY(rnd.Next(500));
-                    grid.Children.Add(button);
-                }
-            }
-
-            Content = grid;
-            _canvasView.InvalidateSurface();
         }
 
-        protected override void OnAppearing()
+        private void CreateCanvasView()
         {
-            base.OnAppearing();
+            float offsetY = 100;
+            _canvasView = new SKCanvasView();
+            _canvasView.PaintSurface += OnCanvasViewPaintSurface;
+            _canvasView.TranslationX = 0;
+            _canvasView.TranslationY = offsetY;
+            _canvasView.HeightRequest = Application.Current.MainPage.Height - offsetY;
         }
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)
