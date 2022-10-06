@@ -55,7 +55,6 @@ namespace LAMA
                     {
                         Debug.WriteLine("not creating table");
                     }
-
                     try
                     {
                         var getting = SQLConnectionWrapper.connection.GetAsync<LocalStorage>(0);
