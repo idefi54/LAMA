@@ -97,6 +97,7 @@ namespace LAMA.Singletons
                 output.Append("," + day.ToUnixTimeMilliseconds());
             }
             Instance.days = output.ToString();
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
         static void saveChatChannels()
         {
@@ -106,6 +107,7 @@ namespace LAMA.Singletons
                 output.Append("," + channel);
             }
             Instance.chatChannels = output.ToString();
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
         [PrimaryKey]
