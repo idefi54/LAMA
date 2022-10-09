@@ -54,13 +54,5 @@ namespace LAMA
                 this.Add(item);
             }
         }
-
-        public override string ToString()
-        {
-            if (Count > 0)
-                return base.ToString();
-            else
-                return String.Empty;
-        }
     }
 }

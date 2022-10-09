@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
-    public class ActivityListItemViewModel : BaseViewModel, INotifyPropertyChanged
+    public class ActivityListItemViewModel : BaseViewModel
     {
 
         LarpActivity _larpActivity;

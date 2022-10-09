@@ -67,10 +67,6 @@ namespace LAMA.Views
 
 			}
         }
-        async void OnInventory (object sender, EventArgs args)
-        {
-            await Navigation.PushAsync(new InventoryView());
-        }
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {

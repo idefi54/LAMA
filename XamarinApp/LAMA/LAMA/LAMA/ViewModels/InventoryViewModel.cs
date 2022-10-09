@@ -90,38 +90,6 @@ namespace LAMA.ViewModels
             IDToViewModel.Remove(item.ID);
         }
         
-        private void OnChange(Serializable changed, int index)
-        {
-            if(changed.GetType() != typeof(InventoryItem))
-            {
-                return;
-            }
-            //REFRESH DATA
-            
-        }
-        private void OnCreated(Serializable made)
-        {
-            if (made.GetType() != typeof(InventoryItem))
-            {
-                return;
-            }
-            var item = (InventoryItem)made;
-            ItemList.Add(new InventoryItemViewModel(item));
-            IDToViewModel.Add(item.ID, ItemList[ItemList.Count - 1]);
-
-        }
-        private void OnDeleted(Serializable deleted)
-        {
-            if (deleted.GetType() != typeof(InventoryItem))
-            {
-                return;
-            }
-            var item = (InventoryItem)deleted;
-
-            ItemList.Remove(IDToViewModel[item.ID]);
-            IDToViewModel.Remove(item.ID);
-        }
-        
 
         private async void OnBorrowItem(object obj)
         {
