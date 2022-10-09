@@ -68,7 +68,6 @@ namespace LAMA.Views
 			}
         }
 
-
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {
             //activity.name = larpActivity.name;

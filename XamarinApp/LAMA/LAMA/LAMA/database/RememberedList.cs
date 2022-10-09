@@ -12,7 +12,7 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
-        int maxID = -1;
+        int maxID = 0;
         static long IDOffset = (long)Math.Pow(2, 31);
 
         SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
@@ -157,10 +157,6 @@ namespace LAMA
             GiveNewInterval.Invoke();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns> returns -1 if it is waiting for more ID intervals from the server </returns>
         public long nextID()
         {
             ++maxID;
