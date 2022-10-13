@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using SQLite;
 namespace LAMA.Singletons
@@ -71,6 +72,7 @@ namespace LAMA.Singletons
     
         public LarpEvent()
         {
+            Debug.WriteLine("Init LarpEvent");
             List<long> temp = Helpers.readLongField(Instance.days);
 
             for (int i = 0; i < temp.Count; ++i) 
@@ -90,7 +92,6 @@ namespace LAMA.Singletons
         }
         static void saveDays()
         {
-            
             StringBuilder output = new StringBuilder();
             foreach (var day in Days)
             {
@@ -100,6 +101,7 @@ namespace LAMA.Singletons
         }
         static void saveChatChannels()
         {
+            Debug.WriteLine("SaveChatChannels");
             StringBuilder output = new StringBuilder();
             foreach (var channel in ChatChannels)
             {

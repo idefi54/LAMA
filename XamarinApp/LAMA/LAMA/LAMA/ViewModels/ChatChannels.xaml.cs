@@ -1,5 +1,4 @@
-﻿using LAMA.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +10,11 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ChatTest : ContentPage
+    public partial class Page1 : ContentPage
     {
-        public ChatTest(string channelName)
+        public Page1()
         {
             InitializeComponent();
-
-            BindingContext = new ChatViewModel(Navigation, channelName);
         }
     }
 }

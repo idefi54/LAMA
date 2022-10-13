@@ -14,6 +14,11 @@
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Return To Chat Channels" Command="{Binding ReturnToChatChannelsCommand}"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <StackLayout  Spacing="0">
             <ScrollView>
