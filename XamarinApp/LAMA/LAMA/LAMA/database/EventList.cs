@@ -34,6 +34,13 @@ namespace LAMA
         {
             base.Add(what);
         }
+        public override string ToString()
+        {
+            if(Count == 0)
+                return string.Empty;
+            else 
+                return base.ToString();
+        }
 
         public EventList()
         {
@@ -46,14 +53,6 @@ namespace LAMA
             {
                 this.Add(item);
             }
-        }
-        
-        public override string ToString()
-        {
-            if(Count == 0)
-                return string.Empty;
-            else 
-                return base.ToString();
         }
     }
 }

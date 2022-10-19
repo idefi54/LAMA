@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using SQLite;
 namespace LAMA.Singletons
 {
@@ -23,16 +24,27 @@ namespace LAMA.Singletons
                 else
                 {
                     LarpEvent result = null;
-                    string name = new LarpEvent().GetType().Name;
+                    string name = typeof(LarpEvent).Name;
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
                     if (a.Result.Count == 0)
                         SQLConnectionWrapper.connection.CreateTableAsync<LarpEvent>().Wait();
                     else
                     {
-                        var getting = SQLConnectionWrapper.connection.GetAsync<LarpEvent>(0);
-                        getting.Wait();
-                        result = getting.Result;
+                        var get = SQLConnectionWrapper.connection.Table<LarpEvent>();
+                        var res = get.CountAsync();
+                        res.Wait();
+                        var count = res.Result;
+                        if (count != 0)
+                        {
+                            var getting = SQLConnectionWrapper.connection.GetAsync<LarpEvent>(0);
+                            getting.Wait();
+                            result = getting.Result;
+                        }
+                        else
+                        {
+                            result = null;
+                        }
                     }
                     if (result != null)
                         instance = result;
@@ -40,13 +52,25 @@ namespace LAMA.Singletons
                     {
                         instance = new LarpEvent();
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
+                        instance.init();
                     }
                     return instance;
                 }
             }
         }
 
-        static public EventList<DateTimeOffset> Days = new EventList<DateTimeOffset>();
+        static EventList<DateTimeOffset> _Days = null;
+        public static EventList<DateTimeOffset> Days
+        {
+            get
+            {
+                if(_Days == null)
+                {
+                    Instance.insurance = Instance.getTypeID();
+                }
+                return _Days;
+            }
+        }
 
         public static string Name
         {
@@ -58,7 +82,19 @@ namespace LAMA.Singletons
             }
         }
 
-        public static EventList<string> ChatChannels = new EventList<string>();
+        volatile int insurance = -5;
+        static EventList<string> _ChatChannels = null;
+        public static EventList<string> ChatChannels { 
+            get
+            {
+
+                if (_ChatChannels == null)
+                {
+                     Instance.insurance = Instance.getTypeID();
+                }
+                return _ChatChannels;
+            }
+        }
 
         public static long LastClientID
         {
@@ -70,24 +106,25 @@ namespace LAMA.Singletons
             }
         }
     
-        public LarpEvent()
+        public void init()
         {
-            Debug.WriteLine("Init LarpEvent");
-            List<long> temp = Helpers.readLongField(Instance.days);
+            List<long> temp = Helpers.readLongField(days);
 
+            _Days = new EventList<DateTimeOffset>();
             for (int i = 0; i < temp.Count; ++i) 
             {
-                Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
+                _Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
             }
 
-            Days.dataChanged += saveDays;
+            _Days.dataChanged += saveDays;
 
-            List<string> channels = Helpers.readStringField(Instance.chatChannels);
+            List<string> channels = Helpers.readStringField(chatChannels);
+            _ChatChannels = new EventList<string>();
             for (int i = 0; i < channels.Count; ++i)
             {
-                ChatChannels.Add(channels[i]);
+                _ChatChannels.Add(channels[i]);
             }
-            ChatChannels.dataChanged += saveChatChannels;
+            _ChatChannels.dataChanged += saveChatChannels;
 
         }
         static void saveDays()
@@ -98,16 +135,18 @@ namespace LAMA.Singletons
                 output.Append("," + day.ToUnixTimeMilliseconds());
             }
             Instance.days = output.ToString();
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
         static void saveChatChannels()
         {
             Debug.WriteLine("SaveChatChannels");
             StringBuilder output = new StringBuilder();
-            foreach (var channel in ChatChannels)
+            foreach (var channel in _ChatChannels)
             {
                 output.Append("," + channel);
             }
             Instance.chatChannels = output.ToString();
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
         [PrimaryKey]

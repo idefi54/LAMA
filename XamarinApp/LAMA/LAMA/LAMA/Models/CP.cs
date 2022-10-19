@@ -104,7 +104,6 @@ namespace LAMA.Models
         {
             list = null;
         }
-
         void updateValue(int index, string newVal)
         {
             list?.sqlConnection.changeData(index, newVal, this);
