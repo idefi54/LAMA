@@ -46,7 +46,6 @@ namespace LAMA.Communicator
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private ModelChangesManager modelChangesManager;
-        private IntervalCommunicationManagerClient intervalsManager;
         static Random rd = new Random();
 
         private object commandsLock = new object();
@@ -160,13 +159,6 @@ namespace LAMA.Communicator
                     {
                         THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
-                    }));
-                }
-                if (messageParts[1] == "Interval")
-                {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), Int64.Parse(messageParts[7]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "GiveID")
@@ -478,7 +470,6 @@ namespace LAMA.Communicator
                 THIS.lastUpdate = 0;
                 THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
-                intervalsManager = new IntervalCommunicationManagerClient(this);
                 logger.LogWrite("Subscribing to events");
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;

@@ -44,7 +44,6 @@ namespace LAMA.Communicator
         private Command currentCommand = null;
 
         private ModelChangesManager modelChangesManager;
-        private IntervalCommunicationManagerServer intervalsManager;
 
         private int maxClientID;
 
@@ -228,13 +227,6 @@ namespace LAMA.Communicator
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                     }));
                 }
-                if (messageParts[1] == "Interval")
-                {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
-                    }));
-                }
                 if (messageParts[1] == "GiveID")
                 {
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
@@ -337,7 +329,6 @@ namespace LAMA.Communicator
             THIS = this;
             logger.LogWrite("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
-            intervalsManager = new IntervalCommunicationManagerServer(this);
 
             /*
             //Initialize Intervals
