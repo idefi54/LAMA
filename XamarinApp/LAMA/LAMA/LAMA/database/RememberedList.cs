@@ -20,13 +20,13 @@ namespace LAMA
         
         List<T> cache = new List<T>();
         OurSQL<T, Storage> sql;
-        OurSQLInterval intervalsSQL;
+
         public OurSQL<T, Storage> sqlConnection { get { return sql; } }
         int typeID = -1;
 
         public RememberedList(OurSQL<T, Storage> sql)
         {
-            intervalsSQL = new OurSQLInterval();
+
             Debug.WriteLine("Interval constructor called");
             this.sql = sql;
             typeID = new T().getTypeID();
@@ -37,16 +37,7 @@ namespace LAMA
         void loadData()
         {
             
-            var intervals = intervalsSQL.ReadData(typeID);
             
-            IDIntervals = new List<Database.Interval>();
-            foreach (var interval in intervals)
-            {
-                if(interval.ownerID == LocalStorage.clientID)
-                    IDIntervals.Add(interval);
-            }
-            if (IDIntervals.Count == 0 && GiveNewInterval != null)
-                GiveNewInterval.Invoke();
             cache = sql.ReadData();
 
             int i = 0;
@@ -134,72 +125,14 @@ namespace LAMA
         }
 
 
-        List<Database.Interval> IDIntervals = new List<Database.Interval>();
-        bool askedForMore = false;
-        int currentIntervalNum = 0;
-
-        public void NewIntervalReceived(Database.Interval input)
-        {
-            askedForMore = false;
-            input.typeID = new T().getTypeID();
-            IDIntervals.Add(input);
-
-            if (LocalStorage.clientID != 0) 
-                intervalsSQL.addData(input);
-        }
-
-
-
-        public delegate void GiveNewIntervalDelegate();
-        public event GiveNewIntervalDelegate GiveNewInterval;
-
-        public void InvokeGiveNewInterval() {
-            Debug.WriteLine("InvokeGiveNewInterval");
-            GiveNewInterval.Invoke();
-        }
+        
 
         public long nextID()
         {
             ++maxID;
             return (long)(LocalStorage.clientID * IDOffset) + maxID;
 
-            /*
-            Database.Interval currentInterval = null;
-
-            // find first interval with space 
-            for (int i = currentIntervalNum; i < IDIntervals.Count; ++i) 
-            {
-                if (IDIntervals[i].lastTaken < IDIntervals[i].end - 1)
-                {
-                    currentInterval = IDIntervals[i];
-                    currentIntervalNum = i;
-                    break;
-                }    
-            }
-
-            Database.Interval lastInterval = null;
-            if (IDIntervals.Count != 0)
-                lastInterval = IDIntervals[IDIntervals.Count - 1];
-            // running out of IDs, so I need to ask the server for more
-            if (currentInterval == null || 
-                (lastInterval.lastTaken - lastInterval.start) / (lastInterval.end - lastInterval.start) > 0.5)
-            {
-                if (!askedForMore && GiveNewInterval != null)
-                {
-                    GiveNewInterval.Invoke();
-                    askedForMore = true;
-                }
-                //if i am out of IDs just return null
-                if (currentInterval == null || lastInterval.lastTaken + 1 == lastInterval.end)
-                    throw new Exception("Out of IDs.");
-            }
-
-            //now i know i have anough space for at least one more ID
-
-            currentInterval.lastTaken++;
-            intervalsSQL.Update(currentInterval);
-            return currentInterval.lastTaken;
-          */
+            
         }
 
         
