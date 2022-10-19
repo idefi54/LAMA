@@ -138,6 +138,16 @@ namespace LAMA.Models
         public EventList<Pair<int, string>> registrationByRole { get { return _registrationByRole; } }
         void registrationByRoleChanged() { updateValue(13, _registrationByRole.ToString()); }
 
+        double _graphY;
+        public double GraphY
+        {
+            get { return _graphY; }
+            set
+            {
+                _graphY = value;
+                updateValue(14, _graphY.ToString());
+            }
+        }
 
         void initChangeListeners()
         {
@@ -226,7 +236,7 @@ namespace LAMA.Models
         }
         
         static string[] attributeNames = { "ID", "name", "description", "preparationNeeded", "eventType", "prerequisiteIDs",
-            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole" };
+            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole", "GraphY" };
         public string[] getAttributeNames()
         {
             return attributeNames;
@@ -273,6 +283,8 @@ namespace LAMA.Models
                     return _roles.ToString();
                 case 13:
                     return _registrationByRole.ToString();
+                case 14:
+                    return _graphY.ToString();
             }
             throw new Exception("wrong index selected");
         }
@@ -327,19 +339,15 @@ namespace LAMA.Models
                     _registrationByRole = Helpers.readIntStringPairField(value);
                     _registrationByRole.dataChanged += registrationByRoleChanged;
                     break;
+                case 14:
+                    int j = 0;
+                    _graphY = Helpers.readDouble(value, ref j);
+                    break;
 
             }
         }
 
-        private void _requiredItems_dataChanged()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void _prerequisiteIDs_dataChanged()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public void buildFromStrings(string[] input)
         {

@@ -26,6 +26,7 @@ namespace LAMA.Models
         public string roles { get; set; }
         public string registrationByRole { get; set; }
         public long lastChange { get; set; }
+        public string graphY { get; set; }
         public void makeFromStrings(string[] input)
         {
             ID = Helpers.readInt(input[0]);
@@ -42,11 +43,12 @@ namespace LAMA.Models
             requiredItems = input[11];
             roles = input[12];
             registrationByRole = input[13];
+            graphY = input[14];
         }
         public string[] getStrings()
         {
             return new string[] { ID.ToString(), name, description, preparationNeeded, eventType, prerequisiteIDs, duration, day, start, place,
-            status, requiredItems, roles, registrationByRole};
+            status, requiredItems, roles, registrationByRole, graphY};
         }
         public long getID()
         { return ID; }
