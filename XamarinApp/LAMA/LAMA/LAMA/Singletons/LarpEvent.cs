@@ -59,7 +59,18 @@ namespace LAMA.Singletons
             }
         }
 
-        static public EventList<DateTimeOffset> Days = new EventList<DateTimeOffset>();
+        static EventList<DateTimeOffset> _Days = null;
+        public static EventList<DateTimeOffset> Days
+        {
+            get
+            {
+                if(_Days == null)
+                {
+                    Instance.insurance = Instance.getTypeID();
+                }
+                return _Days;
+            }
+        }
 
         public static string Name
         {
@@ -99,14 +110,16 @@ namespace LAMA.Singletons
         {
             List<long> temp = Helpers.readLongField(Instance.days);
 
+            _Days = new EventList<DateTimeOffset>();
             for (int i = 0; i < temp.Count; ++i) 
             {
-                Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
+                _Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
             }
 
-            Days.dataChanged += saveDays;
+            _Days.dataChanged += saveDays;
 
             List<string> channels = Helpers.readStringField(chatChannels);
+            _ChatChannels = new EventList<string>();
             for (int i = 0; i < channels.Count; ++i)
             {
                 _ChatChannels.Add(channels[i]);

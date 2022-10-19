@@ -10,7 +10,11 @@ namespace LAMA
     {
         public static EventList<long> readLongField(string input)
         {
+            
+
             EventList<long> output = new EventList<long>();
+            if (input == null)
+                return output;
             int i = 0;
             skipNonDigits(input, ref i);
             while (i < input.Length)
@@ -211,7 +215,8 @@ namespace LAMA
         {
             int i = 0;
             EventList<string> output = new EventList<string>();
-
+            if (input == null)
+                return output;
             while (i < input.Length)
             {
                 output.Add(readString(input, ref i));
