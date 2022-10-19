@@ -74,11 +74,17 @@ namespace LAMA.ViewModels
         }
         void OnMakeCP()
         {
-            navigation.PushAsync(new )
+            navigation.PushAsync(new CreateCPView());
         }
         void OnOpenDetail(object obj)
         {
-
+            if(obj.GetType() != typeof(CPViewModel))
+            {
+                return;
+            }
+            var cpView = (CPViewModel)obj;
+            var cp = cpView.cp;
+            navigation.PushAsync(new CPDetailsView(cp));
         }
     }
 }

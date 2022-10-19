@@ -7,7 +7,7 @@ namespace LAMA.ViewModels
 {
     internal class CPViewModel:BaseViewModel
     {
-        CP cp;
+        public CP cp { get; private set; }
         
         public string Name { get { return cp.name; } }
         public string Nick { get { return cp.nick; } }

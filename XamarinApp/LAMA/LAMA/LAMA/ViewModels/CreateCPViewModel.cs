@@ -11,7 +11,7 @@ namespace LAMA.ViewModels
         INavigation navigation;
 
         public Command CancelCommand { get; private set; }
-        public Command SaveCommand { get; private set; }
+        public Command CreateCommand { get; private set; }
 
         string _name, _nick, _roles, _phone, _facebook, _discord, _notes;
 
@@ -29,7 +29,7 @@ namespace LAMA.ViewModels
             this.navigation = navigation;
 
             CancelCommand = new Command(OnCancel);
-            SaveCommand = new Command(OnSave);
+            CreateCommand = new Command(OnSave);
         }
 
         void OnCancel()
