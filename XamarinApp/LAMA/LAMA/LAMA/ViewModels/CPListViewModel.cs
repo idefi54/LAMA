@@ -72,11 +72,11 @@ namespace LAMA.ViewModels
             CPList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
         }
-        void OnMakeCP()
+        async void OnMakeCP()
         {
-            navigation.PushAsync(new CreateCPView());
+            await navigation.PushAsync(new CreateCPView());
         }
-        void OnOpenDetail(object obj)
+        async void OnOpenDetail(object obj)
         {
             if(obj.GetType() != typeof(CPViewModel))
             {
@@ -84,7 +84,7 @@ namespace LAMA.ViewModels
             }
             var cpView = (CPViewModel)obj;
             var cp = cpView.cp;
-            navigation.PushAsync(new CPDetailsView(cp));
+            await navigation.PushAsync(new CPDetailsView(cp));
         }
     }
 }
