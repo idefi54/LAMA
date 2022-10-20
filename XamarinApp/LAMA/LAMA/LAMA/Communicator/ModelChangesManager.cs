@@ -81,7 +81,7 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
-            string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
+            string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeIndex + ";" + changed.getAttribute(attributeIndex);
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
