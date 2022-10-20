@@ -175,7 +175,7 @@ namespace LAMA.Singletons
                 List<string> channels = Helpers.readStringField(chatChannels);
                 for (int i = 0; i < channels.Count; ++i)
                 {
-                    if (i >= ChatChannels.Count)
+                    if (i >= ChatChannels.Count || ChatChannels[i] != channels[i])
                     {
                         ChatChannels.Add(channels[i]);
                     }
