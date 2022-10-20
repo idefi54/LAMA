@@ -56,6 +56,7 @@ namespace LAMA
                 ++i;
                 if(a.getID() / IDOffset == LocalStorage.clientID && maxID< a.getID())
                     maxID = (int)a.getID();
+                a.addedInto(this);
             }
         }
 
