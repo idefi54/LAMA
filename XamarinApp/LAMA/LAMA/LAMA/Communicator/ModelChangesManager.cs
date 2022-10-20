@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -131,6 +132,10 @@ namespace LAMA.Communicator
                     Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
                     Singletons.LarpEvent.Instance.setAttribute(indexAttribute, value);
                     ignoreUpdate = attributeID;
+                    if (indexAttribute == 2)
+                    {
+                        command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + indexAttribute + ";" + LarpEvent.Instance.chatChannels;
+                    }
                 }
                 if (server)
                 {
