@@ -275,7 +275,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
@@ -367,10 +367,10 @@ namespace LAMA.Communicator
             LocalStorage.cpID = 0;
             LocalStorage.clientID = 0;
             if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
-                long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
-                Debug.WriteLine($"cpID = {cpID}");
+                //long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
+                //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
-                    new Models.CP(cpID, 
+                    new Models.CP(0, 
                     LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
             }
             logger.LogWrite("Initialization finished");
