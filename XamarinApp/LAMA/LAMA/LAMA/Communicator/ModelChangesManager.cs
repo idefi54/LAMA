@@ -15,6 +15,7 @@ namespace LAMA.Communicator
         private bool testing;
         private string objectIgnoreCreation = "";
         private string objectIgnoreDeletion = "";
+        private string ignoreUpdate = "";
 
         public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool testing = false)
         {
@@ -67,6 +68,13 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
+            if (ignoreUpdate == attributeID)
+            {
+                communicator.Logger.LogWrite("Ignore Update: " + ignoreUpdate);
+                ignoreUpdate = "";
+                return;
+            }
+
             Debug.WriteLine($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
             communicator.Logger.LogWrite($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
 
@@ -97,26 +105,32 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    ignoreUpdate = attributeID;
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    ignoreUpdate = attributeID;
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    ignoreUpdate = attributeID;
                 }
 
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    ignoreUpdate = attributeID;
                 }
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
+                    Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
                     Singletons.LarpEvent.Instance.setAttribute(indexAttribute, value);
+                    ignoreUpdate = attributeID;
                 }
                 if (server)
                 {
@@ -128,7 +142,7 @@ namespace LAMA.Communicator
             {
                 //Rollback
                 string rollbackCommand = "Rollback;";
-                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
+                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + indexAttribute + ";" + attributesCache.getByKey(attributeID).value;
                 try
                 {
                     if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());

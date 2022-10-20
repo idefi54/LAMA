@@ -170,13 +170,14 @@ namespace LAMA.Singletons
             get { return _chatChannels; }
             set { 
                 _chatChannels = value;
+                Debug.WriteLine("setting channels");
                 SQLEvents.invokeChanged(this, 2);
                 List<string> channels = Helpers.readStringField(chatChannels);
                 for (int i = 0; i < channels.Count; ++i)
                 {
-                    if (!_chatChannels.Contains(channels[i]))
+                    if (i >= ChatChannels.Count)
                     {
-                        _ChatChannels.Add(channels[i]);
+                        ChatChannels.Add(channels[i]);
                     }
                 }
             }
