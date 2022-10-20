@@ -6,8 +6,7 @@
              Title="{Binding Title}"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
-			 x:DataType="viewmodel:NewActivityViewModel">
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
@@ -109,6 +108,25 @@
 				-->
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
+
+				<Label Text="Závislost na aktivitách"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<StackLayout BindableLayout.ItemsSource="{Binding }" Margin="0,0,0,20">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<Grid HorizontalOptions="Fill">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="80" />
+									<ColumnDefinition Width="20" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Column="0" Text="{Binding RoleName}"/>
+								<Label Grid.Column="2" Text="{Binding CountString}"/>
+							</Grid>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</StackLayout>
 
 				<Label Text="Potřebná příprava"
 					   HorizontalTextAlignment="Start"

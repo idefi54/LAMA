@@ -44,6 +44,8 @@ namespace LAMA.ViewModels
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
 
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies;
+
 
 		//public NewActivityViewModel()
 		//{
@@ -88,6 +90,8 @@ namespace LAMA.ViewModels
 			}
 			TypeIndex = 0;
 			Type = ((LarpActivity.EventType)TypeIndex).ToString();
+
+			
 		}
 
 		private bool ValidateSave()
