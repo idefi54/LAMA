@@ -67,6 +67,7 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
+            Debug.WriteLine($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
             communicator.Logger.LogWrite($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
 
 
@@ -180,6 +181,7 @@ namespace LAMA.Communicator
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
+            Debug.WriteLine($"ItemCreated: {objectType}");
 
             if (objectIgnoreCreation == objectCacheID)
             {

@@ -52,8 +52,8 @@ namespace LAMA.Singletons
                     {
                         instance = new LarpEvent();
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
-                        instance.init();
                     }
+                    instance.init();
                     return instance;
                 }
             }
@@ -87,7 +87,6 @@ namespace LAMA.Singletons
         public static EventList<string> ChatChannels { 
             get
             {
-
                 if (_ChatChannels == null)
                 {
                      Instance.insurance = Instance.getTypeID();
@@ -132,18 +131,31 @@ namespace LAMA.Singletons
             StringBuilder output = new StringBuilder();
             foreach (var day in Days)
             {
-                output.Append("," + day.ToUnixTimeMilliseconds());
+                if (output.Length > 0)
+                {
+                    output.Append("," + day.ToUnixTimeMilliseconds());
+                }
+                else
+                {
+                    output.Append(day.ToUnixTimeMilliseconds());
+                }
             }
             Instance.days = output.ToString();
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
         static void saveChatChannels()
         {
-            Debug.WriteLine("SaveChatChannels");
             StringBuilder output = new StringBuilder();
             foreach (var channel in _ChatChannels)
             {
-                output.Append("," + channel);
+                if (output.Length > 0)
+                {
+                    output.Append("," + channel);
+                }
+                else
+                {
+                    output.Append(channel);
+                }
             }
             Instance.chatChannels = output.ToString();
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
@@ -153,7 +165,22 @@ namespace LAMA.Singletons
         public long Id { get; set; } = 0;
         public string name {get;set;}
         public string days { get; set; }
-        public string chatChannels { get; set; }
+        private string _chatChannels;
+        public string chatChannels {
+            get { return _chatChannels; }
+            set { 
+                _chatChannels = value;
+                SQLEvents.invokeChanged(this, 2);
+                List<string> channels = Helpers.readStringField(chatChannels);
+                for (int i = 0; i < channels.Count; ++i)
+                {
+                    if (!_chatChannels.Contains(channels[i]))
+                    {
+                        _ChatChannels.Add(channels[i]);
+                    }
+                }
+            }
+        }
         public long lastClientID { get; set; }
 
 
