@@ -173,11 +173,20 @@ namespace LAMA.Singletons
                 Debug.WriteLine("setting channels");
                 SQLEvents.invokeChanged(this, 2);
                 List<string> channels = Helpers.readStringField(chatChannels);
+                bool different = false;
                 for (int i = 0; i < channels.Count; ++i)
                 {
-                    if (i >= ChatChannels.Count || ChatChannels[i] != channels[i])
+                    if (!different)
+                    {
+                        different = i >= ChatChannels.Count || ChatChannels[i] != channels[i];
+                    }
+                    if (different && i == channels.Count-1)
                     {
                         ChatChannels.Add(channels[i]);
+                    }
+                    else if (different)
+                    {
+                        ChatChannels.AddWithoutEvent(channels[i]);
                     }
                 }
             }
