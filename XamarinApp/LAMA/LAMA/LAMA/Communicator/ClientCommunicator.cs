@@ -73,6 +73,7 @@ namespace LAMA.Communicator
                                 break;
                             }
                             logger.LogWrite($"Sending: {currentCommand.command}");
+                            Debug.WriteLine($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode();
                             try
                             {
@@ -137,6 +138,7 @@ namespace LAMA.Communicator
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
+                Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(';');
                 if (messageParts[1] == "DataUpdated")
                 {
