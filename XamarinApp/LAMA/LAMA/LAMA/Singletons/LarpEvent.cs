@@ -159,6 +159,7 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
+            SQLEvents.invokeChanged(Instance, 2);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
@@ -166,10 +167,7 @@ namespace LAMA.Singletons
         public long Id { get; set; } = 0;
         public string name {get;set;}
         public string days { get; set; }
-        public string chatChannels {
-            get;
-            set;
-        }
+        public string chatChannels { get; set; }
         public long lastClientID { get; set; }
 
 
@@ -201,11 +199,10 @@ namespace LAMA.Singletons
                 case 2:
                     chatChannels = value;
                     Debug.WriteLine("Changing Chat Channels");
-                    SQLEvents.invokeChanged(this, 2);
                     List<string> channels = Helpers.readStringField(chatChannels);
                     for (int j = 0; j < channels.Count; ++j)
                     {
-                        if (!ChatChannels.Contains(channels[j]))
+                        if (!ChatChannels.Contains(channels[j]) || j >= ChatChannels.Count)
                         {
                             ChatChannels.Add(channels[j]);
                         }
