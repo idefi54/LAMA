@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -67,6 +68,7 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string attributeID = objectType + ";" + objectID + ";" + attributeIndex;
 
+            Debug.WriteLine($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
             communicator.Logger.LogWrite($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
 
 
@@ -80,7 +82,7 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
-            string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + changed.getAttribute(attributeIndex);
+            string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeIndex + ";" + changed.getAttribute(attributeIndex);
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
@@ -88,6 +90,12 @@ namespace LAMA.Communicator
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+
+            Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            if (objectType == "LAMA.Singletons.LarpEvent" && !attributesCache.containsKey(attributeID))
+            {
+                attributesCache.add(new TimeValue(updateTime, value, attributeID));
+            }
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
                 attributesCache.getByKey(attributeID).value = value;
@@ -115,7 +123,12 @@ namespace LAMA.Communicator
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
+                    Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
                     Singletons.LarpEvent.Instance.setAttribute(indexAttribute, value);
+                    if (indexAttribute == 2)
+                    {
+                        command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + indexAttribute + ";" + LarpEvent.Instance.chatChannels;
+                    }
                 }
                 if (server)
                 {
@@ -127,7 +140,7 @@ namespace LAMA.Communicator
             {
                 //Rollback
                 string rollbackCommand = "Rollback;";
-                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeID + ";" + attributesCache.getByKey(attributeID).value;
+                rollbackCommand = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + indexAttribute + ";" + attributesCache.getByKey(attributeID).value;
                 try
                 {
                     if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
@@ -180,6 +193,7 @@ namespace LAMA.Communicator
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + ";" + objectID;
+            Debug.WriteLine($"ItemCreated: {objectType}");
 
             if (objectIgnoreCreation == objectCacheID)
             {

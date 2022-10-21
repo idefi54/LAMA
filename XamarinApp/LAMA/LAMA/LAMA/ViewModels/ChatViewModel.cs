@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Text;
 using Xamarin.Forms;
 using System.Linq;
+using LAMA.Singletons;
+using LAMA.Views;
 
 namespace LAMA.ViewModels
 {
@@ -17,6 +19,7 @@ namespace LAMA.ViewModels
         //public Xamarin.Forms.Command AddMessageCommand { get; }
 
         public Xamarin.Forms.Command MessageSentCommand { get; }
+        public Xamarin.Forms.Command ReturnToChatChannelsCommand { get; }
         public string MessageText { get; set; }
         public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; }
 
@@ -25,6 +28,8 @@ namespace LAMA.ViewModels
         long maxId = 0;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private int channelID;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -38,26 +43,29 @@ namespace LAMA.ViewModels
             Debug.WriteLine("OnMessageSent");
             if (MessageText != "")
             {
-                ChatLogic.Instance.SendMessage(0, MessageText);
+                ChatLogic.Instance.SendMessage(channelID, MessageText);
             }
             Debug.WriteLine(MessageText);
             MessageText = "";
             OnPropertyChanged("MessageText");
         }
 
-        public ChatViewModel(INavigation navigation)
+        public ChatViewModel(INavigation navigation, string channelName)
         {
             SQLEvents.created += PropagateCreated;
             SQLEvents.dataChanged += PropagateChanged;
             SQLEvents.dataDeleted += PropagateDeleted;
 
+            channelID = LarpEvent.ChatChannels.FindIndex(x => x == channelName);
+
             Navigation = navigation;
             MessageSentCommand = new Xamarin.Forms.Command(OnMessageSent);
+            ReturnToChatChannelsCommand = new Xamarin.Forms.Command(ReturnToChatChannels);
 
             ChatMessageListItems = new ObservableCollection<ChatMessageViewModel>();
 
-            List<ChatMessage> messages = ChatLogic.Instance.GetMessages(0, 0, Int32.MaxValue);
-
+            List<ChatMessage> messages = ChatLogic.Instance.GetMessages(channelID, 0, Int32.MaxValue);
+        
             for (int i = 0; i < messages.Count; i++)
             {
                 ChatMessageListItems.Add(new ChatMessageViewModel(messages[i]));
@@ -90,6 +98,11 @@ namespace LAMA.ViewModels
             //AddMessageCommand = new Xamarin.Forms.Command(OnAddChatMessage);
         }
 
+        private async void ReturnToChatChannels()
+        {
+            await Navigation.PushAsync(new ChatChannels());
+        }
+
         private void PropagateCreated(Serializable created)
         {
             Debug.WriteLine("PropagateCreated");
@@ -101,15 +114,17 @@ namespace LAMA.ViewModels
 
             ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
 
-            if (item != null)
+            if (item != null || message.channel != channelID)
                 return;
 
             item = new ChatMessageViewModel(message);
             ChatMessageListItems.Add(item);
+            ChatMessageListItems.OrderBy(x => x.Time);
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
+            Debug.WriteLine("Propagate Changed");
             if (changed == null || changed.GetType() != typeof(ChatMessage))
                 return;
 
@@ -117,7 +132,7 @@ namespace LAMA.ViewModels
 
             ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
 
-            if (item == null)
+            if (item == null || message.channel != channelID)
                 return;
 
             item.UpdateMessage(message);
@@ -132,7 +147,7 @@ namespace LAMA.ViewModels
 
             ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
 
-            if (item != null)
+            if (item != null && message.channel == channelID)
             {
                 ChatMessageListItems.Remove(item);
             }

@@ -44,7 +44,6 @@ namespace LAMA.Communicator
         private Command currentCommand = null;
 
         private ModelChangesManager modelChangesManager;
-        private IntervalCommunicationManagerServer intervalsManager;
 
         private int maxClientID;
 
@@ -77,6 +76,7 @@ namespace LAMA.Communicator
                 if (currentCommand != null)
                 {
                     logger.LogWrite($"Sending: {currentCommand.command}");
+                    Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode();
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
@@ -199,6 +199,7 @@ namespace LAMA.Communicator
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
+                Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(';');
                 if (messageParts[1] == "DataUpdated")
                 {
@@ -226,13 +227,6 @@ namespace LAMA.Communicator
                     MainThread.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
-                    }));
-                }
-                if (messageParts[1] == "Interval")
-                {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.intervalsManager.IntervalsUpdate(messageParts[2], messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), Int32.Parse(messageParts[6]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "GiveID")
@@ -275,7 +269,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
-            logger = new DebugLogger(true);
+            logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
@@ -337,7 +331,6 @@ namespace LAMA.Communicator
             THIS = this;
             logger.LogWrite("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
-            intervalsManager = new IntervalCommunicationManagerServer(this);
 
             /*
             //Initialize Intervals
@@ -367,10 +360,10 @@ namespace LAMA.Communicator
             LocalStorage.cpID = 0;
             LocalStorage.clientID = 0;
             if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
-                long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
-                Debug.WriteLine($"cpID = {cpID}");
+                //long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
+                //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
-                    new Models.CP(cpID, 
+                    new Models.CP(0, 
                     LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
             }
             logger.LogWrite("Initialization finished");

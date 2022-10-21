@@ -4,6 +4,7 @@ using SQLite;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LAMA
 {
@@ -24,7 +25,9 @@ namespace LAMA
         }
         public static void invokeChanged(Serializable changed, int index)
         {
+            Debug.WriteLine("Invoking Changed");
             dataChanged?.Invoke(changed, index);
+            Debug.WriteLine("Invoked Changed");
         }
         public static void invokeDeleted(Serializable deleted)
         {
@@ -58,73 +61,7 @@ namespace LAMA
     }
 
 
-    public class OurSQLInterval
-    {
-
-
-        SQLiteAsyncConnection connection { get; }
-        public OurSQLInterval()
-        {
-            if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection();
-            connection = SQLConnectionWrapper.connection;
-            connection.CreateTableAsync<Database.Interval>().Wait();
-        }
-
-        public void addData(Database.Interval value)
-        {
-            if (value == null)
-                return;
-            connection.InsertAsync(value).Wait();
-        }
-        public List<Database.Interval> ReadData(int typeID)
-        {
-
-            var data = connection.Table<Database.Interval>();
-
-
-            var listData = data.ToArrayAsync();
-            listData.Wait();
-
-            var result = listData.Result;
-
-            List<Database.Interval> output = new List<Database.Interval>();
-            for (int i = 0; i < result.Length; ++i)
-            {
-                if (result[i].typeID == typeID)
-                    output.Add(result[i]);
-            }
-            return output;
-        }
-        public List<Database.Interval> ReadData()
-        {
-
-            var data = connection.Table<Database.Interval>();
-
-
-            var listData = data.ToArrayAsync();
-            listData.Wait();
-
-            var result = listData.Result;
-
-            List<Database.Interval> output = new List<Database.Interval>();
-            for (int i = 0; i < result.Length; ++i)
-            {
-                output.Add(result[i]);
-            }
-            return output;
-        }
-        public void Update(Database.Interval update)
-        {
-            connection.UpdateAsync(update).Wait();
-        }
-    }
-
-
-
-
-
-
+    
 
     public class OurSQL<Data, Storage> where Data : Serializable, new() where Storage : LAMA.Database.StorageInterface, new()
     {
