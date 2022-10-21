@@ -1,4 +1,5 @@
 ﻿using BruTile;
+using LAMA.Communicator;
 using LAMA.Models;
 using LAMA.Singletons;
 using LAMA.Views;
@@ -19,6 +20,8 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command ChannelCreatedCommand { get; }
         public Command<object> ChatChannelTapped { get; private set; }
         public string ChannelName { get; set; }
+
+        public bool CanCreateChannels = false;
         public ObservableCollection<String> Channels { get; set; }
 
         INavigation Navigation;
@@ -58,6 +61,8 @@ namespace LAMA.ViewModels
             {
                 Channels.Add(LarpEvent.ChatChannels[i]);
             }
+
+            if (LocalStorage.cpID == 0) CanCreateChannels = true;
         }
 
         private void PropagateChanged()
