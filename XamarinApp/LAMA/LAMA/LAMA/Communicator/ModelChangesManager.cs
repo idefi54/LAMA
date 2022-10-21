@@ -100,6 +100,10 @@ namespace LAMA.Communicator
             if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
 
             Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            if (objectType == "LAMA.Singletons.LarpEvent" && !attributesCache.containsKey(attributeID))
+            {
+                attributesCache.add(new TimeValue(updateTime, value, attributeID));
+            }
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
                 attributesCache.getByKey(attributeID).value = value;
