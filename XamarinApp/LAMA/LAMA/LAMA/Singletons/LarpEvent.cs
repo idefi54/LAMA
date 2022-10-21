@@ -159,8 +159,8 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
+            Debug.WriteLine(output);
             SQLEvents.invokeChanged(Instance, 2);
-            Debug.WriteLine("Invoked Changed");
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 

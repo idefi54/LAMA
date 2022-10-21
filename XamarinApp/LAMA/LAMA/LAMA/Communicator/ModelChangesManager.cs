@@ -98,6 +98,8 @@ namespace LAMA.Communicator
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
             if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+
+            Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
                 attributesCache.getByKey(attributeID).value = value;
