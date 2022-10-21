@@ -119,10 +119,12 @@ namespace LAMA.ViewModels
 
             item = new ChatMessageViewModel(message);
             ChatMessageListItems.Add(item);
+            ChatMessageListItems.OrderBy(x => x.Time);
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
+            Debug.WriteLine("Propagate Changed");
             if (changed == null || changed.GetType() != typeof(ChatMessage))
                 return;
 
