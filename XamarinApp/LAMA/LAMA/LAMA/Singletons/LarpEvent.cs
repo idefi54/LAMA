@@ -107,7 +107,7 @@ namespace LAMA.Singletons
     
         public void init()
         {
-            List<long> temp = Helpers.readLongField(Instance.days);
+            List<long> temp = Helpers.readLongField(days);
 
             _Days = new EventList<DateTimeOffset>();
             for (int i = 0; i < temp.Count; ++i) 
