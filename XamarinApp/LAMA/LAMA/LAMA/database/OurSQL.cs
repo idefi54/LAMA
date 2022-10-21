@@ -4,6 +4,7 @@ using SQLite;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LAMA
 {
@@ -24,6 +25,7 @@ namespace LAMA
         }
         public static void invokeChanged(Serializable changed, int index)
         {
+            Debug.WriteLine("Invoking Changed");
             dataChanged?.Invoke(changed, index);
         }
         public static void invokeDeleted(Serializable deleted)
