@@ -6,6 +6,7 @@ using LAMA.Models;
 using LAMA.Services;
 using LAMA.Models.DTO;
 using LAMA.Extensions;
+using LAMA.Views;
 
 namespace LAMA.ViewModels
 {
@@ -44,7 +45,7 @@ namespace LAMA.ViewModels
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
 
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies;
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		//public NewActivityViewModel()
@@ -60,6 +61,7 @@ namespace LAMA.ViewModels
 
         public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
         {
+			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			if(activity != null)
             {
 				Title = "Upravit Aktivitu";
@@ -73,6 +75,10 @@ namespace LAMA.ViewModels
 				Day = activity.day;
 				Preparations = activity.preparationNeeded;
 				
+				foreach(int item in activity.prerequisiteIDs)
+				{
+					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[item]));
+				}
 			}
 			else
 			{
@@ -82,7 +88,7 @@ namespace LAMA.ViewModels
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
-			SaveCommand = new Xamarin.Forms.Command(OnSave);
+			SaveCommand = new Command(OnSave);
 			TypeList = new List<string>();
 			foreach (LarpActivity.EventType type in Enum.GetValues(typeof(LarpActivity.EventType)))
 			{
@@ -91,7 +97,8 @@ namespace LAMA.ViewModels
 			TypeIndex = 0;
 			Type = ((LarpActivity.EventType)TypeIndex).ToString();
 
-			
+			AddDependencyCommand = new Command(OnAddDependency);
+			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
 		}
 
 		private bool ValidateSave()
@@ -102,6 +109,25 @@ namespace LAMA.ViewModels
 
 		public Xamarin.Forms.Command SaveCommand { get; }
 		public ICommand CancelCommand { get; }
+		public Command AddDependencyCommand { get; }
+		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
+
+		public void OnAddDependency()
+		{
+			_navigation.PushAsync(new ActivitySelectionPage(SaveDependency));
+		}
+
+		private void OnRemoveDependency(LarpActivityShortItemViewModel obj)
+		{
+			if (obj == null)
+				return;
+			Dependencies.Remove(obj);
+		}
+
+		public void SaveDependency(LarpActivity activity)
+		{
+			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
+		}
 
 		private async void OnCancel()
 		{
@@ -127,10 +153,17 @@ namespace LAMA.ViewModels
 				return;
             }
 			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
-            
+
+			var dependencies = new EventList<int>();
+			
+			foreach(LarpActivityShortItemViewModel item in Dependencies)
+			{
+				dependencies.Add(item.LarpActivity.ID);
+			}
+
 			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
-				new EventList<int>(),
+				dependencies,
 				Duration.ToUnixTimeMilliseconds(), Day, Start.ToUnixTimeMilliseconds(),
 				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
