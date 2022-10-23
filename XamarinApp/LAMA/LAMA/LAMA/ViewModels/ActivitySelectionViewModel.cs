@@ -29,7 +29,7 @@ namespace LAMA.ViewModels
         }
 
 
-        public ActivitySelectionViewModel(Action<LarpActivity> callback)
+        public ActivitySelectionViewModel(Action<LarpActivity> callback, Func<LarpActivity, bool> filter)
 		{
             _callback = callback;
             Activity = null;
@@ -37,11 +37,13 @@ namespace LAMA.ViewModels
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
-                LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]));
+                LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i];
+                if(filter(la))
+                    LarpActivityListItems.Add(new ActivityListItemViewModel(la));
             }
 		}
 
-        private async void Close()
+		private async void Close()
         {
             await Shell.Current.GoToAsync("..");
         }

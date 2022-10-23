@@ -14,11 +14,11 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ActivitySelectionPage : ContentPage
     {
-        public ActivitySelectionPage(Action<LarpActivity> callback)
+        public ActivitySelectionPage(Action<LarpActivity> callback, Func<LarpActivity, bool> filter = null)
         {
             InitializeComponent();
 
-            BindingContext = new ActivitySelectionViewModel(callback);
+            BindingContext = new ActivitySelectionViewModel(callback, filter is null ? (_) => { return true; } : filter);
         }
     }
 }

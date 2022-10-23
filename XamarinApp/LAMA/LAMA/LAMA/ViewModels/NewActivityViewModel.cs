@@ -7,6 +7,7 @@ using LAMA.Services;
 using LAMA.Models.DTO;
 using LAMA.Extensions;
 using LAMA.Views;
+using System.Linq;
 
 namespace LAMA.ViewModels
 {
@@ -59,23 +60,26 @@ namespace LAMA.ViewModels
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;
 
+		private LarpActivity larpActivity;
+
         public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
         {
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
-			if(activity != null)
+			larpActivity = activity;
+			if(larpActivity != null)
             {
 				Title = "Upravit Aktivitu";
-				Id = activity.ID.ToString();
-				Name = activity.name;
-				Description = activity.description;
-				Type = activity.eventType.ToString();
-				TypeIndex = (int)activity.eventType;
+				Id = larpActivity.ID.ToString();
+				Name = larpActivity.name;
+				Description = larpActivity.description;
+				Type = larpActivity.eventType.ToString();
+				TypeIndex = (int)larpActivity.eventType;
 				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
 				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				Day = activity.day;
-				Preparations = activity.preparationNeeded;
+				Preparations = larpActivity.preparationNeeded;
 				
-				foreach(int item in activity.prerequisiteIDs)
+				foreach(int item in larpActivity.prerequisiteIDs)
 				{
 					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[item]));
 				}
@@ -114,7 +118,19 @@ namespace LAMA.ViewModels
 
 		public void OnAddDependency()
 		{
-			_navigation.PushAsync(new ActivitySelectionPage(SaveDependency));
+			HashSet<long> dependencies = new HashSet<long>();
+			foreach(var item in Dependencies)
+			{
+				dependencies.Add(item.LarpActivity.ID);
+			}
+
+			_navigation.PushAsync(new ActivitySelectionPage(
+				SaveDependency,
+				(LarpActivity la) => 
+				{
+					return la != larpActivity && !dependencies.Contains(la.ID); 
+				}
+				));
 		}
 
 		private void OnRemoveDependency(LarpActivityShortItemViewModel obj)
