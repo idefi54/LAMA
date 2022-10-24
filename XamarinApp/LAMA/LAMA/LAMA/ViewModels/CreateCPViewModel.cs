@@ -39,7 +39,7 @@ namespace LAMA.ViewModels
         void OnSave()
         {
             var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
-            var toAdd = new CP(list.nextID(), _name, _nick, Helpers.readStringField(_roles), Helpers.readInt(_phone), _facebook, _discord, _notes);
+            var toAdd = new CP(list.nextID(), _name, _nick, Helpers.readStringField(_roles), _phone, _facebook, _discord, _notes);
             list.add(toAdd);
             navigation.PopAsync();
         }

@@ -18,15 +18,7 @@ namespace LAMA.ViewModels
         { 
             get 
             {
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = 9; i > 0; --i) 
-                {
-                    if (i % 3 == 0)
-                        sb.Append(' ');
-                    sb.Append( (cp.phone % Math.Pow(10,i))/ Math.Pow(10, i - 1));
-                }
-                return sb.ToString(); 
+                return cp.phone;
             } 
         }
         public string Facebook { get { return cp.facebook; } }
