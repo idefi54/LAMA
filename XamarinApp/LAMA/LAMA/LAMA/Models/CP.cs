@@ -45,8 +45,8 @@ namespace LAMA.Models
         }
 
 
-        int _phone;
-        public int phone
+        string _phone;
+        public string phone
         {
             get { return _phone; }
             set { _phone = value; updateValue(4, value.ToString()); }
@@ -66,7 +66,7 @@ namespace LAMA.Models
         {
             _roles.dataChanged += onRolesChange;
         }
-        public CP(long ID, string name, string nick, EventList<string> roles, int phone,
+        public CP(long ID, string name, string nick, EventList<string> roles, string phone,
             string facebook, string discord, Pair<double, double> location, string notes)
         {
             _roles.dataChanged += onRolesChange;
@@ -80,7 +80,7 @@ namespace LAMA.Models
             _location = location;
             _notes = notes;
         }
-        public void updateWhole(string name, string nick, int phone, string facebook, string discord, string notes)
+        public void updateWhole(string name, string nick, string phone, string facebook, string discord, string notes)
         {
             if (name != _name)
                 this.name = name;
@@ -138,7 +138,7 @@ namespace LAMA.Models
                 case 3: _roles = Helpers.readStringField(value);
                     _roles.dataChanged += onRolesChange;
                     break;
-                case 4: _phone = Helpers.readInt(value);
+                case 4: _phone = value;
                     break;
                 case 5: _facebook = value;
                     break;
@@ -192,5 +192,12 @@ namespace LAMA.Models
         {
             return 1;
         }
+
+        public event EventHandler<int> IGotUpdated;
+        public void InvokeIGotUpdated(int index)
+        {
+            IGotUpdated?.Invoke(this, index);
+        }
+
     }
 }

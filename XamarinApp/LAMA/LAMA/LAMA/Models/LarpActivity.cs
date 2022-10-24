@@ -362,5 +362,11 @@ namespace LAMA.Models
             return 3;
         }
 
+
+        public event EventHandler<int> IGotUpdated;
+        public void InvokeIGotUpdated(int index)
+        {
+            IGotUpdated?.Invoke(this, index);
+        }
     }
 }

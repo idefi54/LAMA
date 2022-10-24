@@ -100,5 +100,11 @@ namespace LAMA.Models
             _sentAt = sentAt;
             _ID = _sentAt + LocalStorage.cpID * 1000000000000;
         }
+
+        public event EventHandler<int> IGotUpdated;
+        public void InvokeIGotUpdated(int index)
+        {
+            IGotUpdated?.Invoke(this, index);
+        }
     }
 }

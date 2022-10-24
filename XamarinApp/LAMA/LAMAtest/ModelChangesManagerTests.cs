@@ -23,7 +23,7 @@ namespace LAMAtest
             new LAMA.EventList < Pair<string, int> >(), new EventList < Pair<int, string> >());
             string command = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("■", activity.getAttributes())}";
 
-            LAMA.Models.CP cp = new LAMA.Models.CP(234, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789,
+            LAMA.Models.CP cp = new LAMA.Models.CP(234, "testCP", "testCP234", new LAMA.EventList<string>(), "123456789",
             "facebook", "discord", new Pair<double, double>(13.0, 15.6), "notes");
             string command2 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("■", cp.getAttributes())}";
             
@@ -97,7 +97,7 @@ namespace LAMAtest
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("■", activity.getAttributes())}";
 
-            LAMA.Models.CP cp = new LAMA.Models.CP(235, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789,
+            LAMA.Models.CP cp = new LAMA.Models.CP(235, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", new Pair<double, double>(13.0, 15.6), "notes");
             string command2 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("■", cp.getAttributes())}";
 
@@ -138,7 +138,7 @@ namespace LAMAtest
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("■", activity.getAttributes())}";
 
-            LAMA.Models.CP cp = new LAMA.Models.CP(236, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789,
+            LAMA.Models.CP cp = new LAMA.Models.CP(236, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", new Pair<double, double>(13.0, 15.6), "notes");
             string command2 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("■", cp.getAttributes())}";
 
@@ -245,7 +245,7 @@ namespace LAMAtest
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("■", activity.getAttributes())}";
 
-            LAMA.Models.CP cp = new LAMA.Models.CP(237, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789,
+            LAMA.Models.CP cp = new LAMA.Models.CP(237, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", new Pair<double, double>(13.0, 15.6), "notes");
             string command2 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("■", cp.getAttributes())}";
 
@@ -403,7 +403,7 @@ namespace LAMAtest
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("■", activity.getAttributes())}";
 
-            LAMA.Models.CP cp = new LAMA.Models.CP(238, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789,
+            LAMA.Models.CP cp = new LAMA.Models.CP(238, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", new Pair<double, double>(13.0, 15.6), "notes");
             string command2 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("■", cp.getAttributes())}";
 
@@ -416,7 +416,7 @@ namespace LAMAtest
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
             string command4 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};Rollback;ItemCreated;{activity2.GetType().ToString()};{String.Join("■", activity2.getAttributes())}";
 
-            LAMA.Models.CP cp2 = new LAMA.Models.CP(238, "testCP2", "testCP2342", new LAMA.EventList<string>(), 234567891,
+            LAMA.Models.CP cp2 = new LAMA.Models.CP(238, "testCP2", "testCP2342", new LAMA.EventList<string>(), 234567891.ToString(),
             "facebook2", "discord2", new Pair<double, double>(13.1, 15.7), "notes2");
             string command5 = $"{DateTimeOffset.Now.ToUnixTimeSeconds()};Rollback;ItemCreated;{cp2.GetType().ToString()};{String.Join("■", cp2.getAttributes())}";
 

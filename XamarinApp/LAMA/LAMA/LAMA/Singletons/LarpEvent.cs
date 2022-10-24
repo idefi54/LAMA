@@ -241,5 +241,11 @@ namespace LAMA.Singletons
         public void removed()
         { }
         public void addedInto(object holder) { }
+
+        public event EventHandler<int> IGotUpdated;
+        public void InvokeIGotUpdated(int index)
+        {
+            IGotUpdated?.Invoke(this, index);
+        }
     }
 }

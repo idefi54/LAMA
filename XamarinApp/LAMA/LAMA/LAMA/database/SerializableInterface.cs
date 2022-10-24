@@ -8,6 +8,12 @@ namespace LAMA
 {
     public interface Serializable
     {
+
+        
+        event EventHandler<int> IGotUpdated;
+        void InvokeIGotUpdated(int index);
+
+
         void setAttribute(int index, string value);
 
         

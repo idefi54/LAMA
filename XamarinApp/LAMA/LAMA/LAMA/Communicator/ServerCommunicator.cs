@@ -364,7 +364,7 @@ namespace LAMA.Communicator
                 //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
                     new Models.CP(0, 
-                    LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, 0, "", "", new Pair<double, double>(0.0f, 0.0f), ""));
+                    LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, "", "", "", new Pair<double, double>(0.0f, 0.0f), ""));
             }
             logger.LogWrite("Initialization finished");
         }
@@ -404,7 +404,7 @@ namespace LAMA.Communicator
             if (cpID == -1)
             {
                 CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
-                    clientName, clientName, new EventList<string> {}, 0, "", "", new Pair<double, double>(0.0f, 0.0f), "");
+                    clientName, clientName, new EventList<string> {}, "", "", "", new Pair<double, double>(0.0f, 0.0f), "");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
             }

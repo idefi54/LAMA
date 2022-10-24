@@ -236,5 +236,12 @@ namespace LAMA.Models
                     takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
             }
         }
+
+
+        public event EventHandler<int> IGotUpdated;
+        public void InvokeIGotUpdated(int index)
+        {
+            IGotUpdated?.Invoke(this, index);
+        }
     }
 }

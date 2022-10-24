@@ -25,9 +25,8 @@ namespace LAMA
         }
         public static void invokeChanged(Serializable changed, int index)
         {
-            Debug.WriteLine("Invoking Changed");
             dataChanged?.Invoke(changed, index);
-            Debug.WriteLine("Invoked Changed");
+            changed.InvokeIGotUpdated(index);
         }
         public static void invokeDeleted(Serializable deleted)
         {
