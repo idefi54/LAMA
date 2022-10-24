@@ -169,7 +169,7 @@ namespace LAMA.Models
                 case 1: return _name;
                 case 2: return _nick;
                 case 3: return _roles.ToString();
-                case 4: return _phone.ToString();
+                case 4: return _phone;
                 case 5: return _facebook;
                 case 6: return _discord;
                 case 7: return _location.ToString();
