@@ -20,7 +20,7 @@ namespace LAMA.ViewModels
             {
                 StringBuilder sb = new StringBuilder();
 
-                for (int i = 9; i > 0; ++i) 
+                for (int i = 9; i > 0; --i) 
                 {
                     if (i % 3 == 0)
                         sb.Append(' ');
