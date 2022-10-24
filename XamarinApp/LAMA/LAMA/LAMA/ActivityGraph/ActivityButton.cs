@@ -10,12 +10,12 @@ namespace LAMA.ActivityGraphLib
 {
     public class ActivityButton : Button
     {
-        private LarpActivity _activity;
         private ActivityGraph _activityGraph;
         private float _yPos;
+        public LarpActivity Activity { get; private set; }
         public ActivityButton(LarpActivity activity, ActivityGraph activityGraph)
         {
-            _activity = activity;
+            Activity = activity;
             _activityGraph = activityGraph;
             Text = activity.name;
             VerticalOptions = LayoutOptions.Start;
@@ -27,19 +27,18 @@ namespace LAMA.ActivityGraphLib
         public void Update()
         {
             var now = DateTime.Now;
-            var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
-            var span = time - ActivityGraph.TimeOffset;
+            //var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
+            var time = new DateTime(now.Year, now.Month, 1, Activity.start.hours, Activity.start.minutes, 0);
+            var span = time - _activityGraph.TimeOffset;
 
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY) + _activityGraph.XamOffset;
             IsVisible = TranslationY >= _activityGraph.XamOffset - Height / 3;
 
             TextColor = Color.Black;
-            BackgroundColor = GetColor(_activity.status);
-            CornerRadius = GetCornerRadius(_activity.eventType);
+            BackgroundColor = GetColor(Activity.status);
+            CornerRadius = GetCornerRadius(Activity.eventType);
         }
-
-
         public void Move(float x, float y)
         {
             var now = DateTime.Now;
@@ -48,9 +47,9 @@ namespace LAMA.ActivityGraphLib
             _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
 
             float minutes = x / _activityGraph.MinuteWidth / _activityGraph.Zoom;
-            DateTime newTime = ActivityGraph.TimeOffset.AddMinutes(minutes);
-            _activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
-            _activity.day = newTime.Day;
+            DateTime newTime = _activityGraph.TimeOffset.AddMinutes(minutes - (minutes % 5));
+            Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
+            Activity.day = newTime.Day;
         }
         public void MoveY(float y) => _yPos = y;
 
@@ -104,20 +103,18 @@ namespace LAMA.ActivityGraphLib
                 );
         }
 
-        public void DrawConnection(SKCanvas canvas, ActivityButton b)
+        public static void DrawConnection(SKCanvas canvas, ActivityGraph graph, ActivityButton a, ActivityButton b)
         {
-            ActivityButton a = this;
-
-            float ax = _activityGraph.ToPixels((float)a.TranslationX);
-            float ay = _activityGraph.ToPixels((float)a.TranslationY - _activityGraph.XamOffset);
-            float aWidth = _activityGraph.ToPixels((float)a.Width);
-            float aHeight = _activityGraph.ToPixels((float)a.Height);
+            float ax = graph.ToPixels((float)a.TranslationX);
+            float ay = graph.ToPixels((float)a.TranslationY - graph.XamOffset);
+            float aWidth = graph.ToPixels((float)a.Width);
+            float aHeight = graph.ToPixels((float)a.Height);
             var aRect = new SKRect(ax, ay, ax + aWidth, ay + aHeight);
 
-            float bx = _activityGraph.ToPixels((float)b.TranslationX);
-            float by = _activityGraph.ToPixels((float)b.TranslationY - _activityGraph.XamOffset);
-            float bWidth = _activityGraph.ToPixels((float)b.Width);
-            float bHeight = _activityGraph.ToPixels((float)b.Height);
+            float bx = graph.ToPixels((float)b.TranslationX);
+            float by = graph.ToPixels((float)b.TranslationY - graph.XamOffset);
+            float bWidth = graph.ToPixels((float)b.Width);
+            float bHeight = graph.ToPixels((float)b.Height);
             var bRect = new SKRect(bx, by, bx + bWidth, by + bHeight);
 
             var paint = new SKPaint();
