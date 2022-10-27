@@ -21,15 +21,15 @@ namespace LAMA.ActivityGraphLib
         private float _width;
         private float _height;
         public float OffsetY { get; private set; }
-        public float XamOffset => (float)_canvasView.TranslationY;
+        public float XamOffset => (float)_canvasGrid.Y;
         private float _columnWidth => _width / 24;
         private float _maxOffsetY => -_height * Zoom + _height - 200;
 
         private Label[] _timeLabels;
-        private View _dateView;
-        private Label _dateLabel => (_dateView as StackLayout).Children[1] as Label;
-        public List<ActivityButton> ActivityButtons;
-        private SKCanvasView _canvasView;
+        private Layout<View> _dateView;
+        private Grid _canvasGrid;
+        private Label _dateLabel => _dateView.Children[1] as Label;
+        private SKCanvasView _canvasView => _canvasGrid.Children[0] as SKCanvasView;
 
         // Public
         private float _zoom;
@@ -55,14 +55,13 @@ namespace LAMA.ActivityGraphLib
         public float MinuteWidth => _columnWidth / 60;
         public bool DirtyActivities = false;
 
-        public ActivityGraph(SKCanvasView canvasView, Label[] timeLabels, View dateView)
+        public ActivityGraph(Grid canvasGrid, Label[] timeLabels, Layout<View> dateView)
         {
             Zoom = 2;
             OffsetY = 0;
-            _canvasView = canvasView;
+            _canvasGrid = canvasGrid;
             _timeLabels = timeLabels;
             _dateView = dateView;
-            ActivityButtons = new List<ActivityButton>();
             TimeOffset = DateTime.Now;
             ReloadActivities();
         }
@@ -77,13 +76,13 @@ namespace LAMA.ActivityGraphLib
 
             if (_width < 1000)
             {
-                _dateLabel.FontSize = 8;
+                //_dateLabel.FontSize = 8;
                 foreach(var label in _timeLabels)
                     label.FontSize = 8;
-
+            
             } else
             {
-                _dateLabel.FontSize = 14;
+                //_dateLabel.FontSize = 14;
                 foreach (var label in _timeLabels)
                     label.FontSize = 14;
             }
@@ -102,7 +101,7 @@ namespace LAMA.ActivityGraphLib
         public void Draw(SKCanvas canvas)
         {
             canvas.Clear(SKColors.Black);
-            foreach (ActivityButton button in ActivityButtons)
+            foreach (ActivityButton button in ActivityButtons())
                 button.Update();
 
             SKPaint paint = new SKPaint();
@@ -177,14 +176,17 @@ namespace LAMA.ActivityGraphLib
 
         public void SwitchEditMode(bool edit)
         {
-            foreach (ActivityButton button in ActivityButtons)
-            {
+            foreach (ActivityButton button in ActivityButtons())
                 button.IsEnabled = !edit;
-            }
         }
 
         public void ReloadActivities()
         {
+
+            // Remove all instances of ActivityButton
+            for (int i = 0; i < _canvasGrid.Children.Count - 1; i++)
+                _canvasGrid.Children.RemoveAt(1);
+
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
             var activities = rememberedList.sqlConnection.ReadData();
             var currentActivities =
@@ -193,29 +195,23 @@ namespace LAMA.ActivityGraphLib
                             DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - Math.Abs(activity.day - DateTime.Now.Day) <= 9
                             select activity;
 
-            ActivityButtons.Clear();
             foreach (LarpActivity activity in currentActivities)
-                ActivityButtons.Add(new ActivityButton(activity, this));
-
-            if (ActivityButtons.Count > 0)
-                ActivityButtons[0].Activity.prerequisiteIDs.Add(ActivityButtons[1].Activity.ID);
-
-            DirtyActivities = true;
+                _canvasGrid.Children.Add(new ActivityButton(activity, this));
         }
 
         public void DrawConnections(SKCanvas canvas)
         {
-            foreach (ActivityButton button1 in ActivityButtons)
-                foreach (ActivityButton button2 in ActivityButtons)
+            foreach (ActivityButton button1 in ActivityButtons())
+                foreach (ActivityButton button2 in ActivityButtons())
                     if (button1.Activity.prerequisiteIDs.Contains(button2.Activity.ID))
                         ActivityButton.DrawConnection(canvas, this, button1, button2);
         }
 
         public ActivityButton GetButtonAt(float x, float y)
         {
-            foreach (ActivityButton button in ActivityButtons)
+            foreach (ActivityButton button in ActivityButtons())
             {
-                if (button.Bounds.Offset(button.TranslationX, button.TranslationY).Contains(x, y))
+                if (button.Bounds.Offset(button.TranslationX, button.TranslationY + _canvasGrid.Y).Contains(x, y))
                     return button;
             }
 
@@ -225,8 +221,14 @@ namespace LAMA.ActivityGraphLib
         public ActivityButton AddActivity(LarpActivity activity)
         {
             var button = new ActivityButton(activity, this);
-            ActivityButtons.Add(button);
+            _canvasGrid.Children.Add(button);
             return button;
+        }
+
+        private IEnumerable<ActivityButton> ActivityButtons()
+        {
+            for (int i = 1; i < _canvasGrid.Children.Count; i++)
+                yield return _canvasGrid.Children[i] as ActivityButton;
         }
     }
 }
