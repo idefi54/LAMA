@@ -177,12 +177,19 @@ namespace LAMA.ViewModels
 				dependencies.Add(item.LarpActivity.ID);
 			}
 
-			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
+			LarpActivity larpActivity = new LarpActivity(
+				10,
+				Name, 
+				Description is null ? "" : Description,
+				Preparations is null ? "" : Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				dependencies,
 				Duration.ToUnixTimeMilliseconds(), Day, Start.ToUnixTimeMilliseconds(),
-				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
-				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+				new Pair<double, double>(lon, lat), 
+				LarpActivity.Status.readyToLaunch,
+				new EventList<Pair<int, int>>(), 
+				new EventList<Pair<string, int>>(), 
+				new EventList<Pair<int, string>>());
 
 			_createNewActivity(new LarpActivityDTO(larpActivity));
 
