@@ -85,6 +85,17 @@ namespace LAMA.ViewModels
 
 		private void UpdateActivity(LarpActivityDTO larpActivity)
 		{
+			_activity.UpdateWhole(
+				larpActivity.name,
+				larpActivity.description,
+				larpActivity.preparationNeeded,
+				larpActivity.eventType,
+				larpActivity.duration,
+				larpActivity.day,
+				larpActivity.start,
+				larpActivity.place,
+				larpActivity.status);
+
 			Name = larpActivity.name;
 			Description = larpActivity.description;
 
