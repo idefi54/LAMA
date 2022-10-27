@@ -39,9 +39,14 @@ namespace LAMA.Views
             touchEffect.TouchAction += OnTouchEffectAction;
 
             _canvasView = CreateCanvasView();
-            View controlRow = CreateControlRow();
-            View dateRow = CreateDateRow();
-            View timeRow = CreateTimeRow();
+            Layout<View> controlRow = CreateControlRow();
+            Layout<View> dateRow = CreateDateRow();
+            Layout<View> timeRow = CreateTimeRow();
+
+            var canvasGrid = new Grid();
+            canvasGrid.Children.Add(_canvasView);
+            canvasGrid.HorizontalOptions = LayoutOptions.FillAndExpand;
+            canvasGrid.VerticalOptions = LayoutOptions.FillAndExpand;
 
             var layout = new StackLayout
             {
@@ -51,44 +56,41 @@ namespace LAMA.Views
                     controlRow,
                     dateRow,
                     timeRow,
-                    _canvasView
+                    canvasGrid
                 }
             };
             Content = layout;
 
-            _graph = new ActivityGraph(_canvasView, _timeLabels, dateRow);
+            _graph = new ActivityGraph(canvasGrid, _timeLabels, dateRow);
             ActivityGraph.Instance = _graph;
             _canvasView.InvalidateSurface();
         }
 
-        private View CreateControlRow()
+        private Layout<View> CreateControlRow()
         {
             var grid = new Grid();
 
             // plus and minus buttons
             {
                 var plusMinusStack = new StackLayout();
+                plusMinusStack.HorizontalOptions = LayoutOptions.FillAndExpand;
                 plusMinusStack.Orientation = StackOrientation.Horizontal;
 
                 _plusButton = new Button();
                 _plusButton.Text = "+";
-                _plusButton.VerticalOptions = LayoutOptions.Center;
-                _plusButton.HorizontalOptions = LayoutOptions.Center;
-                //_plusButton.TranslationX = 50;
+                _plusButton.VerticalOptions = LayoutOptions.FillAndExpand;
+                _plusButton.HorizontalOptions = LayoutOptions.FillAndExpand;
                 _plusButton.Clicked += (object sender, EventArgs args) => { _graph.Zoom += 0.25f; _canvasView.InvalidateSurface(); };
-                plusMinusStack.Children.Add(_plusButton);
+                grid.Children.Add(_plusButton, 0, 0);
 
                 _minusButton = new Button();
                 _minusButton.Text = "-";
-                _minusButton.VerticalOptions = LayoutOptions.Center;
-                _minusButton.HorizontalOptions = LayoutOptions.Center;
-                //_minusButton.TranslationX = 10;
+                _minusButton.VerticalOptions = LayoutOptions.FillAndExpand;
+                _minusButton.HorizontalOptions = LayoutOptions.FillAndExpand;
                 _minusButton.Clicked += (object sender, EventArgs args) => { _graph.Zoom -= 0.25f; _canvasView.InvalidateSurface(); };
-                plusMinusStack.Children.Add(_minusButton);
-                plusMinusStack.HorizontalOptions = LayoutOptions.Center;
-                plusMinusStack.VerticalOptions = LayoutOptions.Center;
+                grid.Children.Add(_minusButton, 1, 0);
 
-                grid.Children.Add(plusMinusStack, 0, 0);
+                //grid.Children.Add(plusMinusStack, 0, 0);
             }
 
             // Calendar Button
@@ -97,9 +99,8 @@ namespace LAMA.Views
                 _calendarButton.Text = "Calendar";
                 _calendarButton.VerticalOptions = LayoutOptions.Center;
                 _calendarButton.HorizontalOptions = LayoutOptions.Center;
-                //_calendarButton.TranslationX = 100;
                 _calendarButton.Clicked += (object sender, EventArgs args) => { Navigation.PushModalAsync(new CalendarPage()); };
-                grid.Children.Add(_calendarButton, 1, 0);
+                grid.Children.Add(_calendarButton, 2, 0);
             }
 
             // Edit control
@@ -119,13 +120,13 @@ namespace LAMA.Views
                 _editSwitch.HorizontalOptions = LayoutOptions.End;
                 _editSwitch.Toggled += (object sender, ToggledEventArgs e) => { _graph.SwitchEditMode(e.Value); };
                 editStack.Children.Add(_editSwitch);
-                grid.Children.Add(editStack, 2, 0);
+                grid.Children.Add(editStack, 3, 0);
             }
 
             return grid;
         }
 
-        private View CreateDateRow()
+        private Layout<View> CreateDateRow()
         {
             var dateStack = new StackLayout();
             dateStack.HorizontalOptions = LayoutOptions.Start;
@@ -135,8 +136,8 @@ namespace LAMA.Views
             _leftButton = new Button();
             _leftButton.Text = "<";
             _leftButton.FontAttributes = FontAttributes.Bold;
-            _leftButton.VerticalOptions = LayoutOptions.Center;
-            _leftButton.HorizontalOptions = LayoutOptions.Center;
+            _leftButton.VerticalOptions = LayoutOptions.CenterAndExpand;
+            _leftButton.HorizontalOptions = LayoutOptions.CenterAndExpand;
             _leftButton.TextColor = Color.Blue;
             _leftButton.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
             _leftButton.Clicked += (object sender, EventArgs args) =>
@@ -148,8 +149,8 @@ namespace LAMA.Views
 
             var now = DateTime.Now;
             _dateLabel = new Label();
-            _dateLabel.VerticalOptions = LayoutOptions.Center;
-            _dateLabel.HorizontalOptions = LayoutOptions.Center;
+            _dateLabel.VerticalOptions = LayoutOptions.CenterAndExpand;
+            _dateLabel.HorizontalOptions = LayoutOptions.CenterAndExpand;
             _dateLabel.FontAttributes = FontAttributes.Bold;
             _dateLabel.TextColor = Color.Red;
             _dateLabel.Text = $"{now.Day:00}.{now.Month:00}.{now.Year:0000}";
@@ -158,8 +159,8 @@ namespace LAMA.Views
             _rightButton = new Button();
             _rightButton.Text = ">";
             _rightButton.FontAttributes = FontAttributes.Bold;
-            _rightButton.VerticalOptions = LayoutOptions.Center;
-            _rightButton.HorizontalOptions = LayoutOptions.Center;
+            _rightButton.VerticalOptions = LayoutOptions.CenterAndExpand;
+            _rightButton.HorizontalOptions = LayoutOptions.CenterAndExpand;
             _rightButton.TextColor = Color.Blue;
             _rightButton.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
             _rightButton.Clicked += (object sender, EventArgs args) =>
@@ -172,7 +173,7 @@ namespace LAMA.Views
             return dateStack;
         }
 
-        private View CreateTimeRow()
+        private Layout<View> CreateTimeRow()
         {
             var grid = new Grid();
 
@@ -203,18 +204,6 @@ namespace LAMA.Views
 
         private void ReloadActivities()
         {
-            var grid = Content as StackLayout;
-
-            var toRemove = new List<ActivityButton>();
-            foreach (View view in grid.Children)
-                if (view is ActivityButton)
-                    toRemove.Add(view as ActivityButton);
-
-            foreach (ActivityButton activityButton in toRemove)
-                grid.Children.Remove(activityButton);
-
-            foreach (ActivityButton activityButton in _graph.ActivityButtons)
-                grid.Children.Add(activityButton);
         }
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)

@@ -31,9 +31,10 @@ namespace LAMA.ActivityGraphLib
             var time = new DateTime(now.Year, now.Month, 1, Activity.start.hours, Activity.start.minutes, 0);
             var span = time - _activityGraph.TimeOffset;
 
+            _yPos = Math.Max(0, _yPos);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY) + _activityGraph.XamOffset;
-            IsVisible = TranslationY >= _activityGraph.XamOffset - Height / 3;
+            IsVisible = TranslationY >= - Height / 3;
 
             TextColor = Color.Black;
             BackgroundColor = GetColor(Activity.status);
@@ -43,6 +44,7 @@ namespace LAMA.ActivityGraphLib
         {
             var now = DateTime.Now;
             x = _activityGraph.ToPixels(x - (float)Width / 2);
+            y = y - _activityGraph.XamOffset;
             y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
             _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
 
@@ -51,7 +53,7 @@ namespace LAMA.ActivityGraphLib
             Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
             Activity.day = newTime.Day;
         }
-        public void MoveY(float y) => _yPos = y;
+        public void MoveY(float y) => _yPos = y - _activityGraph.XamOffset;
 
         private int GetCornerRadius(LarpActivity.EventType type)
         {
