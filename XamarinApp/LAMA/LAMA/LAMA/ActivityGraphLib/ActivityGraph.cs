@@ -21,15 +21,15 @@ namespace LAMA.ActivityGraphLib
         private float _width;
         private float _height;
         public float OffsetY { get; private set; }
-        public float XamOffset => (float)_canvasGrid.Y;
+        public float XamOffset => (float)_canvasLayout.Y;
         private float _columnWidth => _width / 24;
         private float _maxOffsetY => -_height * Zoom + _height - 200;
 
-        private Label[] _timeLabels;
-        private Layout<View> _dateView;
-        private Grid _canvasGrid;
-        private Label _dateLabel => _dateView.Children[1] as Label;
-        private SKCanvasView _canvasView => _canvasGrid.Children[0] as SKCanvasView;
+        public Label[] TimeLabels { get; set; }
+        public Layout<View> DateView { get; set; }
+        private Layout<View> _canvasLayout;
+        private Label _dateLabel => DateView?.Children[1] as Label;
+        private SKCanvasView _canvasView => _canvasLayout.Children[0] as SKCanvasView;
 
         // Public
         private float _zoom;
@@ -55,15 +55,14 @@ namespace LAMA.ActivityGraphLib
         public float MinuteWidth => _columnWidth / 60;
         public bool DirtyActivities = false;
 
-        public ActivityGraph(Grid canvasGrid, Label[] timeLabels, Layout<View> dateView)
+        public ActivityGraph(Layout<View> canvasGrid)
         {
             Zoom = 2;
             OffsetY = 0;
-            _canvasGrid = canvasGrid;
-            _timeLabels = timeLabels;
-            _dateView = dateView;
+            _canvasLayout = canvasGrid;
             TimeOffset = DateTime.Now;
             ReloadActivities();
+            _canvasView.InvalidateSurface();
         }
 
         public float FromPixels(float x) => x * (float)_canvasView.Width / _width;
@@ -74,16 +73,19 @@ namespace LAMA.ActivityGraphLib
             _width = args.Info.Width;
             _height = args.Info.Height;
 
+            if (TimeLabels == null)
+                return;
+
             if (_width < 1000)
             {
                 //_dateLabel.FontSize = 8;
-                foreach(var label in _timeLabels)
+                foreach(var label in TimeLabels)
                     label.FontSize = 8;
             
             } else
             {
                 //_dateLabel.FontSize = 14;
-                foreach (var label in _timeLabels)
+                foreach (var label in TimeLabels)
                     label.FontSize = 14;
             }
         }
@@ -114,19 +116,26 @@ namespace LAMA.ActivityGraphLib
             float columnOffset = minutePosition % (_columnWidth * Zoom);
             if (columnOffset < 0) columnOffset += _columnWidth * Zoom;
 
-            foreach (Label label in _timeLabels) label.IsVisible = false;
+            if (TimeLabels != null)
+                foreach (Label label in TimeLabels)
+                    label.IsVisible = false;
 
-            _dateLabel.Text = $"{TimeOffset.Day:00}.{TimeOffset.Month:00}.{TimeOffset.Year:0000}";
+            if (_dateLabel != null)
+                _dateLabel.Text = $"{TimeOffset.Day:00}.{TimeOffset.Month:00}.{TimeOffset.Year:0000}";
 
             for (int i = 0; i < columnCount; i++)
             {
                 int time = (TimeOffset.Hour + i) % 24;
                 if (TimeOffset.Minute > 0) time = (time + 1) % 24;
-                _timeLabels[i].IsVisible = true;
-                _timeLabels[i].Text = $"{time:00}:00";
-                _timeLabels[i].TranslationX = FromPixels(_columnWidth * Zoom * i + columnOffset);
 
-                if (time == 0)
+                if (TimeLabels != null)
+                {
+                    TimeLabels[i].IsVisible = true;
+                    TimeLabels[i].Text = $"{time:00}:00";
+                    TimeLabels[i].TranslationX = FromPixels(_columnWidth * Zoom * i + columnOffset);
+                }
+
+                if (time == 0 && _dateLabel != null)
                 {
                     var t = TimeOffset;
 
@@ -135,7 +144,7 @@ namespace LAMA.ActivityGraphLib
                         t = TimeOffset.AddDays(1);
 
                     _dateLabel.Text = $"{t.Day:00}.{t.Month:00}.{t.Year:0000}";
-                    _dateView.TranslationX = FromPixels(_columnWidth * Zoom * i + columnOffset);
+                    DateView.TranslationX = FromPixels(_columnWidth * Zoom * i + columnOffset);
                 }
 
                 paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -OffsetY);
@@ -152,11 +161,11 @@ namespace LAMA.ActivityGraphLib
                     );
             }
 
-            if (_dateView.TranslationX < 0)
-                _dateView.TranslationX = 0;
+            if (DateView?.TranslationX < 0)
+                DateView.TranslationX = 0;
 
-            if (_dateView.TranslationX > Application.Current.MainPage.Width - _dateView.Width)
-                _dateView.TranslationX = Application.Current.MainPage.Width - _dateView.Width;
+            if (DateView?.TranslationX > Application.Current.MainPage.Width - DateView?.Width)
+                DateView.TranslationX = Application.Current.MainPage.Width - DateView.Width;
 
             paint.PathEffect = null;
             paint.Color = SKColors.Blue;
@@ -184,8 +193,8 @@ namespace LAMA.ActivityGraphLib
         {
 
             // Remove all instances of ActivityButton
-            for (int i = 0; i < _canvasGrid.Children.Count - 1; i++)
-                _canvasGrid.Children.RemoveAt(1);
+            for (int i = 0; i < _canvasLayout.Children.Count - 1; i++)
+                _canvasLayout.Children.RemoveAt(1);
 
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
             var activities = rememberedList.sqlConnection.ReadData();
@@ -196,7 +205,7 @@ namespace LAMA.ActivityGraphLib
                             select activity;
 
             foreach (LarpActivity activity in currentActivities)
-                _canvasGrid.Children.Add(new ActivityButton(activity, this));
+                _canvasLayout.Children.Add(new ActivityButton(activity, this));
         }
 
         public void DrawConnections(SKCanvas canvas)
@@ -211,7 +220,7 @@ namespace LAMA.ActivityGraphLib
         {
             foreach (ActivityButton button in ActivityButtons())
             {
-                if (button.Bounds.Offset(button.TranslationX, button.TranslationY + _canvasGrid.Y).Contains(x, y))
+                if (button.Bounds.Offset(button.TranslationX, button.TranslationY + _canvasLayout.Y).Contains(x, y))
                     return button;
             }
 
@@ -221,14 +230,19 @@ namespace LAMA.ActivityGraphLib
         public ActivityButton AddActivity(LarpActivity activity)
         {
             var button = new ActivityButton(activity, this);
-            _canvasGrid.Children.Add(button);
+            _canvasLayout.Children.Add(button);
             return button;
+        }
+
+        public void InvalidateSurface()
+        {
+            _canvasView.InvalidateSurface();
         }
 
         private IEnumerable<ActivityButton> ActivityButtons()
         {
-            for (int i = 1; i < _canvasGrid.Children.Count; i++)
-                yield return _canvasGrid.Children[i] as ActivityButton;
+            for (int i = 1; i < _canvasLayout.Children.Count; i++)
+                yield return _canvasLayout.Children[i] as ActivityButton;
         }
     }
 }
