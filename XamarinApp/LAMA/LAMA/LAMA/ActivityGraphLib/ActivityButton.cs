@@ -44,6 +44,7 @@ namespace LAMA.ActivityGraphLib
             IsVisible = TranslationY >= - Height / 3;
 
             TextColor = Color.Black;
+            Text = Activity.name;
             BackgroundColor = GetColor(Activity.status);
             CornerRadius = GetCornerRadius(Activity.eventType);
         }
