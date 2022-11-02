@@ -1,12 +1,10 @@
-﻿using SkiaSharp;
-using SkiaSharp.Views.Forms;
-using System;
+﻿using System;
 using TouchTracking;
 using TouchTracking.Forms;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
 using LAMA.ActivityGraphLib;
-using LAMA.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
