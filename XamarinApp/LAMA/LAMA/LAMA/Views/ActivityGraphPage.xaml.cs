@@ -17,22 +17,21 @@ namespace LAMA.Views
         private ActivityGraph _graph;
         private ActivityButton _draggedButton;
         private Dictionary<long, TouchActionEventArgs> _touchActions;
-        private TouchActionEventArgs _firstTouch;
-        private TouchActionEventArgs _secondTouch;
+        private TouchTrackingPoint _lastLocation;
         private float _baseDistance;
         private float _baseZoom;
-        private TouchTrackingPoint _lastPosition;
-        private bool _mouseDown = false;
 
         public ActivityGraphPage()
         {
+            // Regular setup
             InitializeComponent();
             _touchActions = new Dictionary<long, TouchActionEventArgs>();
 
+            // Create platform specific GUI
             var gui = DependencyService.Get<IActivityGraphGUI>();
             (Content, _graph) = gui.CreateGUI(Navigation);
-            ActivityGraph.Instance = _graph;
-
+            
+            // Setup Touch effect - this is a nuget package
             var touchEffect = new TouchEffect();
             touchEffect.Capture = true;
             touchEffect.TouchAction += OnTouchEffectAction;
@@ -44,15 +43,19 @@ namespace LAMA.Views
             // New Press
             if (args.Type == TouchActionType.Pressed)
             {
+                // Add press to dictionary
                 _touchActions[args.Id] = args;
 
+                // Clicking a button
                 if (_touchActions.Count == 1)
                 {
                     _draggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
                 }
 
-                _lastPosition = args.Location;
+                // Save for computing change in location
+                _lastLocation = args.Location;
 
+                // Prepare for zoom;
                 if (_touchActions.Count > 1)
                 {
                     // Take first to and save difference
@@ -82,9 +85,9 @@ namespace LAMA.Views
                 // Scroll graph
                 if (_touchActions.Count == 1)
                 {
-                    float diffX = args.Location.X - _lastPosition.X;
-                    float diffY = args.Location.Y - _lastPosition.Y;
-                    _lastPosition = args.Location;
+                    float diffX = args.Location.X - _lastLocation.X;
+                    float diffY = args.Location.Y - _lastLocation.Y;
+                    _lastLocation = args.Location;
                     _graph.Move(diffX, diffY);
                 }
 
@@ -108,6 +111,7 @@ namespace LAMA.Views
                 _touchActions.Remove(args.Id);
             }
 
+            // Redraw graph every touch
             _graph.InvalidateSurface();
         }
     }
