@@ -6,8 +6,7 @@
              Title="Zobrazení Aktivity"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
-			 x:DataType="viewmodel:DisplayActivityViewModel">
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Přihlásit se" Command="{Binding SignUpCommand}"/>
@@ -82,6 +81,21 @@
 					<Label Grid.Row="1" Grid.Column="2" Text="4" MinimumWidthRequest="100" WidthRequest="100"/>
 				</Grid>
 
+				<Label Text="Závislost na aktivitách"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<StackLayout BindableLayout.ItemsSource="{Binding Dependencies}" Margin="0,0,0,20">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<Grid HorizontalOptions="Fill">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Column="0" Text="{Binding Name}"/>
+							</Grid>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</StackLayout>
 
 				<Label Text="Potřebná příprava"
 					   HorizontalTextAlignment="Start"

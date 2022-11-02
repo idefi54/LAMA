@@ -40,6 +40,9 @@ namespace LAMA.ViewModels
 		
 
 
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
 
 
 
@@ -54,6 +57,8 @@ namespace LAMA.ViewModels
 
 		public DisplayActivityViewModel(INavigation navigation, LarpActivity activity)
         {
+			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+
 			Navigation = navigation;
 
             _activity = activity;
@@ -69,6 +74,12 @@ namespace LAMA.ViewModels
 			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
+
+			foreach(var id in _activity.prerequisiteIDs)
+			{
+				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
+				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
+			}
 
 
 

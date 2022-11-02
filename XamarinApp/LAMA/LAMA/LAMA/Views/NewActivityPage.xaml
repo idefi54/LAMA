@@ -124,7 +124,7 @@
 						</DataTemplate>
 					</BindableLayout.ItemTemplate>
 				</StackLayout>
-				<Button Text="+" HorizontalOptions="Start" Command="{Binding AddDependencyCommand}"/>
+				<Button Text="Přidat závislost" HorizontalOptions="Start" Command="{Binding AddDependencyCommand}"/>
 
 				<Label Text="Potřebná příprava"
 					   HorizontalTextAlignment="Start"
