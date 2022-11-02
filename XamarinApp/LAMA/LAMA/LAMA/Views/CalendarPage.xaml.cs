@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using LAMA.ActivityGraphLib;
+using LAMA.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -20,7 +17,7 @@ namespace LAMA.Views
         Label _dateLabel;
         static DateTime _date;
         DateTime _first => _date.AddDays(-_date.Day + 1);
-        string[] _days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        string[] _days = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
 
         public CalendarPage()
         {
@@ -45,7 +42,6 @@ namespace LAMA.Views
             _leftButton.FontSize = 20;
             _leftButton.TextColor = Color.Blue;
             _leftButton.Clicked += (object sender, EventArgs e) => { _date = _date.AddMonths(-1); Refresh(); };
-
 
             _rightButton.Text = ">";
             _rightButton.HorizontalOptions = LayoutOptions.Center;
@@ -80,8 +76,12 @@ namespace LAMA.Views
                 };
                 _color = _daysInMonth[i].BackgroundColor;
 
-                _daysInMonth[i].Clicked += (object sender, EventArgs e) => {
-                    ActivityGraph.TimeOffset = _first.AddDays(int.Parse((sender as Button).Text) - 1); Navigation.PopModalAsync(); };
+                _daysInMonth[i].Clicked += (object sender, EventArgs e) =>
+                {
+                    var time = ActivityGraph.Instance.TimeOffset;
+                    TimeSpan small = new TimeSpan(0, time.Hour, time.Minute, time.Second, time.Millisecond);
+                    ActivityGraph.Instance.TimeOffset = _first.AddDays(int.Parse((sender as Button).Text) - 1).Add(-small); Navigation.PopModalAsync();
+                };
                 grid.Children.Add(_daysInMonth[i], (i + (int)_first.DayOfWeek) % 7, (i + (int)_first.DayOfWeek) / 7 + 2);
             }
 
