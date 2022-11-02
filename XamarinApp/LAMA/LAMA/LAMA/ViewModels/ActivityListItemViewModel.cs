@@ -16,7 +16,7 @@ namespace LAMA.ViewModels
 
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + (_larpActivity.eventType == Models.LarpActivity.EventType.normal ? "(N)" : "(P)");
 
-        public string Detail => _larpActivity == null ? "" : "začíná za " + TimeFormat(_larpActivity.start.hours, _larpActivity.start.minutes);
+        public string Detail => _larpActivity == null ? "" : "začíná za " + "IMPLEMENT";
 
 
         private bool _showDeleteButton;

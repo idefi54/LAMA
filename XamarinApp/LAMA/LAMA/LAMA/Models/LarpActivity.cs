@@ -65,14 +65,13 @@ namespace LAMA.Models
 
 
 
-        Time _duration = new Time();
-        public Time duration
+        long _duration = 0;
+        public long duration
         {
             get { return _duration; }
             set
             {
                 _duration = value;
-                _duration.dataChanged += durationChanged;
                 updateValue(6, value.ToString());
             }
         }
@@ -88,14 +87,13 @@ namespace LAMA.Models
             }
         }
 
-        Time _start = new Time();
-        public Time start
+        long _start = 0;
+        public long start
         {
             get { return _start; }
             set
             {
                 _start = value;
-                start.dataChanged += startChanged;
                 updateValue(8, _start.ToString());
             }
         }
@@ -152,8 +150,6 @@ namespace LAMA.Models
         void initChangeListeners()
         {
             _prerequisiteIDs.dataChanged += onPrerequisiteChange;
-            _duration.dataChanged += durationChanged;
-            _start.dataChanged += startChanged;
             _requiredItems.dataChanged += requiredItemsChange;
             _roles.dataChanged += rolesChange;
             _registrationByRole.dataChanged += registrationByRoleChanged;
@@ -163,7 +159,7 @@ namespace LAMA.Models
             initChangeListeners();
         }
         public LarpActivity(int ID, string name, string description, string preparation, EventType eventType, EventList<int> prerequisiteIDs,
-            Time duration, int day, Time start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
+            long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
             EventList<Pair<string, int>> roles, EventList<Pair<int, string>> registrations)
         {
             _ID = ID;
@@ -184,8 +180,8 @@ namespace LAMA.Models
             initChangeListeners();
         }
 
-        public void UpdateWhole(string name, string description, string preparation, EventType eventType, Time duration, int day,
-            Time start, Pair<double, double> place, Status status)
+        public void UpdateWhole(string name, string description, string preparation, EventType eventType, long duration, int day,
+            long start, Pair<double, double> place, Status status)
         {
             if (name != _name)
                 this.name = name;
@@ -313,13 +309,13 @@ namespace LAMA.Models
                     _prerequisiteIDs.dataChanged += onPrerequisiteChange;
                     break;
                 case 6:
-                    _duration.setRawMinutes( Helpers.readInt(value), false);
+                    _duration = Helpers.readLong(value);
                     break;
                 case 7:
                     _day = Helpers.readInt(value);
                     break;
                 case 8:
-                    _start.setRawMinutes(Helpers.readInt(value), false);
+                    _start = Helpers.readLong(value);
                     break;
                 case 9:
                     _place = Helpers.readDoublePair(value);
