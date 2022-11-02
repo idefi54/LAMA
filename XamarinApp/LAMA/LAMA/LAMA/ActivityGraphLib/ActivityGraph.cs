@@ -10,33 +10,29 @@ using LAMA.ActivityGraphLib;
 
 namespace LAMA.ActivityGraphLib
 {
+    /// <summary>
+    /// Holds all logic for drawing the graph.
+    /// </summary>
     public class ActivityGraph
     {
-        public static ActivityGraph Instance
-        {
-            get;
-            set;
-        }
-
         // private
         private float _width;
         private float _height;
-        public float OffsetY { get; private set; }
-        public float XamOffset => (float)_canvasLayout.Y;
         private float _columnWidth => _width / 24;
         private float _maxOffsetY => -_height * Zoom + _height - 200;
+        private Label _dateLabel => DateView?.Children[1] as Label;
+        private SKCanvasView _canvasView => _canvasLayout.Children[0] as SKCanvasView;
+        private float _zoom;
+        private static DateTime loadPoint;
+        private DateTime _timeOffset;
 
+        // Public
+        public float OffsetY { get; private set; }
+        public float XamOffset => (float)_canvasLayout.Y;
         public Label[] TimeLabels { get; set; }
         public Layout<View> DateView { get; set; }
         private Layout<View> _canvasLayout;
-        private Label _dateLabel => DateView?.Children[1] as Label;
-        private SKCanvasView _canvasView => _canvasLayout.Children[0] as SKCanvasView;
-
-        // Public
-        private float _zoom;
         public float Zoom { get { return _zoom; } set { _zoom = Math.Max(1, value); } }
-
-        private DateTime _timeOffset;
         public DateTime TimeOffset
         {
             get { return _timeOffset; }
@@ -51,10 +47,10 @@ namespace LAMA.ActivityGraphLib
 
             }
         }
-
-        private static DateTime loadPoint;
         public float MinuteWidth => _columnWidth / 60;
-        public bool DirtyActivities = false;
+        public float FromPixels(float x) => x * (float)_canvasView.Width / _width;
+        public float ToPixels(float x) => x * _width / (float)_canvasView.Width;
+
 
         public ActivityGraph(Layout<View> canvasGrid)
         {
@@ -66,9 +62,10 @@ namespace LAMA.ActivityGraphLib
             _canvasView.InvalidateSurface();
         }
 
-        public float FromPixels(float x) => x * (float)_canvasView.Width / _width;
-        public float ToPixels(float x) => x * _width / (float)_canvasView.Width;
-
+        /// <summary>
+        /// Updates graph size and font sizes.
+        /// </summary>
+        /// <param name="args"></param>
         public void Update(SKPaintSurfaceEventArgs args)
         {
             _width = args.Info.Width;
@@ -91,6 +88,12 @@ namespace LAMA.ActivityGraphLib
             }
         }
 
+        /// <summary>
+        /// Scrolls through the graff in x and y axis.
+        /// x represents time.
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
         public void Move(float dx, float dy)
         {
             dx = ToPixels(dx);
@@ -101,6 +104,10 @@ namespace LAMA.ActivityGraphLib
             OffsetY = Math.Max(_maxOffsetY, OffsetY);
         }
 
+        /// <summary>
+        /// Draws the entire graph.
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Draw(SKCanvas canvas)
         {
             canvas.Clear(SKColors.Black);
@@ -184,12 +191,19 @@ namespace LAMA.ActivityGraphLib
             DrawConnections(canvas);
         }
 
+        /// <summary>
+        /// Disables ActivityButtons and makes it possible to move them with mouse.
+        /// </summary>
+        /// <param name="edit"></param>
         public void SwitchEditMode(bool edit)
         {
             foreach (ActivityButton button in ActivityButtons())
                 button.IsEnabled = !edit;
         }
 
+        /// <summary>
+        /// Reload ActivityButtons with new activities from database at current span of days.
+        /// </summary>
         public void ReloadActivities()
         {
 
@@ -209,6 +223,10 @@ namespace LAMA.ActivityGraphLib
                 _canvasLayout.Children.Add(new ActivityButton(activity, this));
         }
 
+        /// <summary>
+        /// Connects ActivityButtons on graph that serve as prerequisites to another activity.
+        /// </summary>
+        /// <param name="canvas"></param>
         public void DrawConnections(SKCanvas canvas)
         {
             foreach (ActivityButton button1 in ActivityButtons())
@@ -217,6 +235,12 @@ namespace LAMA.ActivityGraphLib
                         ActivityButton.DrawConnection(canvas, this, button1, button2);
         }
 
+        /// <summary>
+        /// Loops over all ActivityButtons and returns first match in touch location x,y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public ActivityButton GetButtonAt(float x, float y)
         {
             foreach (ActivityButton button in ActivityButtons())
@@ -228,6 +252,11 @@ namespace LAMA.ActivityGraphLib
             return null;
         }
 
+        /// <summary>
+        /// Creates and adds new ActivityButton to canvas layout.
+        /// </summary>
+        /// <param name="activity"></param>
+        /// <returns></returns>
         public ActivityButton AddActivity(LarpActivity activity)
         {
             var button = new ActivityButton(activity, this);
@@ -235,6 +264,9 @@ namespace LAMA.ActivityGraphLib
             return button;
         }
 
+        /// <summary>
+        /// Invalidates CanvasView to redraw the graph.
+        /// </summary>
         public void InvalidateSurface()
         {
             _canvasView.InvalidateSurface();

@@ -4,12 +4,14 @@ using LAMA.Models;
 using LAMA.Views;
 using SkiaSharp;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace LAMA.ActivityGraphLib
 {
+    /// <summary>
+    /// Button containing LarpActivity and logic to be drawn on ActivityGraph.
+    /// New methods affect the activity itself.
+    /// </summary>
     public class ActivityButton : Button
     {
         private ActivityGraph _activityGraph;
@@ -22,10 +24,15 @@ namespace LAMA.ActivityGraphLib
             Text = activity.name;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.Start;
-            _yPos = 20;
-            Clicked += (object sender, EventArgs e) => { Navigation.PushAsync(new DisplayActivityPage(activity)); };
+            _yPos = 20; // TODO: Make load from button database when available
+
+            // Clicking the button displays the activity
+            Clicked += (object sender, EventArgs e) => Navigation.PushAsync(new DisplayActivityPage(activity));
         }
 
+        /// <summary>
+        /// Updates position and visual of the button
+        /// </summary>
         public void Update()
         {
             var now = DateTime.Now;
@@ -43,6 +50,12 @@ namespace LAMA.ActivityGraphLib
             BackgroundColor = GetColor(Activity.status);
             CornerRadius = GetCornerRadius(Activity.eventType);
         }
+
+        /// <summary>
+        /// Moves the button to (x,y) and updates LarpActivity accordingly.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Move(float x, float y)
         {
             var now = DateTime.Now;
@@ -56,6 +69,11 @@ namespace LAMA.ActivityGraphLib
             Activity.start = newTime.Hour * 60 + newTime.Minute;
             Activity.day = newTime.Day;
         }
+
+        /// <summary>
+        /// Moves only in y-axis.
+        /// </summary>
+        /// <param name="y"></param>
         public void MoveY(float y) => _yPos = y - _activityGraph.XamOffset;
 
         private int GetCornerRadius(LarpActivity.EventType type)
@@ -88,6 +106,18 @@ namespace LAMA.ActivityGraphLib
             }
         }
 
+        /// <summary>
+        /// Test Method for fast creating LarpActivities.
+        /// TODO: Delete later.
+        /// </summary>
+        /// <param name="durationMinutes"></param>
+        /// <param name="startMinutes"></param>
+        /// <param name="day"></param>
+        /// <param name="status"></param>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public static LarpActivity CreateActivity(int durationMinutes, int startMinutes, int day, LarpActivity.Status status = LarpActivity.Status.readyToLaunch, LarpActivity.EventType type = LarpActivity.EventType.normal, string name = "test", string description = "Test description")
         {
             return new LarpActivity(
@@ -108,6 +138,13 @@ namespace LAMA.ActivityGraphLib
                 );
         }
 
+        /// <summary>
+        /// Draws bezier curve between 2 buttons.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="graph"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
         public static void DrawConnection(SKCanvas canvas, ActivityGraph graph, ActivityButton a, ActivityButton b)
         {
             float ax = graph.ToPixels((float)a.TranslationX);
