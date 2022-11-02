@@ -17,7 +17,7 @@ namespace LAMA.Views
         Label _dateLabel;
         static DateTime _date;
         DateTime _first => _date.AddDays(-_date.Day + 1);
-        string[] _days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        string[] _days = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
 
         public CalendarPage()
         {
