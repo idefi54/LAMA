@@ -205,9 +205,9 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public void ReloadActivities()
         {
-
             // Remove all instances of ActivityButton
-            for (int i = 0; i < _canvasLayout.Children.Count - 1; i++)
+            int count = _canvasLayout.Children.Count;
+            for (int i = 0; i < count - 1; i++)
                 _canvasLayout.Children.RemoveAt(1);
 
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
