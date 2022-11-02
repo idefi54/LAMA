@@ -41,13 +41,11 @@ namespace LAMA.Views
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
-            // adds if not present
-            // updates if present
-            _touchActions[args.Id] = args;
-
             // New Press
             if (args.Type == TouchActionType.Pressed)
             {
+                _touchActions[args.Id] = args;
+
                 if (_touchActions.Count == 1)
                 {
                     _draggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
@@ -71,12 +69,16 @@ namespace LAMA.Views
             // Moving button
             if (args.Type == TouchActionType.Moved && _draggedButton != null)
             {
+                if (_touchActions.ContainsKey(args.Id))
+                    _touchActions[args.Id] = args;
                 _draggedButton.Move(args.Location.X, args.Location.Y);
             }
 
             // Control graph view
             if (args.Type == TouchActionType.Moved && _draggedButton == null)
             {
+                if (_touchActions.ContainsKey(args.Id))
+                    _touchActions[args.Id] = args;
                 // Scroll graph
                 if (_touchActions.Count == 1)
                 {
