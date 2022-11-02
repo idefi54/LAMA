@@ -79,9 +79,9 @@ namespace LAMA.ViewModels
 				Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
 				
-				foreach(int item in larpActivity.prerequisiteIDs)
+				foreach(int id in larpActivity.prerequisiteIDs)
 				{
-					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[item]));
+					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
 				}
 			}
 			else

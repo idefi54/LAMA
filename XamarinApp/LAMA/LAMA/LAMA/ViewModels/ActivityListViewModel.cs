@@ -207,6 +207,14 @@ namespace LAMA.ViewModels
             if(result)
             {
                 LarpActivityListItems.Remove(activityViewModel);
+                RememberedList<LarpActivity, LarpActivityStorage> rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+                for (int i = 0; i < rememberedList.Count; i++)
+				{
+                    if (rememberedList[i].prerequisiteIDs.Contains(activityViewModel.LarpActivity.ID))
+					{
+                        rememberedList[i].prerequisiteIDs.Remove(activityViewModel.LarpActivity.ID);
+					}
+				}
                 DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.removeByID(activityViewModel.LarpActivity.getID());
             }
         }
