@@ -50,13 +50,26 @@ namespace LAMA
             string path = Path.Combine(directory, "database.db");
 
             if (!File.Exists(path))
-                File.Create(path);
+                File.Create(path).Flush();
 
             _connection = new SQLiteAsyncConnection(path);
 
             return _connection;
         }
 
+        public static void ResetDatabase()
+        {
+            string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string path = Path.Combine(directory, "database.db");
+
+            if (File.Exists(path))
+            {
+                _connection = null;
+                File.Delete(path);
+                makeConnection();
+            }
+
+        }
     }
 
 

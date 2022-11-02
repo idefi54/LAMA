@@ -1,11 +1,12 @@
 ﻿using LAMA.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace LAMA.ViewModels
 {
-    public class InventoryItemViewModel : BaseViewModel
+    public class InventoryItemViewModel : BaseViewModel, INotifyPropertyChanged
     {
         InventoryItem _item;
 
@@ -29,8 +30,33 @@ namespace LAMA.ViewModels
         public InventoryItemViewModel(InventoryItem item)
         {
             _item = item;
-
+            item.IGotUpdated += onChange;
         }
+        public event PropertyChangedEventHandler PropertyChanged;
+        void onChange(object sender, int index)
+        {
+            string propName = "";
+
+            switch(index)
+            {
+                case 1: 
+                    propName = nameof(Name);
+                    break;
+                case 2:
+                    propName = nameof(Detail);
+                    break;
+                case 3:
+                    propName = nameof(Borrowed);
+                    break;
+                case 4: propName = nameof(Free);
+                    break;
+                default:
+                    return;
+            }
+            
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
         
     }
 }

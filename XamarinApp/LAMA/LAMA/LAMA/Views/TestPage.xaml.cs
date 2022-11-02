@@ -67,6 +67,10 @@ namespace LAMA.Views
 
 			}
         }
+        void OnResetDatabase(object sender, EventArgs args)
+        {
+            SQLConnectionWrapper.ResetDatabase();
+        }
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {
@@ -88,5 +92,6 @@ namespace LAMA.Views
 
             activity = larpActivity.CreateLarpActivity();
         }
+
     }
 }
