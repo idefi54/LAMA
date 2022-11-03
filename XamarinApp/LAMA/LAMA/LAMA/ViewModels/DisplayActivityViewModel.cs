@@ -62,9 +62,9 @@ namespace LAMA.ViewModels
 			Name = _activity.name;
 			Description = _activity.description;
 			Type = _activity.eventType.ToString();
-			DateTime dt = DateTimeExtention.UnixTimeStampToDateTime(_activity.duration);
+			DateTime dt = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(_activity.duration);
 			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtention.UnixTimeStampToDateTime(_activity.start);
+			dt = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(_activity.start);
 			Start = dt.Hour + ":" + dt.Minute;
 			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
@@ -102,9 +102,9 @@ namespace LAMA.ViewModels
 			Name = larpActivity.name;
 			Description = larpActivity.description;
 
-			DateTime dt = DateTimeExtention.UnixTimeStampToDateTime(larpActivity.duration);
+			DateTime dt = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(larpActivity.duration);
 			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtention.UnixTimeStampToDateTime(larpActivity.start);
+			dt = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(larpActivity.start);
 			Start = dt.Hour + ":" + dt.Minute;
 			DayIndex = (larpActivity.day + 1) + ".";
 			Preparations = larpActivity.preparationNeeded;

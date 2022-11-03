@@ -39,12 +39,12 @@ namespace LAMA.ViewModels
             ShowDeleteButton = false;
         }
 
-        string TimeFormat(int unixStart)
+        string TimeFormat(long unixStart)
         {
 
             long nowSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            long resultSeconds = unixStart - nowSeconds;
+            long resultSeconds = (unixStart/1000) - nowSeconds;
 
             string result = "";
 

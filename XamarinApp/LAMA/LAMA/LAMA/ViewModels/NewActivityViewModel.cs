@@ -65,8 +65,8 @@ namespace LAMA.ViewModels
 				Description = activity.description;
 				Type = activity.eventType.ToString();
 				TypeIndex = (int)activity.eventType;
-				Duration = DateTimeExtention.UnixTimeStampToDateTime(activity.duration);
-				Start = DateTimeExtention.UnixTimeStampToDateTime(activity.start);
+				Duration = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(activity.duration);
+				Start = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(activity.start);
 				Day = activity.day;
 				Preparations = activity.preparationNeeded;
 				
@@ -121,7 +121,7 @@ namespace LAMA.ViewModels
 			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				new EventList<int>(),
-				Duration.ToUnixTimeSeconds(), Day, Start.ToUnixTimeSeconds(),
+				Duration.ToUnixTimeMiliseconds(), Day, Start.ToUnixTimeMiliseconds(),
 				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 
