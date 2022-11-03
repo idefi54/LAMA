@@ -16,7 +16,7 @@ namespace LAMA.ViewModels
 
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + (_larpActivity.eventType == Models.LarpActivity.EventType.normal ? "(N)" : "(P)");
 
-        public string Detail => _larpActivity == null ? "" : "začíná za " + "IMPLEMENT";
+        public string Detail => _larpActivity == null ? "" : "začíná za " + TimeFormat(_larpActivity.start);
 
 
         private bool _showDeleteButton;
@@ -39,20 +39,26 @@ namespace LAMA.ViewModels
             ShowDeleteButton = false;
         }
 
-        string TimeFormat(int hours, int minutes)
+        string TimeFormat(int unixStart)
         {
-            int fullMinutes = hours * 60 + minutes;
 
-            int nowMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+            long nowSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            int resultMinutes = fullMinutes - nowMinutes;
+            long resultSeconds = unixStart - nowSeconds;
 
             string result = "";
-            int resultHours = resultMinutes / 60;
+
+            long resultMinutes = (resultSeconds / 60) % 60;
+            long resultHours = resultMinutes / 3600;
+
             if (resultHours > 0)
                 result = resultHours.ToString() + "h ";
 
-            result += (resultMinutes - resultHours * 60) + "m";
+            if (resultMinutes > 0)
+                result = resultMinutes.ToString() + "h ";
+
+
+            result += (resultSeconds - resultMinutes * 60) + "m";
 
             return result;
 
