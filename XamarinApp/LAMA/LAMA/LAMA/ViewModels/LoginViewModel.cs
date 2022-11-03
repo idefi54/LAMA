@@ -20,8 +20,9 @@ namespace LAMA.ViewModels
         public string ClientPassword { get; set; }
 
         public string ServerName { get; set; }
-        public string ServerIP { get; set; }
-        public string ServerPort { get; set; }
+        public string ServerNgrokEndpoint { get; set; }
+        //public string ServerIP { get; set; }
+        //public string ServerPort { get; set; }
         public string ServerPassword { get; set; }
 
         private string _errorLabel;
@@ -62,10 +63,11 @@ namespace LAMA.ViewModels
         private async void OnServerLoginClicked(object obj)
         {
             string name = ServerName;
-            string IP = ServerIP;
+            //string IP = ServerIP;
+            string ngrokEndpoint = ServerNgrokEndpoint;
             string password = ServerPassword;
-            int port;
-
+            //int port;
+            /*
             try
             {
                 port = int.Parse(ServerPort);
@@ -75,7 +77,7 @@ namespace LAMA.ViewModels
                 ErrorLabel = e.ToString();
                 return;
             }
-
+            */
 
             //name - libovolné (čísla, písmena, mezery, podtržítka, pomlčka)
             //IP - veřejná IP (je potřeba psát, nebo by šla někde vytáhnout?)
@@ -84,7 +86,8 @@ namespace LAMA.ViewModels
             try
             {
                 Console.WriteLine("Launching Communicator");
-                new ServerCommunicator(name, IP, port, password);
+                new ServerCommunicator(name, ngrokEndpoint, password);
+                //new ServerCommunicator(name, IP, port, password);
                 Console.WriteLine("Communicator launched");
 
             }

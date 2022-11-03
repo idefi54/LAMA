@@ -19,12 +19,14 @@
 				<Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ClientPassword}"/>
 				<Button Text="Přihlásit se jako klient" HorizontalOptions="Center" Command="{Binding LoginCommand}"/>
 				<Label Text="Jméno serveru:"/>
-				<Entry Placeholder="Jméno serveru" Text="{Binding ServerName}"/>
-				<Label Text="Veřejná IP:"/>
+                <Entry Placeholder="Jméno serveru" Text="{Binding ServerName}"/>
+                <!--<Label Text="Veřejná IP:"/>
 				<Entry Placeholder="Veřejná IP" Keyboard="Numeric" Text="{Binding ServerIP}"/>
 				<Label Text="Port:"/>
-				<Entry Placeholder="Port" Keyboard="Numeric" Text="{Binding ServerPort}"/>
-				<Label Text="Heslo:"/>
+                <Entry Placeholder="Port" Keyboard="Numeric" Text="{Binding ServerPort}"/>-->
+                <Label Text="Ngrok EndPoint:"/>
+                <Entry Placeholder="Ngrok endpoint, example: tcp://4.tcp.eu.ngrok.io:15637" Text="{Binding ServerNgrokEndpoint}"/>
+                <Label Text="Heslo:"/>
 				<Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ServerPassword}"/>
 				<Button Text="Přihlásit se jako server" HorizontalOptions="Center" Command="{Binding ServerLoginCommand}"/>
 				<Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}"/>

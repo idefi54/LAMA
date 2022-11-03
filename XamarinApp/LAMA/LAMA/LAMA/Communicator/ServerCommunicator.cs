@@ -263,12 +263,7 @@ namespace LAMA.Communicator
             }
         }
 
-        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
-        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongPasswordException">Wrong password used for existing server</exception>
-        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
-        /// <exception cref="WrongPortException">Port number not in the valid range</exception>
-        public ServerCommunicator(string name, string IP, int port, string password)
+        public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password)
         {
             if (name != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
             logger = new DebugLogger(false);
@@ -281,7 +276,7 @@ namespace LAMA.Communicator
             {
                 throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 characters");
             }
-            if (port < 0 || port > 65535)
+            if (localPort < 0 || localPort > 65535 || distantPort < 0 || distantPort > 65535)
             {
                 throw new WrongPortException("Ports must be in range [0..65535]");
             }
@@ -294,7 +289,7 @@ namespace LAMA.Communicator
             {
                 { "name", "\"" + name + "\"" },
                 { "IP", "\"" + IP + "\"" },
-                { "port", port.ToString() },
+                { "port", distantPort.ToString() },
                 { "password", "\"" + password + "\"" }
             };
 
@@ -325,8 +320,18 @@ namespace LAMA.Communicator
 
             logger.LogWrite("No exceptions");
             //maxClientID = 0;
-            serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
+            IPAddress ipAddress;
+            IPAddress.TryParse(IP, out ipAddress);
+            if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
+            {
+                serverSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                serverSocket.Bind(new IPEndPoint(IPAddress.IPv6Any, localPort));
+            }
+            else
+            {
+                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                serverSocket.Bind(new IPEndPoint(IPAddress.Any, localPort));
+            }
             serverSocket.Listen(64);
             server = new Thread(StartServer);
             server.Start();
@@ -361,7 +366,8 @@ namespace LAMA.Communicator
             LocalStorage.serverName = name;
             LocalStorage.cpID = 0;
             LocalStorage.clientID = 0;
-            if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null) {
+            if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null)
+            {
                 //long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
                 //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
@@ -369,6 +375,24 @@ namespace LAMA.Communicator
                     LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, "", "", "", ""));
             }
             logger.LogWrite("Initialization finished");
+        }
+
+        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
+        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
+        /// <exception cref="WrongPasswordException">Wrong password used for existing server</exception>
+        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
+        /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        public ServerCommunicator(string name, string IP, int port, string password)
+        {
+            initServerCommunicator(name, IP, port, port, password);
+        }
+
+        public ServerCommunicator(string name, string ngrokAddress, string password)
+        {
+            string[] addressParts = ngrokAddress.Split(':');
+            IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
+            Debug.WriteLine(addresses[0]);
+            initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password);
         }
 
         private void SendCommand(string commandText, string objectID)
