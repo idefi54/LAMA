@@ -20,7 +20,6 @@ namespace LAMA.UWP
         public MainPage()
         {
             this.InitializeComponent();
-
             LoadApplication(new LAMA.App());
         }
     }

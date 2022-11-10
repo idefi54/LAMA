@@ -11,6 +11,7 @@ using System.Diagnostics;
 using LAMA.Extensions;
 using SkiaSharp.Views.Forms;
 
+
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -32,7 +33,7 @@ namespace LAMA.Views
             // Create platform specific GUI
             var gui = DependencyService.Get<IActivityGraphGUI>();
             (Content, _graph) = gui.CreateGUI(Navigation);
-            
+
             // Setup Touch effect - this is a nuget package
             var touchEffect = new TouchEffect();
             touchEffect.Capture = true;
@@ -68,6 +69,12 @@ namespace LAMA.Views
                     float dy = a.Y - b.Y;
                     _baseDistance = (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy));
                     _baseZoom = _graph.Zoom;
+                }
+
+                if (_graph.ActivityCreationMode)
+                {
+                    var aButton = new ActivityButton();
+                    _graph.AddActivity(ActivityButton.CreateActivity(60, ));
                 }
             }
 
@@ -114,6 +121,8 @@ namespace LAMA.Views
             }
 
             // Redraw graph every touch
+            _graph.MouseX = args.Location.X;
+            _graph.MouseY = args.Location.Y;
             _graph.InvalidateSurface();
         }
     }

@@ -3,14 +3,18 @@ using LAMA.Views;
 using SkiaSharp.Views.Forms;
 using System;
 using Xamarin.Forms;
+using Windows.UI.Xaml;
+using Windows.System;
 
 
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
 {
-    
+
     internal class UWPActivityGraphGUI : IActivityGraphGUI
     {
+        private bool previous = false;
+
         public (Layout<View>, ActivityGraph) CreateGUI(INavigation navigation)
         {
             var canvasView = CreateCanvasView();
@@ -23,6 +27,20 @@ namespace LAMA.UWP
             {
                 graph.Update(args);
                 graph.Draw(args.Surface.Canvas);
+            };
+
+
+            Window.Current.CoreWindow.KeyDown += (Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs args) =>
+            {
+                if (args.VirtualKey == VirtualKey.Control)
+                    graph.SwitchActivityCreationMode(true);
+                canvasView.InvalidateSurface();
+            };
+            Window.Current.CoreWindow.KeyUp += (Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs args) =>
+            {
+                if (args.VirtualKey == VirtualKey.Control)
+                    graph.SwitchActivityCreationMode(false);
+                canvasView.InvalidateSurface();
             };
 
             Layout<View> controlRow = CreateControlRow(graph, canvasView, navigation);
@@ -175,6 +193,11 @@ namespace LAMA.UWP
             canvasView.VerticalOptions = LayoutOptions.FillAndExpand;
 
             return canvasView;
+        }
+
+        private bool IsKeyDown(VirtualKey key)
+        {
+            return Window.Current.CoreWindow.GetKeyState(key) == Windows.UI.Core.CoreVirtualKeyStates.Down;
         }
     }
 }
