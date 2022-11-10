@@ -8,6 +8,7 @@ using LAMA.ActivityGraphLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using LAMA.Extentions;
 
 namespace LAMA.Views
 {
@@ -30,8 +31,7 @@ namespace LAMA.Views
         public void Update()
         {
             var now = DateTime.Now;
-            var time = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            time = time.AddSeconds(_activity.start).ToLocalTime();
+            var time = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(_activity.start);
             TimeSpan span = time - ActivityGraph.TimeOffset;
 
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
@@ -53,7 +53,7 @@ namespace LAMA.Views
 
             float minutes = x / _activityGraph.MinuteWidth / _activityGraph.Zoom;
             DateTime newTime = ActivityGraph.TimeOffset.AddMinutes(minutes);
-            _activity.start = (new DateTimeOffset(newTime.ToUniversalTime())).ToUnixTimeSeconds();
+            _activity.start = newTime.ToUnixTimeMiliseconds();
             _activity.day = newTime.Day;
         }
         public void MoveY(float y) => _yPos = y;
@@ -99,7 +99,7 @@ namespace LAMA.Views
                 prerequisiteIDs: new EventList<int>(),
                 duration: durationMinutes,
                 day: day,
-                start: (int)(new DateTimeOffset(start.ToUniversalTime())).ToUnixTimeSeconds(),
+                start: start.ToUnixTimeMiliseconds(),
                 place: new Pair<double, double>(0.0, 0.0),
                 status: status,
                 requiredItems: new EventList<Pair<int, int>>(),
@@ -268,19 +268,6 @@ namespace LAMA.Views
             paint.StrokeWidth = 3;
             canvas.DrawLine(0, offset, 10, offset, paint);
             canvas.DrawLine(0, offset + _height - 200, 10, offset + _height - 200, paint);
-
-            // For Testing
-            {
-                paint.Color = SKColors.WhiteSmoke;
-                _activityButtons[0].DrawConnection(canvas, _activityButtons[1]);
-                _activityButtons[1].DrawConnection(canvas, _activityButtons[2]);
-                _activityButtons[0].DrawConnection(canvas, _activityButtons[3]);
-
-                _activityButtons[5].DrawConnection(canvas, _activityButtons[9]);
-                _activityButtons[6].DrawConnection(canvas, _activityButtons[4]);
-                _activityButtons[7].DrawConnection(canvas, _activityButtons[5]);
-
-            }
         }
 
         public void SwitchEditMode(bool edit)
