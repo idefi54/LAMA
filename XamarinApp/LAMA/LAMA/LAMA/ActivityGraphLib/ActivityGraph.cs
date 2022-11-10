@@ -24,6 +24,9 @@ namespace LAMA.ActivityGraphLib
         private float _zoom;
         private static DateTime loadPoint;
         private DateTime _timeOffset;
+        public bool ActivityCreationMode { get; private set; } = false;
+        private float _mouseX;
+        private float _mouseY;
 
         // Public
         public float OffsetY { get; private set; }
@@ -51,6 +54,18 @@ namespace LAMA.ActivityGraphLib
         public float ToPixels(float x) => x * _width / (float)_canvasView.Width;
 
 
+        public float MouseX
+        {
+            get { return FromPixels(_mouseX); }
+            set { _mouseX = ToPixels(value); }
+        }
+        public float MouseY
+        {
+            get { return FromPixels(_mouseY); }
+            set { _mouseY = ToPixels(value - XamOffset); }
+        }
+
+
         public ActivityGraph(Layout<View> canvasGrid)
         {
             Zoom = 2;
@@ -76,9 +91,9 @@ namespace LAMA.ActivityGraphLib
             if (_width < 1000)
             {
                 //_dateLabel.FontSize = 8;
-                foreach(var label in TimeLabels)
+                foreach (var label in TimeLabels)
                     label.FontSize = 8;
-            
+
             } else
             {
                 //_dateLabel.FontSize = 14;
@@ -104,7 +119,7 @@ namespace LAMA.ActivityGraphLib
         }
 
         /// <summary>
-        /// Draws the entire graph.
+        /// Draws the entire graph onto the canvas.
         /// </summary>
         /// <param name="canvas"></param>
         public void Draw(SKCanvas canvas)
@@ -187,6 +202,10 @@ namespace LAMA.ActivityGraphLib
             canvas.DrawLine(0, offset, 10, offset, paint);
             canvas.DrawLine(0, offset + _height - 200, 10, offset + _height - 200, paint);
 
+            paint.Color = SKColors.Green;
+            if (ActivityCreationMode)
+                canvas.DrawRect(_mouseX - 50, _mouseY - 25, 100, 50, paint);
+
             DrawConnections(canvas);
         }
 
@@ -198,6 +217,16 @@ namespace LAMA.ActivityGraphLib
         {
             foreach (ActivityButton button in ActivityButtons())
                 button.IsEnabled = !edit;
+        }
+
+        /// <summary>
+        /// Switches edit mode and draws location of the new would be button.
+        /// </summary>
+        /// <param name="active"></param>
+        public void SwitchActivityCreationMode(bool active)
+        {
+            SwitchEditMode(active);
+            ActivityCreationMode = active;
         }
 
         /// <summary>
