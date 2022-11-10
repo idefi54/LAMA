@@ -15,7 +15,6 @@ namespace LAMA
             {
                 if (instance != null)
                 {
-                    Debug.WriteLine("before return existing instance");
                     return instance;
                 }
                 else

@@ -15,7 +15,7 @@ using LAMA.Singletons;
 namespace LAMA.Communicator
 {
     public class ServerCommunicator : Communicator
-    {
+    {       
         public DebugLogger logger;
         public DebugLogger Logger
         {
@@ -47,12 +47,14 @@ namespace LAMA.Communicator
         private ModelChangesManager modelChangesManager;
 
         private int maxClientID;
-
         private void StartServer()
         {
             logger.LogWrite("Starting Server");
+            Debug.WriteLine("Starting Server");
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
             logger.LogWrite("BeginAccept");
+            Debug.WriteLine("BeginAccept");
+
             timer = new System.Threading.Timer((e) =>
             {
                 ProcessBroadcast();
@@ -149,6 +151,7 @@ namespace LAMA.Communicator
         private static void AcceptCallback(IAsyncResult AR)
         {
             THIS.logger.LogWrite("accepting");
+            Debug.WriteLine("accepting");
             Socket socket = serverSocket.EndAccept(AR);
             try
             {
@@ -159,6 +162,7 @@ namespace LAMA.Communicator
                 MainThread.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.logger.LogWrite("Client socket exception");
+                    Debug.WriteLine("Client socket exception");
                 }));
                 lock (ServerCommunicator.socketsLock)
                 {
@@ -182,6 +186,7 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
+                Debug.WriteLine("Socket Exception");
                 lock (ServerCommunicator.socketsLock)
                 {
                     current.Close();
@@ -195,6 +200,7 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             string[] messages = Encoding.Default.GetString(data).Split('|');
+            Debug.WriteLine($"Message Received: {Encoding.Default.GetString(data)}");
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
@@ -251,6 +257,7 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
+                Debug.WriteLine("Second Socket Exception");
                 lock (ServerCommunicator.socketsLock)
                 {
                     current.Close();
@@ -300,10 +307,12 @@ namespace LAMA.Communicator
             {
                 var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
                 responseString = response.Result.Content.ReadAsStringAsync().Result;
+                Debug.WriteLine(responseString);
                 logger.LogWrite(responseString);
             }
             catch (HttpRequestException)
             {
+                Debug.WriteLine("Can not connect to the central server check your internet connection");
                 throw new CantConnectToCentralServerException("Can not connect to the central server check your internet connection");
             }
 
@@ -317,7 +326,6 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
-
             logger.LogWrite("No exceptions");
             //maxClientID = 0;
             IPAddress ipAddress;
@@ -330,7 +338,8 @@ namespace LAMA.Communicator
             else
             {
                 serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                serverSocket.Bind(new IPEndPoint(IPAddress.Any, localPort));
+                serverSocket.Bind(new IPEndPoint(IPAddress.Any, 42222));
+                Debug.WriteLine("IPv4");
             }
             serverSocket.Listen(64);
             server = new Thread(StartServer);
@@ -338,14 +347,13 @@ namespace LAMA.Communicator
             THIS = this;
             logger.LogWrite("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
-
             /*
             //Initialize Intervals
             DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
             DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
             DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
-            
+
             Debug.WriteLine("-------------------------------------0------------------------------------------");
             DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             Debug.WriteLine("-------------------------------------1------------------------------------------");
@@ -356,7 +364,6 @@ namespace LAMA.Communicator
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             Debug.WriteLine("-------------------------------------4------------------------------------------");
             */
-
             logger.LogWrite("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
@@ -400,6 +407,7 @@ namespace LAMA.Communicator
             long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             Command command = new Command(commandText, time, objectID);
             logger.LogWrite($"Sending Command: {commandText} | {time} | {objectID}");
+            Debug.WriteLine($"Sending Command: {commandText} | {time} | {objectID}");
             lock (ServerCommunicator.commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -409,6 +417,7 @@ namespace LAMA.Communicator
         public void SendCommand(Command command)
         {
             logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key}");
+            Debug.WriteLine($"Sending Command: {command.command} | {command.time} | {command.key}");
             lock (ServerCommunicator.commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -439,6 +448,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[maxClientID] = current;
                 logger.LogWrite($"Give new client ID: {maxClientID}");
+                Debug.WriteLine($"Give new client ID: {maxClientID}");
             }
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
             SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
