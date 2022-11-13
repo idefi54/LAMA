@@ -103,7 +103,7 @@ namespace LAMA
                 return;
             Storage storage = new Storage();
             storage.makeFromStrings(value.getAttributes());
-            storage.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
+            storage.lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             connection.InsertAsync(storage).Wait();
 
 
@@ -143,7 +143,7 @@ namespace LAMA
         {
             Storage update = new Storage();
             update.makeFromStrings(who.getAttributes());
-            update.lastChange = DateTimeOffset.Now.ToUnixTimeSeconds();
+            update.lastChange = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             connection.UpdateAsync(update).Wait();
             SQLEvents.invokeChanged(who, attributeIndex);

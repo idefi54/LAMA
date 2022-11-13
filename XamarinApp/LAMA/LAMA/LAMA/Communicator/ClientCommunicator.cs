@@ -283,11 +283,11 @@ namespace LAMA.Communicator
                         logger.LogWrite("Connected");
                         if (LocalStorage.clientID == -1)
                         {
-                            SendCommand(new Command($"GiveID;{LocalStorage.clientName}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                            SendCommand(new Command($"GiveID;{LocalStorage.clientName}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                         else
                         {
-                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                         if (broadcastTimer == null)
                         {
@@ -371,7 +371,7 @@ namespace LAMA.Communicator
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + LocalStorage.clientID;
-            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>

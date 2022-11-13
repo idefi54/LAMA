@@ -8,7 +8,7 @@ using LAMA.ActivityGraphLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using LAMA.Extentions;
+using LAMA.Extensions;
 
 namespace LAMA.Views
 {
@@ -31,7 +31,7 @@ namespace LAMA.Views
         public void Update()
         {
             var now = DateTime.Now;
-            var time = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(_activity.start);
+            var time = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
             TimeSpan span = time - ActivityGraph.TimeOffset;
 
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
@@ -53,7 +53,7 @@ namespace LAMA.Views
 
             float minutes = x / _activityGraph.MinuteWidth / _activityGraph.Zoom;
             DateTime newTime = ActivityGraph.TimeOffset.AddMinutes(minutes);
-            _activity.start = newTime.ToUnixTimeMiliseconds();
+            _activity.start = newTime.ToUnixTimeMilliseconds();
             _activity.day = newTime.Day;
         }
         public void MoveY(float y) => _yPos = y;
@@ -99,7 +99,7 @@ namespace LAMA.Views
                 prerequisiteIDs: new EventList<int>(),
                 duration: durationMinutes,
                 day: day,
-                start: start.ToUnixTimeMiliseconds(),
+                start: start.ToUnixTimeMilliseconds(),
                 place: new Pair<double, double>(0.0, 0.0),
                 status: status,
                 requiredItems: new EventList<Pair<int, int>>(),

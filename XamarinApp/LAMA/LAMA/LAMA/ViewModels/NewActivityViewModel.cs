@@ -5,7 +5,7 @@ using Xamarin.Forms;
 using LAMA.Models;
 using LAMA.Services;
 using LAMA.Models.DTO;
-using LAMA.Extentions;
+using LAMA.Extensions;
 
 namespace LAMA.ViewModels
 {
@@ -65,8 +65,8 @@ namespace LAMA.ViewModels
 				Description = activity.description;
 				Type = activity.eventType.ToString();
 				TypeIndex = (int)activity.eventType;
-				Duration = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(activity.duration);
-				Start = DateTimeExtention.UnixTimeStampMilisecondsToDateTime(activity.start);
+				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
+				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				Day = activity.day;
 				Preparations = activity.preparationNeeded;
 				
@@ -121,7 +121,7 @@ namespace LAMA.ViewModels
 			LarpActivity larpActivity = new LarpActivity(10, Name, Description, Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				new EventList<int>(),
-				Duration.ToUnixTimeMiliseconds(), Day, Start.ToUnixTimeMiliseconds(),
+				Duration.ToUnixTimeMilliseconds(), Day, Start.ToUnixTimeMilliseconds(),
 				new Pair<double, double>(lon, lat), LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 
