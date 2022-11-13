@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -382,6 +383,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            if (serverName != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             logger = new DebugLogger(false);
             _connected = false;

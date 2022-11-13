@@ -10,6 +10,7 @@ using System.Threading;
 using Xamarin.Essentials;
 using System.Diagnostics;
 using LAMA.Models;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -269,6 +270,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
+            if (name != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
             logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
