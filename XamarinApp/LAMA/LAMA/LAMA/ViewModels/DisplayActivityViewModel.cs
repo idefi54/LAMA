@@ -1,5 +1,5 @@
 ﻿using LAMA.Extensions;
-using LAMA.database;
+using LAMA.Database;
 using LAMA.Models;
 using LAMA.Models.DTO;
 using LAMA.Views;
