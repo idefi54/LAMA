@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              x:Class="LAMA.Views.LoginPage"
 			 Shell.NavBarIsVisible="False"
-			 Shell.FlyoutBehavior="Disabled">
+			 Shell.FlyoutBehavior="Disabled"
+			 Title="Přihlásit se">
     <ContentPage.Content>
 		<ScrollView>
 			<StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">

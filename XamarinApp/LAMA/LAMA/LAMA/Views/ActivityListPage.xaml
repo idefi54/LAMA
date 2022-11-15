@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              x:Class="LAMA.Views.ActivityListPage"
-			 x:Name="ActivitiesPage">
+			 x:Name="ActivitiesPage"
+			 Title="Seznam Aktivit">
 
 	<!--
 	<ContentPage.BindingContext>
