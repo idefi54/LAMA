@@ -5,6 +5,7 @@ using LAMA.Models.DTO;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
 
@@ -22,8 +23,8 @@ namespace LAMA.ViewModels
 		private string _duration;
 		private string _start;
 		private string _dayIndex;
-		private List<string> _personale;
-		private List<string> _equipment;
+		private ObservableCollection<RoleItemViewModel> _roles;
+		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
 
@@ -34,8 +35,8 @@ namespace LAMA.ViewModels
 		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
 		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
-		public List<string> Personale { get { return _personale; } set { SetProperty(ref _personale, value); } }
-		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
+		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 		
@@ -86,6 +87,11 @@ namespace LAMA.ViewModels
 			{
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
+			}
+			_roles = new ObservableCollection<RoleItemViewModel>();
+			foreach (Pair<string, int> item in _activity.roles)
+			{
+				_roles.Add(new RoleItemViewModel(item.first, item.second, 0));
 			}
 
 
