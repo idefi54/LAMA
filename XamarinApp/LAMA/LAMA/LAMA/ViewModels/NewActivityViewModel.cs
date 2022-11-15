@@ -23,7 +23,7 @@ namespace LAMA.ViewModels
 		private DateTime _duration;
 		private DateTime _start;
 		private int _day;
-		private List<string> _personale;
+		private TrulyObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -39,7 +39,7 @@ namespace LAMA.ViewModels
 		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
 		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
 		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
-		public List<string> Personale { get { return _personale; } set { SetProperty(ref _personale , value); } }
+		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -67,6 +67,9 @@ namespace LAMA.ViewModels
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			larpActivity = activity;
 			MapHandler.Instance.SetTemporaryPin(0, 0);
+
+			Roles = new TrulyObservableCollection<RoleItemViewModel>();
+
 
 			if (larpActivity != null)
             {
@@ -107,6 +110,12 @@ namespace LAMA.ViewModels
 
 			AddDependencyCommand = new Command(OnAddDependency);
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
+			AddNewRole = new Command(OnAddNewRole);
+		}
+
+		private void OnAddNewRole()
+		{
+			Roles.Add(new RoleItemViewModel("role", 1, 0));
 		}
 
 		private bool ValidateSave()
@@ -149,6 +158,8 @@ namespace LAMA.ViewModels
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
 		}
 
+		public Command AddNewRole { get; }
+
 		private async void OnCancel()
 		{
 			// This will pop the current page off the navigation stack
@@ -173,7 +184,14 @@ namespace LAMA.ViewModels
 				return;
             }
 			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
+			
+			EventList<Pair<string, int>> roles = new EventList<Pair<string, int>>();
 
+			foreach(var role in _roles)
+			{
+				roles.Add(role.ToPair());
+			}
+			
 			var dependencies = new EventList<long>();
 			
 			foreach(LarpActivityShortItemViewModel item in Dependencies)

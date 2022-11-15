@@ -92,21 +92,19 @@
 				<Label Text="Role"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<!--
-				<StackLayout Orientation="Vertical">
-					<StackLayout Orientation="Horizontal">
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Kupec"/>
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-						<Button Text="-"></Button>
-					</StackLayout>
-					<StackLayout Orientation="Horizontal">
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Bandita"/>
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="4" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-						<Button Text="-"></Button>
-					</StackLayout>
+				<StackLayout BindableLayout.ItemsSource="{Binding Roles}" Margin="0,0,0,20">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<StackLayout Orientation="Horizontal">
+								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding MaxCount}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+								<Button Text="-" Command="{Binding RemoveRole}"></Button>
+							</StackLayout>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
 				</StackLayout>
-				-->
-				<Button Text="+" HorizontalOptions="Start"></Button>
+				
+				<Button Text="+" HorizontalOptions="Start" Command="{Binding AddNewRole}"></Button>
 
 
 				<Label Text="Závislost na aktivitách"
