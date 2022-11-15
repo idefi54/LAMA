@@ -59,6 +59,7 @@ namespace LAMA.ViewModels
         {
 			if(activity != null)
             {
+				Title = "Upravit Aktivitu";
 				Id = activity.ID.ToString();
 				Name = activity.name;
 				Description = activity.description;
@@ -69,6 +70,11 @@ namespace LAMA.ViewModels
 				Day = activity.day;
 				Preparations = activity.preparationNeeded;
 				
+			}
+			else
+			{
+				Title = "Nová Aktivita";
+
 			}
 
 			_navigation = navigation;
