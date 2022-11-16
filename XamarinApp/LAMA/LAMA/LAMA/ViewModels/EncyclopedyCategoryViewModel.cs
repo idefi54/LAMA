@@ -36,19 +36,39 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command AddChildRecordCommand;
         
 
-        static List<EncyclopedyCategory> parentlessCategories = new List<EncyclopedyCategory>();
-        static List<EncyclopedyRecord> parentlessRecords = new List<EncyclopedyRecord>();
+        static ObservableCollection<EncyclopedyCategory> parentlessCategories = new ObservableCollection<EncyclopedyCategory>();
+        static ObservableCollection<EncyclopedyRecord> parentlessRecords = new ObservableCollection<EncyclopedyRecord>();
 
         INavigation Navigation;
 
 
-        List<string> _CategoryNames = new List<string>();
-        List<string> _RecordNames = new List<string>();
+        
         int _SelectedCategoryIndex;
         int _SelectedRecordIndex;
 
-        public List<string> CategoryNames { get { return _CategoryNames; } set { SetProperty(ref _CategoryNames, value); } }
-        public List<string> RecordNames { get { return _RecordNames; } set { SetProperty(ref _RecordNames, value); } }
+        public List<string> CategoryNames
+        {
+            get
+            {
+                List<string> output = new List<string>();
+                foreach(var a in parentlessCategories)
+                {
+                    output.Add(a.Name);
+                }
+                return output;
+            }
+        }
+        public List<string> RecordNames { 
+            get
+            {
+                List<string> output = new List<string>();
+                foreach(var a in parentlessRecords)
+                {
+                    output.Add(a.Name);
+                }
+                return output;
+            } 
+        }
         public int SelectedCategoryIndex { get { return _SelectedCategoryIndex; } set { SetProperty(ref _SelectedCategoryIndex, value); } }
         public int SelectedRecordIndex { get { return _SelectedRecordIndex; } set { SetProperty(ref _SelectedRecordIndex, value); } }
 
@@ -133,7 +153,7 @@ namespace LAMA.ViewModels
                 }
                 for (int i = 0; i < category.Records.Count; ++i)
                 {
-                    Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(category.Records[i])));
+                    Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(category.Records[i]), Navigation));
                 }
             }
 
@@ -168,7 +188,8 @@ namespace LAMA.ViewModels
         }
         async void onEdit()
         {
-            await Navigation.PushAsync(new EncyclopedyCategoryEditView(category));
+            if (category != null) 
+                await Navigation.PushAsync(new EncyclopedyCategoryEditView(category));
         }
         async void onCancel()
         {
@@ -195,7 +216,7 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (EncyclopedyRecordViewModel)obj;
-            await Navigation.PushAsync(new EncyclopedyRecordView(viewModel.record, Navigation));
+            await Navigation.PushAsync(new EncyclopedyRecordView(viewModel.record));
         }
         async void onOpenCategory(object obj)
         {
@@ -216,7 +237,19 @@ namespace LAMA.ViewModels
         }
         async void onAddRecord()
         {
-            await Navigation.PushAsync(new CreateEncycplopedyRecordView());
+            await Navigation.PushAsync(new CreateEncyclopedyRecordView());
+        }
+
+        async void onAddChildCategory()
+        {
+            this.category.ChildCategories.Add(parentlessCategories[SelectedCategoryIndex].ID);
+            parentlessCategories.RemoveAt(SelectedRecordIndex);
+
+        }
+        async void onAddChildRecord()
+        {
+            this.category.Records.Add(parentlessRecords[SelectedRecordIndex].ID);
+            parentlessRecords.RemoveAt(SelectedRecordIndex);
         }
     }
 }

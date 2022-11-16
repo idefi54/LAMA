@@ -35,6 +35,17 @@ namespace LAMA.Models
             }
         }
 
+        public EncyclopedyRecord()
+        {
+
+        }
+        public EncyclopedyRecord(long ID, string name, string tldr, string fullText)
+        {
+            this._ID = ID;
+            this._name = name;
+            this._tldr = tldr;
+            this._fullText = fullText;
+        }
 
         RememberedList<EncyclopedyRecord, EncyclopedyRecordStorage> list = null;
         public void addedInto(object holder)
