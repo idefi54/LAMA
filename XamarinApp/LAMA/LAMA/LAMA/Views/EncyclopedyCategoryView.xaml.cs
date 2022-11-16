@@ -16,12 +16,12 @@ namespace LAMA.Views
         public EncyclopedyCategoryView()
         {
             InitializeComponent();
-            BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(null);
+            BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(null, Navigation);
         }
         public EncyclopedyCategoryView(EncyclopedyCategory category)
         {
             InitializeComponent();
-            BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(category);
+            BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(category, Navigation);
         }
     }
 }

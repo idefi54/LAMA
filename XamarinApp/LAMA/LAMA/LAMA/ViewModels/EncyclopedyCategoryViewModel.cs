@@ -1,5 +1,7 @@
 ﻿using LAMA.Communicator;
 using LAMA.Models;
+using LAMA.Views;
+using Mapsui;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,28 +17,59 @@ namespace LAMA.ViewModels
 
         public ObservableCollection<EncyclopedyCategoryViewModel> Categories { get; }
         public ObservableCollection<EncyclopedyRecordViewModel> Records { get; }
-        string name;
+        string name="";
         public string Name { get { return name; } private set{ SetProperty(ref name, value);} }
-        string description;
+        string description="";
         public string Description { get { return description; } private set { SetProperty(ref description, value); } }
 
+        public Command<object> OpenRecordDetailsCommand;
+        public Command<object> OpenCategoryDetailsCommand;
+
         public Xamarin.Forms.Command Save;
+        public Xamarin.Forms.Command Create;
         public Xamarin.Forms.Command Edit;
         public Xamarin.Forms.Command Cancel;
         public Xamarin.Forms.Command Delete;
-        public Xamarin.Forms.Command AddChildCategory;
-        public Xamarin.Forms.Command AddRecord;
+        public Xamarin.Forms.Command AddCategoryCommand;
+        public Xamarin.Forms.Command AddRecordCommand;
+        public Xamarin.Forms.Command AddChildCategoryCommand;
+        public Xamarin.Forms.Command AddChildRecordCommand;
+        
 
-        List<EncyclopedyCategory> parentlessCategories = new List<EncyclopedyCategory>();
-        List<EncyclopedyRecord> parentlessRecords = new List<EncyclopedyRecord>();
+        static List<EncyclopedyCategory> parentlessCategories = new List<EncyclopedyCategory>();
+        static List<EncyclopedyRecord> parentlessRecords = new List<EncyclopedyRecord>();
 
-        public EncyclopedyCategoryViewModel(EncyclopedyCategory category)
+        INavigation Navigation;
+
+
+        List<string> _CategoryNames = new List<string>();
+        List<string> _RecordNames = new List<string>();
+        int _SelectedCategoryIndex;
+        int _SelectedRecordIndex;
+
+        public List<string> CategoryNames { get { return _CategoryNames; } set { SetProperty(ref _CategoryNames, value); } }
+        public List<string> RecordNames { get { return _RecordNames; } set { SetProperty(ref _RecordNames, value); } }
+        public int SelectedCategoryIndex { get { return _SelectedCategoryIndex; } set { SetProperty(ref _SelectedCategoryIndex, value); } }
+        public int SelectedRecordIndex { get { return _SelectedRecordIndex; } set { SetProperty(ref _SelectedRecordIndex, value); } }
+
+        public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation)
         {
             this.category = category;
+            this.Navigation = navigation;
+
+            OpenRecordDetailsCommand = new Command<object>(onOpenRecord);
+            OpenCategoryDetailsCommand = new Command<object>(onOpenCategory);
+
             Save = new Xamarin.Forms.Command(onSave);
             Edit = new Xamarin.Forms.Command(onEdit);
             Cancel = new Xamarin.Forms.Command(onCancel);
             Delete = new Xamarin.Forms.Command(onDelete);
+            Create = new Xamarin.Forms.Command(onCreate);
+            AddCategoryCommand = new Xamarin.Forms.Command(onAddCategory);
+            AddRecordCommand = new Xamarin.Forms.Command(onAddRecord);
+            AddChildCategoryCommand = new Xamarin.Forms.Command(onAddChildCategory);
+            AddChildRecordCommand = new Xamarin.Forms.Command(onAddChildRecord);
+            
 
             HashSet<long> notTakenCategoryIDs = new HashSet<long>();
             var categoryList = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
@@ -52,6 +85,7 @@ namespace LAMA.ViewModels
                 }
 
             }
+            parentlessCategories.Clear();
             foreach (var id in notTakenCategoryIDs)
             {
                 parentlessCategories.Add(categoryList.getByID(id));
@@ -73,6 +107,7 @@ namespace LAMA.ViewModels
                 }
 
             }
+            parentlessRecords.Clear();
             foreach (var id in notTakenRecordIDs)
             {
                 parentlessRecords.Add(recordList.getByID(id));
@@ -81,20 +116,20 @@ namespace LAMA.ViewModels
 
             if (category == null)
             {
-                foreach(var a in parentlessCategories)
+                foreach (var a in parentlessCategories)
                 {
-                    Categories.Add(new EncyclopedyCategoryViewModel(a));
+                    Categories.Add(new EncyclopedyCategoryViewModel(a, Navigation));
                 }
-                foreach(var a in parentlessRecords)
+                foreach (var a in parentlessRecords)
                 {
-                    Records.Add(new EncyclopedyRecordViewModel(a));
+                    Records.Add(new EncyclopedyRecordViewModel(a, Navigation));
                 }
             }
             else
             {
                 for (int i = 0; i < category.ChildCategories.Count; ++i)
                 {
-                    Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(category.ChildCategories[i])));
+                    Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(category.ChildCategories[i]), Navigation));
                 }
                 for (int i = 0; i < category.Records.Count; ++i)
                 {
@@ -104,25 +139,84 @@ namespace LAMA.ViewModels
 
         }
 
-        void onSave()
+        async void onSave()
         {
             category.Name = name;
             category.Description = description;
+            category.ChildCategories.Clear();
+            category.Records.Clear();
+            foreach(var a in Categories)
+            {
+                category.ChildCategories.Add(a.category.ID);
+            }
+            foreach(var a in Records)
+            {
+                category.Records.Add(a.record.getID());
+            }
+
+
+
+            await Navigation.PopAsync();
         }
-        void onEdit()
+        async void onCreate()
         {
-            throw new NotImplementedException();
+            var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
+            var newCategory = new EncyclopedyCategory(list.nextID(), Name, Description);
+            list.add(newCategory);
+            parentlessCategories.Add(newCategory);
+            await Navigation.PopAsync();
         }
-        void onCancel()
+        async void onEdit()
         {
-            throw new NotImplementedException();
+            await Navigation.PushAsync(new EncyclopedyCategoryEditView(category));
+        }
+        async void onCancel()
+        {
+            await Navigation.PopAsync();
         }
         void onDelete()
         {
             var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
             list.removeByID(category.ID);
-            throw new NotImplementedException("remove also the ID from other categories");
+            
+            var categoryList = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
+            for (int i = 0; i < categoryList.Count; ++i)
+            {
+                categoryList[i].ChildCategories.Remove(category.ID);
+            }
+            Navigation.PopAsync();
+        }
+        async void onOpenRecord(object obj)
+        {
+            if (obj.GetType() != typeof(EncyclopedyRecordViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(EncyclopedyRecordViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+            var viewModel = (EncyclopedyRecordViewModel)obj;
+            await Navigation.PushAsync(new EncyclopedyRecordView(viewModel.record, Navigation));
+        }
+        async void onOpenCategory(object obj)
+        {
+
+            if (obj.GetType() != typeof(EncyclopedyCategoryViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(EncyclopedyCategoryViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+            var viewModel = (EncyclopedyCategoryViewModel)obj;
+            await Navigation.PushAsync(new EncyclopedyCategoryView(viewModel.category));
         }
 
+        async void onAddCategory()
+        {
+            await Navigation.PushAsync(new CreateEncyclopedyCategoryView());
+        }
+        async void onAddRecord()
+        {
+            await Navigation.PushAsync(new CreateEncycplopedyRecordView());
+        }
     }
 }

@@ -1,23 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.EncyclopedyCategoryView"
-             xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Přidat Kategorii" Command="{Binding AddCategoryCommand}"/>
-        <ToolbarItem Text="Přidat Stránku" Command="{Binding AddRecordCommand}"/>
-        <ToolbarItem Text="Upravit" Command="{Binding Edit}"/>
-    </ContentPage.ToolbarItems>
-
-
-
-
+             x:Class="LAMA.Views.EncyclopedyCategoryEditView">
+    
+    
+    
+    
     <ContentPage.Content>
         <ScrollView>
             <StackLayout  Padding="30,15,30,15" >
-                <Label Text="{Binding Name}"/>
-                <Label Text="{Binding Description}"/>
+                <Entry Text="{Binding Name}"/>
+                <Entry Text="{Binding Description}"/>
 
 
                 <ListView x:Name="CategoryList" ItemsSource="{Binding Categories}" SelectionMode="None" Margin="5,5,5,0">
@@ -37,21 +30,18 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
 
-                                    <Grid.GestureRecognizers>
-
-                                        <TapGestureRecognizer 
-    										NumberOfTapsRequired="2"
-    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenCategoryDetailCommand}"		
-    										CommandParameter="{Binding .}">
-                                        </TapGestureRecognizer>
-
-                                    </Grid.GestureRecognizers>
+                                    
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-
+                
+                <Label Text="Přidat kategorii"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Picker Title="Jméno" ItemsSource="{Binding CategoryNames}" SelectedIndex="{Binding SelectedCategoryIndex}"  HorizontalOptions="Start"/>
+                <Button Text="Přidat" Command="{Binding AddChildCategoryCommand}" HorizontalOptions="FillAndExpand"></Button>
 
                 <ListView x:Name="RecordList" ItemsSource="{Binding Records}" SelectionMode="None" Margin="5,5,5,0">
                     <ListView.ItemTemplate>
@@ -71,20 +61,18 @@
                                     <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
                                     <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding TLDR}" FontSize="Micro" TextColor="Gray" />
 
-                                    <Grid.GestureRecognizers>
 
-                                        <TapGestureRecognizer 
-						    				NumberOfTapsRequired="2"
-						    				Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenRecordDetailCommand}"		
-						    				CommandParameter="{Binding .}">
-                                        </TapGestureRecognizer>
-
-                                    </Grid.GestureRecognizers>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+
+                <Label Text="Přidat záznam"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Picker Title="Jméno" ItemsSource="{Binding RecordNames}" SelectedIndex="{Binding SelectedRecordIndex}"  HorizontalOptions="Start"/>
+                <Button Text="Přidat" Command="{Binding AddChildRecordCommand}" HorizontalOptions="FillAndExpand"></Button>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
