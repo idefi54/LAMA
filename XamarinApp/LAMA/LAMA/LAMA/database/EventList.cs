@@ -38,8 +38,22 @@ namespace LAMA
         {
             if(Count == 0)
                 return string.Empty;
-            else 
-                return base.ToString();
+            else
+            {
+                StringBuilder output = new StringBuilder();
+                bool first = true;
+                for (int i = 0; i < Count; ++i) 
+                {
+                    if(!first)
+                        output.Append(",");
+
+                    if(first)
+                        first = false;
+                    output.Append(this[i].ToString());
+
+                }
+                return output.ToString();
+            }
         }
 
         public EventList()

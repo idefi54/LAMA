@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LAMA.Models
 {
-    class CP : Serializable
+    public class CP : Serializable
     {
         public enum Status { ready, onBreak, onActivity};
 
@@ -67,7 +67,7 @@ namespace LAMA.Models
             _roles.dataChanged += onRolesChange;
         }
         public CP(long ID, string name, string nick, EventList<string> roles, string phone,
-            string facebook, string discord, Pair<double, double> location, string notes)
+            string facebook, string discord, string notes)
         {
             _roles.dataChanged += onRolesChange;
             _ID = ID;
@@ -77,7 +77,6 @@ namespace LAMA.Models
             _phone = phone;
             _facebook = facebook;
             _discord = discord;
-            _location = location;
             _notes = notes;
         }
         public void updateWhole(string name, string nick, string phone, string facebook, string discord, string notes)
@@ -170,7 +169,7 @@ namespace LAMA.Models
                 case 1: return _name;
                 case 2: return _nick;
                 case 3: return _roles.ToString();
-                case 4: return _phone.ToString();
+                case 4: return _phone;
                 case 5: return _facebook;
                 case 6: return _discord;
                 case 7: return _location.ToString();

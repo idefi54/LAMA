@@ -37,11 +37,11 @@ namespace LAMA.ViewModels
             {
                 ItemList.Add(new InventoryItemViewModel(inventoryItems[i]));
                 maxId = Math.Max(maxId, inventoryItems[i].ID);
-                IDToViewModel.Add(inventoryItems[i].ID, ItemList[i]);
-                SQLEvents.dataChanged += OnChange;
+                IDToViewModel.Add(inventoryItems[i].ID, ItemList[i]);    
             }
             SQLEvents.created += OnCreated;
             SQLEvents.dataDeleted += OnDeleted;
+            SQLEvents.dataChanged += OnChange;
 
             AddItemCommand = new Xamarin.Forms.Command(OnCreateItem);
             BorrowItem = new Command<object>(OnBorrowItem);

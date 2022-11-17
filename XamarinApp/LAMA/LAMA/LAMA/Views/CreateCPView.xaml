@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LAMA.Views.CreateCPView">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+            <!--
+            <Label Text="Welcome to Xamarin.Forms!"
+                    VerticalOptions="CenterAndExpand" 
+                    HorizontalOptions="CenterAndExpand" />
+
+                <Label Text="Poznámky"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Entry Text="{Binding Notes}" FontSize="Medium" />
+                <Button Text="Uložit změny" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                -->
+
+
+                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
+                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
+                <Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
+                <Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
+                <Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
+                <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
+                <Entry Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" />
+
+                <StackLayout Orientation="Horizontal">
+                    <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
+                    <Button Text="Vytvořit" Command="{Binding CreateCommand}" HorizontalOptions="FillAndExpand"></Button>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
