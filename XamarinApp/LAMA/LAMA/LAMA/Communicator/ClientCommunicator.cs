@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -283,11 +284,11 @@ namespace LAMA.Communicator
                         logger.LogWrite("Connected");
                         if (LocalStorage.clientID == -1)
                         {
-                            SendCommand(new Command($"GiveID;{LocalStorage.clientName}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                            SendCommand(new Command($"GiveID;{LocalStorage.clientName}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                         else
                         {
-                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                         if (broadcastTimer == null)
                         {
@@ -371,7 +372,7 @@ namespace LAMA.Communicator
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + LocalStorage.clientID;
-            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None"));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
@@ -382,6 +383,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            if (serverName != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             logger = new DebugLogger(false);
             _connected = false;

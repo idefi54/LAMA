@@ -16,11 +16,14 @@
         <ScrollView>
             <StackLayout Spacing="10">
 
+                <Button Text="ResetDatabase" Clicked="OnResetDatabase"/>
+                
                 <Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
                 <Button Text="NewActivity" Clicked="OnNewActivity"/>
                 <Button Text="EditActivity" Clicked="OnEditActivity"/>
                 <Button Text="ActivitySelector" Clicked="OnActivitySelector"/>
                 <Button Text="Inventory" Clicked="OnInventory"/>
+                
                 
             </StackLayout>
         </ScrollView>

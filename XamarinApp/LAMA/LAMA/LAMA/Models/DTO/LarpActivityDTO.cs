@@ -14,9 +14,9 @@ namespace LAMA.Models.DTO
         public string preparationNeeded {get; set;}
         public EventType eventType {get; set;}
         public List<int> prerequisiteIDs {get; set;}
-        public Time duration {get; set;}
+        public long duration {get; set;}
         public int day {get; set;}
-        public Time start {get; set;}
+        public long start {get; set;}
         public Pair<double, double> place {get; set;}
         public Status status {get; set;}
         public List<Pair<int, int>> requiredItems {get; set;}

@@ -107,7 +107,6 @@ namespace LAMA.ViewModels
             var itemViewModel = (InventoryItemViewModel)obj;
             
             itemViewModel.Item.Borrow(1);
-            //UPDATE DISPLAY
         }
         private async void OnReturnItem(object obj)
         {
@@ -120,7 +119,6 @@ namespace LAMA.ViewModels
             var itemViewModel = (InventoryItemViewModel)obj;
 
             itemViewModel.Item.Return(1);
-            //UPDATE DISPLAY
         }
         private async void OnCreateItem()
         {

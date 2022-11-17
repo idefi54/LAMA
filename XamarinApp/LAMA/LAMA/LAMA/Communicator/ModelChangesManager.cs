@@ -72,7 +72,7 @@ namespace LAMA.Communicator
             communicator.Logger.LogWrite($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
 
 
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             if (!attributesCache.containsKey(attributeID))
             {
                 attributesCache.add(new TimeValue(updateTime, changed.getAttribute(attributeIndex), attributeID));
@@ -202,7 +202,7 @@ namespace LAMA.Communicator
                 return;
             }
 
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + ";" + objectType + ";" + String.Join("■", attributes);
 
@@ -453,7 +453,7 @@ namespace LAMA.Communicator
 
             communicator.Logger.LogWrite($"OnItemDeleted: {objectCacheID}");
 
-            long updateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemDeleted" + ";" + objectType + ";" + objectID;
 

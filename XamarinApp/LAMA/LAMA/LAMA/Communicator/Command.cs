@@ -36,7 +36,7 @@ namespace LAMA.Communicator
         public Command()
         {
             _command = "";
-            _time = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             _receiverID = 0;
         }
 

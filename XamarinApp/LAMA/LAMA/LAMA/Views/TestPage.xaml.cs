@@ -25,7 +25,7 @@ namespace LAMA.Views
                 "Je potřeba otestovat zda aplikace funguje.\nProjít každou funkcionalitu a zda tam nejsou chyby.",
                 "Udělat aplikaci.\nZaplnit ji daty.\nVyrazit do přírody.",
                 LarpActivity.EventType.normal, new EventList<int>(),
-                new Time(60 + 30), 0, new Time(60 * 16 + 15), new Pair<double, double>(0, 0), LarpActivity.Status.launched,
+                999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
                 new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 
         }
@@ -67,6 +67,10 @@ namespace LAMA.Views
 
 			}
         }
+        void OnResetDatabase(object sender, EventArgs args)
+        {
+            SQLConnectionWrapper.ResetDatabase();
+        }
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {
@@ -88,5 +92,6 @@ namespace LAMA.Views
 
             activity = larpActivity.CreateLarpActivity();
         }
+
     }
 }

@@ -10,6 +10,7 @@ using System.Threading;
 using Xamarin.Essentials;
 using System.Diagnostics;
 using LAMA.Models;
+using LAMA.Singletons;
 
 namespace LAMA.Communicator
 {
@@ -23,7 +24,7 @@ namespace LAMA.Communicator
 
         public long LastUpdate
         {
-            get { return DateTimeOffset.Now.ToUnixTimeSeconds(); }
+            get { return DateTimeOffset.Now.ToUnixTimeMilliseconds(); }
             set { }
         }
 
@@ -269,6 +270,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string IP, int port, string password)
         {
+            if (name != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
             logger = new DebugLogger(false);
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -414,8 +416,8 @@ namespace LAMA.Communicator
                 clientSockets[maxClientID] = current;
                 logger.LogWrite($"Give new client ID: {maxClientID}");
             }
-            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
-            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", maxClientID));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
         }
 
         private void NewClientConnected(int id, Socket current)
@@ -425,7 +427,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[id] = current;
             }
-            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeSeconds(), "None", id));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", id));
         }
 
         public void SendUpdate(Socket current, int id, long lastUpdateTime)
