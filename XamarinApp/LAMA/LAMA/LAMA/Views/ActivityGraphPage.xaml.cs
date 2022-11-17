@@ -8,7 +8,7 @@ using LAMA.ActivityGraphLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-
+using LAMA.Models;
 
 namespace LAMA.Views
 {
@@ -37,6 +37,11 @@ namespace LAMA.Views
             touchEffect.Capture = true;
             touchEffect.TouchAction += OnTouchEffectAction;
             Content.Effects.Add(touchEffect);
+        }
+
+        protected override void OnAppearing()
+        {
+            _graph.ReloadActivities();
         }
 
         void OnTouchEffectAction(object sender, TouchActionEventArgs args)
@@ -69,10 +74,21 @@ namespace LAMA.Views
                     _baseZoom = _graph.Zoom;
                 }
 
+                // Create new activity -> redirect to NewActivtyPage
                 if (_graph.ActivityCreationMode)
                 {
-                    var aButton = new ActivityButton();
-                    _graph.AddActivity(ActivityButton.CreateActivity(60, ));
+                    var time = _graph.ToTime(_lastLocation.X);
+                    _touchActions.Remove(args.Id);
+                    _draggedButton = null;
+                    Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
+                    {
+                        activityDTO.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
+                        activityDTO.start = new Time(time.Hour * 60 + time.Minute);
+                        activityDTO.day = time.Day;
+                        LarpActivity newActivity = activityDTO.CreateLarpActivity();
+                        DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(newActivity);
+                    }
+                    ));
                 }
             }
 

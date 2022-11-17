@@ -8,7 +8,7 @@ namespace LAMA.ActivityGraphLib
 {
     /// <summary>
     /// Button containing LarpActivity and logic to be drawn on ActivityGraph.
-    /// New methods affect the activity itself.
+    /// ActivityButton specific methods affect the activity itself.
     /// </summary>
     public class ActivityButton : Button
     {
@@ -56,16 +56,15 @@ namespace LAMA.ActivityGraphLib
         /// <param name="y"></param>
         public void Move(float x, float y)
         {
-            var now = DateTime.Now;
-            x = _activityGraph.ToPixels(x - (float)Width / 2);
+            // X -> time
+            DateTime newTime = _activityGraph.ToTime(x - (float)Width / 2);
+            Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
+            Activity.day = newTime.Day;
+
+            // Y
             y = y - _activityGraph.XamOffset;
             y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
             _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
-
-            float minutes = x / _activityGraph.MinuteWidth / _activityGraph.Zoom;
-            DateTime newTime = _activityGraph.TimeOffset.AddMinutes(minutes - (minutes % 5));
-            Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
-            Activity.day = newTime.Day;
         }
 
         /// <summary>

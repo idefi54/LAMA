@@ -15,6 +15,8 @@ namespace LAMA.ActivityGraphLib
     public class ActivityGraph
     {
         // private
+        //===============================================
+
         private float _width;
         private float _height;
         private float _columnWidth => _width / 24;
@@ -24,17 +26,46 @@ namespace LAMA.ActivityGraphLib
         private float _zoom;
         private static DateTime loadPoint;
         private DateTime _timeOffset;
-        public bool ActivityCreationMode { get; private set; } = false;
         private float _mouseX;
         private float _mouseY;
+        private Layout<View> _canvasLayout;
 
         // Public
+        //===============================================
+
+        /// <summary>
+        /// Vertical offset of graph view while zoomed.
+        /// </summary>
         public float OffsetY { get; private set; }
+        
+        /// <summary>
+        /// Vertical offset of the canvas layout containing the activity graph.
+        /// </summary>
         public float XamOffset => (float)_canvasLayout.Y;
+
+        /// <summary>
+        /// 24 labels to be shown as description for hours of a day.
+        /// </summary>
         public Label[] TimeLabels { get; set; }
+
+        /// <summary>
+        /// Xamarin UI for showing current date above the graph.
+        /// </summary>
         public Layout<View> DateView { get; set; }
-        private Layout<View> _canvasLayout;
+
+        /// <summary>
+        /// Is in mode for creation new a activity.
+        /// </summary>
+        public bool ActivityCreationMode { get; private set; } = false;
+
+        /// <summary>
+        /// Larger value zooms in the graph.
+        /// </summary>
         public float Zoom { get { return _zoom; } set { _zoom = Math.Max(1, value); } }
+
+        /// <summary>
+        /// Current time offset where the activity graph is positioned on the timeline.
+        /// </summary>
         public DateTime TimeOffset
         {
             get { return _timeOffset; }
@@ -49,22 +80,57 @@ namespace LAMA.ActivityGraphLib
 
             }
         }
+
+        /// <summary>
+        /// Width in canvas pixels of one minte on the activity graph.
+        /// </summary>
         public float MinuteWidth => _columnWidth / 60;
+
+        /// <summary>
+        /// Converts pixel coordinates of the canvas containing the activity graph to xamarin coordinates.
+        /// </summary>
+        /// <param name="x">Chosen (horizontal or vertical) coordinate you wish to convert.</param>
+        /// <returns></returns>
         public float FromPixels(float x) => x * (float)_canvasView.Width / _width;
+
+
+        /// <summary>
+        /// Converts xamarin coordinates to pixel coordinates of the canvas containing the activity graph.
+        /// </summary>
+        /// <param name="x">Chosen (horizontal or vertical) coordinate you wish to convert.</param>
+        /// <returns></returns>
         public float ToPixels(float x) => x * _width / (float)_canvasView.Width;
 
+        /// <summary>
+        /// Converts mouse cursor horizontal location to time on the current state of the activity graph.
+        /// </summary>
+        /// <param name="x">Xamarin horizontal location on screen.</param>
+        /// <returns></returns>
+        public DateTime ToTime(float x)
+        {
+            float minutes = ToPixels(x) / MinuteWidth / Zoom;
+            return TimeOffset.AddMinutes(minutes - (minutes % 5));
+        }
 
+        /// <summary>
+        /// Mouse location for some functions of the graph.
+        /// Like for highlight of adding new activity button. (Activity creation mode)
+        /// </summary>
         public float MouseX
         {
             get { return FromPixels(_mouseX); }
             set { _mouseX = ToPixels(value); }
         }
+
+        /// <summary>
+        /// Mouse location for some functions of the graph.
+        /// Like for highlight of adding new activity button. (Activity creation mode)
+        /// </summary>
         public float MouseY
         {
             get { return FromPixels(_mouseY); }
             set { _mouseY = ToPixels(value - XamOffset); }
         }
-
 
         public ActivityGraph(Layout<View> canvasGrid)
         {
