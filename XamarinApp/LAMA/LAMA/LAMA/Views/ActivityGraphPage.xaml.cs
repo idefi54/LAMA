@@ -12,7 +12,6 @@ using LAMA.Extensions;
 using SkiaSharp.Views.Forms;
 using LAMA.Models;
 
-
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
