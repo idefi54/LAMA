@@ -84,15 +84,14 @@ namespace LAMA.Singletons
 
         volatile int insurance = -5;
         static EventList<string> _chatChannels = null;
-        public static EventList<string> ChatChannels { get { if (Instance != null) return _chatChannels; else return null; } }
         public static EventList<string> ChatChannels { 
             get
             {
-                if (_ChatChannels == null)
+                if (_chatChannels == null)
                 {
                      Instance.insurance = Instance.getTypeID();
                 }
-                return _ChatChannels;
+                return _chatChannels;
             }
         }
 
@@ -120,7 +119,7 @@ namespace LAMA.Singletons
             _chatChannels = new EventList<string>();
 
             List<string> channels = Helpers.readStringField(chatChannels);
-            _ChatChannels = new EventList<string>();
+            _chatChannels = new EventList<string>();
             for (int i = 0; i < channels.Count; ++i)
             {
                 _chatChannels.Add(channels[i]);
@@ -149,7 +148,7 @@ namespace LAMA.Singletons
         {
             Debug.WriteLine("Saving chat channels");
             StringBuilder output = new StringBuilder();
-            foreach (var channel in _ChatChannels)
+            foreach (var channel in _chatChannels)
             {
                 if (output.Length > 0)
                 {
