@@ -77,6 +77,7 @@ namespace LAMA.Models
             _ID = ID;
             _name = name;
             _description = description;
+            initListeners();
         }
 
         public event EventHandler<int> IGotUpdated;

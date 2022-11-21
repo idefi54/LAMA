@@ -41,7 +41,7 @@
 
                                         <TapGestureRecognizer 
     										NumberOfTapsRequired="2"
-    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenCategoryDetailCommand}"		
+    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenCategoryDetailsCommand}"		
     										CommandParameter="{Binding .}">
                                         </TapGestureRecognizer>
 
@@ -75,7 +75,7 @@
 
                                         <TapGestureRecognizer 
 						    				NumberOfTapsRequired="2"
-						    				Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenRecordDetailCommand}"		
+						    				Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenRecordDetailsCommand}"		
 						    				CommandParameter="{Binding .}">
                                         </TapGestureRecognizer>
 

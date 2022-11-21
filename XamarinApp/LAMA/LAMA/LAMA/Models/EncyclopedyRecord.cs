@@ -91,8 +91,10 @@ namespace LAMA.Models
                 case 3:
                     _fullText = value;
                     break;
+                default:
+                    throw new Exception("wrongIndex");
             }
-            throw new Exception("wrongIndex");
+            
         }
         public string getAttribute(int i)
         {

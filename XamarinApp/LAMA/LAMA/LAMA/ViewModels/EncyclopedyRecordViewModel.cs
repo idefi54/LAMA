@@ -12,18 +12,18 @@ namespace LAMA.ViewModels
         INavigation Navigation;
         public EncyclopedyRecord record { get; private set; }
 
-        string _Name;
+        string _Name = "";
         public string Name { get { return _Name; } set { SetProperty(ref _Name, value); } }
-        string _Text;
-        public string Text { get { return record.FullText; }  set { SetProperty(ref _Text, value); } }
-        string _TLDR;
-        public string TLDR { get { return record.TLDR; } set { SetProperty(ref _TLDR, value); } }
+        string _Text = "";
+        public string Text { get { return _Text; }  set { SetProperty(ref _Text, value); } }
+        string _TLDR = "";
+        public string TLDR { get { return _TLDR; } set { SetProperty(ref _TLDR, value); } }
 
-        public Xamarin.Forms.Command AddRecordCommand;
-        public Xamarin.Forms.Command Edit;
-        public Xamarin.Forms.Command Return;
-        public Xamarin.Forms.Command Create;
-        public Xamarin.Forms.Command Save;
+        public Xamarin.Forms.Command AddRecordCommand { get; private set; }
+        public Xamarin.Forms.Command Edit { get; private set; }
+        public Xamarin.Forms.Command Return { get; private set; }
+        public Xamarin.Forms.Command Create { get; private set; }
+        public Xamarin.Forms.Command Save { get; private set; }
         public EncyclopedyRecordViewModel(EncyclopedyRecord record, INavigation navigation)
         {
             Navigation = navigation;

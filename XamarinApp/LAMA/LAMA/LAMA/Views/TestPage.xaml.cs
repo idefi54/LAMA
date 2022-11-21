@@ -49,11 +49,15 @@ namespace LAMA.Views
         {
             await Navigation.PushAsync(new InventoryView());
         }
+        async void OnEncyclopedy(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new EncyclopedyCategoryView(null));
+        }
         async void OnCP (object sender, EventArgs args)
         {
             await Navigation.PushAsync(new CPListView());
         }
-        
+
         async void OnActivitySelector(object sender, EventArgs args)
         {
 			ActivitySelectionPage page = new ActivitySelectionPage(_displayName);
