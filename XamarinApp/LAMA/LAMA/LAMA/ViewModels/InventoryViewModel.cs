@@ -48,8 +48,7 @@ namespace LAMA.ViewModels
             ReturnItem = new Command<object>(OnReturnItem);
             OpenDetailCommand = new Command<object>(OnOpenDetail);
 
-            var test = LarpEvent.ChatChannels;
-            var test2 = 63432168;
+            
 
         }
         private async void OnOpenDetail(object obj)

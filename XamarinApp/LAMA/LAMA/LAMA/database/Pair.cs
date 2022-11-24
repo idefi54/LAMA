@@ -42,5 +42,10 @@ namespace LAMA
             return false;
             
         }
+
+        public override int GetHashCode()
+        {
+            return first.GetHashCode() * second.GetHashCode();
+        }
     }
 }

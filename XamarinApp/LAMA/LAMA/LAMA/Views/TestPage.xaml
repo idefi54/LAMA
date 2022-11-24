@@ -24,6 +24,7 @@
                 <Button Text="ActivitySelector" Clicked="OnActivitySelector"/>
                 <Button Text="Inventory" Clicked="OnInventory"/>
                 <Button Text="CPs" Clicked="OnCP"/>
+                <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
                 
             </StackLayout>
         </ScrollView>
