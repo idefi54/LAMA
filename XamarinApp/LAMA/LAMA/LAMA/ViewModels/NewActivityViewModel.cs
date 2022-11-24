@@ -7,6 +7,7 @@ using LAMA.Services;
 using LAMA.Models.DTO;
 using LAMA.Extensions;
 using LAMA.Views;
+using static LAMA.Models.LarpActivity;
 using System.Linq;
 
 namespace LAMA.ViewModels
@@ -84,7 +85,10 @@ namespace LAMA.ViewModels
 				Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetTemporaryPin(larpActivity.place.first, larpActivity.place.second);
-				
+				foreach(Pair<string, int> role in activity.roles)
+				{
+					Roles.Add(new RoleItemViewModel(role.first, role.second, 0));
+				}
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
 					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
@@ -93,8 +97,14 @@ namespace LAMA.ViewModels
 			else
 			{
 				Title = "Nová Aktivita";
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
-				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
+				Name = "";
+				Description = "";
+				Type = EventType.normal.ToString();
+				TypeIndex = (int)EventType.normal;
+				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
+				Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				Day = 0;
+				Preparations = "";
 			}
 
 			_navigation = navigation;
@@ -111,6 +121,12 @@ namespace LAMA.ViewModels
 			AddDependencyCommand = new Command(OnAddDependency);
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
 			AddNewRole = new Command(OnAddNewRole);
+			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
+		}
+
+		private void OnRemoveRole(RoleItemViewModel role)
+		{
+			Roles.Remove(role);
 		}
 
 		private void OnAddNewRole()
@@ -159,6 +175,7 @@ namespace LAMA.ViewModels
 		}
 
 		public Command AddNewRole { get; }
+		public Command<RoleItemViewModel> RemoveRole {get; }
 
 		private async void OnCancel()
 		{
