@@ -102,7 +102,7 @@ namespace LAMA.ViewModels
         private async void OnFakeLoginClicked(object obj)
         {
             if (DatabaseHolder<CP, CPStorage>.Instance.rememberedList.Count == 0)
-                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(new CP(0, "Inco Gnito", "incognito", new EventList<string>(), "123456789", "", "", new Pair<double, double>(0, 0), ""));
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(new CP(0, "Inco Gnito", "incognito", new EventList<string>(), "123456789", "", "", ""));
 
             LocalStorage.cpID = (int)DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0].ID;
 
