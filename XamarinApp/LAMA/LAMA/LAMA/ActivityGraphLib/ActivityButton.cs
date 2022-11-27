@@ -43,7 +43,7 @@ namespace LAMA.ActivityGraphLib
 
             _yPos = Math.Max(0, _yPos);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
-            TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY) + _activityGraph.XamOffset;
+            TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY);
             IsVisible = TranslationY >= - Height / 3;
 
             TextColor = Color.Black;
@@ -65,7 +65,6 @@ namespace LAMA.ActivityGraphLib
             Activity.day = newTime.Day;
 
             // Y
-            y = y - _activityGraph.XamOffset;
             y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
             _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
         }
