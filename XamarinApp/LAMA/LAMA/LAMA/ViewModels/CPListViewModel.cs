@@ -13,7 +13,7 @@ namespace LAMA.ViewModels
 
 
         public Command AddCPCommand { get; private set; }
-        public ObservableCollection<CPViewModel> CPList{ get; private set; }
+        public TrulyObservableCollection<CPViewModel> CPList{ get; private set; }
         Dictionary<long, CPViewModel> IDToViewModel = new Dictionary<long, CPViewModel>();
         public Command<object> OpenDetailCommand { get; private set; }
 
@@ -22,7 +22,7 @@ namespace LAMA.ViewModels
             this.navigation = navigation;
             AddCPCommand = new Command(OnMakeCP);
             OpenDetailCommand = new Command<object>(OnOpenDetail);
-            CPList = new ObservableCollection<CPViewModel>();
+            CPList = new TrulyObservableCollection<CPViewModel>();
             LoadCPs();
         }
 

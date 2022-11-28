@@ -44,7 +44,11 @@ namespace LAMA.Models
         public int free
         {
             get { return _free; }
-            set { updateValue(4, value.ToString()); }
+            set 
+            {
+                _free = value;
+                updateValue(4, value.ToString()); 
+            }
         }
 
         EventList<Pair<long,int>> _takenBy = new EventList<Pair<long, int>>();
@@ -182,8 +186,8 @@ namespace LAMA.Models
         {
             if (howMany <= free)
             {
-                free -= howMany;
-                taken += howMany;
+                free = free - howMany;
+                taken = taken + howMany;
             }
         }
 
@@ -218,8 +222,8 @@ namespace LAMA.Models
         {
             if(howMany <= taken)
             {       
-                taken -= howMany;
-                free += howMany;
+                taken = taken - howMany;
+                free = free + howMany;
             }
         }
         public void Return (int howMany, long who)
