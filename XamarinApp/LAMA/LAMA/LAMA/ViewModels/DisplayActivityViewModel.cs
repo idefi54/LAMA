@@ -40,6 +40,9 @@ namespace LAMA.ViewModels
 		
 
 
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
 
 
 
@@ -54,6 +57,8 @@ namespace LAMA.ViewModels
 
 		public DisplayActivityViewModel(INavigation navigation, LarpActivity activity)
         {
+			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+
 			Navigation = navigation;
 
             _activity = activity;
@@ -69,6 +74,12 @@ namespace LAMA.ViewModels
 			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
+
+			foreach(var id in _activity.prerequisiteIDs)
+			{
+				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
+				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
+			}
 
 
 
@@ -86,29 +97,37 @@ namespace LAMA.ViewModels
 			await Shell.Current.GoToAsync("..");
 		}
 
-		private void UpdateActivity(LarpActivityDTO larpActivity)
+		private void UpdateActivity(LarpActivityDTO larpActivityDTO)
 		{
 			_activity.UpdateWhole(
-				larpActivity.name,
-				larpActivity.description,
-				larpActivity.preparationNeeded,
-				larpActivity.eventType,
-				larpActivity.duration,
-				larpActivity.day,
-				larpActivity.start,
-				larpActivity.place,
-				larpActivity.status);
+				larpActivityDTO.name,
+				larpActivityDTO.description,
+				larpActivityDTO.preparationNeeded,
+				larpActivityDTO.eventType,
+				larpActivityDTO.duration,
+				larpActivityDTO.day,
+				larpActivityDTO.start,
+				larpActivityDTO.place,
+				larpActivityDTO.status);
 
-			Name = larpActivity.name;
-			Description = larpActivity.description;
+			Name = larpActivityDTO.name;
+			Description = larpActivityDTO.description;
 
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivity.duration);
+			Dependencies.Clear();
+			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
+			foreach (int id in _activity.prerequisiteIDs)
+			{
+				LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
+				Dependencies.Add(new LarpActivityShortItemViewModel(la));
+			}
+
+			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.duration);
 			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivity.start);
+			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.start);
 			Start = dt.Hour + ":" + dt.Minute;
-			DayIndex = (larpActivity.day + 1) + ".";
-			Preparations = larpActivity.preparationNeeded;
-			Location = larpActivity.place.ToString();
+			DayIndex = (larpActivityDTO.day + 1) + ".";
+			Preparations = larpActivityDTO.preparationNeeded;
+			Location = larpActivityDTO.place.ToString();
 		}
 	}
 }
