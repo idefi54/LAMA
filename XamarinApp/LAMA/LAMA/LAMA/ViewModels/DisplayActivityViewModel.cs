@@ -97,29 +97,50 @@ namespace LAMA.ViewModels
 			await Shell.Current.GoToAsync("..");
 		}
 
-		private void UpdateActivity(LarpActivityDTO larpActivity)
+		private void UpdateActivity(LarpActivityDTO larpActivityDTO)
 		{
 			_activity.UpdateWhole(
-				larpActivity.name,
-				larpActivity.description,
-				larpActivity.preparationNeeded,
-				larpActivity.eventType,
-				larpActivity.duration,
-				larpActivity.day,
-				larpActivity.start,
-				larpActivity.place,
-				larpActivity.status);
+				larpActivityDTO.name,
+				larpActivityDTO.description,
+				larpActivityDTO.preparationNeeded,
+				larpActivityDTO.eventType,
+				larpActivityDTO.duration,
+				larpActivityDTO.day,
+				larpActivityDTO.start,
+				larpActivityDTO.place,
+				larpActivityDTO.status);
 
-			Name = larpActivity.name;
-			Description = larpActivity.description;
+			Name = larpActivityDTO.name;
+			Description = larpActivityDTO.description;
 
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivity.duration);
+			Dependencies.Clear();
+			foreach (int id in larpActivityDTO.prerequisiteIDs)
+			{
+				if(!_activity.prerequisiteIDs.Contains(id))
+				{
+					_activity.prerequisiteIDs.Add(id);
+				}
+			}
+			for(int i = _activity.prerequisiteIDs.Count - 1; i >= 0; i--)
+			{
+				if(!larpActivityDTO.prerequisiteIDs.Contains(_activity.prerequisiteIDs[i]))
+				{
+					_activity.prerequisiteIDs.RemoveAt(i);
+				}
+			}
+			foreach (int id in _activity.prerequisiteIDs)
+			{
+				LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
+				Dependencies.Add(new LarpActivityShortItemViewModel(la));
+			}
+
+			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.duration);
 			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivity.start);
+			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.start);
 			Start = dt.Hour + ":" + dt.Minute;
-			DayIndex = (larpActivity.day + 1) + ".";
-			Preparations = larpActivity.preparationNeeded;
-			Location = larpActivity.place.ToString();
+			DayIndex = (larpActivityDTO.day + 1) + ".";
+			Preparations = larpActivityDTO.preparationNeeded;
+			Location = larpActivityDTO.place.ToString();
 		}
 	}
 }
