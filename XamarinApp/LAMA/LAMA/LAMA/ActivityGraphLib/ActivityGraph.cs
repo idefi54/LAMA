@@ -30,6 +30,7 @@ namespace LAMA.ActivityGraphLib
         private float _mouseX;
         private float _mouseY;
         private Layout<View> _canvasLayout;
+        private bool _editMode;
 
         // Public
         //===============================================
@@ -114,6 +115,17 @@ namespace LAMA.ActivityGraphLib
         }
 
         /// <summary>
+        /// Converts time to mouse cursor horizontal location.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public float FromTime(DateTime time)
+        {
+            TimeSpan difference = TimeOffset - time;
+            return FromPixels((float)difference.TotalMinutes * MinuteWidth * Zoom);
+        }
+
+        /// <summary>
         /// Mouse location for some functions of the graph.
         /// Like for highlight of adding new activity button. (Activity creation mode)
         /// </summary>
@@ -193,7 +205,10 @@ namespace LAMA.ActivityGraphLib
         {
             canvas.Clear(SKColors.Black);
             foreach (ActivityButton button in ActivityButtons())
+            {
                 button.Update();
+                if (_editMode) button.DrawBoders(canvas);
+            }
 
             SKPaint paint = new SKPaint();
             paint.Color = SKColors.Blue;
@@ -284,6 +299,7 @@ namespace LAMA.ActivityGraphLib
         {
             foreach (ActivityButton button in ActivityButtons())
                 button.IsEnabled = !edit;
+            _editMode = edit;
         }
 
         /// <summary>

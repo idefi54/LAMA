@@ -16,7 +16,10 @@ namespace LAMA.ActivityGraphLib
     {
         private ActivityGraph _activityGraph;
         private float _yPos;
+        private float _sideWidth = 10;
         public LarpActivity Activity { get; private set; }
+        enum EditState { Left, Right, Move }
+        private EditState _editState;
         public ActivityButton(LarpActivity activity, ActivityGraph activityGraph)
         {
             Activity = activity;
@@ -25,6 +28,8 @@ namespace LAMA.ActivityGraphLib
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.Start;
             _yPos = 20; // TODO: Make load from button database when available
+            _editState = EditState.Move;
+            activity.duration.setRawMinutes(60);// TODO: DELETE When actual duration works
 
             // Clicking the button displays the activity
             Clicked += (object sender, EventArgs e) => Navigation.PushAsync(new DisplayActivityPage(activity));
@@ -44,12 +49,49 @@ namespace LAMA.ActivityGraphLib
             _yPos = Math.Max(0, _yPos);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY);
-            IsVisible = TranslationY >= - Height / 3;
+            WidthRequest = _activityGraph.FromPixels(Activity.duration.getRawMinutes() * _activityGraph.MinuteWidth * _activityGraph.Zoom);
 
+            IsVisible = TranslationY >= - Height / 3;
             TextColor = Color.Black;
             Text = Activity.name;
             BackgroundColor = GetColor(Activity.status);
             CornerRadius = GetCornerRadius(Activity.eventType);
+        }
+
+        public void DrawBoders(SKCanvas canvas)
+        {
+            var paint = new SKPaint();
+            paint.Color = SKColors.Green.WithAlpha(125);
+            float x = _activityGraph.ToPixels((float)TranslationX);
+            float y = _activityGraph.ToPixels((float)TranslationY);
+            float w = _activityGraph.ToPixels((float)Width);
+            float h = _activityGraph.ToPixels((float)Height);
+
+            var lRect = new SKRect(x, y, x + _sideWidth, y + h);
+            var rRect = new SKRect(x + w - _sideWidth, y, x + w, y + h);
+
+            paint.Color = (_editState == EditState.Left) ? SKColors.Red : SKColors.Green;
+            canvas.DrawRect(lRect, paint);
+
+            paint.Color = (_editState == EditState.Right) ? SKColors.Red : SKColors.Green;
+            canvas.DrawRect(rRect, paint);
+        }
+
+        public void ClickEdit(float x, float y)
+        {
+            float xRel = x - (float)TranslationX;
+            float yRel = y - (float)TranslationY - _activityGraph.XamOffset;
+
+            if (yRel < 0 || yRel > Height || xRel < 0 || yRel > Width)
+                return;
+
+            float sideWidthXam = _activityGraph.FromPixels(_sideWidth);
+            if (xRel < sideWidthXam) _editState = EditState.Left;
+            if (xRel > Width - sideWidthXam) _editState = EditState.Right;
+        }
+        public void Release()
+        {
+            _editState = EditState.Move;
         }
 
         /// <summary>
@@ -57,16 +99,36 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void Move(float x, float y)
+        public void MoveEdit(float x, float y)
         {
-            // X -> time
-            DateTime newTime = _activityGraph.ToTime(x - (float)Width / 2);
-            Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
-            Activity.day = newTime.Day;
+            if (_editState == EditState.Left)
+            {
+                DateTime at = _activityGraph.ToTime(x);
+                int mins = at.Hour * 60 + at.Minute;
+                int duration = Activity.start.getRawMinutes() - mins;
+                Activity.duration.setRawMinutes(Activity.duration.getRawMinutes() + duration);
+                Activity.start.setRawMinutes(at.Hour * 60 + at.Minute);
+            }
 
-            // Y
-            y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
-            _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
+            if (_editState == EditState.Right)
+            {
+                DateTime at = _activityGraph.ToTime(x);
+                int mins = at.Hour * 60 + at.Minute;
+                int duration = mins - Activity.start.getRawMinutes();
+                Activity.duration.setRawMinutes(duration);
+            }
+
+            if (_editState == EditState.Move)
+            {
+                // X -> time
+                DateTime newTime = _activityGraph.ToTime(x - (float)Width / 2);
+                Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
+                Activity.day = newTime.Day;
+
+                // Y
+                y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
+                _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
+            }
         }
 
         /// <summary>

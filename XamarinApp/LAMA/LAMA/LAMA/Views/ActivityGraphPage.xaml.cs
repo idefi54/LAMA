@@ -59,6 +59,7 @@ namespace LAMA.Views
                 if (_touchActions.Count == 1)
                 {
                     _draggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
+                    _draggedButton?.ClickEdit(args.Location.X, args.Location.Y);
                 }
 
                 // Save for computing change in location
@@ -100,7 +101,7 @@ namespace LAMA.Views
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
-                _draggedButton.Move(args.Location.X, args.Location.Y);
+                _draggedButton.MoveEdit(args.Location.X, args.Location.Y);
             }
 
             // Control graph view
@@ -108,6 +109,7 @@ namespace LAMA.Views
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
+
                 // Scroll graph
                 if (_touchActions.Count == 1)
                 {
@@ -133,6 +135,7 @@ namespace LAMA.Views
             // Release
             if (args.Type == TouchActionType.Released)
             {
+                _draggedButton?.Release();
                 _draggedButton = null;
                 _touchActions.Remove(args.Id);
             }
