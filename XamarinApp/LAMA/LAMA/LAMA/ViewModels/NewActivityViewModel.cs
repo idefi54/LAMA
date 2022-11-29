@@ -170,7 +170,7 @@ namespace LAMA.ViewModels
             }
 			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
 
-			var dependencies = new EventList<int>();
+			var dependencies = new EventList<long>();
 			
 			foreach(LarpActivityShortItemViewModel item in Dependencies)
 			{

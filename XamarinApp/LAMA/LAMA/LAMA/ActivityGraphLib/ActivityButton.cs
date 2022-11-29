@@ -96,7 +96,7 @@ namespace LAMA.ActivityGraphLib
                 description: description,
                 preparation: "",
                 eventType: type,
-                prerequisiteIDs: new EventList<int>(),
+                prerequisiteIDs: new EventList<long>(),
                 duration: durationMinutes,
                 day: day,
                 start: startMinutes,

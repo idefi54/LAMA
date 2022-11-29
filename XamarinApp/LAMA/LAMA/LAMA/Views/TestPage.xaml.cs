@@ -24,7 +24,7 @@ namespace LAMA.Views
             activity = new LarpActivity(4, "Testování Xamarin Aplikace",
                 "Je potřeba otestovat zda aplikace funguje.\nProjít každou funkcionalitu a zda tam nejsou chyby.",
                 "Udělat aplikaci.\nZaplnit ji daty.\nVyrazit do přírody.",
-                LarpActivity.EventType.normal, new EventList<int>(),
+                LarpActivity.EventType.normal, new EventList<long>(),
                 999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
                 new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
 

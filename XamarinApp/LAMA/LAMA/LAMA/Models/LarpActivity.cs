@@ -11,8 +11,8 @@ namespace LAMA.Models
         public enum EventType { normal, preparation };
         public enum Status { awaitingPrerequisites, readyToLaunch, launched, inProgress, completed };
 
-        int _ID;
-        public int ID { get { return _ID; } }
+        long _ID;
+        public long ID { get { return _ID; } }
 
         string _name;
         public string name
@@ -56,8 +56,8 @@ namespace LAMA.Models
             }
         }
 
-        EventList<int> _prerequisiteIDs = new EventList<int>();
-        public EventList<int> prerequisiteIDs
+        EventList<long> _prerequisiteIDs = new EventList<long>();
+        public EventList<long> prerequisiteIDs
         {
             get { return _prerequisiteIDs; }
         }
@@ -158,7 +158,7 @@ namespace LAMA.Models
         {
             initChangeListeners();
         }
-        public LarpActivity(int ID, string name, string description, string preparation, EventType eventType, EventList<int> prerequisiteIDs,
+        public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
             long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
             EventList<Pair<string, int>> roles, EventList<Pair<int, string>> registrations)
         {
@@ -290,7 +290,7 @@ namespace LAMA.Models
             switch(i)
             {
                 case 0:
-                    _ID = Helpers.readInt(value);
+                    _ID = Helpers.readLong(value);
                     break;
                 case 1:
                     _name = value;
@@ -305,7 +305,7 @@ namespace LAMA.Models
                     _eventType = (EventType)Helpers.findIndex( Enum.GetNames(typeof(EventType)), value);
                     break;
                 case 5:
-                    _prerequisiteIDs = Helpers.readIntField(value);
+                    _prerequisiteIDs = Helpers.readLongField(value);
                     _prerequisiteIDs.dataChanged += onPrerequisiteChange;
                     break;
                 case 6:
