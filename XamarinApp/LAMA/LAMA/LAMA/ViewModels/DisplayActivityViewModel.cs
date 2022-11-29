@@ -114,20 +114,7 @@ namespace LAMA.ViewModels
 			Description = larpActivityDTO.description;
 
 			Dependencies.Clear();
-			foreach (int id in larpActivityDTO.prerequisiteIDs)
-			{
-				if(!_activity.prerequisiteIDs.Contains(id))
-				{
-					_activity.prerequisiteIDs.Add(id);
-				}
-			}
-			for(int i = _activity.prerequisiteIDs.Count - 1; i >= 0; i--)
-			{
-				if(!larpActivityDTO.prerequisiteIDs.Contains(_activity.prerequisiteIDs[i]))
-				{
-					_activity.prerequisiteIDs.RemoveAt(i);
-				}
-			}
+			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
 			foreach (int id in _activity.prerequisiteIDs)
 			{
 				LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);

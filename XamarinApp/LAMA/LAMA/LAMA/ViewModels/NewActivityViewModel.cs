@@ -87,7 +87,8 @@ namespace LAMA.ViewModels
 			else
 			{
 				Title = "Nová Aktivita";
-
+				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
+				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
 			}
 
 			_navigation = navigation;

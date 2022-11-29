@@ -203,6 +203,21 @@ namespace LAMA.Models
                 this.status = status;
         }
 
+        public void UpdatePrerequisiteIDs(List<long> newPrerequisites)
+        {
+            for(int i = prerequisiteIDs.Count - 1; i >= 0; i--)
+            {
+                if(!newPrerequisites.Contains(prerequisiteIDs[i]))
+                    prerequisiteIDs.RemoveAt(i);
+            }
+
+            foreach(long id in newPrerequisites)
+            {
+                if (!prerequisiteIDs.Contains(id))
+                    prerequisiteIDs.Add(id);
+            }
+        }
+
 
         RememberedList<LarpActivity, LarpActivityStorage> list = null;
         public void removed()
