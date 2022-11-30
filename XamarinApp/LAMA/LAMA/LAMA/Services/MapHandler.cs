@@ -127,7 +127,6 @@ namespace LAMA.Services
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClickedAdding;
 
-            _pin.Position = new Position(0, 0);
             if (!view.Pins.Contains(_pin))
                 view.Pins.Add(_pin);
 
@@ -290,6 +289,14 @@ namespace LAMA.Services
         /// </summary>
         /// <returns></returns>
         public (double, double) GetTemporaryPin() => (_pin.Position.Longitude, _pin.Position.Latitude);
+
+        /// <summary>
+        /// Sets the location of temporary pin.
+        /// See MapViewSetupAdding() method for more information.
+        /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
+        public void SetTemporaryPin(double lon, double lat) => _pin.Position = new Position(lat, lon);
 
         /// <summary>
         /// Enables or disables the icon showing our location from the gps.

@@ -66,7 +66,9 @@ namespace LAMA.ViewModels
         {
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			larpActivity = activity;
-			if(larpActivity != null)
+			MapHandler.Instance.SetTemporaryPin(0, 0);
+
+			if (larpActivity != null)
             {
 				Title = "Upravit Aktivitu";
 				Id = larpActivity.ID.ToString();
@@ -78,6 +80,7 @@ namespace LAMA.ViewModels
 				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
+				MapHandler.Instance.SetTemporaryPin(larpActivity.place.first, larpActivity.place.second);
 				
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
