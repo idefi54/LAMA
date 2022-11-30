@@ -313,16 +313,6 @@ namespace LAMA.ActivityGraphLib
         }
 
         /// <summary>
-        /// Switches edit mode and draws location of the new would be button.
-        /// </summary>
-        /// <param name="active"></param>
-        public void SwitchActivityCreationMode(bool active)
-        {
-            SwitchEditMode(active);
-            ActivityCreationMode = active;
-        }
-
-        /// <summary>
         /// Reload ActivityButtons with new activities from database at current span of days.
         /// </summary>
         public void ReloadActivities()
