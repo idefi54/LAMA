@@ -3,14 +3,18 @@ using LAMA.Views;
 using SkiaSharp.Views.Forms;
 using System;
 using Xamarin.Forms;
+using Windows.UI.Xaml;
+using Windows.System;
 
 
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
 {
-    
+
     internal class UWPActivityGraphGUI : IActivityGraphGUI
     {
+        private bool previous = false;
+
         public (Layout<View>, ActivityGraph) CreateGUI(INavigation navigation)
         {
             var canvasView = CreateCanvasView();
@@ -23,6 +27,20 @@ namespace LAMA.UWP
             {
                 graph.Update(args);
                 graph.Draw(args.Surface.Canvas);
+            };
+
+
+            Window.Current.CoreWindow.KeyDown += (Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs args) =>
+            {
+                if (args.VirtualKey == VirtualKey.Control)
+                    graph.SwitchActivityCreationMode(true);
+                canvasView.InvalidateSurface();
+            };
+            Window.Current.CoreWindow.KeyUp += (Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs args) =>
+            {
+                if (args.VirtualKey == VirtualKey.Control)
+                    graph.SwitchActivityCreationMode(false);
+                canvasView.InvalidateSurface();
             };
 
             Layout<View> controlRow = CreateControlRow(graph, canvasView, navigation);
@@ -57,19 +75,17 @@ namespace LAMA.UWP
 
                 var plusButton = new Button();
                 plusButton.Text = "+";
-                plusButton.VerticalOptions = LayoutOptions.FillAndExpand;
-                plusButton.HorizontalOptions = LayoutOptions.FillAndExpand;
+                plusButton.VerticalOptions = LayoutOptions.Center;
+                plusButton.HorizontalOptions = LayoutOptions.Center;
                 plusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom += 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(plusButton, 0, 0);
 
                 var minusButton = new Button();
                 minusButton.Text = "-";
-                minusButton.VerticalOptions = LayoutOptions.FillAndExpand;
-                minusButton.HorizontalOptions = LayoutOptions.FillAndExpand;
+                minusButton.VerticalOptions = LayoutOptions.Center;
+                minusButton.HorizontalOptions = LayoutOptions.Center;
                 minusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom -= 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(minusButton, 1, 0);
-
-                //grid.Children.Add(plusMinusStack, 0, 0);
             }
 
             // Calendar Button
@@ -78,7 +94,7 @@ namespace LAMA.UWP
                 calendarButton.Text = "Calendar";
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
-                calendarButton.Clicked += (object sender, EventArgs args) => { navigation.PushModalAsync(new CalendarPage()); };
+                calendarButton.Clicked += (object sender, EventArgs args) => { navigation.PushModalAsync(new CalendarPage(graph)); };
                 grid.Children.Add(calendarButton, 2, 0);
             }
 
@@ -177,6 +193,11 @@ namespace LAMA.UWP
             canvasView.VerticalOptions = LayoutOptions.FillAndExpand;
 
             return canvasView;
+        }
+
+        private bool IsKeyDown(VirtualKey key)
+        {
+            return Window.Current.CoreWindow.GetKeyState(key) == Windows.UI.Core.CoreVirtualKeyStates.Down;
         }
     }
 }
