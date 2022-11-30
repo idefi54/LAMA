@@ -58,6 +58,10 @@ namespace LAMA.ActivityGraphLib
             CornerRadius = GetCornerRadius(Activity.eventType);
         }
 
+        /// <summary>
+        /// Draws indicators for resizing activity.
+        /// </summary>
+        /// <param name="canvas"></param>
         public void DrawBoders(SKCanvas canvas)
         {
             var paint = new SKPaint();
@@ -77,6 +81,11 @@ namespace LAMA.ActivityGraphLib
             canvas.DrawRect(rRect, paint);
         }
 
+        /// <summary>
+        /// Click on button in edit mode to edit the activity.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void ClickEdit(float x, float y)
         {
             float xRel = x - (float)TranslationX;
@@ -89,7 +98,11 @@ namespace LAMA.ActivityGraphLib
             if (xRel < sideWidthXam) _editState = EditState.Left;
             if (xRel > Width - sideWidthXam) _editState = EditState.Right;
         }
-        public void Release()
+
+        /// <summary>
+        /// Release button in edit mode.
+        /// </summary>
+        public void ReleaseEdit()
         {
             _editState = EditState.Move;
         }
