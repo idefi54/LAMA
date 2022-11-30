@@ -134,7 +134,7 @@ namespace LAMA.Views
             // Release
             if (args.Type == TouchActionType.Released)
             {
-                _draggedButton?.Release();
+                _draggedButton?.ReleaseEdit();
                 _draggedButton = null;
                 _touchActions.Remove(args.Id);
             }

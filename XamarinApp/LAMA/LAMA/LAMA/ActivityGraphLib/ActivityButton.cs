@@ -58,6 +58,10 @@ namespace LAMA.ActivityGraphLib
             CornerRadius = GetCornerRadius(Activity.eventType);
         }
 
+        /// <summary>
+        /// Draws indicators for resizing activity.
+        /// </summary>
+        /// <param name="canvas"></param>
         public void DrawBoders(SKCanvas canvas)
         {
             var paint = new SKPaint();
@@ -77,6 +81,11 @@ namespace LAMA.ActivityGraphLib
             canvas.DrawRect(rRect, paint);
         }
 
+        /// <summary>
+        /// Click on button in edit mode to edit the activity.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void ClickEdit(float x, float y)
         {
             float xRel = x - (float)TranslationX;
@@ -89,31 +98,41 @@ namespace LAMA.ActivityGraphLib
             if (xRel < sideWidthXam) _editState = EditState.Left;
             if (xRel > Width - sideWidthXam) _editState = EditState.Right;
         }
-        public void Release()
+
+        /// <summary>
+        /// Release button in edit mode.
+        /// </summary>
+        public void ReleaseEdit()
         {
             _editState = EditState.Move;
         }
 
         /// <summary>
-        /// Moves the button to (x,y) and updates LarpActivity accordingly.
+        /// Edits the activity according to mouse move and button state.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         public void MoveEdit(float x, float y)
         {
+            const long minimalDuration = 10;
             if (_editState == EditState.Left)
             {
                 DateTime at = _activityGraph.ToTime(x);
-                int duration = (int)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes;
-                Activity.duration = Activity.duration + duration;
-                Activity.start = at.ToUnixTimeMilliseconds();
+                long duration = (int)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes + Activity.duration;
+
+                if (duration > minimalDuration)
+                {
+                    Activity.duration = duration;
+                    Activity.start = at.ToUnixTimeMilliseconds();
+                }
             }
 
             if (_editState == EditState.Right)
             {
                 DateTime at = _activityGraph.ToTime(x);
-                int duration = (int)(at - DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start)).TotalMinutes;
-                Activity.duration = duration;
+                long duration = (long)(at - DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start)).TotalMinutes;
+                if (duration >= minimalDuration)
+                    Activity.duration = duration;
             }
 
             if (_editState == EditState.Move)
