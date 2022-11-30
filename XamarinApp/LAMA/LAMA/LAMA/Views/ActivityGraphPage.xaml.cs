@@ -87,7 +87,7 @@ namespace LAMA.Views
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         activityDTO.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
-                        activityDTO.start = new Time(time.Hour * 60 + time.Minute);
+                        activityDTO.start = time.ToUnixTimeMilliseconds();
                         activityDTO.day = time.Day;
                         LarpActivity newActivity = activityDTO.CreateLarpActivity();
                         DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(newActivity);

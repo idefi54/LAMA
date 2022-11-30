@@ -29,7 +29,7 @@ namespace LAMA.ActivityGraphLib
             HorizontalOptions = LayoutOptions.Start;
             _yPos = 20; // TODO: Make load from button database when available
             _editState = EditState.Move;
-            activity.duration.setRawMinutes(60);// TODO: DELETE When actual duration works
+            activity.duration = 60;// TODO: DELETE When actual duration works
 
             // Clicking the button displays the activity
             Clicked += (object sender, EventArgs e) => Navigation.PushAsync(new DisplayActivityPage(activity));
@@ -49,7 +49,7 @@ namespace LAMA.ActivityGraphLib
             _yPos = Math.Max(0, _yPos);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY);
-            WidthRequest = _activityGraph.FromPixels(Activity.duration.getRawMinutes() * _activityGraph.MinuteWidth * _activityGraph.Zoom);
+            WidthRequest = _activityGraph.FromPixels(Activity.duration * _activityGraph.MinuteWidth * _activityGraph.Zoom);
 
             IsVisible = TranslationY >= - Height / 3;
             TextColor = Color.Black;
@@ -104,25 +104,23 @@ namespace LAMA.ActivityGraphLib
             if (_editState == EditState.Left)
             {
                 DateTime at = _activityGraph.ToTime(x);
-                int mins = at.Hour * 60 + at.Minute;
-                int duration = Activity.start.getRawMinutes() - mins;
-                Activity.duration.setRawMinutes(Activity.duration.getRawMinutes() + duration);
-                Activity.start.setRawMinutes(at.Hour * 60 + at.Minute);
+                int duration = (int)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes;
+                Activity.duration = Activity.duration + duration;
+                Activity.start = at.ToUnixTimeMilliseconds();
             }
 
             if (_editState == EditState.Right)
             {
                 DateTime at = _activityGraph.ToTime(x);
-                int mins = at.Hour * 60 + at.Minute;
-                int duration = mins - Activity.start.getRawMinutes();
-                Activity.duration.setRawMinutes(duration);
+                int duration = (int)(at - DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start)).TotalMinutes;
+                Activity.duration = duration;
             }
 
             if (_editState == EditState.Move)
             {
                 // X -> time
                 DateTime newTime = _activityGraph.ToTime(x - (float)Width / 2);
-                Activity.start.setRawMinutes(newTime.Hour * 60 + newTime.Minute);
+                Activity.start = newTime.ToUnixTimeMilliseconds();
                 Activity.day = newTime.Day;
 
                 // Y
