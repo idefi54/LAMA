@@ -110,6 +110,8 @@ namespace LAMA.ViewModels
             {
                 name = category.Name;
                 description = category.Description;
+                category.ChildCategories.dataChanged += OnMyCategoriesChanged;
+                category.Records.dataChanged += OnMyRecordsChanged;
             }
 
            
@@ -149,10 +151,28 @@ namespace LAMA.ViewModels
             }
 
         }
-        
+        void OnMyCategoriesChanged()
+        {
+            var categoryList = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
+
+            Categories.Clear();
+            foreach (var a in category.ChildCategories)
+            {
+                Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(a), Navigation));
+            }
+        }
+        void OnMyRecordsChanged()
+        {
+            var recordList = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList;
+            Records.Clear();
+            foreach(var a in category.Records)
+            {
+                Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(a), Navigation));
+            }
+        }
         void OnCategoriesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Categories = new ObservableCollection<EncyclopedyCategoryViewModel>();
+            Categories.Clear();
             foreach (var a in EncyclopedyOrphanage.ParentlessCategories)
             {
                 Categories.Add(new EncyclopedyCategoryViewModel(a, Navigation));
@@ -160,7 +180,7 @@ namespace LAMA.ViewModels
         }
         void OnRecordsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Records = new ObservableCollection<EncyclopedyRecordViewModel>();
+            Records.Clear();
             foreach (var a in EncyclopedyOrphanage.ParentlessRecords)
             {
                 Records.Add(new EncyclopedyRecordViewModel(a, Navigation));
@@ -195,16 +215,7 @@ namespace LAMA.ViewModels
             category.Description = description;
             category.ChildCategories.Clear();
             category.Records.Clear();
-            foreach(var a in Categories)
-            {
-                category.ChildCategories.Add(a.category.ID);
-            }
-            foreach(var a in Records)
-            {
-                category.Records.Add(a.record.getID());
-            }
-
-
+           
 
             await Navigation.PopAsync();
         }
