@@ -29,10 +29,17 @@ namespace LAMA.Views
 
         private async Task<bool> CheckLocationAvailable()
         {
-            PermissionStatus status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            if (Device.RuntimePlatform != Device.WPF)
+            {
+                PermissionStatus status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
 
-            if (status != PermissionStatus.Granted)
+                if (status != PermissionStatus.Granted)
+                    return false;
+            }
+            else
+            {
                 return false;
+            }
 
             // try if the location is truly ON
             try
@@ -61,8 +68,11 @@ namespace LAMA.Views
             layout.Children.Add(activityIndicator);
 
             // Handle permissions and location
-            await Permissions.RequestAsync<Permissions.StorageWrite>();
-            await Permissions.RequestAsync<Permissions.StorageRead>();
+            if (Device.RuntimePlatform != Device.WPF)
+            {
+                await Permissions.RequestAsync<Permissions.StorageWrite>();
+                await Permissions.RequestAsync<Permissions.StorageRead>();
+            }
             bool locationAvailable = await CheckLocationAvailable();
 
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)

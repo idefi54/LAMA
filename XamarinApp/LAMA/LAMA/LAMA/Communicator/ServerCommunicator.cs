@@ -278,7 +278,7 @@ namespace LAMA.Communicator
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
-            logger.LogWrite("Created client, loaded dictionaries");
+            Debug.WriteLine("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
                 throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 characters");
@@ -326,7 +326,7 @@ namespace LAMA.Communicator
                 throw new WrongPasswordException("Wrong password for existing server");
             }
 
-            logger.LogWrite("No exceptions");
+            Debug.WriteLine("No exceptions");
             //maxClientID = 0;
             IPAddress ipAddress;
             IPAddress.TryParse(IP, out ipAddress);
@@ -345,7 +345,7 @@ namespace LAMA.Communicator
             server = new Thread(StartServer);
             server.Start();
             THIS = this;
-            logger.LogWrite("Server started");
+            Debug.WriteLine("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
             /*
             //Initialize Intervals
@@ -364,7 +364,7 @@ namespace LAMA.Communicator
             DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
             Debug.WriteLine("-------------------------------------4------------------------------------------");
             */
-            logger.LogWrite("Subscribing to events");
+            Debug.WriteLine("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
@@ -381,7 +381,7 @@ namespace LAMA.Communicator
                     new Models.CP(0,
                     LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, "", "", "", ""));
             }
-            logger.LogWrite("Initialization finished");
+            Debug.WriteLine("Initialization finished");
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>

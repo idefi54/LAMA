@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:LAMA.ViewModels"
+             xmlns:pages="clr-namespace:LAMA.Views"
+             x:Class="LAMA.Views.FlyoutMenuPage"
+             Title="Flyout Menu">
+    <StackLayout>
+        <ListView>
+            <ListView.ItemsSource>
+                <x:Array Type="{x:Type local:FlyoutPageItemViewModel}">
+                    <local:FlyoutPageItemViewModel Title="Map" TargetPage="{x:Type pages:MapPage}" />
+                    <local:FlyoutPageItemViewModel Title="Seznam Aktivit" TargetPage="{x:Type pages:ActivityListPage}" />
+                    <local:FlyoutPageItemViewModel Title="TestPage" TargetPage="{x:Type pages:TestPage}" />
+                    <local:FlyoutPageItemViewModel Title="Chat" TargetPage="{x:Type pages:ChatChannels}" />
+                    <local:FlyoutPageItemViewModel Title="Activity Graph" TargetPage="{x:Type pages:ActivityGraphPage}" />
+                </x:Array>
+            </ListView.ItemsSource>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="5,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Title}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

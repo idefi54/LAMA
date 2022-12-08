@@ -4,6 +4,7 @@ using LAMA.Models;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xamarin.Forms;
 
@@ -57,7 +58,14 @@ namespace LAMA.ViewModels
                 return;
             }
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(MapPage)}");
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new MapPage());
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"//{nameof(MapPage)}");
+            }
         }
 
         private async void OnServerLoginClicked(object obj)
@@ -97,9 +105,16 @@ namespace LAMA.ViewModels
                 return;
             }
 
-
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(MapPage)}");
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new MapPage());
+                //LAMA.App.Current.MainPage = new MapPage();
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"//{nameof(MapPage)}");
+            }
         }
 
         private async void OnFakeLoginClicked(object obj)
@@ -109,8 +124,16 @@ namespace LAMA.ViewModels
 
             LocalStorage.cpID = (int)DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0].ID;
 
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(TestPage)}");
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new TestPage());
+                //LAMA.App.Current.MainPage = new TestPage();
+            }
+            else
+            {
+                // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+                await Shell.Current.GoToAsync($"//{nameof(TestPage)}");
+            }
         }
     }
 }

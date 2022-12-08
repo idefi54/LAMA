@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels" xmlns:common="clr-namespace:LAMA.Views"
              x:Class="LAMA.Views.ChatChannels"
 			 x:Name="ChatChannelsPage">
     <ContentPage.Content>
         <StackLayout  Spacing="0">
+            <common:OurNavigationMenu></common:OurNavigationMenu>
             <ScrollView>
                 <StackLayout x:Name="Channels" BindableLayout.ItemsSource="{Binding Channels}" Margin="5,5,5,0">
                     <BindableLayout.ItemTemplate>
