@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.Diagnostics;
 using LAMA.Singletons;
+using Xamarin.Forms;
 
 namespace LAMA.Communicator
 {
@@ -95,7 +96,7 @@ namespace LAMA.Communicator
                     s.Close();
                 }
             }
-            MainThread.BeginInvokeOnMainThread(new Action(() =>
+            Device.BeginInvokeOnMainThread(new Action(() =>
             {
                 SaveCommandQueue();
             }));
@@ -143,7 +144,7 @@ namespace LAMA.Communicator
                 string[] messageParts = message.Split(';');
                 if (messageParts[1] == "DataUpdated")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
@@ -151,14 +152,14 @@ namespace LAMA.Communicator
                 }
                 if (messageParts[1] == "ItemCreated")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemDeleted")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.LastUpdate = Int64.Parse(messageParts[0]);
                         THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
@@ -166,14 +167,14 @@ namespace LAMA.Communicator
                 }
                 if (messageParts[1] == "GiveID")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.ReceiveID(Int32.Parse(messageParts[2]), Int32.Parse(messageParts[3]));
                     }));
                 }
                 if (messageParts[1] == "Connected")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.Connected();
                     }));
@@ -310,7 +311,7 @@ namespace LAMA.Communicator
                     }
                     catch
                     {
-                        MainThread.BeginInvokeOnMainThread(new Action(() =>
+                        Device.BeginInvokeOnMainThread(new Action(() =>
                         {
                             THIS._connected = false;
                             THIS.wasUpdated = false;

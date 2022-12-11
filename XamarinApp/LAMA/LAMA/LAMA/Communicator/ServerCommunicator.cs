@@ -11,6 +11,7 @@ using Xamarin.Essentials;
 using System.Diagnostics;
 using LAMA.Models;
 using LAMA.Singletons;
+using Xamarin.Forms;
 
 namespace LAMA.Communicator
 {
@@ -159,7 +160,7 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                MainThread.BeginInvokeOnMainThread(new Action(() =>
+                Device.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.logger.LogWrite("Client socket exception");
                     Debug.WriteLine("Client socket exception");
@@ -210,42 +211,42 @@ namespace LAMA.Communicator
                 string[] messageParts = message.Split(';');
                 if (messageParts[1] == "DataUpdated")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemCreated")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
                     }));
                 }
                 if (messageParts[1] == "ItemDeleted")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
                 if (messageParts[1] == "Update")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                     }));
                 }
                 if (messageParts[1] == "GiveID")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.GiveNewClientID(current, messageParts[2]);
                     }));
                 }
                 if (messageParts[1] == "ClientConnected")
                 {
-                    MainThread.BeginInvokeOnMainThread(new Action(() =>
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.NewClientConnected(Int32.Parse(messageParts[2]), current);
                     }));
@@ -307,7 +308,7 @@ namespace LAMA.Communicator
             var responseString = "";
             try
             {
-                var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/startserver.php", content);
+                var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/startserver.php", content);
                 responseString = response.Result.Content.ReadAsStringAsync().Result;
                 Debug.WriteLine(responseString);
                 logger.LogWrite(responseString);
