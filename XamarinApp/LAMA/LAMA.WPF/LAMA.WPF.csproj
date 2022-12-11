@@ -193,6 +193,9 @@
     <Reference Include="TouchTracking, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TouchTracking.1.2.0\lib\netstandard1.3\TouchTracking.dll</HintPath>
     </Reference>
+    <Reference Include="TouchTracking.Forms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TouchTracking.Forms.1.1.0\lib\netstandard1.3\TouchTracking.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

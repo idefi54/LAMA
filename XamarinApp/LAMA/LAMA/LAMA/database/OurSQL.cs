@@ -53,15 +53,18 @@ namespace LAMA
 
             if (!File.Exists(path))
                 File.Create(path).Flush();
-            
+
+            Debug.WriteLine("Before connection");
             _connection = new SQLiteAsyncConnection(path);
+            Debug.WriteLine("Connection established");
+            Debug.WriteLine(_connection);
 
             return _connection;
         }
 
         public static void ResetDatabase()
         {
-
+            Debug.WriteLine("Reseting database");
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(directory, "database.db");
 

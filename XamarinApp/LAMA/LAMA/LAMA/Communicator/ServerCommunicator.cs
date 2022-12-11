@@ -272,8 +272,10 @@ namespace LAMA.Communicator
 
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password)
         {
-            if (name != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
+            if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
+            Debug.WriteLine("After LarpEvent.Name test");
+            LarpEvent.Name = name;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();

@@ -383,8 +383,9 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
-            if (serverName != LarpEvent.Name) SQLConnectionWrapper.ResetDatabase();
+            if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
+            LarpEvent.Name = serverName;
             logger = new DebugLogger(false);
             _connected = false;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;

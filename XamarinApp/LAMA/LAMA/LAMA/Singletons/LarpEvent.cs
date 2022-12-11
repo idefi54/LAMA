@@ -25,7 +25,16 @@ namespace LAMA.Singletons
                 {
                     LarpEvent result = null;
                     string name = typeof(LarpEvent).Name;
+                    Debug.WriteLine("Before make connection");
+                    if (SQLConnectionWrapper.connection == null)
+                    {
+                        SQLConnectionWrapper.makeConnection();
+                    }
+                    Debug.WriteLine("After make connection");
+                    Debug.WriteLine(SQLConnectionWrapper.connection.ToString());
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
+                    Debug.WriteLine("After getting name");
+                    Debug.WriteLine(a);
                     a.Wait();
                     if (a.Result.Count == 0)
                         SQLConnectionWrapper.connection.CreateTableAsync<LarpEvent>().Wait();
