@@ -421,7 +421,7 @@ namespace LAMA.Communicator
             var responseString = "";
             try
             {
-                var response = client.PostAsync("https://larp-project-mff.000webhostapp.com/findserver.php", content);
+                var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/findserver.php", content);
                 responseString = response.Result.Content.ReadAsStringAsync().Result;
             }
             catch (HttpRequestException)
