@@ -204,7 +204,7 @@ namespace LAMA.Communicator
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
-            string command = "ItemCreated" + ";" + objectType + ";" + String.Join("■", attributes);
+            string command = "ItemCreated" + ";" + objectType + ";" + String.Join("¦", attributes);
 
             communicator.Logger.LogWrite($"OnItemCreated: {command}");
             if (!objectsCache.containsKey(objectCacheID) || (objectsCache.getByKey(objectCacheID).command.StartsWith("ItemDeleted") && testing))
@@ -229,7 +229,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split('■');
+                Debug.WriteLine(serializedObject);
+                string[] attributtes = serializedObject.Split('¦');
+                Debug.WriteLine(attributtes);
+                Debug.WriteLine(attributtes.Length);
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
 
@@ -254,7 +257,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
@@ -279,7 +282,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
 
@@ -304,7 +307,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.ChatMessage")
             {
                 Models.ChatMessage cm = new Models.ChatMessage();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 cm.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cm.getID();
 
@@ -348,7 +351,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
                 long activityID = activity.getID();
@@ -371,7 +374,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
@@ -395,7 +398,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
                 long itemID = ii.getID();
@@ -418,7 +421,7 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.ChatMessage")
             {
                 Models.ChatMessage cm = new Models.ChatMessage();
-                string[] attributtes = serializedObject.Split('■');
+                string[] attributtes = serializedObject.Split('¦');
                 cm.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cm.getID();
                 long messageID = cm.getID();
