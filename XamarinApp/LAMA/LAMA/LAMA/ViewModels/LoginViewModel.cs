@@ -12,10 +12,14 @@ namespace LAMA.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        public Xamarin.Forms.Command DatabaseNameCommand { get; }
         public Xamarin.Forms.Command LoginCommand { get; }
         public Xamarin.Forms.Command ServerLoginCommand { get; }
         public Xamarin.Forms.Command FakeLoginCommand { get; }
 
+        public string DatabaseName { get; set; }
+        private string _databaseNameDisplay;
+        public string DatabaseNameDisplay { get { return _databaseNameDisplay; } set { SetProperty(ref _databaseNameDisplay, value); } }
         public string ClientServerName { get; set; }
         public string ClientName { get; set; }
         public string ClientPassword { get; set; }
@@ -34,6 +38,17 @@ namespace LAMA.ViewModels
             LoginCommand = new Xamarin.Forms.Command(OnLoginClicked);
             FakeLoginCommand = new Xamarin.Forms.Command(OnFakeLoginClicked);
             ServerLoginCommand = new Xamarin.Forms.Command(OnServerLoginClicked);
+            DatabaseNameCommand = new Xamarin.Forms.Command(OnChangeDatabaseName);
+            DatabaseNameDisplay = $"Database Name: {SQLConnectionWrapper.databaseName}";
+        }
+
+        private void OnChangeDatabaseName()
+        {
+            SQLConnectionWrapper.databaseName = DatabaseName;
+            if (SQLConnectionWrapper.connection == null)
+            {
+                DatabaseNameDisplay = $"Database Name: {DatabaseName}";
+            }
         }
 
         private async void OnLoginClicked(object obj)

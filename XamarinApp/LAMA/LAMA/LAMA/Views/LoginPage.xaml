@@ -13,6 +13,11 @@
         <StackLayout  Spacing="0">
             <ScrollView>
                 <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                    <Label Text="{Binding DatabaseNameDisplay}"/>
+                    <Label Text="Debug: database name"/>
+                    <Entry Placeholder="example: database2.db" Text="{Binding DatabaseName}"/>
+                    <Button Text="Set database name" HorizontalOptions="Center" Command="{Binding DatabaseNameCommand}"/>
+                    
                     <Label Text="Jméno serveru:"/>
                     <Entry Placeholder="Jméno serveru" Text="{Binding ClientServerName}"/>
                     <Label Text="Jméno klienta:"/>

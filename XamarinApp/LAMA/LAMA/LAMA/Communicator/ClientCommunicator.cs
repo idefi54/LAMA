@@ -125,6 +125,10 @@ namespace LAMA.Communicator
                 try
                 {
                     received = current.EndReceive(AR);
+                    if (received == 0)
+                    {
+                        throw new SocketException();
+                    }
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
@@ -211,6 +215,7 @@ namespace LAMA.Communicator
         {
             LocalStorage.clientID = clientId;
             LocalStorage.cpID = cpId;
+            Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
             RequestUpdate();
         }
 
