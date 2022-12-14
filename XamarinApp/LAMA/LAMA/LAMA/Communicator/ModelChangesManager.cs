@@ -121,6 +121,16 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
+                if (objectType == "LAMA.Models.EncyclopedyCategory")
+                {
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Models.EncyclopedyRecord")
+                {
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
                     Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
@@ -179,6 +189,16 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Models.EncyclopedyCategory")
+                {
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Models.EncyclopedyRecord")
+                {
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
@@ -328,6 +348,56 @@ namespace LAMA.Communicator
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
+
+            if (objectType == "LAMA.Models.EncyclopedyCategory")
+            {
+                Models.EncyclopedyCategory cm = new Models.EncyclopedyCategory();
+                string[] attributtes = serializedObject.Split('¦');
+                cm.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + cm.getID();
+
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    if (!server || testing)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.add(cm);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                    // Notify every client of item creation
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                }
+                else if (server) ItemCreatedSendRollback(objectID, current);
+            }
+
+            if (objectType == "LAMA.Models.EncyclopedyRecord")
+            {
+                Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
+                string[] attributtes = serializedObject.Split('¦');
+                er.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + er.getID();
+
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    if (!server || testing)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.add(er);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + ";" + i));
+                    }
+                    // Notify every client of item creation
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                }
+                else if (server) ItemCreatedSendRollback(objectID, current);
+            }
         }
 
         private void ItemCreatedSendRollback(string objectID, Socket current)
@@ -440,6 +510,54 @@ namespace LAMA.Communicator
                     }
                 }
             }
+
+
+            if (objectType == "LAMA.Models.EncyclopedyCategory")
+            {
+                Models.EncyclopedyCategory ec = new Models.EncyclopedyCategory();
+                string[] attributtes = serializedObject.Split('¦');
+                ec.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + ec.getID();
+                long messageID = ec.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    ec = DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(messageID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    ec.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
+                    }
+                }
+            }
+
+
+            if (objectType == "LAMA.Models.EncyclopedyRecord")
+            {
+                Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
+                string[] attributtes = serializedObject.Split('¦');
+                er.buildFromStrings(attributtes);
+                string objectID = objectType + ";" + er.getID();
+                long messageID = er.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+
+                    er = DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(messageID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    er.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + ";" + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + ";" + i).time = updateTime;
+                    }
+                }
+            }
         }
 
         public void OnItemDeleted(Serializable changed)
@@ -504,6 +622,19 @@ namespace LAMA.Communicator
                     nAttributes = removedChatMessage.numOfAttributes();
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.removeByID(objectID);
                 }
+                Models.EncyclopedyCategory removedEncyclopedyCategory;
+                if (objectType == "LAMA.Models.EncyclopedyCategory" && (removedEncyclopedyCategory = DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedEncyclopedyCategory.numOfAttributes();
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.removeByID(objectID);
+                }
+                Models.EncyclopedyRecord removedEncyclopedyRecord;
+                if (objectType == "LAMA.Models.EncyclopedyRecord" && (removedEncyclopedyRecord = DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedEncyclopedyRecord.numOfAttributes();
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.removeByID(objectID);
+                }
+
                 for (int i = 0; i < nAttributes; i++)
                 {
                     attributesCache.removeByKey(objectID + ";" + i);
