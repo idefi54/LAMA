@@ -29,6 +29,17 @@ namespace LAMA
             base.RemoveAt(where);
             dataChanged?.Invoke();
         }
+        public new void Remove(T what)
+        {
+            for (int i = 0; i < Count; ++i) 
+            {
+                if (what.Equals(this[i])) 
+                {
+                    RemoveAt(i);
+                    return;
+                }
+            }
+        }
 
         public void AddWithoutEvent(T what)
         {

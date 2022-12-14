@@ -46,8 +46,20 @@
                 <Label Text="Poznámky"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Notes}" FontSize="Medium" />
-                <Button Text="Uložit změny" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Label Text="{Binding Notes}" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                <Label Text="Pravomoce" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding Permissions}" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                <Button Text="Upravit" Command="{Binding EditCommand}" HorizontalOptions="FillAndExpand"></Button>
 
             </StackLayout>
         </ScrollView>
