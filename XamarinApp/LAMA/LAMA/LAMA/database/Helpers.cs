@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LAMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -225,5 +226,16 @@ namespace LAMA
             return output;
         }
 
+        public static string EnumEventListToString(EventList<CP.PermissionType> input)
+        {
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < input.Count; ++i)
+            {
+                if (i != 0)
+                    output.Append(", ");
+                output.Append(((int)input[i]).ToString());
+            }
+            return output.ToString();
+        }
     }
 }
