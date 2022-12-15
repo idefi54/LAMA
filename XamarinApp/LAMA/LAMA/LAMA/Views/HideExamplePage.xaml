@@ -10,11 +10,13 @@
 	
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label Text="Test Label" IsVisible="{Binding TestHideBool}"/>
 
-			<Button IsVisible="{Binding TestHideBool}" />
+			<Button Text="TestButton" IsVisible="{Binding TestHideBool}" />
+
+			<Entry Text="Test Entry" IsVisible="{Binding TestHideBool}"/>
+
+			<Editor Text="Test Editor" IsVisible="{Binding TestHideBool}"/>
 		</StackLayout>
     </ContentPage.Content>
 </ContentPage>
