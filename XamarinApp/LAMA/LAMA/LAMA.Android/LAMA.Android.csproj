@@ -66,8 +66,10 @@
   <ItemGroup>
     <Compile Include="AlarmHandler.cs" />
     <Compile Include="AndroidActivityGraphGUI.cs" />
+    <Compile Include="AndroidLocationService.cs" />
     <Compile Include="AndroidNotificationManager.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="NotificationHelper.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
