@@ -138,7 +138,7 @@ namespace LAMA.Models
         {
             switch(index)
             {
-                case 0: _ID = Helpers.readInt(value);
+                case 0: _ID = Helpers.readLong(value);
                     break;
                 case 1: _name = value;
                     break;

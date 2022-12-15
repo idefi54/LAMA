@@ -12,6 +12,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command GoToTestPage { get; }
         public Xamarin.Forms.Command GoToChat { get; }
         public Xamarin.Forms.Command GoToActivityGraph { get; }
+        public Xamarin.Forms.Command GoToEncyclopedy { get; }
 
         public OurNavigationMenuViewModel()
         {
@@ -20,6 +21,7 @@ namespace LAMA.ViewModels
             GoToTestPage = new Xamarin.Forms.Command(OnGoToTestPage);
             GoToChat = new Xamarin.Forms.Command(OnGoToChat);
             GoToActivityGraph = new Xamarin.Forms.Command(OnGoToActivityGraph);
+            GoToEncyclopedy = new Xamarin.Forms.Command(OnGoToEncyclopedy);
         }
 
         private async void OnGoToMap(object obj)
@@ -45,6 +47,11 @@ namespace LAMA.ViewModels
         private async void OnGoToActivityGraph(object obj)
         {
             await App.Current.MainPage.Navigation.PushAsync(new ActivityGraphPage());
+        }
+
+        private async void OnGoToEncyclopedy(object obj)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new EncyclopedyCategoryView(null));
         }
     }
 }

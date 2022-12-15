@@ -8,7 +8,7 @@ namespace LAMA.Models
     internal class CPStorage: Database.StorageInterface
     {
         [PrimaryKey]
-        public int ID { get; set; } 
+        public long ID { get; set; } 
 
         public string name { get; set; }
         public string nick { get; set; }
@@ -23,7 +23,7 @@ namespace LAMA.Models
 
         public void makeFromStrings(string[] input)
         {
-            ID = Helpers.readInt(input[0]);
+            ID = Helpers.readLong(input[0]);
             name = input[1];
             nick = input[2];
             roles = input[3];
