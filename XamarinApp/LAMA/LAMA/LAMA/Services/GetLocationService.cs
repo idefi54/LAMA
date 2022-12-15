@@ -40,7 +40,7 @@ namespace LAMA.Services
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             var errorMessage = new LocationErrorMessage();
-                            MessagingCenter.Send(errorMessage, "LocationError");
+                            MessagingCenter.Send(errorMessage, $"Error while updating location: {ex.Message}");
                         });
                     }
                 }
