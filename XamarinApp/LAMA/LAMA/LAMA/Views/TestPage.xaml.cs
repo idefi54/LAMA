@@ -79,6 +79,10 @@ namespace LAMA.Views
         {
             SQLConnectionWrapper.ResetDatabase();
         }
+        async void OnHideExample(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new HideExamplePage());
+        }
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {

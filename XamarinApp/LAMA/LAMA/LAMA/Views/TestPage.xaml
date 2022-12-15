@@ -25,8 +25,10 @@
                 <Button Text="Inventory" Clicked="OnInventory"/>
                 <Button Text="CPs" Clicked="OnCP"/>
                 <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
-                
-            </StackLayout>
+
+				<Button Text="Hide Example" Clicked="OnHideExample"/>
+
+			</StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>
