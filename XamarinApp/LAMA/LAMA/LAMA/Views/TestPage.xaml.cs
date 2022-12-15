@@ -1,12 +1,14 @@
 ﻿using LAMA.Models;
 using LAMA.Models.DTO;
+using LAMA.Services;
 using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -40,6 +42,37 @@ namespace LAMA.Views
 
             LocalStorage.cpID = 666;
 
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                MessagingCenter.Subscribe<LocationMessage>(this, "Location",
+                    message =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            // TODO -> TRACK THE LOCATION CODE HERE
+
+                        });
+                    });
+
+                MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped",
+                    message =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            // What now?
+                            Debug.Print("LOCATION STOPPED");
+                        });
+                    });
+
+                MessagingCenter.Subscribe<LocationErrorMessage>(this, "LocationError",
+                    message =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Debug.Print("There was an error updating location");
+                        });
+                    });
+            }
         }
 
         async void OnDisplayActivity(object sender, EventArgs args)
@@ -57,7 +90,7 @@ namespace LAMA.Views
         {
             await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity, activity));
         }
-        async void OnInventory (object sender, EventArgs args)
+        async void OnInventory(object sender, EventArgs args)
         {
             await Navigation.PushAsync(new InventoryView());
         }
@@ -65,27 +98,27 @@ namespace LAMA.Views
         {
             await Navigation.PushAsync(new EncyclopedyCategoryView(null));
         }
-        async void OnCP (object sender, EventArgs args)
+        async void OnCP(object sender, EventArgs args)
         {
             await Navigation.PushAsync(new CPListView());
         }
 
         async void OnActivitySelector(object sender, EventArgs args)
         {
-			ActivitySelectionPage page = new ActivitySelectionPage(_displayName);
+            ActivitySelectionPage page = new ActivitySelectionPage(_displayName);
             await Navigation.PushAsync(page);
-            
+
 
             void _displayName(LarpActivity activity)
-			{
+            {
 
-                if(activity != null)
-			        _ = DisplayAlert("Activity", activity.name, "OK");
+                if (activity != null)
+                    _ = DisplayAlert("Activity", activity.name, "OK");
                 else
-			        _ = DisplayAlert("Problem", "Something went wrong and no activity is present.", "BUMMER");
+                    _ = DisplayAlert("Problem", "Something went wrong and no activity is present.", "BUMMER");
 
 
-			}
+            }
         }
         void OnResetDatabase(object sender, EventArgs args)
         {
@@ -146,6 +179,42 @@ namespace LAMA.Views
             //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
 
             activity = larpActivity.CreateLarpActivity();
+        }
+
+        protected async override void OnAppearing()
+        {
+
+            var permission = await Xamarin.Essentials.Permissions.RequestAsync<Xamarin.Essentials.Permissions.LocationAlways>();
+            
+            if (permission == Xamarin.Essentials.PermissionStatus.Denied)
+            {
+                // TODO Let the user know they need to accept
+                return;
+            }
+
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                if (!Preferences.Get("LocationServiceRunning", false))
+                    StartService();
+                else
+                    StopService();
+            }
+
+            base.OnAppearing();
+        }
+
+        private void StartService()
+        {
+            var startServiceMessage = new StartServiceMessage();
+            MessagingCenter.Send(startServiceMessage, "ServiceStarted");
+            Preferences.Set("LocationServiceRunning", true);
+        }
+
+        private void StopService()
+        {
+            var stopServiceMessage = new StopServiceMessage();
+            MessagingCenter.Send(stopServiceMessage, "ServiceStopped");
+            Preferences.Set("LocationServiceRunning", false);
         }
 
     }
