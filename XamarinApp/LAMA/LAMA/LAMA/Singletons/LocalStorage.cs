@@ -19,7 +19,7 @@ namespace LAMA
                 }
                 else
                 {
-                    LocalStorage result = null;
+                    
                     string name =  new LocalStorage().GetType().Name;
                     Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);

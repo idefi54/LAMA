@@ -63,7 +63,7 @@ namespace LAMA.Models
         string _notes;
         public string notes { get { return _notes; } set { _notes = value; updateValue(8, value); } }
 
-        EventList<PermissionType> _permissions;
+        EventList<PermissionType> _permissions = new EventList<PermissionType>();
         public EventList<PermissionType> permissions { get { return _permissions; } }
         void onPermissionsChange()
         {
