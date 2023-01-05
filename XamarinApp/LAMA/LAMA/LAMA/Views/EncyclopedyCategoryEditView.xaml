@@ -16,11 +16,12 @@
                 <Entry Text="{Binding Name}"/>
                 <Entry Text="{Binding Description}"/>
 
-
-                <ListView x:Name="CategoryList" ItemsSource="{Binding Categories}" SelectionMode="None" Margin="5,5,5,0">
-                    <ListView.ItemTemplate>
+                <Label Text="Kategorie
+                       "/>
+                <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding Categories}" Margin="5,5,5,0">
+                    <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell>
+                            
                                 <Grid Padding="5" Margin="5" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -36,10 +37,10 @@
 
                                     
                                 </Grid>
-                            </ViewCell>
+                            
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
                 
                 <Label Text="Přidat kategorii"
 					   HorizontalTextAlignment="Start"
@@ -47,10 +48,13 @@
                 <Picker Title="Jméno" ItemsSource="{Binding CategoryNames}" SelectedIndex="{Binding SelectedCategoryIndex}"  HorizontalOptions="Start"/>
                 <Button Text="Přidat" Command="{Binding AddChildCategoryCommand}" HorizontalOptions="FillAndExpand"></Button>
 
-                <ListView x:Name="RecordList" ItemsSource="{Binding Records}" SelectionMode="None" Margin="5,5,5,0">
-                    <ListView.ItemTemplate>
+
+                <Label Text="Stránky
+                       "/>
+                <StackLayout x:Name="RecordList" BindableLayout.ItemsSource="{Binding Records}" Margin="5,5,5,0">
+                    <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell>
+                            
                                 <Grid Padding="5" Margin="5" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -67,10 +71,10 @@
 
 
                                 </Grid>
-                            </ViewCell>
+                            
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
 
                 <Label Text="Přidat záznam"
 					   HorizontalTextAlignment="Start"

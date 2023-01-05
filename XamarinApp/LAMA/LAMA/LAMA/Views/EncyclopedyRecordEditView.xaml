@@ -27,8 +27,7 @@
 
                 <Entry Text="{Binding Name}" Placeholder="Název" FontSize="Medium" />
                 <Entry Text="{Binding TLDR}" Placeholder="Shrnutí" FontSize="Medium" />
-                <Entry Text="{Binding Text}" Placeholder="Plný text" FontSize="Medium" />
-
+                <Editor Text="{Binding Text}" Placeholder="Plný text" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
             </StackLayout>
         </ScrollView>
