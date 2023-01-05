@@ -79,5 +79,29 @@ namespace LAMA
                 this.Add(item);
             }
         }
+
+        public new void Clear()
+        {
+            base.Clear();
+            dataChanged.Invoke();
+        }
+
+        public void Update (EventList<T> otherOne)
+        {
+            
+            for(int i = 0; i< otherOne.Count; ++i)
+            {
+                if (Count < i)
+                {
+                    if (this[i].Equals(otherOne[i]))
+                        continue;
+                    else
+                        base[i] = otherOne[i];
+                }
+                else
+                    base.Add(otherOne[i]);
+            }
+            dataChanged.Invoke();
+        }
     }
 }

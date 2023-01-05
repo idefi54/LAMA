@@ -68,7 +68,10 @@ namespace LAMA
 
         public static EventList<int> readIntField(string input)
         {
+            
             EventList<int> output = new EventList<int>();
+            if (input == null)
+                return output;
             int i = 0;
             skipNonDigits(input, ref i);
             while (i < input.Length)

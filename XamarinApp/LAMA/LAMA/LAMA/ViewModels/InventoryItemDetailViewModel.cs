@@ -74,19 +74,28 @@ namespace LAMA.ViewModels
                 CPNames.Add(CP.nick);
             }
         }
-        public async void OnBorrow()
+        public void OnBorrow()
         {
             if (_howManyBorrow < 1)
                 return;
 
             _item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]);
+            NumBorrowed = _item.taken.ToString();
+            NumFree = _item.free.ToString();
+
             SetProperty(ref _howManyBorrow, 0);
             SetProperty(ref _borrowName, 0);
             writeBorrowedBy();
         }
-        public async void OnReturn()
+        public void OnReturn()
         {
+            if (_returnNum < 1)
+                return;
+
             _item.Return(_returnNum, CPIDs[CPNames[ _returnName]]);
+            NumBorrowed = _item.taken.ToString();
+            NumFree = _item.free.ToString();
+
             SetProperty(ref _returnNum, 0);
             SetProperty(ref _returnName, 0);
             writeBorrowedBy();
@@ -94,9 +103,9 @@ namespace LAMA.ViewModels
 
         private void writeBorrowedBy()
         {
-            NumBorrowed = _item.takenBy.ToString();
-            NumFree = _item.free.ToString();
-            
+            SetProperty(ref _numBorrowed, _item.taken);
+            SetProperty(ref _numFree, _item.free);
+
 
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             StringBuilder output = new StringBuilder();

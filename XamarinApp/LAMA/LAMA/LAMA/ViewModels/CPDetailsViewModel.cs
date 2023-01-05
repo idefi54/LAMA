@@ -57,6 +57,7 @@ namespace LAMA.ViewModels
 
             name = cp.name;
             nick = cp.nick;
+            roles = cp.roles.ToString();
             phone = cp.phone;
             facebook = cp.facebook;
             discord = cp.discord;
@@ -81,6 +82,7 @@ namespace LAMA.ViewModels
                 cp.name = name;
             if (cp.nick != nick)
                 cp.nick = nick;
+            cp.roles.Update(Helpers.readStringField(roles));
             if (cp.phone != phone)
                 cp.phone = phone;
             if (cp.facebook != facebook)
@@ -124,12 +126,14 @@ namespace LAMA.ViewModels
             cp.permissions.Add(namesToPermissions[AddablePermissions[PermissionToAdd]]);
             figureOutPermissions();
             SetProperty(ref permissions, cp.permissions.ToString());
+            Permissions = cp.permissions.ToString();
         }
         void onRemovePermission()
         {
             cp.permissions.Remove(namesToPermissions[CurrentPermissions[permissionToRemove]]);
             figureOutPermissions();
             SetProperty(ref permissions, cp.permissions.ToString());
+            Permissions = cp.permissions.ToString();
         }
      }
 }
