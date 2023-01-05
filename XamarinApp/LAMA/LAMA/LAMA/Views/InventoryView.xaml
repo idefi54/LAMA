@@ -8,7 +8,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Řadit" />
         <ToolbarItem Text="Filtr" />
-        <ToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}"/>
+        <forms:BindableToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}"/>
     </ContentPage.ToolbarItems>
 
 
