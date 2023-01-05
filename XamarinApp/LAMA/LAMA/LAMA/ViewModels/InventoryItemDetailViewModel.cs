@@ -32,9 +32,10 @@ namespace LAMA.ViewModels
         public string NumBorrowed { get { return _numBorrowed.ToString(); } private set { SetProperty(ref _numBorrowed, Helpers.readInt( value)); } }
         public string NumFree { get { return _numFree.ToString(); } private set { SetProperty(ref _numFree, Helpers.readInt(value)); } }
         public string BorrowedBy { get { return _borrowedBy; } private set { SetProperty(ref _borrowedBy, value); } }
-
+        public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
+        public Command DeleteCommand { get; private set; }
 
         public List<string> CPNames { get { return _CPNames; } set { SetProperty(ref _CPNames, value); } }
         public int BorrowerSelected { get { return _borrowName; } set { SetProperty(ref _borrowName, value); } }
@@ -63,7 +64,7 @@ namespace LAMA.ViewModels
             
             DetailedBorrowCommand = new Command(OnBorrow);
             DetailedReturnCommand = new Command(OnReturn);
-
+            DeleteCommand = new Command(onDelete);
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
             for (int i =0; i< CPList.Count; ++i)
@@ -119,6 +120,11 @@ namespace LAMA.ViewModels
 
 
             BorrowedBy = output.ToString();
+        }
+        async void onDelete()
+        {
+            DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.removeByID(_item.ID);
+            await Navigation.PopAsync();
         }
     }
 }

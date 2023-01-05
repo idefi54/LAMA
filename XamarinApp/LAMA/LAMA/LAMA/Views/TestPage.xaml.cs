@@ -38,7 +38,7 @@ namespace LAMA.Views
             if (!me.permissions.Contains(CP.PermissionType.SetPermission))
                 me.permissions.Add(CP.PermissionType.SetPermission);
 
-            LocalStorage.clientID = 666;
+            LocalStorage.cpID = 666;
 
         }
 
