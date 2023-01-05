@@ -23,7 +23,7 @@ namespace LAMA.ViewModels
         public Command<object> ReturnItem { get; private set; }
         public Command<object> OpenDetailCommand { get; private set; }
 
-        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} private set { } }
+        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
 
         INavigation Navigation;
 

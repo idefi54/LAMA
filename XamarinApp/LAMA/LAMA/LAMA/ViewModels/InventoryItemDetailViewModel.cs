@@ -32,7 +32,7 @@ namespace LAMA.ViewModels
         public string NumBorrowed { get { return _numBorrowed.ToString(); } private set { SetProperty(ref _numBorrowed, Helpers.readInt( value)); } }
         public string NumFree { get { return _numFree.ToString(); } private set { SetProperty(ref _numFree, Helpers.readInt(value)); } }
         public string BorrowedBy { get { return _borrowedBy; } private set { SetProperty(ref _borrowedBy, value); } }
-        public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } }
+        public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
         public Command DeleteCommand { get; private set; }
