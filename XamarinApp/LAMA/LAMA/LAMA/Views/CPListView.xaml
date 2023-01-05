@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.CPListView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Řadit" />
         <ToolbarItem Text="Filtr" />
-        <ToolbarItem Text="Přidat CP" Command="{Binding AddCPCommand}"/>
+        <forms:BindableToolbarItem Text="Přidat CP" Command="{Binding AddCPCommand}" IsVisible="{Binding CanAddCP}" />
     </ContentPage.ToolbarItems>
 
 

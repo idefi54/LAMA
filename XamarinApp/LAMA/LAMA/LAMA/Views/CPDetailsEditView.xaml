@@ -6,47 +6,48 @@
         <ScrollView>
             <StackLayout Padding="15" >
 
-                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
+                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
 
-                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
+                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
 
 
                 <Label Text="Role"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Roles}" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
+                <Entry Text="{Binding Roles}" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
                 
                 <Label Text="Telefon"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Phone}" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
+                <Entry Text="{Binding Phone}" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
                 <Label Text="Facebook"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Facebook}" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
+                <Entry Text="{Binding Facebook}" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
                 <Label Text="Discord"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Discord}" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
+                <Entry Text="{Binding Discord}" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
                 <Label Text="Poznámky"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Notes}" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
+                <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
+
+                <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
+
+                <Picker Title="Pravomoc" ItemsSource="{Binding AddablePermissions}" SelectedIndex="{Binding PermissionToAdd}"  HorizontalOptions="Start" IsVisible="{Binding CanChangePermissions}"/>
+                <Button Text="Přidat" Command="{Binding AddPermissionCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangePermissions}"></Button>
+
+                <Picker Title="Pravomoc" ItemsSource="{Binding CurrentPermissions}" SelectedIndex="{Binding PermissionToRemove}"  HorizontalOptions="Start" IsVisible="{Binding CanChangePermissions}"/>
+                <Button Text="Odebrat" Command="{Binding RemovePermissionCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangePermissions}"></Button>
 
 
-                <Picker Title="Pravomoc" ItemsSource="{Binding AddablePermissions}" SelectedIndex="{Binding PermissionToAdd}"  HorizontalOptions="Start"/>
-                <Button Text="Přidat" Command="{Binding AddPermissionCommand}" HorizontalOptions="FillAndExpand"></Button>
-
-                <Picker Title="Pravomoc" ItemsSource="{Binding CurrentPermissions}" SelectedIndex="{Binding PermissionToRemove}"  HorizontalOptions="Start"/>
-                <Button Text="Odebrat" Command="{Binding RemovePermissionCommand}" HorizontalOptions="FillAndExpand"></Button>
-
-
-                <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                
 
             </StackLayout>
         </ScrollView>

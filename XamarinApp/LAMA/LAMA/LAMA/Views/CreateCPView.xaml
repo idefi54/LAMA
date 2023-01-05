@@ -24,7 +24,7 @@
                 <Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
                 <Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
                 <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
-                <Entry Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" />
+                <Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
                 <StackLayout Orientation="Horizontal">
                     <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>

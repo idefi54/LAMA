@@ -34,10 +34,14 @@ namespace LAMA.ViewModels
         public string Notes { get { return _notes; } set { SetProperty(ref _notes, value); } }
         string permissions;
         public string Permissions { get{ return permissions; } set { SetProperty(ref permissions, value); } }
+        public bool CanChangeCPs { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
+        public bool CanOpenDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission); } set { } }
+        public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission); } set { } }
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
         public Command AddPermissionCommand { get; private set; }
         public Command RemovePermissionCommand { get; private set; }
+        public Command DeleteCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> CurrentPermissions { get; } = new ObservableCollection<string>();
         int permissionToAdd;
@@ -54,7 +58,7 @@ namespace LAMA.ViewModels
             _notes = cp.notes;
             SaveCommand = new Command(OnSave);
             EditCommand = new Command(OnEdit);
-
+            DeleteCommand = new Command(OnDelete);
             name = cp.name;
             nick = cp.nick;
             roles = cp.roles.ToString();
@@ -130,10 +134,23 @@ namespace LAMA.ViewModels
         }
         void onRemovePermission()
         {
+            //do NOT remove your own permission to change permissions, that's usually a dumb idea and a potential soft lock of a whole larp
+            if (cp == LocalStorage.cp && namesToPermissions[CurrentPermissions[permissionToRemove]]== CP.PermissionType.SetPermission)
+                return;
             cp.permissions.Remove(namesToPermissions[CurrentPermissions[permissionToRemove]]);
             figureOutPermissions();
             SetProperty(ref permissions, cp.permissions.ToString());
             Permissions = cp.permissions.ToString();
+        }
+        async void OnDelete()
+        {
+            // don't delete yourself
+            // also do not delete the server
+            if (LocalStorage.cpID == cp.ID || cp.ID==0)
+                return;
+
+            DatabaseHolder<CP, CPStorage>.Instance.rememberedList.removeByID(cp.ID);
+            await navigation.PopAsync();
         }
      }
 }

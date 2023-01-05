@@ -59,8 +59,8 @@
 					   VerticalTextAlignment="End"/>
 
 
-                <Button Text="Upravit" Command="{Binding EditCommand}" HorizontalOptions="FillAndExpand"></Button>
-
+                <Button Text="Upravit" Command="{Binding EditCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanOpenDetails}"></Button>
+                <Button Text="Smazat" Command="{Binding DeleteCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
