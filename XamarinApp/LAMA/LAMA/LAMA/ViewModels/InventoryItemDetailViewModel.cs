@@ -32,9 +32,10 @@ namespace LAMA.ViewModels
         public string NumBorrowed { get { return _numBorrowed.ToString(); } private set { SetProperty(ref _numBorrowed, Helpers.readInt( value)); } }
         public string NumFree { get { return _numFree.ToString(); } private set { SetProperty(ref _numFree, Helpers.readInt(value)); } }
         public string BorrowedBy { get { return _borrowedBy; } private set { SetProperty(ref _borrowedBy, value); } }
-
+        public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
+        public Command DeleteCommand { get; private set; }
 
         public List<string> CPNames { get { return _CPNames; } set { SetProperty(ref _CPNames, value); } }
         public int BorrowerSelected { get { return _borrowName; } set { SetProperty(ref _borrowName, value); } }
@@ -63,7 +64,7 @@ namespace LAMA.ViewModels
             
             DetailedBorrowCommand = new Command(OnBorrow);
             DetailedReturnCommand = new Command(OnReturn);
-
+            DeleteCommand = new Command(onDelete);
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
             for (int i =0; i< CPList.Count; ++i)
@@ -74,19 +75,28 @@ namespace LAMA.ViewModels
                 CPNames.Add(CP.nick);
             }
         }
-        public async void OnBorrow()
+        public void OnBorrow()
         {
             if (_howManyBorrow < 1)
                 return;
 
             _item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]);
+            NumBorrowed = _item.taken.ToString();
+            NumFree = _item.free.ToString();
+
             SetProperty(ref _howManyBorrow, 0);
             SetProperty(ref _borrowName, 0);
             writeBorrowedBy();
         }
-        public async void OnReturn()
+        public void OnReturn()
         {
+            if (_returnNum < 1)
+                return;
+
             _item.Return(_returnNum, CPIDs[CPNames[ _returnName]]);
+            NumBorrowed = _item.taken.ToString();
+            NumFree = _item.free.ToString();
+
             SetProperty(ref _returnNum, 0);
             SetProperty(ref _returnName, 0);
             writeBorrowedBy();
@@ -94,9 +104,9 @@ namespace LAMA.ViewModels
 
         private void writeBorrowedBy()
         {
-            NumBorrowed = _item.takenBy.ToString();
-            NumFree = _item.free.ToString();
-            
+            SetProperty(ref _numBorrowed, _item.taken);
+            SetProperty(ref _numFree, _item.free);
+
 
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             StringBuilder output = new StringBuilder();
@@ -110,6 +120,11 @@ namespace LAMA.ViewModels
 
 
             BorrowedBy = output.ToString();
+        }
+        async void onDelete()
+        {
+            DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.removeByID(_item.ID);
+            await Navigation.PopAsync();
         }
     }
 }

@@ -27,6 +27,18 @@ namespace LAMA.Views
                 LarpActivity.EventType.normal, new EventList<long>(),
                 999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
                 new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            
+            var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
+            if (me == null)
+            {
+                me = new CP(666, "me", "test", new EventList<string>(), "", "", "", "");
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(me);
+                
+            }
+            if (!me.permissions.Contains(CP.PermissionType.SetPermission))
+                me.permissions.Add(CP.PermissionType.SetPermission);
+
+            LocalStorage.cpID = 666;
 
         }
 
@@ -83,6 +95,37 @@ namespace LAMA.Views
         {
             await Navigation.PushAsync(new HideExamplePage());
         }
+
+
+
+
+
+
+
+
+
+
+        void onAddPermissionsPermission(object sender, EventArgs args)
+        {
+            var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
+            if (me.permissions.Contains(CP.PermissionType.SetPermission))
+                me.permissions.Add(CP.PermissionType.SetPermission);
+        }
+        void onRemovePermissionspermission(object sender, EventArgs args)
+        {
+            var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
+            if (me.permissions.Contains(CP.PermissionType.SetPermission))
+                me.permissions.Remove(CP.PermissionType.SetPermission);
+        }
+
+
+
+
+
+
+
+
+
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {

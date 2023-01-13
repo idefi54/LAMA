@@ -4,6 +4,7 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing.Text;
 using System.Text;
 using Xamarin.Forms;
 
@@ -21,6 +22,8 @@ namespace LAMA.ViewModels
 
         public Command<object> ReturnItem { get; private set; }
         public Command<object> OpenDetailCommand { get; private set; }
+
+        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
 
         INavigation Navigation;
 

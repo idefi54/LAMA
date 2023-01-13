@@ -14,7 +14,7 @@
                 <Label Text="Popis předmětu"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Description}" Placeholder="Popis" FontSize="Medium" />
+                <Editor Text="{Binding Description}" Placeholder="Popis" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
                 <Label Text="Na skladě"
 					   HorizontalTextAlignment="Start"

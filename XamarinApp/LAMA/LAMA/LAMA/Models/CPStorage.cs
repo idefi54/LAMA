@@ -18,6 +18,7 @@ namespace LAMA.Models
         public string discord { get; set; }
         public string location { get; set; }
         public string notes { get; set; }
+        public string permissions { get; set; }
         public long lastChange { get; set; }
 
         public void makeFromStrings(string[] input)
@@ -31,10 +32,11 @@ namespace LAMA.Models
             discord = input[6];
             location = input[7];
             notes = input[8];
+            permissions = input[9];
         }
         public string[] getStrings()
         {
-            return new string[] { ID.ToString(), name, nick, roles, phone, facebook, discord, location, notes};
+            return new string[] { ID.ToString(), name, nick, roles, phone, facebook, discord, location, notes, permissions};
         }
         public long getID()
         {
