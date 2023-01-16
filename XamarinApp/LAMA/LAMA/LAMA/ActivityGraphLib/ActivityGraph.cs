@@ -324,11 +324,11 @@ namespace LAMA.ActivityGraphLib
                 _canvasLayout.Children.RemoveAt(1);
 
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
-            var activities = rememberedList.sqlConnection.ReadData();
 
             TimeSpan maxDifference = new TimeSpan(days: 9, 0, 0, 0);
-            foreach (LarpActivity activity in activities)
+            for (int i = 0; i < rememberedList.Count; i++)
             {
+                LarpActivity activity = rememberedList[i];
                 DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 
                 if ((start - TimeOffset).Duration() < maxDifference)
