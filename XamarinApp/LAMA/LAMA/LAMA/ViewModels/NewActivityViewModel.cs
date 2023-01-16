@@ -9,6 +9,7 @@ using LAMA.Extensions;
 using LAMA.Views;
 using static LAMA.Models.LarpActivity;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace LAMA.ViewModels
 {
@@ -24,7 +25,7 @@ namespace LAMA.ViewModels
 		private DateTime _duration;
 		private DateTime _start;
 		private int _day;
-		private TrulyObservableCollection<RoleItemViewModel> _roles;
+		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -40,7 +41,7 @@ namespace LAMA.ViewModels
 		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
 		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
 		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
-		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
+		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -69,7 +70,7 @@ namespace LAMA.ViewModels
 			larpActivity = activity;
 			MapHandler.Instance.SetTemporaryPin(0, 0);
 
-			Roles = new TrulyObservableCollection<RoleItemViewModel>();
+			Roles = new ObservableCollection<RoleItemViewModel>();
 
 
 			if (larpActivity != null)

@@ -130,6 +130,12 @@ namespace LAMA.ViewModels
 			Name = larpActivityDTO.name;
 			Description = larpActivityDTO.description;
 
+			_activity.roles.Clear();
+			foreach(var role in larpActivity.roles)
+			{
+				_activity.roles.Add(role);
+			}
+
 			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
 			foreach (int id in _activity.prerequisiteIDs)
