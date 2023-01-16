@@ -7,6 +7,7 @@ using System.Text;
 using System.Linq;
 using Xamarin.Forms;
 using LAMA.ActivityGraphLib;
+using LAMA.Extensions;
 
 namespace LAMA.ActivityGraphLib
 {
@@ -324,14 +325,15 @@ namespace LAMA.ActivityGraphLib
 
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
             var activities = rememberedList.sqlConnection.ReadData();
-            var currentActivities =
-                            from activity in activities
-                            where Math.Abs(activity.day - TimeOffset.Day) <= 9 ||
-                            DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - Math.Abs(activity.day - DateTime.Now.Day) <= 9
-                            select activity;
 
-            foreach (LarpActivity activity in currentActivities)
-                _canvasLayout.Children.Add(new ActivityButton(activity, this));
+            TimeSpan maxDifference = new TimeSpan(days: 9, 0, 0, 0);
+            foreach (LarpActivity activity in activities)
+            {
+                DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+
+                if ((start - TimeOffset).Duration() < maxDifference)
+                    _canvasLayout.Children.Add(new ActivityButton(activity, this));
+            }
         }
 
         /// <summary>
