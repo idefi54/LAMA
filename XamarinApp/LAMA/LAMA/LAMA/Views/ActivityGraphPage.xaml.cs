@@ -46,7 +46,7 @@ namespace LAMA.Views
             _graph.ReloadActivities();
         }
 
-        void OnTouchEffectAction(object sender, TouchActionEventArgs args)
+        public void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
             // New Press
             if (args.Type == TouchActionType.Pressed)
