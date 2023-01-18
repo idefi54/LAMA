@@ -91,7 +91,7 @@ namespace LAMA.ViewModels
 			_roles = new ObservableCollection<RoleItemViewModel>();
 			foreach (Pair<string, int> item in _activity.roles)
 			{
-				_roles.Add(new RoleItemViewModel(item.first, item.second, 0));
+				_roles.Add(new RoleItemViewModel(item.first, item.second, 0, false));
 			}
 
 
@@ -135,7 +135,7 @@ namespace LAMA.ViewModels
 			foreach(var role in larpActivityDTO.roles)
 			{
 				_activity.roles.Add(role);
-				Roles.Add(new RoleItemViewModel(role.first, role.second, 0));
+				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
 			}
 
 			Dependencies.Clear();

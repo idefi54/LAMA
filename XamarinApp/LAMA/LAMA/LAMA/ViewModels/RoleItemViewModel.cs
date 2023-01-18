@@ -27,11 +27,12 @@ namespace LAMA.ViewModels
 		private bool _editable;
 		public bool Editable { get { return _editable; } set { SetProperty(ref _editable, value); } }
 
-		public RoleItemViewModel(string name, int max, int current)
+		public RoleItemViewModel(string name, int max, int current, bool isEditable)
 		{
 			_name = name;
 			_currentCount = current;
 			_maxCount = max;
+			Editable = isEditable;
 		}
 
 		public Pair<string,int> ToPair()

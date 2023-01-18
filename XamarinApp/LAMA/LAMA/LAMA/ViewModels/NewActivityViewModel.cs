@@ -88,7 +88,7 @@ namespace LAMA.ViewModels
 				MapHandler.Instance.SetTemporaryPin(larpActivity.place.first, larpActivity.place.second);
 				foreach(Pair<string, int> role in activity.roles)
 				{
-					Roles.Add(new RoleItemViewModel(role.first, role.second, 0));
+					Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
 				}
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
@@ -132,7 +132,7 @@ namespace LAMA.ViewModels
 
 		private void OnAddNewRole()
 		{
-			Roles.Add(new RoleItemViewModel("role", 1, 0));
+			Roles.Add(new RoleItemViewModel("role", 1, 0, true));
 		}
 
 		private bool ValidateSave()
