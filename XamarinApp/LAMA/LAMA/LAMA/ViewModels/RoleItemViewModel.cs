@@ -10,8 +10,9 @@ namespace LAMA.ViewModels
 		public string Name { get { return _name.ToString(); } set { SetProperty(ref _name, value); } }
 
 		private int _currentCount;
-		private int _maxCount;
 		public string Count => $"{_currentCount}/{_maxCount}";
+
+		private int _maxCount;
 		public string MaxCount {
 			get { return _maxCount.ToString(); }
 			set 
@@ -22,6 +23,9 @@ namespace LAMA.ViewModels
 				}
 			}
 		}
+
+		private bool _editable;
+		public bool Editable { get { return _editable; } set { SetProperty(ref _editable, value); } }
 
 		public RoleItemViewModel(string name, int max, int current)
 		{

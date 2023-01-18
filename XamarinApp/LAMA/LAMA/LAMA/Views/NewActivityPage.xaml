@@ -6,7 +6,7 @@
              Title="{Binding Title}"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels" xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
@@ -96,7 +96,8 @@
 					<BindableLayout.ItemTemplate>
 						<DataTemplate>
 							<StackLayout Orientation="Horizontal">
-								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+								<Entry IsVisible="{Binding Editable}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+								<Label IsVisible="{Binding Editable, Converter={Converters:InverseBoolConverter}}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
 								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding MaxCount}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
 								<Button Text="-"
 										Command="{Binding Path=BindingContext.RemoveRole, Source={x:Reference Name=RoleList}}"
