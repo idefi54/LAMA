@@ -50,6 +50,8 @@ namespace LAMA.Views
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
+                            var cpList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+                            cpList[LocalStorage.cpID].location = new Pair<double, double>(message.Longitude, message.Latitude);
                             // TODO -> TRACK THE LOCATION CODE HERE
 
                         });
@@ -206,12 +208,12 @@ namespace LAMA.Views
                 if (CrossGeolocator.Current.IsListening)
                 {
                     await CrossGeolocator.Current.StopListeningAsync();
-                    CrossGeolocator.Current.PositionChanged -= Current_PositionChanged;
+                    CrossGeolocator.Current.PositionChanged -= IOSPositionChanged;
                     return;
                 }
 
-                await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(1), 10);
-                CrossGeolocator.Current.PositionChanged += Current_PositionChanged;
+                await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(5), 10);
+                CrossGeolocator.Current.PositionChanged += IOSPositionChanged;
 
 
                 DependencyService.Get<INotificationManager>().SendNotification("Location",
@@ -221,8 +223,10 @@ namespace LAMA.Views
             base.OnAppearing();
         }
 
-        private void Current_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
+        private void IOSPositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
         {
+            var cpList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+            cpList[LocalStorage.cpID].location = new Pair<double, double>(e.Position.Longitude, e.Position.Latitude);
         }
 
         private void StartService()
