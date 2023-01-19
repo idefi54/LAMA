@@ -132,8 +132,8 @@ namespace LAMA.Models
         public EventList<Pair<string, int>> roles { get { return _roles; } }
         void rolesChange() { updateValue(12, _roles.ToString()); }
         // person ID, to what role they are registered
-        EventList<Pair<int, string>> _registrationByRole = new EventList<Pair<int, string>>();
-        public EventList<Pair<int, string>> registrationByRole { get { return _registrationByRole; } }
+        EventList<Pair<long, string>> _registrationByRole = new EventList<Pair<long, string>>();
+        public EventList<Pair<long, string>> registrationByRole { get { return _registrationByRole; } }
         void registrationByRoleChanged() { updateValue(13, _registrationByRole.ToString()); }
 
         double _graphY;
@@ -160,7 +160,7 @@ namespace LAMA.Models
         }
         public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
             long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
-            EventList<Pair<string, int>> roles, EventList<Pair<int, string>> registrations)
+            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations)
         {
             _ID = ID;
             _name = name;
@@ -347,7 +347,7 @@ namespace LAMA.Models
                     _roles.dataChanged += rolesChange;
                     break;
                 case 13:
-                    _registrationByRole = Helpers.readIntStringPairField(value);
+                    _registrationByRole = Helpers.readLongStringPairField(value);
                     _registrationByRole.dataChanged += registrationByRoleChanged;
                     break;
                 case 14:

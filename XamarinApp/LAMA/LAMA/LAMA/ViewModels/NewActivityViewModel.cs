@@ -217,6 +217,8 @@ namespace LAMA.ViewModels
 				dependencies.Add(item.LarpActivity.ID);
 			}
 
+			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
+
 			LarpActivity larpActivity = new LarpActivity(
 				10,
 				Name, 
@@ -231,7 +233,7 @@ namespace LAMA.ViewModels
 				LarpActivity.Status.readyToLaunch,
 				new EventList<Pair<int, int>>(), 
 				new EventList<Pair<string, int>>(), 
-				new EventList<Pair<int, string>>());
+				registered);
 
 			_createNewActivity(new LarpActivityDTO(larpActivity));
 

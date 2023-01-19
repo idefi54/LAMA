@@ -210,7 +210,7 @@ namespace LAMA.ActivityGraphLib
                 status: status,
                 requiredItems: new EventList<Pair<int, int>>(),
                 roles: new EventList<Pair<string, int>>(),
-                registrations: new EventList<Pair<int, string>>()
+                registrations: new EventList<Pair<long, string>>()
                 );
         }
 

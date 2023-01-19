@@ -109,7 +109,7 @@ namespace LAMA.ViewModels
 		{
 			if (isRegistered)
 				return;
-			_activity.registrationByRole.Add(new Pair<int, string>(LocalStorage.cpID,_activity.roles[0].first));
+			_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,_activity.roles[0].first));
 
 			
 		}
