@@ -137,6 +137,15 @@ namespace LAMA.ViewModels
 
 		private bool ValidateSave()
 		{
+			foreach(var role in Roles)
+			{
+				foreach(var role2 in Roles)
+				{
+					if (role.Name == role2.Name && role != role2)
+						return false;
+				}
+			}
+
 			return !String.IsNullOrWhiteSpace(_name)
 				&& !String.IsNullOrWhiteSpace(_description);
 		}
@@ -217,6 +226,7 @@ namespace LAMA.ViewModels
 				dependencies.Add(item.LarpActivity.ID);
 			}
 
+			EventList<Pair<int, int>> items = new EventList<Pair<int, int>>();
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
 			LarpActivity larpActivity = new LarpActivity(
@@ -231,8 +241,8 @@ namespace LAMA.ViewModels
 				Start.ToUnixTimeMilliseconds(),
 				new Pair<double, double>(lon, lat), 
 				LarpActivity.Status.readyToLaunch,
-				new EventList<Pair<int, int>>(), 
-				new EventList<Pair<string, int>>(), 
+				items, 
+				roles, 
 				registered);
 
 			_createNewActivity(new LarpActivityDTO(larpActivity));

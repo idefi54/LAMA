@@ -131,10 +131,9 @@ namespace LAMA.ViewModels
 			Description = larpActivityDTO.description;
 
 			Roles.Clear();
-			_activity.roles.Clear();
+			_activity.UpdateRoles(larpActivityDTO.roles);
 			foreach(var role in larpActivityDTO.roles)
 			{
-				_activity.roles.Add(role);
 				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
 			}
 

@@ -218,6 +218,51 @@ namespace LAMA.Models
             }
         }
 
+        public void UpdateRoles(List<Pair<string,int>> newRoles)
+        {
+            for (int i = roles.Count - 1; i >= 0; i--)
+            {
+                var machRoles = newRoles.Where((x) => { return x.first == roles[i].first; });
+                if (machRoles.Count() == 0)
+				{
+                    CompletelyRemoveRole(i);
+				}
+                else
+				{
+                    roles[i] = machRoles.First();
+				}
+            }
+
+            foreach (Pair<string,int> id in newRoles)
+            {
+                if (roles.Where((x) => { return x.first == id.first; }).Count() == 0)
+                    roles.Add(id);
+            }
+        }
+
+        public void CompletelyRemoveRole(string name)
+		{
+            for (int i = roles.Count - 1; i >= 0; i--)
+			{
+                if (roles[i].first == name)
+				{
+                    CompletelyRemoveRole(i);
+                    return;
+				}
+			}
+		}
+
+        public void CompletelyRemoveRole(int index)
+		{
+            if (index >= roles.Count)
+                return;
+
+            Pair<string, int> roleToRemove = roles[index];
+            roles.RemoveAt(index);
+
+            roles.RemoveAll(x => x.first == roleToRemove.first);
+        }
+
 
         RememberedList<LarpActivity, LarpActivityStorage> list = null;
         public void removed()
