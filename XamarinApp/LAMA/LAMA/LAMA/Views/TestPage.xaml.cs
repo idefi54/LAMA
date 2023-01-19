@@ -2,6 +2,7 @@
 using LAMA.Models.DTO;
 using LAMA.Services;
 using LAMA.ViewModels;
+using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -157,7 +158,28 @@ namespace LAMA.Views
                     StopService();
             }
 
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+                if (CrossGeolocator.Current.IsListening)
+                {
+                    await CrossGeolocator.Current.StopListeningAsync();
+                    CrossGeolocator.Current.PositionChanged -= Current_PositionChanged;
+                    return;
+                }
+
+                await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(1), 10);
+                CrossGeolocator.Current.PositionChanged += Current_PositionChanged;
+
+
+                DependencyService.Get<INotificationManager>().SendNotification("Location",
+                    "We are tracking your location to show others where you are.");
+            }
+
             base.OnAppearing();
+        }
+
+        private void Current_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
+        {
         }
 
         private void StartService()
