@@ -101,7 +101,10 @@ namespace LAMA.ViewModels
 			_roles = new ObservableCollection<RoleItemViewModel>();
 			foreach (Pair<string, int> item in _activity.roles)
 			{
-				_roles.Add(new RoleItemViewModel(item.first, item.second, 0, false));
+				int registered = _activity.registrationByRole
+					.Where(x => x.second.Trim() == item.first)
+					.Count();
+				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
 
 			isRegistered = IsRegistered();
@@ -139,7 +142,18 @@ namespace LAMA.ViewModels
 				index = selectionResult.Value;
             }
 
-			_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,roles[index]));
+			string selectedRole = roles[index];
+
+			int alreadyRegisteredCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+
+			if(_activity.roles.Where(x=>x.first == selectedRole).Count() > alreadyRegisteredCount)
+            {
+				_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,selectedRole));
+            }
+			else
+            {
+				await _messageService.ShowAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
+            }
 
 			isRegistered = IsRegistered();
 		}
