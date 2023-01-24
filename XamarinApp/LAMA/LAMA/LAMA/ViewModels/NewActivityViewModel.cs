@@ -48,7 +48,7 @@ namespace LAMA.ViewModels
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
 
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		//public NewActivityViewModel()
@@ -64,8 +64,12 @@ namespace LAMA.ViewModels
 
 		private LarpActivity larpActivity;
 
-        public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
-        {
+		private IMessageService _messageService;
+
+		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
+		{
+			_messageService = DependencyService.Get<IMessageService>();
+
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			larpActivity = activity;
 			MapHandler.Instance.SetTemporaryPin(0, 0);
@@ -137,17 +141,33 @@ namespace LAMA.ViewModels
 
 		private bool ValidateSave()
 		{
+			string message = "";
+
+			if (String.IsNullOrWhiteSpace(_name)
+				|| String.IsNullOrWhiteSpace(_description))
+            {
+				message += "Název aktivity a popis aktivity musí být vyplněny.\n";
+            }
+
+			bool duplicates = false;
 			foreach(var role in Roles)
 			{
 				foreach(var role2 in Roles)
 				{
 					if (role.Name == role2.Name && role != role2)
-						return false;
+						duplicates = true;
 				}
 			}
+			if (duplicates)
+            {
+				message += "Nemohou být dvě role se stejným názvem.\n";
+            }
 
-			return !String.IsNullOrWhiteSpace(_name)
-				&& !String.IsNullOrWhiteSpace(_description);
+			if(message != "")
+            {
+				_messageService.ShowAlertAsync(message, "Nevalidní aktivita!");
+            }
+			return message == "";
 		}
 
 		public Xamarin.Forms.Command SaveCommand { get; }

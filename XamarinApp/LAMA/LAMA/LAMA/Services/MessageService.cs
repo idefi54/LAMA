@@ -7,14 +7,14 @@ namespace LAMA.Services
 {
     public interface IMessageService
     {
-        Task ShowAsync(string message, string title = "LAMA");
+        Task ShowAlertAsync(string message, string title = "LAMA");
         Task<bool> ShowConfirmationAsync(string message, string title = "LAMA");
         Task<int?> ShowSelectionAsync(string message, string[] options, string title = "LAMA");
     }
 
     public class MessageService : IMessageService
     {
-        public async Task ShowAsync(string message, string title = "LAMA")
+        public async Task ShowAlertAsync(string message, string title = "LAMA")
         {
             await App.Current.MainPage.DisplayAlert(title, message, "Ok");
         }

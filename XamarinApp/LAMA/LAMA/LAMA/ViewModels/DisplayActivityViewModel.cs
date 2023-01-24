@@ -128,7 +128,7 @@ namespace LAMA.ViewModels
 
 			if(_activity.roles.Count == 0)
             {
-				await _messageService.ShowAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
+				await _messageService.ShowAlertAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
 				return;
             }
 
@@ -154,7 +154,7 @@ namespace LAMA.ViewModels
 			}
 			else
             {
-				await _messageService.ShowAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
+				await _messageService.ShowAlertAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
             }
 
 			isRegistered = IsRegistered();
@@ -167,7 +167,7 @@ namespace LAMA.ViewModels
 
 			if (roles.Length == 0)
             {
-				await _messageService.ShowAsync("Žádná role na odebrání");
+				await _messageService.ShowAlertAsync("Žádná role na odebrání");
             }
 			else
             {
