@@ -119,7 +119,7 @@ namespace LAMA.ViewModels
 			foreach (Pair<string, int> item in _activity.roles)
 			{
 				int registered = _activity.registrationByRole
-					.Where(x => x.second.Trim() == item.first)
+					.Where(x => x.second == item.first)
 					.Count();
 				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
@@ -254,7 +254,7 @@ namespace LAMA.ViewModels
 			}
 
 			long cpID = LocalStorage.cpID;
-			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second.Trim()).ToArray();
+			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second).ToArray();
 
 			if (roles.Length == 0)
             {
