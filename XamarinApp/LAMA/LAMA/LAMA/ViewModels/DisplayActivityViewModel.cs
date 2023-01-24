@@ -26,7 +26,7 @@ namespace LAMA.ViewModels
 		private string _duration;
 		private string _start;
 		private string _dayIndex;
-		private ObservableCollection<RoleItemViewModel> _roles;
+		private TrulyObservableCollection<RoleItemViewModel> _roles;
 		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -38,7 +38,7 @@ namespace LAMA.ViewModels
 		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
 		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
-		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -98,7 +98,7 @@ namespace LAMA.ViewModels
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
 			}
-			_roles = new ObservableCollection<RoleItemViewModel>();
+			_roles = new TrulyObservableCollection<RoleItemViewModel>();
 			foreach (Pair<string, int> item in _activity.roles)
 			{
 				int registered = _activity.registrationByRole
@@ -146,10 +146,12 @@ namespace LAMA.ViewModels
 
 			int alreadyRegisteredCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
 
-			if(_activity.roles.Where(x=>x.first == selectedRole).Count() > alreadyRegisteredCount)
+			if(_activity.roles.Where(x=>x.first == selectedRole).First().second > alreadyRegisteredCount)
             {
 				_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,selectedRole));
-            }
+				var editedRole = Roles.Where(role => role.Name == selectedRole).FirstOrDefault();
+				editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+			}
 			else
             {
 				await _messageService.ShowAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
@@ -161,7 +163,7 @@ namespace LAMA.ViewModels
         private async void UnregisterAsync()
         {
 			long cpID = LocalStorage.cpID;
-			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second).ToArray();
+			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second.Trim()).ToArray();
 
 			if (roles.Length == 0)
             {
@@ -174,6 +176,11 @@ namespace LAMA.ViewModels
 				if (result)
 				{
 					_activity.registrationByRole.RemoveAll(x => x.first == cpID);
+					var editedRoles = Roles.Where(role => roles.Contains(role.Name));
+					foreach (var editedRole in editedRoles)
+                    {
+						editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == editedRole.Name).Count();
+					}
 				}
             }
 			isRegistered = IsRegistered();

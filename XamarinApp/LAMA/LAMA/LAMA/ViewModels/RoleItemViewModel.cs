@@ -10,6 +10,7 @@ namespace LAMA.ViewModels
 		public string Name { get { return _name.ToString(); } set { SetProperty(ref _name, value); } }
 
 		private int _currentCount;
+		public int CurrentCount { get { return _currentCount; } set { SetProperty(ref _currentCount, value); OnPropertyChanged(Count); } }
 		public string Count => $"{_currentCount}/{_maxCount}";
 
 		private int _maxCount;
@@ -20,6 +21,7 @@ namespace LAMA.ViewModels
 				if(int.TryParse(value, out int number))
 				{
 					SetProperty(ref _maxCount, number);
+					OnPropertyChanged(Count);
 				}
 			}
 		}
