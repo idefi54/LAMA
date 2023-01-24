@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
+using System.Linq;
+using LAMA.Services;
+using System.Threading.Tasks;
 
 namespace LAMA.ViewModels
 {
@@ -39,12 +42,15 @@ namespace LAMA.ViewModels
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
+
+        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
+		private bool _isRegistered;
+		private bool isRegistered { get { return _isRegistered; } set { _isRegistered = value; OnPropertyChanged(nameof(SignUpText)); } }
 		
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
-		
-		private bool isRegistered => _activity.registrationByRole.FindIndex(p => p.first == LocalStorage.cpID) >= 0;
-		
-		public string SignUp
+
+		public string SignUpText
 		{
 			get
 			{
@@ -61,13 +67,17 @@ namespace LAMA.ViewModels
 		public Command EditCommand { get; }
 
 
-		INavigation Navigation;
+		private INavigation Navigation;
+
+		private IMessageService _messageService;
 
 		public DisplayActivityViewModel(INavigation navigation, LarpActivity activity)
         {
-			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
-
+			_messageService = DependencyService.Get<Services.IMessageService>();
 			Navigation = navigation;
+
+
+			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 
             _activity = activity;
             ActivityName = _activity.name;
@@ -94,7 +104,7 @@ namespace LAMA.ViewModels
 				_roles.Add(new RoleItemViewModel(item.first, item.second, 0, false));
 			}
 
-
+			isRegistered = IsRegistered();
 
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
@@ -108,13 +118,54 @@ namespace LAMA.ViewModels
 		private async void OnSignUp()
 		{
 			if (isRegistered)
+            {
+				UnregisterAsync();
 				return;
-			_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,_activity.roles[0].first));
+            }
 
-			
+			if(_activity.roles.Count == 0)
+            {
+				await _messageService.ShowAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
+				return;
+            }
+
+			string[] roles = _activity.roles.Select(x => x.first).ToArray();
+			int index = 0;
+			if(_activity.roles.Count > 1)
+            {
+				int? selectionResult = await _messageService.ShowSelectionAsync("Vyberte roli ke které se chcete přihlásit.", roles);
+				if (!selectionResult.HasValue)
+					return;
+				index = selectionResult.Value;
+            }
+
+			_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,roles[index]));
+
+			isRegistered = IsRegistered();
 		}
 
-		private void UpdateActivity(LarpActivityDTO larpActivityDTO)
+        private async void UnregisterAsync()
+        {
+			long cpID = LocalStorage.cpID;
+			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second).ToArray();
+
+			if (roles.Length == 0)
+            {
+				await _messageService.ShowAsync("Žádná role na odebrání");
+            }
+			else
+            {
+				bool result = await _messageService.ShowConfirmationAsync($"Opravdu se chcete odregistrovat z role \"{roles[0]}\"");
+
+				if (result)
+				{
+					_activity.registrationByRole.RemoveAll(x => x.first == cpID);
+				}
+            }
+			isRegistered = IsRegistered();
+        }
+
+        private void UpdateActivity(LarpActivityDTO larpActivityDTO)
 		{
 			_activity.UpdateWhole(
 				larpActivityDTO.name,
@@ -152,6 +203,11 @@ namespace LAMA.ViewModels
 			DayIndex = (larpActivityDTO.day + 1) + ".";
 			Preparations = larpActivityDTO.preparationNeeded;
 			Location = larpActivityDTO.place.ToString();
+		}
+
+		private bool IsRegistered()
+        {
+			return _activity.registrationByRole.FindIndex(p => p.first == LocalStorage.cpID) >= 0;
 		}
 	}
 }
