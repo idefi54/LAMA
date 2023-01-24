@@ -2,6 +2,7 @@
 using LAMA.Singletons;
 using LAMA.Views;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
@@ -10,13 +11,16 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class InventoryViewModel 
+    public class InventoryViewModel :BaseViewModel
     {
-        public TrulyObservableCollection<InventoryItemViewModel> ItemList { get; }
+        TrulyObservableCollection<InventoryItemViewModel> _ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
+        public TrulyObservableCollection<InventoryItemViewModel> ItemList { get { return _ItemList; } private set { SetProperty(ref _ItemList, value); } }
         Dictionary<long, InventoryItemViewModel> IDToViewModel = new Dictionary<long, InventoryItemViewModel>();
 
-        public Xamarin.Forms.Command AddItemCommand { get; }
+        public string FilterText { get; set; }
 
+        public Xamarin.Forms.Command AddItemCommand { get; }
+        
         //
         public Command<object> BorrowItem { get; private set; }
 
@@ -28,7 +32,7 @@ namespace LAMA.ViewModels
         INavigation Navigation;
 
         long maxId = 0;
-
+        
 
         public InventoryViewModel(INavigation navigation)
         {
@@ -124,9 +128,86 @@ namespace LAMA.ViewModels
         {
             await Navigation.PushAsync(new CreateInventoryItemView());
         }
+
+
+
+
+
+
+
+        TrulyObservableCollection<InventoryItemViewModel> rememberForFilter = null;
+
+        void OnFilter()
+        {
+            OnCancelFilter();
+
+            rememberForFilter = _ItemList;
+
+            TrulyObservableCollection<InventoryItemViewModel> newList = new TrulyObservableCollection<InventoryItemViewModel>();
+
+            foreach (var itemView in ItemList)
+            {
+                if (itemView.Name.ToLower().Contains(FilterText.ToLower()))
+                    newList.Add(itemView);
+            }
+
+            SetProperty(ref _ItemList, newList);
+
+        }
+        void OnCancelFilter()
+        {
+            if (rememberForFilter != null)
+                SetProperty(ref _ItemList, rememberForFilter);
+            rememberForFilter = null;
+        }
+
+
+
+        bool nameDescended = false;
+        void OnOrderByName()
+        {
+            nameDescended = !nameDescended;
+            order(nameDescended, new CompareByName());
+        }
         
+        void order(bool ascending, IComparer<InventoryItemViewModel> comparer)
+        {
+            // just bubble sort because i wanna do it super simply and in place
+            // and i am too lazy to do merge sort in place
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+                // one pass
+                for (int i = 0; i < ItemList.Count - 1; ++i)
+                {
+                    if ((ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) < 0) ||
+                        (!ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) > 0))
+                    {
+                        //swap 
+                        var temp = ItemList[i];
+                        ItemList[i] = ItemList[i + 1];
+                        ItemList[i + 1] = temp;
+                        if (!changed)
+                            changed = true;
+                    }
+                }
+            }
+        }
+
+        class CompareByName : IComparer<InventoryItemViewModel>
+        {
+            public int Compare(InventoryItemViewModel x, InventoryItemViewModel y)
+            {
+                return x.Name.CompareTo(y.Name);
+            }
+        }
         
-            
-            
+
+
+
+
+
+
     }
 }
