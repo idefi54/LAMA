@@ -213,6 +213,19 @@ namespace LAMA
             }
             return output;
         }
+        public static EventList<Pair<long, string>> readLongStringPairField(string input)
+        {
+            EventList<Pair<long, string>> output = new EventList<Pair<long, string>>();
+            int i = 0;
+            while (i < input.Length)
+            {
+                long first = readLong(input, ref i);
+                ++i;
+                output.Add(new Pair<long, string>(first, readString(input, ref i)));
+                skipNonDigits(input, ref i); ;
+            }
+            return output;
+        }
 
 
         public static EventList<string> readStringField(string input)

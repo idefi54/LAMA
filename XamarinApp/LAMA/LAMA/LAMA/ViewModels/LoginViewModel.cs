@@ -1,4 +1,6 @@
 ﻿using LAMA.Communicator;
+using LAMA.Database;
+using LAMA.Models;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -99,6 +101,11 @@ namespace LAMA.ViewModels
 
         private async void OnFakeLoginClicked(object obj)
         {
+            if (DatabaseHolder<CP, CPStorage>.Instance.rememberedList.Count == 0)
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(new CP(0, "Inco Gnito", "incognito", new EventList<string>(), "123456789", "", "", ""));
+
+            LocalStorage.cpID = (int)DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0].ID;
+
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(TestPage)}");
         }

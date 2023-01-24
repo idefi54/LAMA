@@ -132,8 +132,8 @@ namespace LAMA.Models
         public EventList<Pair<string, int>> roles { get { return _roles; } }
         void rolesChange() { updateValue(12, _roles.ToString()); }
         // person ID, to what role they are registered
-        EventList<Pair<int, string>> _registrationByRole = new EventList<Pair<int, string>>();
-        public EventList<Pair<int, string>> registrationByRole { get { return _registrationByRole; } }
+        EventList<Pair<long, string>> _registrationByRole = new EventList<Pair<long, string>>();
+        public EventList<Pair<long, string>> registrationByRole { get { return _registrationByRole; } }
         void registrationByRoleChanged() { updateValue(13, _registrationByRole.ToString()); }
 
         double _graphY;
@@ -160,7 +160,7 @@ namespace LAMA.Models
         }
         public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
             long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
-            EventList<Pair<string, int>> roles, EventList<Pair<int, string>> registrations)
+            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations)
         {
             _ID = ID;
             _name = name;
@@ -218,6 +218,51 @@ namespace LAMA.Models
             }
         }
 
+        public void UpdateRoles(List<Pair<string,int>> newRoles)
+        {
+            for (int i = roles.Count - 1; i >= 0; i--)
+            {
+                var machRoles = newRoles.Where((x) => { return x.first == roles[i].first; });
+                if (machRoles.Count() == 0)
+				{
+                    CompletelyRemoveRole(i);
+				}
+                else
+				{
+                    roles[i] = machRoles.First();
+				}
+            }
+
+            foreach (Pair<string,int> id in newRoles)
+            {
+                if (roles.Where((x) => { return x.first == id.first; }).Count() == 0)
+                    roles.Add(id);
+            }
+        }
+
+        public void CompletelyRemoveRole(string name)
+		{
+            for (int i = roles.Count - 1; i >= 0; i--)
+			{
+                if (roles[i].first == name)
+				{
+                    CompletelyRemoveRole(i);
+                    return;
+				}
+			}
+		}
+
+        public void CompletelyRemoveRole(int index)
+		{
+            if (index >= roles.Count)
+                return;
+
+            Pair<string, int> roleToRemove = roles[index];
+            roles.RemoveAt(index);
+
+            roles.RemoveAll(x => x.first == roleToRemove.first);
+        }
+
 
         RememberedList<LarpActivity, LarpActivityStorage> list = null;
         public void removed()
@@ -273,7 +318,7 @@ namespace LAMA.Models
                 case 2:
                     return _description;
                 case 3:
-                    return _preparationNeeded.ToString();
+                    return _preparationNeeded != null?_preparationNeeded.ToString():"";
                 case 4:
                     return _eventType.ToString();
                 case 5:
@@ -347,7 +392,7 @@ namespace LAMA.Models
                     _roles.dataChanged += rolesChange;
                     break;
                 case 13:
-                    _registrationByRole = Helpers.readIntStringPairField(value);
+                    _registrationByRole = Helpers.readLongStringPairField(value);
                     _registrationByRole.dataChanged += registrationByRoleChanged;
                     break;
                 case 14:

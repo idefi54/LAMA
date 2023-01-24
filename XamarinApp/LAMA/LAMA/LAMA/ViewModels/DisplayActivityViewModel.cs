@@ -1,11 +1,16 @@
 ﻿using LAMA.Extensions;
+using LAMA.Database;
 using LAMA.Models;
 using LAMA.Models.DTO;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
+using System.Linq;
+using LAMA.Services;
+using System.Threading.Tasks;
 
 namespace LAMA.ViewModels
 {
@@ -21,8 +26,8 @@ namespace LAMA.ViewModels
 		private string _duration;
 		private string _start;
 		private string _dayIndex;
-		private List<string> _personale;
-		private List<string> _equipment;
+		private TrulyObservableCollection<RoleItemViewModel> _roles;
+		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
 
@@ -33,16 +38,25 @@ namespace LAMA.ViewModels
 		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
 		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
-		public List<string> Personale { get { return _personale; } set { SetProperty(ref _personale, value); } }
-		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
+		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
+
+        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
+		private bool _isRegistered;
+		private bool isRegistered { get { return _isRegistered; } set { _isRegistered = value; OnPropertyChanged(nameof(SignUpText)); } }
 		
 
-
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
-
-
+		public string SignUpText
+		{
+			get
+			{
+				return isRegistered ? "Odhlásit se" : "Přihlásit se";
+			}
+		}
 
 
 
@@ -53,13 +67,17 @@ namespace LAMA.ViewModels
 		public Command EditCommand { get; }
 
 
-		INavigation Navigation;
+		private INavigation Navigation;
+
+		private IMessageService _messageService;
 
 		public DisplayActivityViewModel(INavigation navigation, LarpActivity activity)
         {
-			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
-
+			_messageService = DependencyService.Get<Services.IMessageService>();
 			Navigation = navigation;
+
+
+			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 
             _activity = activity;
             ActivityName = _activity.name;
@@ -80,8 +98,16 @@ namespace LAMA.ViewModels
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
 			}
+			_roles = new TrulyObservableCollection<RoleItemViewModel>();
+			foreach (Pair<string, int> item in _activity.roles)
+			{
+				int registered = _activity.registrationByRole
+					.Where(x => x.second.Trim() == item.first)
+					.Count();
+				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
+			}
 
-
+			isRegistered = IsRegistered();
 
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
@@ -94,10 +120,73 @@ namespace LAMA.ViewModels
 
 		private async void OnSignUp()
 		{
-			await Shell.Current.GoToAsync("..");
+			if (isRegistered)
+            {
+				UnregisterAsync();
+				return;
+            }
+
+			if(_activity.roles.Count == 0)
+            {
+				await _messageService.ShowAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
+				return;
+            }
+
+			string[] roles = _activity.roles.Select(x => x.first).ToArray();
+			int index = 0;
+			if(_activity.roles.Count > 1)
+            {
+				int? selectionResult = await _messageService.ShowSelectionAsync("Vyberte roli ke které se chcete přihlásit.", roles);
+				if (!selectionResult.HasValue)
+					return;
+				index = selectionResult.Value;
+            }
+
+			string selectedRole = roles[index];
+
+			int alreadyRegisteredCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+
+			if(_activity.roles.Where(x=>x.first == selectedRole).First().second > alreadyRegisteredCount)
+            {
+				_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,selectedRole));
+				var editedRole = Roles.Where(role => role.Name == selectedRole).FirstOrDefault();
+				editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+			}
+			else
+            {
+				await _messageService.ShowAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
+            }
+
+			isRegistered = IsRegistered();
 		}
 
-		private void UpdateActivity(LarpActivityDTO larpActivityDTO)
+        private async void UnregisterAsync()
+        {
+			long cpID = LocalStorage.cpID;
+			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second.Trim()).ToArray();
+
+			if (roles.Length == 0)
+            {
+				await _messageService.ShowAsync("Žádná role na odebrání");
+            }
+			else
+            {
+				bool result = await _messageService.ShowConfirmationAsync($"Opravdu se chcete odregistrovat z role \"{roles[0]}\"");
+
+				if (result)
+				{
+					_activity.registrationByRole.RemoveAll(x => x.first == cpID);
+					var editedRoles = Roles.Where(role => roles.Contains(role.Name));
+					foreach (var editedRole in editedRoles)
+                    {
+						editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == editedRole.Name).Count();
+					}
+				}
+            }
+			isRegistered = IsRegistered();
+        }
+
+        private void UpdateActivity(LarpActivityDTO larpActivityDTO)
 		{
 			_activity.UpdateWhole(
 				larpActivityDTO.name,
@@ -112,6 +201,13 @@ namespace LAMA.ViewModels
 
 			Name = larpActivityDTO.name;
 			Description = larpActivityDTO.description;
+
+			Roles.Clear();
+			_activity.UpdateRoles(larpActivityDTO.roles);
+			foreach(var role in larpActivityDTO.roles)
+			{
+				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
+			}
 
 			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
@@ -128,6 +224,11 @@ namespace LAMA.ViewModels
 			DayIndex = (larpActivityDTO.day + 1) + ".";
 			Preparations = larpActivityDTO.preparationNeeded;
 			Location = larpActivityDTO.place.ToString();
+		}
+
+		private bool IsRegistered()
+        {
+			return _activity.registrationByRole.FindIndex(p => p.first == LocalStorage.cpID) >= 0;
 		}
 	}
 }

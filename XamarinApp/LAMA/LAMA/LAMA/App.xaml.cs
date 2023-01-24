@@ -11,6 +11,8 @@ namespace LAMA
 
         public App()
         {
+            DependencyService.Register<IMessageService, MessageService>();
+
             InitializeComponent();
 
             MainPage = new AppShell();
