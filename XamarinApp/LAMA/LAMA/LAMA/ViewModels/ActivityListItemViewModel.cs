@@ -54,6 +54,9 @@ namespace LAMA.ViewModels
             long resultHours = (resultSeconds / 3600) % 24;
             long resultDays = resultSeconds / 86400;
 
+            if (resultDays > 0)
+                result += resultDays.ToString() + "d ";
+
             if (resultHours > 0)
                 result += resultHours.ToString() + "h ";
 
