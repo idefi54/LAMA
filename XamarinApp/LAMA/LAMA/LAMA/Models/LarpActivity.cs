@@ -75,7 +75,6 @@ namespace LAMA.Models
                 updateValue(6, value.ToString());
             }
         }
-        void durationChanged() { updateValue(6, _duration.ToString()); }
         int _day;
         public int day
         {

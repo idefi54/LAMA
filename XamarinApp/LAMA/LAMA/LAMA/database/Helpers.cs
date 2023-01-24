@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using Mapsui.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,8 +111,10 @@ namespace LAMA
         static string readString(string input, ref int offset)
         {
             StringBuilder output = new StringBuilder();
+            skipWhiteSpaces(input, ref offset);
             while (offset < input.Length && input[offset] != separator)
             {
+                
                 output.Append(input[offset]);
                 ++offset;
             }
@@ -294,8 +297,16 @@ namespace LAMA
             }
             return output.ToString();
         }
+        
+        private static void skipWhiteSpaces(string input, ref int offset)
+        {
+            while (input.Length<offset && char.IsWhiteSpace( input[offset]) )
+            {
+                offset++;
+            }
+        }
 
-        public static EventList<double> readDoubleField(string input)
+        private static void skipWhiteSpaces(string input, ref int offset)
         {
             EventList<double> output = new EventList<double>();
             if (input == null)
