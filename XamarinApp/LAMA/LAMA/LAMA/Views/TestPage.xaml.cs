@@ -212,7 +212,7 @@ namespace LAMA.Views
                     return;
                 }
 
-                await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(5), 10);
+                await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(30), 10);
                 CrossGeolocator.Current.PositionChanged += IOSPositionChanged;
 
 
