@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LAMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -67,7 +68,10 @@ namespace LAMA
 
         public static EventList<int> readIntField(string input)
         {
+            
             EventList<int> output = new EventList<int>();
+            if (input == null)
+                return output;
             int i = 0;
             skipNonDigits(input, ref i);
             while (i < input.Length)
@@ -209,6 +213,19 @@ namespace LAMA
             }
             return output;
         }
+        public static EventList<Pair<long, string>> readLongStringPairField(string input)
+        {
+            EventList<Pair<long, string>> output = new EventList<Pair<long, string>>();
+            int i = 0;
+            while (i < input.Length)
+            {
+                long first = readLong(input, ref i);
+                ++i;
+                output.Add(new Pair<long, string>(first, readString(input, ref i)));
+                skipNonDigits(input, ref i); ;
+            }
+            return output;
+        }
 
 
         public static EventList<string> readStringField(string input)
@@ -225,5 +242,16 @@ namespace LAMA
             return output;
         }
 
+        public static string EnumEventListToString(EventList<CP.PermissionType> input)
+        {
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < input.Count; ++i)
+            {
+                if (i != 0)
+                    output.Append(", ");
+                output.Append(((int)input[i]).ToString());
+            }
+            return output.ToString();
+        }
     }
 }

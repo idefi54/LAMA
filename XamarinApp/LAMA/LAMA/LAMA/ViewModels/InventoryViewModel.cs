@@ -4,6 +4,7 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing.Text;
 using System.Text;
 using Xamarin.Forms;
 
@@ -11,7 +12,7 @@ namespace LAMA.ViewModels
 {
     public class InventoryViewModel 
     {
-        public ObservableCollection<InventoryItemViewModel> ItemList { get; }
+        public TrulyObservableCollection<InventoryItemViewModel> ItemList { get; }
         Dictionary<long, InventoryItemViewModel> IDToViewModel = new Dictionary<long, InventoryItemViewModel>();
 
         public Xamarin.Forms.Command AddItemCommand { get; }
@@ -22,6 +23,8 @@ namespace LAMA.ViewModels
         public Command<object> ReturnItem { get; private set; }
         public Command<object> OpenDetailCommand { get; private set; }
 
+        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
+
         INavigation Navigation;
 
         long maxId = 0;
@@ -30,7 +33,7 @@ namespace LAMA.ViewModels
         public InventoryViewModel(INavigation navigation)
         {
             Navigation = navigation;
-            ItemList = new ObservableCollection<InventoryItemViewModel>();
+            ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
 
             var inventoryItems = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
             for (int i = 0; i < inventoryItems.Count; ++i) 
@@ -67,9 +70,7 @@ namespace LAMA.ViewModels
             if(changed.GetType() != typeof(InventoryItem))
             {
                 return;
-            }
-            //REFRESH DATA
-            
+            }            
         }
         private void OnCreated(Serializable made)
         {

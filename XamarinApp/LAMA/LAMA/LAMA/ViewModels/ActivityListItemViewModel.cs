@@ -17,7 +17,7 @@ namespace LAMA.ViewModels
 
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + _larpActivity.eventType.ToShortString();
 
-        public string Detail => _larpActivity == null ? "" : "začíná za " + TimeFormat(_larpActivity.start);
+        public string Detail => _larpActivity == null ? "" : TimeFormat(_larpActivity.start);
 
 
         private bool _showDeleteButton;
@@ -47,19 +47,24 @@ namespace LAMA.ViewModels
 
             long resultSeconds = (unixStart/1000) - nowSeconds;
 
-            string result = "";
+            string result = resultSeconds >= 0 ? "začíná za " : "začalo před ";
+            resultSeconds = Math.Abs(resultSeconds);
 
             long resultMinutes = (resultSeconds / 60) % 60;
-            long resultHours = resultMinutes / 3600;
+            long resultHours = (resultSeconds / 3600) % 24;
+            long resultDays = resultSeconds / 86400;
+
+            if (resultDays > 0)
+                result += resultDays.ToString() + "d ";
 
             if (resultHours > 0)
-                result = resultHours.ToString() + "h ";
+                result += resultHours.ToString() + "h ";
 
-            if (resultMinutes > 0)
-                result = resultMinutes.ToString() + "h ";
+            //if (resultMinutes > 0)
+            result += resultMinutes.ToString() + "m ";
 
 
-            result += (resultSeconds - resultMinutes * 60) + "m";
+            //result += (resultSeconds % 60) + "s";
 
             return result;
 

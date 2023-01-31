@@ -39,42 +39,42 @@
 
                 <Label Text="Detailní zapůjčení"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                    <Picker Title="Jméno " ItemsSource="{Binding CPNames}" SelectedIndex="{Binding BorrowerSelected}" HorizontalOptions="Start">
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
+                    <Picker Title="Jméno " ItemsSource="{Binding CPNames}" SelectedIndex="{Binding BorrowerSelected}" HorizontalOptions="Start" IsVisible="{Binding ManageInventory}">
                     </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Kolik"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                    <Entry Text="{Binding HowManyBorrow}" Placeholder="0" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
+                    <Entry Text="{Binding HowManyBorrow}" Placeholder="0" FontSize="Medium" IsVisible="{Binding ManageInventory}"/>
                 </StackLayout>
-                <Button Text="Půjčit" Command="{Binding DetailedBorrowCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Button Text="Půjčit" Command="{Binding DetailedBorrowCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding ManageInventory}"></Button>
                 
                 <Label Text="Detailní vrácení"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                    <Picker Title="Jméno" ItemsSource="{Binding CPNames}" SelectedIndex="{Binding ReturnerSelected}"  HorizontalOptions="Start">
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
+                    <Picker Title="Jméno" ItemsSource="{Binding CPNames}" SelectedIndex="{Binding ReturnerSelected}"  HorizontalOptions="Start" IsVisible="{Binding ManageInventory}">
                         
                     </Picker>
                 </StackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Kolik"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                    <Entry Text="{Binding HowManyReturn}" Placeholder="0" FontSize="Medium" />
+					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
+                    <Entry Text="{Binding HowManyReturn}" Placeholder="0" FontSize="Medium" IsVisible="{Binding ManageInventory}"/>
                 </StackLayout>
-                <Button Text="Vrátit" Command="{Binding DetailedReturnCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Button Text="Vrátit" Command="{Binding DetailedReturnCommand}" IsVisible="{Binding ManageInventory}" HorizontalOptions="FillAndExpand" ></Button>
 
-
+                <Button Text="Smazat" Command="{Binding DeleteCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding ManageInventory}" BackgroundColor="Red"/>
 
             </StackLayout>
         </ScrollView>

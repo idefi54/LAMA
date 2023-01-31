@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using LAMA.Models;
 
 namespace LAMA
 {
@@ -42,16 +43,17 @@ namespace LAMA
 
 
         public static SQLiteAsyncConnection connection { get { return _connection; } }
-        private static SQLiteAsyncConnection _connection;
-
+        private static SQLiteAsyncConnection _connection = null;
         public static SQLiteAsyncConnection makeConnection()
         {
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(directory, "database.db");
 
+            
+
             if (!File.Exists(path))
                 File.Create(path).Flush();
-
+            
             _connection = new SQLiteAsyncConnection(path);
 
             return _connection;
@@ -59,11 +61,16 @@ namespace LAMA
 
         public static void ResetDatabase()
         {
+
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(directory, "database.db");
 
             if (File.Exists(path))
             {
+
+                if (_connection != null)
+                    _connection.CloseAsync().Wait();
+
                 _connection = null;
                 File.Delete(path);
                 makeConnection();

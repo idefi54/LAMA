@@ -15,7 +15,6 @@ namespace LAMA.ActivityGraphLib
     public class ActivityButton : Button
     {
         private ActivityGraph _activityGraph;
-        private float _yPos;
         private float _sideWidth = 10;
         public LarpActivity Activity { get; private set; }
         enum EditState { Left, Right, Move }
@@ -27,7 +26,6 @@ namespace LAMA.ActivityGraphLib
             Text = activity.name;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.Start;
-            _yPos = 20; // TODO: Make load from button database when available
             _editState = EditState.Move;
             activity.duration = 60;// TODO: DELETE When actual duration works
 
@@ -42,13 +40,13 @@ namespace LAMA.ActivityGraphLib
         {
             var now = DateTime.Now;
             //var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
-            var start = LAMA.Extensions.DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start);
-            var time = new DateTime(now.Year, now.Month, 1, start.Hour, start.Minute, 0);
-            var span = time - _activityGraph.TimeOffset;
+            var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start);
+            //var time = new DateTime(now.Year, now.Month, 1, start.Hour, start.Minute, 0);
+            var span = start - _activityGraph.TimeOffset;
 
-            _yPos = Math.Max(0, _yPos);
+            Activity.GraphY = Math.Max(0, Activity.GraphY);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
-            TranslationY = _activityGraph.FromPixels(_yPos * _activityGraph.Zoom + _activityGraph.OffsetY);
+            TranslationY = _activityGraph.FromPixels((float)Activity.GraphY * _activityGraph.Zoom + _activityGraph.OffsetY);
             WidthRequest = _activityGraph.FromPixels(Activity.duration * _activityGraph.MinuteWidth * _activityGraph.Zoom);
 
             IsVisible = TranslationY >= - Height / 3;
@@ -144,7 +142,7 @@ namespace LAMA.ActivityGraphLib
 
                 // Y
                 y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
-                _yPos = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
+                Activity.GraphY = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
             }
         }
 
@@ -152,7 +150,7 @@ namespace LAMA.ActivityGraphLib
         /// Moves only in y-axis.
         /// </summary>
         /// <param name="y"></param>
-        public void MoveY(float y) => _yPos = y - _activityGraph.XamOffset;
+        public void MoveY(float y) => Activity.GraphY = y - _activityGraph.XamOffset;
 
         private int GetCornerRadius(LarpActivity.EventType type)
         {
@@ -212,7 +210,7 @@ namespace LAMA.ActivityGraphLib
                 status: status,
                 requiredItems: new EventList<Pair<int, int>>(),
                 roles: new EventList<Pair<string, int>>(),
-                registrations: new EventList<Pair<int, string>>()
+                registrations: new EventList<Pair<long, string>>()
                 );
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using LAMA.Models;
 using SQLite;
 
 namespace LAMA
@@ -19,7 +20,7 @@ namespace LAMA
                 }
                 else
                 {
-                    LocalStorage result = null;
+                    
                     string name =  new LocalStorage().GetType().Name;
                     Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
@@ -132,6 +133,9 @@ namespace LAMA
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
         }
+
+        public static CP cp { get { return DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(cpID); } }
+
 
         [PrimaryKey]
         public int ID { get; set; } = 0;

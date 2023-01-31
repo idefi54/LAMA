@@ -18,6 +18,7 @@ namespace LAMA.ViewModels
         public string Text { get { return _Text; }  set { SetProperty(ref _Text, value); } }
         string _TLDR = "";
         public string TLDR { get { return _TLDR; } set { SetProperty(ref _TLDR, value); } }
+        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
 
         public Xamarin.Forms.Command AddRecordCommand { get; private set; }
         public Xamarin.Forms.Command Edit { get; private set; }

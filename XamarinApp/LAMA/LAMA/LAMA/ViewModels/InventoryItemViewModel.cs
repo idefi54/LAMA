@@ -16,8 +16,8 @@ namespace LAMA.ViewModels
 
         public string Detail { get { return _item != null ? Item.description : ""; } }
         public string Borrowed { get { return _item != null ? Item.taken.ToString() : ""; } }
-        public string Free { get { return _item != null ? (Item.free - Item.taken).ToString() : ""; } }
-
+        public string Free { get { return _item != null ? Item.free.ToString() : ""; } }
+        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
 
 
         public bool ShowReturnButton { get { return Item.taken > 0; } }

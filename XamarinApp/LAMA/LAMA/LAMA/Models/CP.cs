@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace LAMA.Models
 {
     public class CP : Serializable
     {
         public enum Status { ready, onBreak, onActivity};
+
+        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity};
 
         long _ID;
         public long ID { get { return _ID; } }
@@ -60,16 +63,23 @@ namespace LAMA.Models
         string _notes;
         public string notes { get { return _notes; } set { _notes = value; updateValue(8, value); } }
 
-
+        EventList<PermissionType> _permissions = new EventList<PermissionType>();
+        public EventList<PermissionType> permissions { get { return _permissions; } }
+        void onPermissionsChange()
+        {
+            updateValue(9, Helpers.EnumEventListToString(_permissions));
+        }
 
         public CP()
         {
             _roles.dataChanged += onRolesChange;
+            _permissions.dataChanged += onPermissionsChange;
         }
         public CP(long ID, string name, string nick, EventList<string> roles, string phone,
             string facebook, string discord, string notes)
         {
             _roles.dataChanged += onRolesChange;
+            _permissions.dataChanged += onPermissionsChange;
             _ID = ID;
             _name = name;
             _nick = nick;
@@ -110,7 +120,7 @@ namespace LAMA.Models
 
 
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes" };
+            "discord", "location", "notes", "permissions" };
 
         public long getID()
         {
@@ -147,7 +157,18 @@ namespace LAMA.Models
                     break;
                 case 8:_notes = value;
                     break;
+                case 9:
+                    var temp = Helpers.readIntField(value);
+                    _permissions = new EventList<PermissionType>();
+                    foreach(var a in temp)
+                    {
+                        _permissions.Add((PermissionType)a);
+                    }
+                    _permissions.dataChanged += onPermissionsChange;
+                    break;
                     
+
+
 
             }
         }
@@ -174,6 +195,7 @@ namespace LAMA.Models
                 case 6: return _discord;
                 case 7: return _location.ToString();
                 case 8: return _notes;
+                case 9: return Helpers.EnumEventListToString(_permissions);
             }
             throw new Exception("wring index called");
         }

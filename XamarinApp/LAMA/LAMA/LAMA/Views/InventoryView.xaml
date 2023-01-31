@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.InventoryView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
 			 Title="Inventář">
@@ -8,7 +9,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Řadit" />
         <ToolbarItem Text="Filtr" />
-        <ToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}"/>
+        <forms:BindableToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}" IsVisible ="{Binding CanChangeItems}"/>
     </ContentPage.ToolbarItems>
 
 
@@ -32,11 +33,11 @@
                             <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding Detail}" FontSize="Micro" TextColor="Gray" />
                             <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Text="{Binding Free}" FontSize="Small" TextColor="Gray" />
                             <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="1" Text="{Binding Borrowed}" FontSize="Small" TextColor="Gray" />
-                            
-                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+
+                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="#268A2E" TextColor="White" IsVisible ="{Binding CanChangeItems}"
 										Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
 										CommandParameter="{Binding .}"/>
-                            <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+                            <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="#B9C133" TextColor="White" IsVisible ="{Binding CanChangeItems}"
 										Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
 										CommandParameter="{Binding .}"/>
                            

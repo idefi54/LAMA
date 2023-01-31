@@ -29,6 +29,17 @@ namespace LAMA
             base.RemoveAt(where);
             dataChanged?.Invoke();
         }
+        public new void Remove(T what)
+        {
+            for (int i = 0; i < Count; ++i) 
+            {
+                if (what.Equals(this[i])) 
+                {
+                    RemoveAt(i);
+                    return;
+                }
+            }
+        }
 
         public void AddWithoutEvent(T what)
         {
@@ -67,6 +78,30 @@ namespace LAMA
             {
                 this.Add(item);
             }
+        }
+
+        public new void Clear()
+        {
+            base.Clear();
+            dataChanged.Invoke();
+        }
+
+        public void Update (EventList<T> otherOne)
+        {
+            
+            for(int i = 0; i< otherOne.Count; ++i)
+            {
+                if (Count < i)
+                {
+                    if (this[i].Equals(otherOne[i]))
+                        continue;
+                    else
+                        base[i] = otherOne[i];
+                }
+                else
+                    base.Add(otherOne[i]);
+            }
+            dataChanged.Invoke();
         }
     }
 }

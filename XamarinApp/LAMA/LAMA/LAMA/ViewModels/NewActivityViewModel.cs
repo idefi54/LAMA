@@ -7,7 +7,9 @@ using LAMA.Services;
 using LAMA.Models.DTO;
 using LAMA.Extensions;
 using LAMA.Views;
+using static LAMA.Models.LarpActivity;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace LAMA.ViewModels
 {
@@ -23,7 +25,7 @@ namespace LAMA.ViewModels
 		private DateTime _duration;
 		private DateTime _start;
 		private int _day;
-		private List<string> _personale;
+		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -39,14 +41,14 @@ namespace LAMA.ViewModels
 		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
 		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
 		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
-		public List<string> Personale { get { return _personale; } set { SetProperty(ref _personale , value); } }
+		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
 
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		//public NewActivityViewModel()
@@ -62,11 +64,20 @@ namespace LAMA.ViewModels
 
 		private LarpActivity larpActivity;
 
-        public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
-        {
+		private IMessageService _messageService;
+
+		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
+		{
+			_messageService = DependencyService.Get<IMessageService>();
+
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			larpActivity = activity;
-			if(larpActivity != null)
+			MapHandler.Instance.SetTemporaryPin(0, 0);
+
+			Roles = new ObservableCollection<RoleItemViewModel>();
+
+
+			if (larpActivity != null)
             {
 				Title = "Upravit Aktivitu";
 				Id = larpActivity.ID.ToString();
@@ -78,7 +89,11 @@ namespace LAMA.ViewModels
 				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
-				
+				MapHandler.Instance.SetTemporaryPin(larpActivity.place.first, larpActivity.place.second);
+				foreach(Pair<string, int> role in activity.roles)
+				{
+					Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
+				}
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
 					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
@@ -87,8 +102,14 @@ namespace LAMA.ViewModels
 			else
 			{
 				Title = "Nová Aktivita";
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
-				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(0);
+				Name = "";
+				Description = "";
+				Type = EventType.normal.ToString();
+				TypeIndex = (int)EventType.normal;
+				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
+				Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				Day = 0;
+				Preparations = "";
 			}
 
 			_navigation = navigation;
@@ -104,12 +125,49 @@ namespace LAMA.ViewModels
 
 			AddDependencyCommand = new Command(OnAddDependency);
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
+			AddNewRole = new Command(OnAddNewRole);
+			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
+		}
+
+		private void OnRemoveRole(RoleItemViewModel role)
+		{
+			Roles.Remove(role);
+		}
+
+		private void OnAddNewRole()
+		{
+			Roles.Add(new RoleItemViewModel("role", 1, 0, true));
 		}
 
 		private bool ValidateSave()
 		{
-			return !String.IsNullOrWhiteSpace(_name)
-				&& !String.IsNullOrWhiteSpace(_description);
+			string message = "";
+
+			if (String.IsNullOrWhiteSpace(_name)
+				|| String.IsNullOrWhiteSpace(_description))
+            {
+				message += "Název aktivity a popis aktivity musí být vyplněny.\n";
+            }
+
+			bool duplicates = false;
+			foreach(var role in Roles)
+			{
+				foreach(var role2 in Roles)
+				{
+					if (role.Name == role2.Name && role != role2)
+						duplicates = true;
+				}
+			}
+			if (duplicates)
+            {
+				message += "Nemohou být dvě role se stejným názvem.\n";
+            }
+
+			if(message != "")
+            {
+				_messageService.ShowAlertAsync(message, "Nevalidní aktivita!");
+            }
+			return message == "";
 		}
 
 		public Xamarin.Forms.Command SaveCommand { get; }
@@ -146,6 +204,9 @@ namespace LAMA.ViewModels
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
 		}
 
+		public Command AddNewRole { get; }
+		public Command<RoleItemViewModel> RemoveRole {get; }
+
 		private async void OnCancel()
 		{
 			// This will pop the current page off the navigation stack
@@ -170,13 +231,23 @@ namespace LAMA.ViewModels
 				return;
             }
 			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
+			
+			EventList<Pair<string, int>> roles = new EventList<Pair<string, int>>();
 
+			foreach(var role in _roles)
+			{
+				roles.Add(role.ToPair());
+			}
+			
 			var dependencies = new EventList<long>();
 			
 			foreach(LarpActivityShortItemViewModel item in Dependencies)
 			{
 				dependencies.Add(item.LarpActivity.ID);
 			}
+
+			EventList<Pair<int, int>> items = new EventList<Pair<int, int>>();
+			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
 			LarpActivity larpActivity = new LarpActivity(
 				10,
@@ -190,9 +261,9 @@ namespace LAMA.ViewModels
 				Start.ToUnixTimeMilliseconds(),
 				new Pair<double, double>(lon, lat), 
 				LarpActivity.Status.readyToLaunch,
-				new EventList<Pair<int, int>>(), 
-				new EventList<Pair<string, int>>(), 
-				new EventList<Pair<int, string>>());
+				items, 
+				roles, 
+				registered);
 
 			_createNewActivity(new LarpActivityDTO(larpActivity));
 
