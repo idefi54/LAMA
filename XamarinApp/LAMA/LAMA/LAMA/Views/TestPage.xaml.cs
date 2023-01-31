@@ -52,7 +52,6 @@ namespace LAMA.Views
                         {
                             var cpList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
                             cpList[LocalStorage.cpID].location = new Pair<double, double>(message.Longitude, message.Latitude);
-                            // TODO -> TRACK THE LOCATION CODE HERE
 
                         });
                     });
