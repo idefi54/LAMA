@@ -2,7 +2,7 @@
 
 namespace LAMA.Droid
 {
-    [BroadcastReceiver(Enabled = true, Label = "Local Notifications Broadcast Receiver")]
+    [BroadcastReceiver(Enabled = true, Label = "Local Notifications Broadcast Receiver", Exported = true)]
     public class AlarmHandler : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
