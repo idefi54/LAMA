@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:LAMA.Views"
              mc:Ignorable="d"
-             x:Class="LAMA.Views.LoginPage"
+             x:Class="LAMA.Views.ServerLoginPage"
 			 Shell.NavBarIsVisible="False"
 			 Shell.FlyoutBehavior="Disabled"
 			 Title="Přihlásit se">
@@ -17,14 +17,7 @@
                     <Label Text="Debug: database name"/>
                     <Entry Placeholder="example: database2.db" Text="{Binding DatabaseName}"/>
                     <Button Text="Set database name" HorizontalOptions="Center" Command="{Binding DatabaseNameCommand}"/>
-                    
-                    <Label Text="Jméno serveru:"/>
-                    <Entry Placeholder="Jméno serveru" Text="{Binding ClientServerName}"/>
-                    <Label Text="Jméno klienta:"/>
-                    <Entry Placeholder="Jméno klienta" Text="{Binding ClientName}"/>
-                    <Label Text="Heslo:"/>
-                    <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ClientPassword}"/>
-                    <Button Text="Přihlásit se jako klient" HorizontalOptions="Center" Command="{Binding LoginCommand}"/>
+
                     <Label Text="Jméno serveru:"/>
                     <Entry Placeholder="Jméno serveru" Text="{Binding ServerName}"/>
                     <!--<Label Text="Veřejná IP:"/>
@@ -33,12 +26,13 @@
                         <Entry Placeholder="Port" Keyboard="Numeric" Text="{Binding ServerPort}"/>-->
                     <Label Text="Ngrok EndPoint:"/>
                     <Entry Placeholder="Ngrok endpoint, example: tcp://4.tcp.eu.ngrok.io:15637" Text="{Binding ServerNgrokEndpoint}"/>
-                    <Label Text="Heslo:"/>
+                    <Label Text="Serverové Heslo:"/>
                     <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ServerPassword}"/>
-                    <Label Text="Heslo Admin:"/>
-                    <Entry Placeholder="Heslo Admin" IsPassword="True" Text="{Binding ServerAdminPassword}"/>
+                    <Label Text="Přezdívka:"/>
+                    <Entry Placeholder="Přezdívka" Text="{Binding NickName}"/>
+                    <Label Text="Osobní Heslo:"/>
+                    <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding PersonalPassword}"/>
                     <Button Text="Přihlásit se jako server" HorizontalOptions="Center" Command="{Binding ServerLoginCommand}"/>
-                    <Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}"/>
                     <Label Text="{Binding ErrorLabel, Mode=TwoWay}"/>
                 </StackLayout>
             </ScrollView>

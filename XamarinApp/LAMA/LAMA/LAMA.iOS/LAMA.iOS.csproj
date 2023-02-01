@@ -154,4 +154,10 @@
       <Name>LAMA</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\klient.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\server.png" />
+  </ItemGroup>
 </Project>

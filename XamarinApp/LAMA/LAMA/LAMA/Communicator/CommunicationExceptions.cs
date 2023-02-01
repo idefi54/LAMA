@@ -4,12 +4,12 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
-    public class WrongPasswordException : Exception
+    public class WrongCreadintialsException : Exception
     {
-        public WrongPasswordException() { }
-        public WrongPasswordException(string message)
+        public WrongCreadintialsException() { }
+        public WrongCreadintialsException(string message)
             : base(message) { }
-        public WrongPasswordException(string message, Exception inner)
+        public WrongCreadintialsException(string message, Exception inner)
             : base(message, inner) { }
     }
 

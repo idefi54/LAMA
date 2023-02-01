@@ -251,6 +251,7 @@ namespace LAMA.Communicator
                 Models.LarpActivity activity = new Models.LarpActivity();
                 Debug.WriteLine(serializedObject);
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 Debug.WriteLine(attributtes);
                 Debug.WriteLine(attributtes.Length);
                 activity.buildFromStrings(attributtes);
@@ -278,6 +279,7 @@ namespace LAMA.Communicator
             {
                 Models.CP cp = new Models.CP();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
@@ -303,6 +305,7 @@ namespace LAMA.Communicator
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
 
@@ -328,6 +331,7 @@ namespace LAMA.Communicator
             {
                 Models.ChatMessage cm = new Models.ChatMessage();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cm.getID();
 
@@ -353,6 +357,7 @@ namespace LAMA.Communicator
             {
                 Models.EncyclopedyCategory cm = new Models.EncyclopedyCategory();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cm.getID();
 
@@ -378,6 +383,7 @@ namespace LAMA.Communicator
             {
                 Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 er.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + er.getID();
 
@@ -422,6 +428,7 @@ namespace LAMA.Communicator
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + activity.getID();
                 long activityID = activity.getID();
@@ -445,6 +452,7 @@ namespace LAMA.Communicator
             {
                 Models.CP cp = new Models.CP();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cp.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cp.getID();
 
@@ -469,6 +477,7 @@ namespace LAMA.Communicator
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ii.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ii.getID();
                 long itemID = ii.getID();
@@ -492,6 +501,7 @@ namespace LAMA.Communicator
             {
                 Models.ChatMessage cm = new Models.ChatMessage();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + cm.getID();
                 long messageID = cm.getID();
@@ -516,6 +526,7 @@ namespace LAMA.Communicator
             {
                 Models.EncyclopedyCategory ec = new Models.EncyclopedyCategory();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ec.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + ec.getID();
                 long messageID = ec.getID();
@@ -540,6 +551,7 @@ namespace LAMA.Communicator
             {
                 Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
                 string[] attributtes = serializedObject.Split('¦');
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 er.buildFromStrings(attributtes);
                 string objectID = objectType + ";" + er.getID();
                 long messageID = er.getID();

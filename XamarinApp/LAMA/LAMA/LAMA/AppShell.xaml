@@ -79,12 +79,19 @@
         https://docs.microsoft.com/dotnet/api/xamarin.forms.shellgroupitem.flyoutdisplayoptions?view=xamarin-forms
     -->
 
-	<ShellItem Route="LoginPage" FlyoutItemIsVisible="False">
-		<ShellContent ContentTemplate="{DataTemplate local:LoginPage}"/>
-	</ShellItem>
-	
-	
-	<FlyoutItem Title="Map">
+
+    <ShellItem Route="ClientChooseServerPage" FlyoutItemIsVisible="False">
+        <ShellContent ContentTemplate="{DataTemplate local:ClientChooseServerPage}"/>
+    </ShellItem>
+
+    <!--
+    <ShellItem Route="ChooseClientServerPage" FlyoutItemIsVisible="False">
+        <ShellContent ContentTemplate="{DataTemplate local:ChooseClientServerPage}"/>
+    </ShellItem>
+    -->
+
+
+    <FlyoutItem Title="Map">
 		<ShellContent Route="MapPage" ContentTemplate="{DataTemplate local:MapPage}" />
 	</FlyoutItem>
 	<FlyoutItem Title="Seznam Aktivit" Icon="icon_feed.png">

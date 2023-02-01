@@ -1,22 +1,22 @@
 ﻿using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LoginPage : ContentPage
+    public partial class ServerLoginPage : ContentPage
     {
-        public LoginPage()
+        public ServerLoginPage(bool newServer)
         {
             InitializeComponent();
-            this.BindingContext = new LoginViewModel();
+            this.BindingContext = new ServerLoginViewModel(newServer);
         }
     }
 }

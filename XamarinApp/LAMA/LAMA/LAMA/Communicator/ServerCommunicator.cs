@@ -12,6 +12,7 @@ using System.Diagnostics;
 using LAMA.Models;
 using LAMA.Singletons;
 using Xamarin.Forms;
+using SQLite;
 
 namespace LAMA.Communicator
 {
@@ -82,6 +83,7 @@ namespace LAMA.Communicator
                     logger.LogWrite($"Sending: {currentCommand.command}");
                     Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode();
+                    Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
@@ -204,8 +206,8 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            string[] messages = Encoding.Default.GetString(data).Split('|');
-            Debug.WriteLine($"Message Received: {Encoding.Default.GetString(data)}");
+            Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
+            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split('|');
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
@@ -213,6 +215,13 @@ namespace LAMA.Communicator
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(';');
+                for (int j = 0; j < messageParts.Length; j++)
+                {
+                    if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
+                    {
+                        messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
+                    }
+                }
                 if (messageParts[1] == "DataUpdated")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
@@ -245,7 +254,14 @@ namespace LAMA.Communicator
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.GiveNewClientID(current, messageParts[2]);
+                        THIS.GiveNewClientID(current, messageParts[2], messageParts[3], Int32.Parse(messageParts[4]));
+                    }));
+                }
+                if (messageParts[1] == "GiveIDExisting")
+                {
+                    Device.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.ExistingClientID(current, messageParts[2], messageParts[3], Int32.Parse(messageParts[4]));
                     }));
                 }
                 if (messageParts[1] == "ClientConnected")
@@ -275,7 +291,7 @@ namespace LAMA.Communicator
             }
         }
 
-        public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password)
+        public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
             if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
@@ -299,41 +315,81 @@ namespace LAMA.Communicator
             {
                 throw new NotAnIPAddressException("Invalid IP address format");
             }
+            Debug.WriteLine(Encryption.EncryptPassword(password));
+            Debug.WriteLine(Encryption.EncryptPassword(adminPassword));
             var values = new Dictionary<string, string>
             {
                 { "name", "\"" + name + "\"" },
                 { "IP", "\"" + IP + "\"" },
                 { "port", distantPort.ToString() },
-                { "password", "\"" + password + "\"" }
+                { "password", "\"" + Encryption.EncryptPassword(password) + "\"" },
+                { "adminPassword", "\"" + Encryption.EncryptPassword(adminPassword) + "\"" }
             };
 
 
             var content = new FormUrlEncodedContent(values);
             var responseString = "";
-            try
+            if (newServer)
             {
-                var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/startserver.php", content);
-                responseString = response.Result.Content.ReadAsStringAsync().Result;
-                Debug.WriteLine(responseString);
-                logger.LogWrite(responseString);
-            }
-            catch (HttpRequestException)
-            {
-                Debug.WriteLine("Can not connect to the central server check your internet connection");
-                throw new CantConnectToCentralServerException("Can not connect to the central server check your internet connection");
-            }
+                try
+                {
+                    var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/startserver.php", content);
+                    responseString = response.Result.Content.ReadAsStringAsync().Result;
+                    Debug.WriteLine(responseString);
+                    logger.LogWrite(responseString);
+                }
+                catch (HttpRequestException)
+                {
+                    Debug.WriteLine("Can not connect to the central server check your internet connection");
+                    throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
+                }
 
 
-            if (responseString == "Connection")
-            {
-                throw new CantConnectToDatabaseException("Connecting to database failed");
+                if (responseString == "Connection")
+                {
+                    throw new CantConnectToDatabaseException("Nepodařilo se připojit k databázi.");
+                }
+                else if (responseString == "serverExists")
+                {
+                    throw new WrongCreadintialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
+                }
             }
-            else if (responseString == "password")
+            else
             {
-                throw new WrongPasswordException("Wrong password for existing server");
-            }
+                try
+                {
+                    var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/existingserver.php", content);
+                    responseString = response.Result.Content.ReadAsStringAsync().Result;
+                    Debug.WriteLine(responseString);
+                    logger.LogWrite(responseString);
+                }
+                catch (HttpRequestException)
+                {
+                    Debug.WriteLine("Can not connect to the central server check your internet connection");
+                    throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
+                }
 
+
+                if (responseString == "Connection")
+                {
+                    throw new CantConnectToDatabaseException("Nepodařilo se připojit k databázi.");
+                }
+                else if (responseString == "credintials")
+                {
+                    throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
+                }
+                else if (responseString == "password")
+                {
+                    throw new WrongCreadintialsException("password.");
+                }
+            }
             Debug.WriteLine("No exceptions");
+            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu");
+            //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
+            byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
+            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
+            Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
+
             //maxClientID = 0;
             IPAddress ipAddress;
             IPAddress.TryParse(IP, out ipAddress);
@@ -376,7 +432,7 @@ namespace LAMA.Communicator
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
 
-            LocalStorage.clientName = name;
+            LocalStorage.clientName = nick;
             LocalStorage.serverName = name;
             LocalStorage.cpID = 0;
             LocalStorage.clientID = 0;
@@ -386,27 +442,27 @@ namespace LAMA.Communicator
                 //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
                     new Models.CP(0,
-                    LocalStorage.serverName, "server", new EventList<string> { "server", "org" }, "", "", "", ""));
+                    nick, nick, new EventList<string> { "server", "org" }, "", "", "", ""));
             }
             Debug.WriteLine("Initialization finished");
         }
 
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongPasswordException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
-        public ServerCommunicator(string name, string IP, int port, string password)
+        public ServerCommunicator(string name, string IP, int port, string password, string adminPassword, string nick, bool newServer)
         {
-            initServerCommunicator(name, IP, port, port, password);
+            initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
         }
 
-        public ServerCommunicator(string name, string ngrokAddress, string password)
+        public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
             Debug.WriteLine(addresses[0]);
-            initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password);
+            initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password, adminPassword, nick, newServer);
         }
 
         private void SendCommand(string commandText, string objectID)
@@ -431,9 +487,45 @@ namespace LAMA.Communicator
             }
         }
 
-        private void GiveNewClientID(Socket current, string clientName)
+        private void ExistingClientID(Socket current, string clientName, string password, int clientID)
         {
-            maxClientID += 1;
+            if (clientID == -1)
+            {
+                maxClientID += 1;
+                clientID = maxClientID;
+            }
+            long cpID = -1;
+            for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
+            {
+                //Add password testing
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                {
+                    cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
+                    string command = $"GiveID;{clientID};{cpID}";
+                    lock (ServerCommunicator.socketsLock)
+                    {
+                        clientSockets[clientID] = current;
+                    }
+                    SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    return;
+                }
+            }
+            lock (ServerCommunicator.socketsLock)
+            {
+                clientSockets[clientID] = current;
+            }
+            SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+        }
+
+        private void GiveNewClientID(Socket current, string clientName, string password, int clientID)
+        {
+            if (clientID == -1)
+            {
+                maxClientID += 1;
+                clientID = maxClientID;
+            }
             long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
@@ -441,6 +533,12 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
+                    SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    lock (ServerCommunicator.socketsLock)
+                    {
+                        clientSockets[clientID] = current;
+                    }
+                    return;
                 }
             }
             if (cpID == -1)
@@ -450,15 +548,13 @@ namespace LAMA.Communicator
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
             }
-            string command = $"GiveID;{maxClientID};{cpID}";
+            string command = $"GiveID;{clientID};{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
-                clientSockets[maxClientID] = current;
-                logger.LogWrite($"Give new client ID: {maxClientID}");
-                Debug.WriteLine($"Give new client ID: {maxClientID}");
+                clientSockets[clientID] = current;
             }
-            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
-            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", maxClientID));
+            SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         private void NewClientConnected(int id, Socket current)
