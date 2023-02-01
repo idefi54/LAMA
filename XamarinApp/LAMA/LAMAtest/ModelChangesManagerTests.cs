@@ -21,7 +21,7 @@ namespace LAMAtest
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(123, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList < Pair<int, int> >(),
-            new LAMA.EventList < Pair<string, int> >(), new EventList < Pair<int, string> >());
+            new LAMA.EventList < Pair<string, int> >(), new EventList < Pair<long, string> >());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(234, "testCP", "testCP234", new LAMA.EventList<string>(), "123456789",
@@ -95,7 +95,7 @@ namespace LAMAtest
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(124, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
-            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(235, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
@@ -136,7 +136,7 @@ namespace LAMAtest
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(125, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
-            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(236, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
@@ -243,7 +243,7 @@ namespace LAMAtest
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(126, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
-            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(237, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
@@ -305,23 +305,23 @@ namespace LAMAtest
             LAMA.RememberedList<LAMA.Models.CP, LAMA.Models.CPStorage> cpList = LAMA.DatabaseHolder<LAMA.Models.CP, LAMA.Models.CPStorage>.Instance.rememberedList;
             LAMA.RememberedList<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage> inventoryItemList = LAMA.DatabaseHolder<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage>.Instance.rememberedList;
 
-            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{1};{"testActivity"}";
-            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{2};{"testDescription"}";
-            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{3};{"None"}";
-            string command27 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{4};{LAMA.Models.LarpActivity.EventType.normal}";
-            string command28 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{6};{60}";
-            string command29 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{7};{1}";
-            string command30 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{8};{120}";
-            string command31 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{9};{new Pair<double, double>(10.1, 15.2)}";
-            string command32 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{10};{LAMA.Models.LarpActivity.Status.readyToLaunch}";
+            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{1};{"testActivity"}";
+            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{2};{"testDescription"}";
+            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{3};{"None"}";
+            string command27 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{4};{LAMA.Models.LarpActivity.EventType.normal}";
+            string command28 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{6};{60}";
+            string command29 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{7};{1}";
+            string command30 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{8};{120}";
+            string command31 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{9};{new Pair<double, double>(10.1, 15.2)}";
+            string command32 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{10};{LAMA.Models.LarpActivity.Status.readyToLaunch}";
 
-            string command33 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{1};{"testCP"}";
-            string command34 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{2};{"testCP234"}";
-            string command35 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{4};123456789";
-            string command36 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{5};{"facebook"}";
-            string command37 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{6};{"discord"}";
-            string command38 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{7};{new Pair<double, double>(13.0, 15.6)}";
-            string command39 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{8};{"notes"}";
+            string command33 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{1};{"testCP"}";
+            string command34 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{2};{"testCP234"}";
+            string command35 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{4};123456789";
+            string command36 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{5};{"facebook"}";
+            string command37 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{6};{"discord"}";
+            string command38 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{7};{new Pair<double, double>(0.0, 0.0)}";
+            string command39 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{8};{"notes"}";
 
             string command40 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{1};{"testItem"}";
             string command41 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{2};{"test inventory item"}";
@@ -401,7 +401,7 @@ namespace LAMAtest
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(127, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
-            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(238, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
@@ -414,7 +414,7 @@ namespace LAMAtest
 
             LAMA.Models.LarpActivity activity2 = new LAMA.Models.LarpActivity(127, "testActivity2", "testDescription2", "None2", LAMA.Models.LarpActivity.EventType.preparation, new LAMA.EventList<long>(),
             61, 2, 121, new Pair<double, double>(10.2, 15.3), LAMA.Models.LarpActivity.Status.awaitingPrerequisites, new LAMA.EventList<Pair<int, int>>(),
-            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
+            new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;ItemCreated;{activity2.GetType().ToString()};{String.Join("¦", activity2.getAttributes())}";
 
             LAMA.Models.CP cp2 = new LAMA.Models.CP(238, "testCP2", "testCP2342", new LAMA.EventList<string>(), 234567891.ToString(),

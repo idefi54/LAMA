@@ -26,7 +26,7 @@ namespace LAMA.WPF
         public MainWindow()
         {
             InitializeComponent();
-            Forms.Init();
+            Xamarin.Forms.Forms.Init();
             LoadApplication(new LAMA.App());
 
             MouseDown += MainWindow_MouseDown;
