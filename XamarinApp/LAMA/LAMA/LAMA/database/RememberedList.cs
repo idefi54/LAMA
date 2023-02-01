@@ -12,7 +12,7 @@ namespace LAMA
     
     public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
     {
-        int maxID = 0;
+        long maxID = 0;
         static long IDOffset = (long)Math.Pow(2, 31);
 
         SortedDictionary<long, int> IDToIndex = new SortedDictionary<long, int>();
@@ -46,7 +46,7 @@ namespace LAMA
                 IDToIndex.Add(a.getID(), i);
                 ++i;
                 if(a.getID() / IDOffset == LocalStorage.clientID && maxID< a.getID())
-                    maxID = (int)a.getID();
+                    maxID = a.getID();
                 a.addedInto(this);
             }
         }
@@ -81,7 +81,7 @@ namespace LAMA
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
             if (data.getID() > maxID && data.getID() / IDOffset == LocalStorage.clientID)
-                maxID = (int)data.getID();
+                maxID = data.getID();
 
             sql.addData(data, invokeEvent);
             data.addedInto(this);

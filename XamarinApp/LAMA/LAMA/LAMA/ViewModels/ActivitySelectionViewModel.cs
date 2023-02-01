@@ -45,7 +45,14 @@ namespace LAMA.ViewModels
 
 		private async void Close()
         {
-            await Shell.Current.GoToAsync("..");
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await App.Current.MainPage.Navigation.PopAsync();
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("..");
+            }
         }
     }
 }

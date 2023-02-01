@@ -17,7 +17,7 @@
             <StackLayout Spacing="10">
 
                 <Button Text="ResetDatabase" Clicked="OnResetDatabase"/>
-                
+
                 <Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
                 <Button Text="NewActivity" Clicked="OnNewActivity"/>
                 <Button Text="EditActivity" Clicked="OnEditActivity"/>
@@ -26,9 +26,9 @@
                 <Button Text="CPs" Clicked="OnCP"/>
                 <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
 
-				<Button Text="Hide Example" Clicked="OnHideExample"/>
+                <Button Text="Hide Example" Clicked="OnHideExample"/>
 
-			</StackLayout>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

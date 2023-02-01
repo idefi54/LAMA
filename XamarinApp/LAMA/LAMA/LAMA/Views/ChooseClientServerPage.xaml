@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:common="clr-namespace:LAMA.Views"
+             mc:Ignorable="d"
+             x:Class="LAMA.Views.ChooseClientServerPage"
+             Shell.NavBarIsVisible="False"
+			 Shell.FlyoutBehavior="Disabled"
+			 Title="Vybrat roli">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                <ImageButton Source="Assets\server.png"
+                        WidthRequest="256"
+                        HeightRequest="256"
+                        BackgroundColor="White"
+                        Command="{Binding ChooseServerCommand}"/>
+                <ImageButton Source="Assets\klient.png"
+                        WidthRequest="256"
+                        HeightRequest="256"
+                        BackgroundColor="White"
+                        Command="{Binding ChooseClientCommand}"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

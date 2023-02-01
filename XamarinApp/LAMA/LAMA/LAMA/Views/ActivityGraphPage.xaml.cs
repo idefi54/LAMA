@@ -46,7 +46,7 @@ namespace LAMA.Views
             _graph.ReloadActivities();
         }
 
-        void OnTouchEffectAction(object sender, TouchActionEventArgs args)
+        public void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
             // New Press
             if (args.Type == TouchActionType.Pressed)
@@ -85,6 +85,7 @@ namespace LAMA.Views
                     _draggedButton = null;
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
+                        //Error - must be long, otherwise two activities might have the same id
                         activityDTO.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
                         activityDTO.start = time.ToUnixTimeMilliseconds();
                         activityDTO.day = time.Day;

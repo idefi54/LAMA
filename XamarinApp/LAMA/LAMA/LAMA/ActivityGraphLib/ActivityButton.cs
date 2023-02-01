@@ -116,7 +116,7 @@ namespace LAMA.ActivityGraphLib
             if (_editState == EditState.Left)
             {
                 DateTime at = _activityGraph.ToTime(x);
-                long duration = (int)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes + Activity.duration;
+                long duration = (long)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes + Activity.duration;
 
                 if (duration > minimalDuration)
                 {

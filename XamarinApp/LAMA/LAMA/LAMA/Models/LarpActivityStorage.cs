@@ -10,7 +10,7 @@ namespace LAMA.Models
         //{ "ID", "name", "description", "preparationNeeded", "eventType", "prerequisiteIDs",
             //"duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole" };
         [PrimaryKey]
-        public int ID { get; set; }
+        public long ID { get; set; }
 
         public string name { get; set; }
         public string description { get; set; }
@@ -29,7 +29,7 @@ namespace LAMA.Models
         public string graphY { get; set; }
         public void makeFromStrings(string[] input)
         {
-            ID = Helpers.readInt(input[0]);
+            ID = Helpers.readLong(input[0]);
             name = input[1];
             description = input[2];
             preparationNeeded = input[3];

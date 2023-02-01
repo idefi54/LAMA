@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<StackLayout  
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="LAMA.Views.OurNavigationMenu"
+    Padding="0" 
+    Spacing="0"
+    BackgroundColor="#b2ffff">
+    <StackLayout.IsVisible>
+        <OnPlatform x:TypeArguments="x:Boolean">
+            <On Platform="Android">false</On>
+            <On Platform="iOS">false</On>
+            <On Platform="UWP">false</On>
+            <On Platform="WPF">true</On>
+        </OnPlatform>
+    </StackLayout.IsVisible>
+    <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Padding="40, 10" Spacing="10">
+        <Button Text="Map" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToMap}"></Button>
+        <Button Text="Seznam Aktivit" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToActivities}"></Button>
+        <Button Text="Test Page" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToTestPage}"></Button>
+        <Button Text="Chat" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToChat}"></Button>
+        <Button Text="Activity Graph" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToActivityGraph}"></Button>
+        <Button Text="Encyklopedie" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToEncyclopedy}"></Button>
+    </StackLayout>
+</StackLayout>

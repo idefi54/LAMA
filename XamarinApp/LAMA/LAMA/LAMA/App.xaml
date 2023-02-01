@@ -27,6 +27,10 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
+            <Style ApplyToDerivedTypes="true" TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}"/>
+                <Setter Property="BarTextColor" Value="White"/>
+            </Style>
         </ResourceDictionary>        
     </Application.Resources>
 </Application>

@@ -52,7 +52,7 @@
             </ScrollView>
             <StackLayout>
                 <Editor x:Name="TextBox" HeightRequest="100" Margin="20, 20, 20, 0" Text="{Binding MessageText, Mode=TwoWay}"></Editor>
-                <Button Text="Send" Margin="20, 10, 20, 10" CornerRadius="5" Command="{Binding MessageSentCommand}"></Button>
+                <Button Text="Odeslat" Margin="20, 10, 20, 10" CornerRadius="5" Command="{Binding MessageSentCommand}"></Button>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

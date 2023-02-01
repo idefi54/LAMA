@@ -210,7 +210,14 @@ namespace LAMA.ViewModels
 		private async void OnCancel()
 		{
 			// This will pop the current page off the navigation stack
-			await Shell.Current.GoToAsync("..");
+			if (Device.RuntimePlatform == Device.WPF)
+			{
+				await App.Current.MainPage.Navigation.PopAsync();
+			}
+			else
+			{
+				await Shell.Current.GoToAsync("..");
+			}
 		}
 
         private async void OnSave()
@@ -268,7 +275,14 @@ namespace LAMA.ViewModels
 			_createNewActivity(new LarpActivityDTO(larpActivity));
 
 			// This will pop the current page off the navigation stack
-			await Shell.Current.GoToAsync("..");
+			if (Device.RuntimePlatform == Device.WPF)
+			{
+				await App.Current.MainPage.Navigation.PopAsync();
+			}
+			else
+			{
+				await Shell.Current.GoToAsync("..");
+			}
         }
     }
 }

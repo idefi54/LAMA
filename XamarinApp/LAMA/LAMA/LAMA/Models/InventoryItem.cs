@@ -114,7 +114,7 @@ namespace LAMA.Models
             switch (i)
             {
                 case 0:
-                    _ID = Helpers.readInt(s);
+                    _ID = Helpers.readLong(s);
                     break;
                 case 1:
                     _name = s;
