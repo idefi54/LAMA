@@ -121,9 +121,6 @@
     <EmbeddedResource Update="Views\InventoryView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\MapLimitsPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Views\ChatTest.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

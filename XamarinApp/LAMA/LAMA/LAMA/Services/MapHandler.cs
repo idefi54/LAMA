@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xamarin.Essentials;
+using System.Threading.Tasks;
 
 namespace LAMA.Services
 {
@@ -273,7 +274,7 @@ namespace LAMA.Services
         /// Needs to be async.
         /// </summary>
         /// <param name="view"></param>
-        public async void UpdateLocation(MapView view, bool gpsAvailable = true)
+        public async Task UpdateLocation(MapView view, bool gpsAvailable = true)
         {
             var location = gpsAvailable ? await Geolocation.GetLastKnownLocationAsync() : CurrentLocation;
             if (location == null)
