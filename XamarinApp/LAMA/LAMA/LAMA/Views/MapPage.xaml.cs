@@ -11,11 +11,19 @@ namespace LAMA.Views
     public partial class MapPage : ContentPage
     {
         private MapView _mapView;
+        private Button _setHomeButton;
 
         public MapPage()
         {
             InitializeComponent();
             MapHandler.Instance.OnPinClick += OnPinClicked;
+            _setHomeButton = new Button();
+            _setHomeButton.Clicked += SetHomeButton_Clicked;
+            _setHomeButton.Text = "Set Home Location";
+            _setHomeButton.TextColor = Color.Black;
+            _setHomeButton.BackgroundColor = Color.Yellow;
+            var layout = (Content as StackLayout);
+            layout.Children.Add(_setHomeButton);
         }
 
         private async void OnPinClicked(PinClickedEventArgs e, int activityID, bool doubleClick)
@@ -77,10 +85,8 @@ namespace LAMA.Views
 
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
-                await DisplayAlert("Location not available", "If you want your location to be visible on the map, please have your location turned on and grant the permission to use it.", "OK");
-                await Navigation.PushModalAsync(new MapLimitsPage());
-                layout.Children.Remove(activityIndicator);
-                return;
+                await DisplayAlert("Location not available",
+                    "Please, turn on your location or set your home location.", "OK");
             }
 
             // Handle the fucking map
@@ -95,16 +101,42 @@ namespace LAMA.Views
             };
             MapHandler.Instance.MapViewSetup(_mapView);
             MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
-            MapHandler.Instance.SetLocationVisible(_mapView, locationAvailable);
-            MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
-            MapHandler.Zoom(_mapView, 75);
-            MapHandler.SetZoomLimits(_mapView, 1, 100);
+            MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
+
+            if (MapHandler.Instance.CurrentLocation != null)
+            {
+                MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
+                MapHandler.Zoom(_mapView, 75);
+                MapHandler.SetZoomLimits(_mapView, 1, 100);
+            }
 
             layout.Children.Add(_mapView);
             layout.Children.Remove(activityIndicator);
            
             // test
             MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
+        }
+
+        private async void SetHomeButton_Clicked(object sender, System.EventArgs e)
+        {
+            _setHomeButton.BackgroundColor = Color.Green;
+            _setHomeButton.Text = "Change Home Location";
+
+            Mapsui.Geometries.Point p = Mapsui.Projection.SphericalMercator.ToLonLat(_mapView.Viewport.Center.X, _mapView.Viewport.Center.Y);
+            Location loc = new Location
+            {
+                Latitude = p.Y,
+                Longitude = p.X
+            };
+            MapHandler.Instance.CurrentLocation = loc;
+            MapHandler.Instance.UpdateLocation(_mapView, false);
+            MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
+            MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
+            MapHandler.Zoom(_mapView, 75);
+            MapHandler.SetZoomLimits(_mapView, 1, 100);
+
+            await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
+            return;
         }
 
         protected override void OnDisappearing()
