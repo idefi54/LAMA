@@ -100,14 +100,16 @@ namespace LAMA.Views
                 BackgroundColor = Color.Gray
             };
             MapHandler.Instance.MapViewSetup(_mapView);
-            MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
-            MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
+            await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
+            MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
 
             if (MapHandler.Instance.CurrentLocation != null)
             {
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
                 MapHandler.Zoom(_mapView, 75);
                 MapHandler.SetZoomLimits(_mapView, 1, 100);
+                _setHomeButton.BackgroundColor = Color.Gray;
+                _setHomeButton.Text = "Change Home Location";
             }
 
             layout.Children.Add(_mapView);
@@ -119,7 +121,7 @@ namespace LAMA.Views
 
         private async void SetHomeButton_Clicked(object sender, System.EventArgs e)
         {
-            _setHomeButton.BackgroundColor = Color.Green;
+            _setHomeButton.BackgroundColor = Color.Gray;
             _setHomeButton.Text = "Change Home Location";
 
             Mapsui.Geometries.Point p = Mapsui.Projection.SphericalMercator.ToLonLat(_mapView.Viewport.Center.X, _mapView.Viewport.Center.Y);
