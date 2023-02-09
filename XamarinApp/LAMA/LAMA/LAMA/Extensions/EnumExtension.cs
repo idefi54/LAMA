@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LAMA.Extentions
+namespace LAMA.Extensions
 {
-	public static class EnumExtentions
+	public static class EnumExtension
 	{
 		public static string ToShortString(this LarpActivity.EventType eventType)
 		{

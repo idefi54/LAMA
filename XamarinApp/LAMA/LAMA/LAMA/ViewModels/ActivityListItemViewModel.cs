@@ -1,4 +1,4 @@
-﻿using LAMA.Extentions;
+﻿using LAMA.Extensions;
 using LAMA.Models;
 using LAMA.Models.DTO;
 using System;
