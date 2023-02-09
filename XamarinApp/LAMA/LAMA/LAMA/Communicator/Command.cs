@@ -4,6 +4,9 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Class representing a single message sent over the network
+    /// </summary>
     public class Command : SerializableDictionaryItem
     {
         private string _key;
@@ -33,6 +36,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Initialize empty command
+        /// </summary>
         public Command()
         {
             _command = "";
@@ -40,6 +46,11 @@ namespace LAMA.Communicator
             _receiverID = 0;
         }
 
+        /// <summary>
+        /// Initialize command with a specific text and key.
+        /// </summary>
+        /// <param name="text">Text of the command including the time part of the message</param>
+        /// <param name="key">Key for the database</param>
         public Command(string text, string key)
         {
             string[] messageParts = text.Split(';');
@@ -49,6 +60,12 @@ namespace LAMA.Communicator
             _receiverID = 0;
         }
 
+        /// <summary>
+        /// Initialize the command with a text, time sent and key
+        /// </summary>
+        /// <param name="text">Text of the message</param>
+        /// <param name="initTime">The time message was sent</param>
+        /// <param name="key">Key for the database</param>
         public Command(string text, long initTime, string key)
         {
             _command = text;
@@ -57,6 +74,12 @@ namespace LAMA.Communicator
             _receiverID = 0;
         }
 
+        /// <summary>
+        /// Initialize command with text, unique key and ID
+        /// </summary>
+        /// <param name="text">Text of the message</param>
+        /// <param name="key">Unique key for the database</param>
+        /// <param name="id">Id of the client receiving the message</param>
         public Command(string text, string key, int id)
         {
             string[] messageParts = text.Split(';');
@@ -66,6 +89,13 @@ namespace LAMA.Communicator
             _receiverID = id;
         }
 
+        /// <summary>
+        /// Initialize all of the command values
+        /// </summary>
+        /// <param name="text">Text of the message</param>
+        /// <param name="initTime">Time the message was sent</param>
+        /// <param name="key">Unique key for the database</param>
+        /// <param name="id">Id of the client receiving the message</param>
         public Command(string text, long initTime, string key, int id)
         {
             _command = text;
@@ -82,6 +112,10 @@ namespace LAMA.Communicator
             list.sqlConnection.changeData(index, newVal, this);
         }
 
+        /// <summary>
+        /// Get encoded representation of the command (using AES algorithm)
+        /// </summary>
+        /// <returns></returns>
         public byte[] Encode()
         {
             return Encryption.EncryptStringToBytes_Aes(_time + ";" + _command + "|");
@@ -145,6 +179,10 @@ namespace LAMA.Communicator
             return _key;
         }
 
+        /// <summary>
+        /// Get string representation of the command, not encoded
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return time.ToString() + ";" + command;
