@@ -10,6 +10,7 @@ using LAMA.Views;
 using static LAMA.Models.LarpActivity;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace LAMA.ViewModels
 {
@@ -20,11 +21,11 @@ namespace LAMA.ViewModels
 		private string _description;
 		private string _type;
 		private int _typeIndex;
-		//private DateTime _startTime;
-		//private DateTime _endTime;
-		private DateTime _duration;
-		private DateTime _start;
-		private int _day;
+        private DateTime _startTime;
+        private DateTime _endTime;
+  //      private DateTime _duration;
+		//private DateTime _start;
+		//private int _day;
 		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
 		private string _preparations;
@@ -36,11 +37,11 @@ namespace LAMA.ViewModels
 		public string Description { get { return _description; } set { SetProperty(ref _description , value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
-		//public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime , value); } }
-		//public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime , value); } }
-		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
-		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
-		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
+        public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
+        public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+  //      public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
+		//public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
+		//public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
 		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
@@ -85,9 +86,11 @@ namespace LAMA.ViewModels
 				Description = larpActivity.description;
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
-				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				Day = activity.day;
+				//Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
+				//Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				StartTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				EndTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
+				//Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
 				foreach(Pair<string, int> role in activity.roles)
@@ -106,9 +109,11 @@ namespace LAMA.ViewModels
 				Description = "";
 				Type = EventType.normal.ToString();
 				TypeIndex = (int)EventType.normal;
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
-				Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				Day = 0;
+				//Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
+				//Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				StartTime = DateTime.Now.AddMinutes(30); //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				EndTime = StartTime.AddHours(1);
+				//Day = 0;
 				Preparations = "";
 			}
 
@@ -141,12 +146,12 @@ namespace LAMA.ViewModels
 
 		private bool ValidateSave()
 		{
-			string message = "";
+			StringBuilder messageBuilder = new StringBuilder();
 
 			if (String.IsNullOrWhiteSpace(_name)
 				|| String.IsNullOrWhiteSpace(_description))
             {
-				message += "Název aktivity a popis aktivity musí být vyplněny.\n";
+				messageBuilder.AppendLine("Název aktivity a popis aktivity musí být vyplněny.");
             }
 
 			bool duplicates = false;
@@ -160,8 +165,15 @@ namespace LAMA.ViewModels
 			}
 			if (duplicates)
             {
-				message += "Nemohou být dvě role se stejným názvem.\n";
+				messageBuilder.AppendLine("Nemohou být dvě role se stejným názvem.");
             }
+
+			if(StartTime >= EndTime)
+			{
+				messageBuilder.AppendLine("Čas začátku musí být před časem konce.");
+			}
+
+			string message = messageBuilder.ToString();
 
 			if(message != "")
             {
@@ -256,6 +268,11 @@ namespace LAMA.ViewModels
 			EventList<Pair<int, int>> items = new EventList<Pair<int, int>>();
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
+			int tmp_day = 0;
+
+			long start = StartTime.ToUnixTimeMilliseconds();
+			long duration = EndTime.ToUnixTimeMilliseconds() - start;
+
 			LarpActivity larpActivity = new LarpActivity(
 				10,
 				Name, 
@@ -263,9 +280,9 @@ namespace LAMA.ViewModels
 				Preparations is null ? "" : Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				dependencies,
-				Duration.ToUnixTimeMilliseconds(),
-				Day,
-				Start.ToUnixTimeMilliseconds(),
+				duration,
+				tmp_day,
+				start,
 				new Pair<double, double>(lon, lat), 
 				LarpActivity.Status.readyToLaunch,
 				items, 
