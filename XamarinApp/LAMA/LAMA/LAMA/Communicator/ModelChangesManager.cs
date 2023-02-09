@@ -17,6 +17,14 @@ namespace LAMA.Communicator
         private string objectIgnoreCreation = "";
         private string objectIgnoreDeletion = "";
 
+        /// <summary>
+        /// Create new model changes manager, used to change application status based on received messages
+        /// </summary>
+        /// <param name="initCommunicator">Communicator that uses this manager</param>
+        /// <param name="objectsCache"></param>
+        /// <param name="attributesCache"></param>
+        /// <param name="server">Is this server or client</param>
+        /// <param name="testing">Is this manager used for testing, or in the application itself</param>
         public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool testing = false)
         {
             this.server = server;
@@ -26,11 +34,17 @@ namespace LAMA.Communicator
             communicator = initCommunicator;
         }
 
+        /// <summary>
+        /// Process a received message
+        /// </summary>
+        /// <param name="command">Received message</param>
+        /// <param name="current"></param>
         public void ProcessCommand(string command, Socket current)
         {
             string[] messageParts = command.Split(';');
             if (!server)
             {
+                //Some attribute got updated
                 if (messageParts[1] == "DataUpdated")
                 {
                     if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
@@ -46,6 +60,7 @@ namespace LAMA.Communicator
                     if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
                 }
+                //Rollback effect of some previous message
                 if (!server && (messageParts[1] == "Rollback"))
                 {
                     if (messageParts[2] == "DataUpdated")
@@ -62,6 +77,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Data updated event was triggered, communicator may have to send a message
+        /// </summary>
+        /// <param name="changed">Item whose attribute was changed</param>
+        /// <param name="attributeIndex">Index of the modified attribute</param>
         public void OnDataUpdated(Serializable changed, int attributeIndex)
         {
             long objectID = changed.getID();
@@ -86,6 +106,16 @@ namespace LAMA.Communicator
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
+        /// <summary>
+        /// Message received describing attribute change
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="objectID"></param>
+        /// <param name="indexAttribute"></param>
+        /// <param name="value"></param>
+        /// <param name="updateTime"></param>
+        /// <param name="command"></param>
+        /// <param name="current"></param>
         public void DataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
@@ -162,6 +192,15 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Rollback previous data update
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="objectID"></param>
+        /// <param name="indexAttribute"></param>
+        /// <param name="value"></param>
+        /// <param name="updateTime"></param>
+        /// <param name="command"></param>
         public void RollbackDataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command)
         {
             string attributeID = objectType + ";" + objectID + ";" + indexAttribute;
@@ -208,6 +247,10 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Item created event was triggered, communicator may have to send a message
+        /// </summary>
+        /// <param name="changed"></param>
         public void OnItemCreated(Serializable changed)
         {
             long objectID = changed.getID();
@@ -242,7 +285,14 @@ namespace LAMA.Communicator
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
         }
 
-
+        /// <summary>
+        /// Message received describing creation of a new object
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="serializedObject"></param>
+        /// <param name="updateTime"></param>
+        /// <param name="command"></param>
+        /// <param name="current"></param>
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
             if (!testing) communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
@@ -406,6 +456,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Inform client, that an item creation should be rolled back
+        /// </summary>
+        /// <param name="objectID"></param>
+        /// <param name="current"></param>
         private void ItemCreatedSendRollback(string objectID, Socket current)
         {
             communicator.Logger.LogWrite($"ItemCreatedSendRollback: {objectID}");
@@ -421,6 +476,13 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Message received informing client, that item creation should be rolled back
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="serializedObject">The object we should roll back to</param>
+        /// <param name="updateTime"></param>
+        /// <param name="command"></param>
         public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
             if (!testing) communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
@@ -572,6 +634,10 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Item was deleted, message might have to be sent
+        /// </summary>
+        /// <param name="changed"></param>
         public void OnItemDeleted(Serializable changed)
         {
             long objectID = changed.getID();
@@ -602,7 +668,13 @@ namespace LAMA.Communicator
             }
         }
 
-
+        /// <summary>
+        /// Message received describing deletion of an object
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="objectID"></param>
+        /// <param name="updateTime"></param>
+        /// <param name="command"></param>
         public void ItemDeleted(string objectType, long objectID, long updateTime, string command)
         {
             if (!testing) communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");

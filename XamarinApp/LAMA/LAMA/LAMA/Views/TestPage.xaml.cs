@@ -30,13 +30,13 @@ namespace LAMA.Views
                 LarpActivity.EventType.normal, new EventList<long>(),
                 999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
                 new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            
+
             var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
             if (me == null)
             {
                 me = new CP(666, "me", "test", new EventList<string>(), "", "", "", "");
                 DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(me);
-                
+
             }
             if (!me.permissions.Contains(CP.PermissionType.SetPermission))
                 me.permissions.Add(CP.PermissionType.SetPermission);
@@ -185,15 +185,17 @@ namespace LAMA.Views
 
         protected async override void OnAppearing()
         {
-
-            var permission = await Xamarin.Essentials.Permissions.RequestAsync<Xamarin.Essentials.Permissions.LocationAlways>();
-            
-            if (permission == Xamarin.Essentials.PermissionStatus.Denied)
+            //WPF doesn't have permissions
+            if (Device.RuntimePlatform != Device.WPF)
             {
-                // TODO Let the user know they need to accept
-                return;
-            }
+                var permission = await Permissions.RequestAsync<Permissions.LocationAlways>();
 
+                if (permission == PermissionStatus.Denied)
+                {
+                    // TODO Let the user know they need to accept
+                    return;
+                }
+            }
             if (Device.RuntimePlatform == Device.Android)
             {
                 if (!Preferences.Get("LocationServiceRunning", false))

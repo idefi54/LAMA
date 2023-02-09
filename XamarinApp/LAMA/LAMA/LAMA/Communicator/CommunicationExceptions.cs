@@ -4,6 +4,9 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Wrong client name, client password, server password or a server with this name already exists
+    /// </summary>
     public class WrongCreadintialsException : Exception
     {
         public WrongCreadintialsException() { }
@@ -13,6 +16,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Server name can not contain special symbols
+    /// </summary>
     public class WrongNameFormatException : Exception
     {
         public WrongNameFormatException() { }
@@ -22,6 +28,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Server with this name doesn't exist (no such server specified in the database table)
+    /// </summary>
     public class NonExistentServerException : Exception
     {
         public NonExistentServerException() { }
@@ -31,6 +40,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Unable to connect to the central (remote) server - probably problem with connection
+    /// </summary>
     public class CantConnectToCentralServerException : Exception
     {
         public CantConnectToCentralServerException() { }
@@ -40,6 +52,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Unable to connect to the database with the LARP server specifications
+    /// </summary>
     public class CantConnectToDatabaseException : Exception
     {
         public CantConnectToDatabaseException() { }
@@ -49,6 +64,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Supplied IP isn't a valid IP address
+    /// </summary>
     public class NotAnIPAddressException : Exception
     {
         public NotAnIPAddressException() { }
@@ -58,6 +76,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// Can not create server with this port number
+    /// </summary>
     public class WrongPortException : Exception
     {
         public WrongPortException() { }
@@ -67,6 +88,9 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
+    /// <summary>
+    /// LARP server refused connection
+    /// </summary>
     public class ServerConnectionRefusedException : Exception
     {
         public ServerConnectionRefusedException() { }

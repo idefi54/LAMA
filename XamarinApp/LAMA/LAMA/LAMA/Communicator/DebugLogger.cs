@@ -11,11 +11,19 @@ namespace LAMA.Communicator
         readonly private bool shouldLog;
         private object loggingLock = new object();
 
+        /// <summary>
+        /// Logger capable of writing into a file
+        /// </summary>
+        /// <param name="shouldLog">Is logging turned on</param>
         public DebugLogger(bool shouldLog)
         {
             this.shouldLog = shouldLog;
         }
 
+        /// <summary>
+        /// Log a debug message into a text file
+        /// </summary>
+        /// <param name="logMessage">Message to be logged (time included automatically)</param>
         public void LogWrite(string logMessage)
         {
             if (shouldLog)

@@ -31,6 +31,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Object describing a single attribute (its identification key, value and the time of the last change)
+        /// </summary>
+        /// <param name="init">Value of the attribute</param>
+        /// <param name="key">Unique identifier</param>
         public TimeValue(string init, string key)
         {
             string[] initParts = init.Split(';');
@@ -39,6 +44,12 @@ namespace LAMA.Communicator
             _key = key;
         }
 
+        /// <summary>
+        /// Object describing a single attribute (its identification key, value and the time of the last change)
+        /// </summary>
+        /// <param name="initTime">Last time the attribute was changed in unix time format</param>
+        /// <param name="initValue">Value of the attribute</param>
+        /// <param name="key">Unique identifier</param>
         public TimeValue(long initTime, string initValue, string key)
         {
             _time = initTime;

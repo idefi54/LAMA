@@ -18,7 +18,9 @@ namespace LAMA.Communicator
         private static RSAParameters rsaPublic;
 
         private static byte[] AESkey;
-
+        /// <summary>
+        /// Generate the private and public key for RSA encryption
+        /// </summary>
         public static void GenerateRSAKeys()
         {
             rsaProvider = new RSACryptoServiceProvider(1024);
@@ -30,6 +32,10 @@ namespace LAMA.Communicator
             rsaPublic = rsaProvider.ExportParameters(false);
         }
 
+        /// <summary>
+        /// Get string representation of the currently used public key
+        /// </summary>
+        /// <returns>string representation of the public RSA key</returns>
         public static string GetPublicRSAKey()
         {
             var sw = new System.IO.StringWriter();
@@ -38,6 +44,11 @@ namespace LAMA.Communicator
             return sw.ToString();
         }
 
+        /// <summary>
+        /// Load public RSA key from its string representation
+        /// </summary>
+        /// <param name="keyString">string representation of the public RSA key</param>
+        /// <returns>RSA parameters with supplied public key</returns>
         public static RSAParameters DecodePublicKey(string keyString)
         {
             var sr = new System.IO.StringReader(keyString);
@@ -45,14 +56,25 @@ namespace LAMA.Communicator
             return (RSAParameters)xs.Deserialize(sr);
         }
 
-        public static string DecryptRSA(string decriptedString)
+        /// <summary>
+        /// Decrypt string using RSA
+        /// </summary>
+        /// <param name="decryptedString">Encoded string to be decrypted</param>
+        /// <returns>Decrypted message</returns>
+        public static string DecryptRSA(string decryptedString)
         {
             rsaProvider.ImportParameters(rsaPrivate);
-            byte[] bytes = System.Text.Encoding.Unicode.GetBytes(decriptedString);
+            byte[] bytes = System.Text.Encoding.Unicode.GetBytes(decryptedString);
             byte[] bytesDecripted = rsaProvider.Decrypt(bytes, true);
             return System.Text.Encoding.Unicode.GetString(bytesDecripted);
         }
 
+        /// <summary>
+        /// Encrypt message using RSA and a supplied public key.
+        /// </summary>
+        /// <param name="encryptedString"></param>
+        /// <param name="publicKey"></param>
+        /// <returns></returns>
         public static string EncryptRSA(string encryptedString, string publicKey)
         {
             rsaProvider.ImportParameters(DecodePublicKey(publicKey));
@@ -62,6 +84,11 @@ namespace LAMA.Communicator
             return textEncrypted;
         }
 
+        /// <summary>
+        /// Encrypt password using SHA256
+        /// </summary>
+        /// <param name="password">Nonencrypted password</param>
+        /// <returns></returns>
         public static string EncryptPassword(string password)
         {
             SHA256 sha256 = SHA256.Create();
@@ -70,6 +97,14 @@ namespace LAMA.Communicator
             return Convert.ToBase64String(encrypted);
         }
 
+        /// <summary>
+        /// Encrypt message using AES algorithm
+        /// </summary>
+        /// <param name="inputString">Message to be encrypted</param>
+        /// <param name="ECB">Use ECB version of algorithm - true by default, this is fine because the first part of message is
+        /// always different (time the message was sent in milliseconds), otherwise ECB should be set to false, this would however
+        /// increase the size of encoded messages</param>
+        /// <returns>Base64String of the bytes the message was encoded to</returns>
         public static string EncryptAES(string inputString, bool ECB = true)
         {
             //Debug.WriteLine($"input: {inputString} \n");
@@ -105,6 +140,14 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Encrypt message using AES algorithm
+        /// </summary>
+        /// <param name="inputString">Message to be encrypted</param>
+        /// <param name="ECB">Use ECB version of algorithm - true by default, this is fine because the first part of message is
+        /// always different (time the message was sent in milliseconds), otherwise ECB should be set to false, this would however
+        /// increase the size of encoded messages</param>
+        /// <returns>encoded message as byte array</returns>
         public static byte[] EncryptStringToBytes_Aes(string plainText, bool ECB = true)
         {
             using (Aes myAes = Aes.Create())
@@ -139,6 +182,14 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Decrypt AES encoded message from Base64String
+        /// </summary>
+        /// <param name="inputString">encoded message in form of Base64String</param>
+        /// <param name="ECB">Use ECB version of algorithm - true by default, this is fine because the first part of message is
+        /// always different (time the message was sent in milliseconds), otherwise ECB should be set to false, this would however
+        /// increase the size of encoded messages</param>
+        /// <returns>Decrypted message as string</returns>
         public static string DecryptAES(string inputString, bool ECB = true)
         {
             byte[] bytes = System.Convert.FromBase64String(inputString);
@@ -152,6 +203,14 @@ namespace LAMA.Communicator
             return decrypted;
         }
 
+        /// <summary>
+        /// Decrypt AES encoded message from Base64String
+        /// </summary>
+        /// <param name="bytes">encoded message as byte array</param>
+        /// <param name="ECB">Use ECB version of algorithm - true by default, this is fine because the first part of message is
+        /// always different (time the message was sent in milliseconds), otherwise ECB should be set to false, this would however
+        /// increase the size of encoded messages</param>
+        /// <returns>Decrypted message as string</returns>
         public static string DecryptStringFromBytes_Aes(byte[] bytes, bool ECB = true)
         {
             string decrypted = "";
@@ -165,6 +224,13 @@ namespace LAMA.Communicator
             return decrypted;
         }
 
+        /// <summary>
+        /// Read one message from encrypted (there can be multiple messages after each other in the encrypted data)
+        /// </summary>
+        /// <param name="encrypted">Bytes of the message/messages we are trying to decrypt</param>
+        /// <param name="offset">Start of the decrypted message (if there are more messages encrypted)</param>
+        /// <param name="ECB">Use ECB version of AES?</param>
+        /// <returns>Single decrypted message</returns>
         private static string ReadSingleMessageFromEncrypted(byte[] encrypted, out int offset, bool ECB = true)
         {
             offset = 0;
@@ -212,6 +278,10 @@ namespace LAMA.Communicator
             //return decrypted;
         }
 
+        /// <summary>
+        /// Set key for AES algorithm
+        /// </summary>
+        /// <param name="Key">String representation of the key</param>
         public static void SetAESKey(string Key)
         {
             AESkey = Encoding.UTF8.GetBytes(Key).Take(32).ToArray();

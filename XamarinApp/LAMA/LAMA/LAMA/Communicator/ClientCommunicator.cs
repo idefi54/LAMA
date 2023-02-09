@@ -18,19 +18,26 @@ namespace LAMA.Communicator
     public class ClientCommunicator : Communicator
     {
         public DebugLogger logger;
+        //Logging into a text file
         public DebugLogger Logger
         {
             get { return logger; }
         }
+        //Managed to connect to the server
         private bool _connected = false;
         public bool connected
         {
             get { return _connected; }
         }
+        //Is the client already logged in into the application
         public bool loggedIn = false;
+        //Server socket
         public static Socket s;
+        //So we can use the socket in different threads
         private static object socketLock = new object();
+        //Thread the client listens on
         private Thread listener;
+        //When was the client last updated from the server
         public long lastUpdate;
         public long LastUpdate
         {
@@ -38,23 +45,27 @@ namespace LAMA.Communicator
             set { if (wasUpdated) { lastUpdate = value; } }
         }
         private bool wasUpdated = false;
-        //private static string CPName;
-        //private static string assignedEvent = "";
+
+        //TCP connection address
         private IPAddress _IP;
         private int _port;
         private bool _IPv6 = false;
         private bool _IPv4 = false;
 
+        //Buffer for received messages
         static byte[] buffer = new byte[8 * 1024];
         private static ClientCommunicator THIS;
+        //Memory
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private ModelChangesManager modelChangesManager;
         static Random rd = new Random();
 
+        //Queue of broadcasted commands and its lock
         private object commandsLock = new object();
         private Queue<Command> commandsToBroadcast = new Queue<Command>();
 
+        //Timers for periodicconnection attempts and message sending
         private Timer connectionTimer;
         private Timer broadcastTimer;
 
@@ -66,6 +77,9 @@ namespace LAMA.Communicator
                 connectionTimer = null;
             }
         }
+        /// <summary>
+        /// Sends all the messages in the buffer (commands to broadcast) to the server
+        /// </summary>
         private void ProcessBroadcast()
         {
             lock (socketLock)
@@ -114,6 +128,10 @@ namespace LAMA.Communicator
             }));
         }
 
+        /// <summary>
+        /// Queues a command (into commandsToBroadcast) which will then be sent to the server
+        /// </summary>
+        /// <param name="command"></param>
         public void SendCommand(Command command)
         {
             int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
@@ -128,10 +146,16 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Decodes the messages received over the network and sends it to the methods responding to the data
+        /// </summary>
+        /// <param name="AR"></param>
+        /// <exception cref="SocketException"></exception>
         private static void ReceiveData(IAsyncResult AR)
         {
             int received;
             Socket current = (Socket)AR.AsyncState;
+            //Try to receive data, if there is a problem close connection (will try to reconnect immediatelly)
             lock (ClientCommunicator.socketLock)
             {
                 try
@@ -191,6 +215,7 @@ namespace LAMA.Communicator
                         THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
                     }));
                 }
+                //Received IDs from the server
                 if (messageParts[1] == "GiveID")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
@@ -198,6 +223,7 @@ namespace LAMA.Communicator
                         THIS.ReceiveID(Int32.Parse(messageParts[2]), Int32.Parse(messageParts[3]));
                     }));
                 }
+                //Managed to connect to the server
                 if (messageParts[1] == "Connected")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
@@ -205,6 +231,7 @@ namespace LAMA.Communicator
                         THIS.Connected();
                     }));
                 }
+                //Client was refused by the server
                 if (messageParts[1] == "ClientRefused")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
@@ -212,6 +239,7 @@ namespace LAMA.Communicator
                         THIS.ClientRefused(Int32.Parse(messageParts[2]));
                     }));
                 }
+                //Rollback effects of previous messages (data updates and item creations)
                 if (messageParts[1] == "Rollback")
                 {
                     if (messageParts[2] == "DataUpdated")
@@ -240,6 +268,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Client received a client and CP id from the server
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="cpId"></param>
         private void ReceiveID(int clientId, int cpId)
         {
             loggedIn = true;
@@ -248,13 +281,20 @@ namespace LAMA.Communicator
             Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
             RequestUpdate();
         }
-
+        
+        /// <summary>
+        /// Client was refused by the server (incorrect password, or the client already exists)
+        /// </summary>
+        /// <param name="clientId"></param>
         private void ClientRefused(int clientId)
         {
             loggedIn = true;
             LocalStorage.clientID = clientId;
         }
 
+        /// <summary>
+        /// Request update from the server
+        /// </summary>
         private void RequestUpdate()
         {
             string q = "";
@@ -263,6 +303,9 @@ namespace LAMA.Communicator
             SendCommand(new Command(q, lastUpdate, "None"));
         }
 
+        /// <summary>
+        /// Start receiving data from the server
+        /// </summary>
         private void StartListening()
         {
             lock (ClientCommunicator.socketLock)
@@ -279,6 +322,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Start periodically broadcasting messages in the buffer
+        /// </summary>
         private void StartBroadcasting()
         {
             broadcastTimer = new System.Threading.Timer((e) =>
@@ -287,6 +333,9 @@ namespace LAMA.Communicator
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
         }
 
+        /// <summary>
+        /// Create socket for server communication
+        /// </summary>
         private void InitSocket()
         {
             lock (ClientCommunicator.socketLock)
@@ -360,6 +409,12 @@ namespace LAMA.Communicator
         }
         */
 
+        /// <summary>
+        /// Log into the server as a CP
+        /// </summary>
+        /// <param name="cpName"></param>
+        /// <param name="password"></param>
+        /// <param name="isNew">is this a new CP or a CP, that already exists on the server</param>
         public void LoginAsCP(string cpName, string password, bool isNew = true)
         {
             LocalStorage.clientName = cpName;
@@ -375,6 +430,7 @@ namespace LAMA.Communicator
             {
                 StartBroadcasting();
             }
+            //If not already listening start listening to the data from the server
             if (listener == null)
             {
                 listener = new Thread(StartListening);
@@ -382,6 +438,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Try to connect to the server (if not already connected)
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ServerConnectionRefusedException"></exception>
         private bool Connect()
         {
             lock (ClientCommunicator.socketLock)
@@ -423,6 +484,9 @@ namespace LAMA.Communicator
             return true;
         }
 
+        /// <summary>
+        /// Server said, that we successfully connected
+        /// </summary>
         private void Connected()
         {
             logger.LogWrite("connected set true");
@@ -430,6 +494,9 @@ namespace LAMA.Communicator
             THIS.wasUpdated = true;
         }
 
+        /// <summary>
+        /// Save broadcasted messages to a database
+        /// </summary>
         private void SaveCommandQueue()
         {
             List<Command> commandsToSave = new List<Command>();
@@ -451,6 +518,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Load messages saved in the database
+        /// </summary>
         private void LoadCommandQueue()
         {
             List<Command> commandsLoaded = new List<Command>();
@@ -470,12 +540,18 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Send information, that client connected to the server (specify the client by its ID)
+        /// </summary>
         private void SendClientInfo()
         {
             string command = "ClientConnected" + ";" + LocalStorage.clientID;
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
-
+        /// <summary>
+        /// Create a client communicator. A class capable of sending messages to the server based on the changes happening on the
+        /// client side, receiving messages from the server and updating the status of the program based on the data received.
+        /// </summary>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
         /// <exception cref="WrongCreadintialsException">Wrong password used</exception>
@@ -489,15 +565,16 @@ namespace LAMA.Communicator
             LarpEvent.Name = serverName;
             logger = new DebugLogger(false);
             _connected = false;
+
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
-            logger.LogWrite("Created dictionaries");
-
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
             }
             LoadCommandQueue();
+
+            //Try to connect to the central server to get information about the LARP server
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {
@@ -516,7 +593,6 @@ namespace LAMA.Communicator
             {
                 throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
             }
-
             if (responseString == "Connection")
             {
                 throw new CantConnectToDatabaseException("Nepodařilo se připojit k databázi.");
@@ -525,11 +601,13 @@ namespace LAMA.Communicator
             {
                 throw new WrongCreadintialsException("Špatné heslo nebo neexistující server.");
             }
+            //Managed to connect to the central server database and the LARP server exists
             else
             {
                 logger.LogWrite("No exceptions");
                 Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu");
                 string[] array = responseString.Split(',');
+                //Get server IP (check if it is valid)
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
                 {
                     if (_IP.AddressFamily == AddressFamily.InterNetworkV6)
@@ -550,7 +628,8 @@ namespace LAMA.Communicator
                 LocalStorage.serverName = serverName;
                 LocalStorage.clientID = -1;
                 InitSocket();
-                //Connect();
+
+                //Periodically try to connect to the LARP server
                 connectionTimer = new System.Threading.Timer((e) =>
                 {
                     Connect();
@@ -568,7 +647,10 @@ namespace LAMA.Communicator
             }
         }
 
-
+        /// <summary>
+        /// Create a client communicator. A class capable of sending messages to the server based on the changes happening on the
+        /// client side, receiving messages from the server and updating the status of the program based on the data received.
+        /// </summary>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
         /// <exception cref="WrongCreadintialsException">Wrong password used</exception>
@@ -582,22 +664,22 @@ namespace LAMA.Communicator
             LarpEvent.Name = serverName;
             logger = new DebugLogger(false);
             _connected = false;
+
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
-            logger.LogWrite("Created dictionaries");
-
             if (objectsCache.getByKey("CommandQueueLength") == null)
             {
                 objectsCache.add(new Command("0", "CommandQueueLength"));
             }
             LoadCommandQueue();
+
+            //Try to connect to the central server to find information about the LARP server
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {
                 { "name", "\"" + serverName + "\"" },
                 { "password", "\"" + Encryption.EncryptPassword(password) + "\"" }
             };
-
             var content = new FormUrlEncodedContent(values);
             var responseString = "";
             try
@@ -618,10 +700,12 @@ namespace LAMA.Communicator
             {
                 throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
             }
+            //Managed to connect to the central server database and LARP server exists
             else
             {
                 logger.LogWrite("No exceptions");
                 string[] array = responseString.Split(',');
+                //Get server IP address (check if it is valid)
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
                 {
                     if (_IP.AddressFamily == AddressFamily.InterNetworkV6)
@@ -643,6 +727,7 @@ namespace LAMA.Communicator
                 LocalStorage.serverName = serverName;
                 LocalStorage.clientID = -1;
                 InitSocket();
+                //Periodically try to connect to the server
                 Connect();
                 connectionTimer = new System.Threading.Timer((e) =>
                 {

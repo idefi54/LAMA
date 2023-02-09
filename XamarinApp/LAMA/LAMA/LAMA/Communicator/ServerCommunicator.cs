@@ -49,6 +49,9 @@ namespace LAMA.Communicator
         private ModelChangesManager modelChangesManager;
 
         private int maxClientID;
+        /// <summary>
+        /// Start accepting clients and broadcasting messages to them
+        /// </summary>
         private void StartServer()
         {
             logger.LogWrite("Starting Server");
@@ -63,6 +66,9 @@ namespace LAMA.Communicator
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
         }
 
+        /// <summary>
+        /// Broadcast messages to the connected clients
+        /// </summary>
         private void ProcessBroadcast()
         {
             while (true)
@@ -87,6 +93,7 @@ namespace LAMA.Communicator
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
+                        //Send message to all the clients connected
                         if (currentCommand.receiverID == 0)
                         {
                             foreach (KeyValuePair<int, Socket> entry in clientSockets)
@@ -115,6 +122,7 @@ namespace LAMA.Communicator
                                 }
                             }
                         }
+                        //Send message only to one client
                         else
                         {
                             Socket client = clientSockets[currentCommand.receiverID];
@@ -151,6 +159,10 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// React to the clients connecting to the server
+        /// </summary>
+        /// <param name="AR"></param>
         private static void AcceptCallback(IAsyncResult AR)
         {
             THIS.logger.LogWrite("accepting");
@@ -179,6 +191,11 @@ namespace LAMA.Communicator
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
         }
 
+        /// <summary>
+        /// React to the messages from the clients
+        /// </summary>
+        /// <param name="AR"></param>
+        /// <exception cref="SocketException"></exception>
         private static void ReceiveData(IAsyncResult AR)
         {
             int received;
@@ -291,6 +308,23 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Initialize server communicator (update information on remote server, start listenning to clients, set up message sending...)
+        /// </summary>
+        /// <param name="name">Name of the server</param>
+        /// <param name="IP"></param>
+        /// <param name="localPort">port the LARP server listens on</param>
+        /// <param name="distantPort">Port the ngrok listens on</param>
+        /// <param name="password">Server password (clients use it to access the server)</param>
+        /// <param name="adminPassword">Administrator password</param>
+        /// <param name="nick">Personal nick/name</param>
+        /// <param name="newServer">New or existing server</param>
+        /// <exception cref="WrongNameFormatException"></exception>
+        /// <exception cref="WrongPortException"></exception>
+        /// <exception cref="NotAnIPAddressException"></exception>
+        /// <exception cref="CantConnectToCentralServerException"></exception>
+        /// <exception cref="CantConnectToDatabaseException"></exception>
+        /// <exception cref="WrongCreadintialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
             if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
@@ -447,6 +481,16 @@ namespace LAMA.Communicator
             Debug.WriteLine("Initialization finished");
         }
 
+        /// <summary>
+        /// Create new ServerCommunicator - used to communicate with the clients
+        /// </summary>
+        /// <param name="name">Name of the server</param>
+        /// <param name="IP"></param>
+        /// <param name="port"></param>
+        /// <param name="password">Server password</param>
+        /// <param name="adminPassword">Server administrator password</param>
+        /// <param name="nick">Personal nick</param>
+        /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
         /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
@@ -457,6 +501,20 @@ namespace LAMA.Communicator
             initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
         }
 
+        /// <summary>
+        /// Create new ServerCommunicator - used to communicate with the clients
+        /// </summary>
+        /// <param name="name">Name of the server</param>
+        /// <param name="ngrokAddress"></param>
+        /// <param name="password">Server password</param>
+        /// <param name="adminPassword">Server administrator password</param>
+        /// <param name="nick">Personal nick</param>
+        /// <param name="newServer">Is this a new or an existing server</param>
+        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
+        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
+        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
+        /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
             string[] addressParts = ngrokAddress.Split(':');
@@ -465,6 +523,11 @@ namespace LAMA.Communicator
             initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password, adminPassword, nick, newServer);
         }
 
+        /// <summary>
+        /// Insert command to the command queue (commands from this queue are sent automatically)
+        /// </summary>
+        /// <param name="commandText"></param>
+        /// <param name="objectID"></param>
         private void SendCommand(string commandText, string objectID)
         {
             long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -477,6 +540,10 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Insert command to the command queue (commands from this queue are sent automatically)
+        /// </summary>
+        /// <param name="command"></param>
         public void SendCommand(Command command)
         {
             logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key}");
@@ -487,6 +554,13 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Give ID to an existing client (the CP was already created)
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="clientName"></param>
+        /// <param name="password"></param>
+        /// <param name="clientID"></param>
         private void ExistingClientID(Socket current, string clientName, string password, int clientID)
         {
             if (clientID == -1)
@@ -519,6 +593,13 @@ namespace LAMA.Communicator
             SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
+        /// <summary>
+        /// Give client and CP ID
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="clientName"></param>
+        /// <param name="password"></param>
+        /// <param name="clientID"></param>
         private void GiveNewClientID(Socket current, string clientName, string password, int clientID)
         {
             if (clientID == -1)
@@ -557,6 +638,11 @@ namespace LAMA.Communicator
             SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
+        /// <summary>
+        /// Known client connected (reconnection)
+        /// </summary>
+        /// <param name="id">ID of the connected client</param>
+        /// <param name="current"></param>
         private void NewClientConnected(int id, Socket current)
         {
             logger.LogWrite($"New Client Connected: {id}");
@@ -567,6 +653,12 @@ namespace LAMA.Communicator
             SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", id));
         }
 
+        /// <summary>
+        /// Send information to a client about all the changes since a certain time
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="id">Client id</param>
+        /// <param name="lastUpdateTime">The last time this client was updated</param>
         public void SendUpdate(Socket current, int id, long lastUpdateTime)
         {
             logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
