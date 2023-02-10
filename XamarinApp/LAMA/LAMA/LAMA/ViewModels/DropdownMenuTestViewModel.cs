@@ -45,19 +45,38 @@ namespace LAMA.ViewModels
 		private string _string5 = "TestCounter: ";
 		public string String5 { get { return _string5; } set { SetProperty(ref _string5, value, nameof(String5)); } }
 
+		public Command SwitchAnimateDropdownCommand { get; private set; }
 		public Command SwitchShowDropdownCommand { get; private set; }
 		public Command TestCommand { get; private set; }
 
-		private bool _showDropdown = true;
-		public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value, nameof(ShowDropdown)); } }
-
-		public DropdownMenuTestViewModel()
+		public DropdownMenuTestViewModel(Action<bool,Action<double, bool>> dropdownAnimation)
 		{
+			SwitchAnimateDropdownCommand = new Command(SwichAnimateDropdown);
 			SwitchShowDropdownCommand = new Command(SwichShowDropdown);
 			TestCommand = new Command(() => String5 += "|");
+			this.dropdownAnimation = dropdownAnimation;
 		}
 
-		private void SwichShowDropdown(object obj)
+
+		private bool _showDropdown = false;
+		public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value, nameof(ShowDropdown)); } }
+
+		private Action<bool, Action<double, bool>> dropdownAnimation;
+		private bool isAnimating = false;
+		private bool shouldShow = false;
+		private void SwichAnimateDropdown()
+		{
+			if(isAnimating)
+				return;
+
+			isAnimating = true;
+
+			ShowDropdown = true;
+			shouldShow = !shouldShow;
+
+			dropdownAnimation(shouldShow, (d, b) => { ShowDropdown = shouldShow; isAnimating = false; });
+		}
+		private void SwichShowDropdown()
 		{
 			ShowDropdown = !ShowDropdown;
 		}

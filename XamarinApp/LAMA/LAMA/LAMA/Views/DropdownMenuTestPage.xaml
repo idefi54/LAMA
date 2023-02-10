@@ -7,10 +7,12 @@
 			 Title="Dropdown ukázka">
 
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Show Dropdown" Command="{Binding SwitchShowDropdownCommand}"/>
+		<ToolbarItem Text="Animate" Command="{Binding SwitchAnimateDropdownCommand}"/>
+		<ToolbarItem Text="Show" Command="{Binding SwitchShowDropdownCommand}"/>
 	</ContentPage.ToolbarItems>
 
 	<ContentPage.Content>
+		<!--Dropdown menu design from https://stackoverflow.com/questions/52873366/dropdown-menu-in-xamarin-forms-tabbedpage-->
 		<AbsoluteLayout x:Name="absoluteLayout">
 			<!--Classical page content-->
 			<StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
@@ -26,7 +28,8 @@
 					 HorizontalOptions="Fill" VerticalOptions="Fill"
 					 BackgroundColor="#000000" Opacity="0.2"
 					 IsVisible="{Binding ShowDropdown}"/>
-			<Frame AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+			<Frame x:Name="DropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
 				   BackgroundColor="LightPink"
 				   IsVisible="{Binding ShowDropdown}">
 				<StackLayout>
