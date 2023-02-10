@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             x:Class="LAMA.Views.DropdownMenuTestPage"
+			 x:Name="DropdownExample"
+			 Title="Dropdown ukázka">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Show Dropdown" Command="{Binding SwitchShowDropdownCommand}"/>
+	</ContentPage.ToolbarItems>
+
+	<ContentPage.Content>
+		<AbsoluteLayout x:Name="absoluteLayout">
+			<!--Classical page content-->
+			<StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+				<Label Text="{Binding String1}"/>
+				<Label Text="{Binding String2}"/>
+				<Label Text="{Binding String3}"/>
+				<Label Text="{Binding String4}"/>
+				<Label Text="{Binding String5}"/>
+				<Button Text="TEST!" Command="{Binding TestCommand}"/>
+			</StackLayout>
+			<!--Dropdown content must be bellow, so it is rendered on top of the previous one-->
+			<BoxView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"
+					 HorizontalOptions="Fill" VerticalOptions="Fill"
+					 BackgroundColor="#000000" Opacity="0.2"
+					 IsVisible="{Binding ShowDropdown}"/>
+			<Frame AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+				   BackgroundColor="red"
+				   IsVisible="{Binding ShowDropdown}">
+				<StackLayout>
+					<Label Text="Test Label"/>
+					<CheckBox IsChecked="{Binding DropdownCheck}"/>
+					<Label Text="Text Name"/>
+					<Entry Text="{Binding DropdownName}"/>
+				</StackLayout>
+			</Frame>
+		</AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>
