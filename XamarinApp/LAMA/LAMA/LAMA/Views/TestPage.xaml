@@ -27,6 +27,7 @@
                 <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
 
                 <Button Text="Hide Example" Clicked="OnHideExample"/>
+                <Button Text="Dropdown Menu Example" Clicked="OnDropdownExample"/>
 
             </StackLayout>
         </ScrollView>

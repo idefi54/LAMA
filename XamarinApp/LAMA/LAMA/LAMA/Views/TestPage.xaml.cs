@@ -132,7 +132,10 @@ namespace LAMA.Views
         }
 
 
-
+        async void OnDropdownExample(object sender, EventArgs args)
+		{
+            await Navigation.PushAsync(new DropdownMenuTestPage());
+		}
 
 
 

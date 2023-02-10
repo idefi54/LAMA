@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             x:Class="LAMA.Views.DropdownMenuTestPage"
+			 x:Name="DropdownExample"
+			 Title="Dropdown ukázka">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Animate" Command="{Binding SwitchAnimateDropdownCommand}"/>
+		<ToolbarItem Text="Show" Command="{Binding SwitchShowDropdownCommand}"/>
+	</ContentPage.ToolbarItems>
+
+	<ContentPage.Content>
+		<!--Dropdown menu design from https://stackoverflow.com/questions/52873366/dropdown-menu-in-xamarin-forms-tabbedpage-->
+		<AbsoluteLayout x:Name="absoluteLayout">
+			<!--Classical page content-->
+			<StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+				<Label Text="{Binding String1}" FontSize="40" Padding="10,10,10,10"/>
+				<Label Text="{Binding String2}" FontSize="40" Padding="10,10,10,10"/>
+				<Label Text="{Binding String3}" FontSize="40" Padding="10,10,10,10"/>
+				<Label Text="{Binding String4}" FontSize="40" Padding="10,10,10,10"/>
+				<Label Text="{Binding String5}" FontSize="40" Padding="10,10,10,10"/>
+				<Button Text="TEST!" Command="{Binding TestCommand}" Padding="10,10,10,10"/>
+			</StackLayout>
+			<!--Dropdown content must be bellow, so it is rendered on top of the previous one. x:Name is relevant only for animation.-->
+			<!--This serves as a disabling of classical page content-->
+			<BoxView x:Name ="Fadeout"
+					 AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"
+					 HorizontalOptions="Fill" VerticalOptions="Fill"
+					 BackgroundColor="#000000" Opacity="0.2"
+					 IsVisible="{Binding ShowDropdown}"/>
+			<!--This is the actual dropdown menu. It apears it needs to be in the frame for some reason.
+				In AbsoluteLayout.LayoutBounds replace 200 with desired height. Also change BackgroundColor to desired color.-->
+			<Frame x:Name="DropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+				   BackgroundColor="LightPink"
+				   IsVisible="{Binding ShowDropdown}">
+				<StackLayout>
+					<Label Text="Test Label"/>
+					<CheckBox IsChecked="{Binding DropdownCheck}"/>
+					<Label Text="Text Name"/>
+					<Entry Text="{Binding DropdownName}"/>
+				</StackLayout>
+			</Frame>
+		</AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>
