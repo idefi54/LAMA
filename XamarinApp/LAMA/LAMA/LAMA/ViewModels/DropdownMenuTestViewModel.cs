@@ -52,15 +52,21 @@ namespace LAMA.ViewModels
 		public DropdownMenuTestViewModel(Action<bool,Action<double, bool>> dropdownAnimation)
 		{
 			SwitchAnimateDropdownCommand = new Command(SwichAnimateDropdown);
-			SwitchShowDropdownCommand = new Command(SwichShowDropdown);
+			SwitchShowDropdownCommand = new Command(SwichShowDropdown); // you can call it with any kind of command, like you would anything else
 			TestCommand = new Command(() => String5 += "|");
 			this.dropdownAnimation = dropdownAnimation;
 		}
 
 
+		// this part is all that's needed to hide and show the dropdown menu
 		private bool _showDropdown = false;
 		public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value, nameof(ShowDropdown)); } }
+		private void SwichShowDropdown()
+		{
+			ShowDropdown = !ShowDropdown;
+		}
 
+		// from this point forward it's just for animation
 		private Action<bool, Action<double, bool>> dropdownAnimation;
 		private bool isAnimating = false;
 		private bool shouldShow = false;
@@ -75,10 +81,6 @@ namespace LAMA.ViewModels
 			shouldShow = !shouldShow;
 
 			dropdownAnimation(shouldShow, (d, b) => { ShowDropdown = shouldShow; isAnimating = false; });
-		}
-		private void SwichShowDropdown()
-		{
-			ShowDropdown = !ShowDropdown;
 		}
 	}
 }

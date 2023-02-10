@@ -23,11 +23,15 @@
 				<Label Text="{Binding String5}" FontSize="40" Padding="10,10,10,10"/>
 				<Button Text="TEST!" Command="{Binding TestCommand}" Padding="10,10,10,10"/>
 			</StackLayout>
-			<!--Dropdown content must be bellow, so it is rendered on top of the previous one-->
-			<BoxView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"
+			<!--Dropdown content must be bellow, so it is rendered on top of the previous one. x:Name is relevant only for animation.-->
+			<!--This serves as a disabling of classical page content-->
+			<BoxView x:Name ="Fadeout"
+					 AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"
 					 HorizontalOptions="Fill" VerticalOptions="Fill"
 					 BackgroundColor="#000000" Opacity="0.2"
 					 IsVisible="{Binding ShowDropdown}"/>
+			<!--This is the actual dropdown menu. It apears it needs to be in the frame for some reason.
+				In AbsoluteLayout.LayoutBounds replace 200 with desired height. Also change BackgroundColor to desired color.-->
 			<Frame x:Name="DropdownMenu"
 				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
 				   BackgroundColor="LightPink"
