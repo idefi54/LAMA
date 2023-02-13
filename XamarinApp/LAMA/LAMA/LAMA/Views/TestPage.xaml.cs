@@ -85,7 +85,7 @@ namespace LAMA.Views
 
         async void OnNewActivity(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity));
+            await Navigation.PushAsync(new NewActivityPage(CreateActivity));
         }
 
         async void OnEditActivity(object sender, EventArgs args)
@@ -194,32 +194,17 @@ namespace LAMA.Views
         }
 
 
+        private void CreateActivity(LarpActivityDTO larpActivity)
+        {
+            larpActivity.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
+            LarpActivity newActivity = larpActivity.CreateLarpActivity();
 
-
-
-
-
-
-
+            DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(newActivity);
+            activity = newActivity;
+        }
 
         private void DummyUpdateActivity(LarpActivityDTO larpActivity)
         {
-            //activity.name = larpActivity.name;
-            //activity.description = larpActivity.description;
-
-
-            //activity.duration = larpActivity.duration;
-            //activity.start = larpActivity.start;
-            //activity.day = larpActivity.day;
-            //activity.preparationNeeded = larpActivity.preparationNeeded;
-            //activity.place = larpActivity.place;
-
-
-
-            //activity = new LarpActivity(activity.ID, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
-            //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
-            //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
-
             activity = larpActivity.CreateLarpActivity();
         }
 
