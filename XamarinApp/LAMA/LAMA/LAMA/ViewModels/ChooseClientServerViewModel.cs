@@ -19,12 +19,25 @@ namespace LAMA.ViewModels
 
         private async void OnServerClicked()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new ServerLoginTypePage());
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new ServerLoginTypePage());
+            }
+            else {
+                await Shell.Current.GoToAsync($"//{nameof(ServerLoginTypePage)}");
+            }
         }
 
         private async void OnClientClicked()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new ClientChooseServerPage());
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new ClientChooseServerPage());
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"//{nameof(ClientChooseServerPage)}");
+            }
         }
     }
 }

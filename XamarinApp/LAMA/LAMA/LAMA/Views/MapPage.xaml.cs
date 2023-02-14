@@ -139,7 +139,10 @@ namespace LAMA.Views
             MapHandler.Zoom(_mapView);
             //MapHandler.SetZoomLimits(_mapView, 1, 100);
 
-            await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
+            if (Device.RuntimePlatform != Device.WPF)
+            {
+                await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
+            }
             return;
         }
 

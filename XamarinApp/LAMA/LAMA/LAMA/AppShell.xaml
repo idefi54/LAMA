@@ -122,7 +122,10 @@
     <TabBar>
 		<ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
 		<ShellContent Route="NewActivityPage" ContentTemplate="{DataTemplate local:NewActivityPage}" />
-	</TabBar>
+        <ShellContent Route="ClientChooseServerPage" ContentTemplate="{DataTemplate local:ClientChooseServerPage}"/>
+        <ShellContent Route="ClientLoginTypePage" ContentTemplate="{DataTemplate local:ClientLoginTypePage}"/>
+        <ShellContent Route="ClientChooseNamePage" ContentTemplate="{DataTemplate local:ClientChooseNamePage}"/>
+    </TabBar>
 
     <!-- Optional Templates 
     // These may be provided inline as below or as separate classes.
