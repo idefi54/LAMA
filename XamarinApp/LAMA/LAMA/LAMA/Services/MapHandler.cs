@@ -25,10 +25,10 @@ namespace LAMA.Services
         // Private fields
         private List<Feature> _symbols;
         private Dictionary<long, Pin> _activities;
-        private Dictionary<ulong, Pin> _notifications;
+        private Dictionary<ulong, Pin> _alerts;
         private List<Pin> _pins;
         private Pin _pin;
-        private ulong _notificationID;
+        private ulong _alertID;
         private static MapHandler _instance;
         private Stopwatch _stopwatch;
         private long _time;
@@ -50,7 +50,7 @@ namespace LAMA.Services
 
         /// <summary>
         /// <para>
-        /// Instance holds internal data on events, notifications and such, that should show on the map.
+        /// Instance holds internal data on events, alerts and such, that should show on the map.
         /// </para>
         /// 
         /// Has methods that need to work with such data.
@@ -70,10 +70,10 @@ namespace LAMA.Services
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
             _activities = new Dictionary<long, Pin>();
-            _notifications = new Dictionary<ulong, Pin>();
+            _alerts = new Dictionary<ulong, Pin>();
             _pin = new Pin();
             _pin.Label = "temp";
-            _notificationID = 0;
+            _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
             _time = 0;
@@ -120,7 +120,7 @@ namespace LAMA.Services
             foreach (Pin pin in _activities.Values)
                 view.Pins.Add(pin);
 
-            foreach (Pin pin in _notifications.Values)
+            foreach (Pin pin in _alerts.Values)
                 view.Pins.Add(pin);
         }
 
@@ -141,7 +141,7 @@ namespace LAMA.Services
             foreach (Pin pin in _activities.Values)
                 view.Pins.Add(pin);
 
-            foreach (Pin pin in _notifications.Values)
+            foreach (Pin pin in _alerts.Values)
                 view.Pins.Add(pin);
         }
 
@@ -155,7 +155,7 @@ namespace LAMA.Services
             view.HideCallouts();
 
             foreach (Pin pin in _activities.Values) view.Pins.Add(pin);
-            foreach (Pin pin in _notifications.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _alerts.Values) view.Pins.Add(pin);
             foreach (Pin pin in _pins) view.Pins.Add(pin);
         }
 
@@ -237,24 +237,24 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Adds the notification to the internal data.
+        /// Adds the alert to the internal data.
         /// Also adds a pin to a MapView if specified.
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
         /// <param name="text"></param>
         /// <param name="view"></param>
-        /// <returns>Returns notification id, if you want to remove it later.</returns>
-        public ulong AddNotification(double lon, double lat, string text, MapView view = null)
+        /// <returns>Returns alert id, if you want to remove it later.</returns>
+        public ulong AddAlert(double lon, double lat, string text, MapView view = null)
         {
             Pin p = CreatePin(lon, lat, "important");
             p.Callout.Title = text;
             p.Color = Xamarin.Forms.Color.Red;
             p.Callout.Color = Xamarin.Forms.Color.Red;
-            _notifications.Add(_notificationID, p);
+            _alerts.Add(_alertID, p);
             view?.Pins.Add(p);
 
-            return _notificationID++;
+            return _alertID++;
         }
 
         /// <summary>
@@ -270,15 +270,15 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Removes the notification from the internal data.
+        /// Removes the alert from the internal data.
         /// Also removes it from a MapView if specified.
         /// </summary>
         /// <param name="noficationID"></param>
         /// <param name="view"></param>
-        public void RemoveNotification(ulong noficationID, MapView view = null)
+        public void RemoveAlert(ulong noficationID, MapView view = null)
         {
-            view?.Pins.Remove(_notifications[noficationID]);
-            _notifications.Remove(noficationID);
+            view?.Pins.Remove(_alerts[noficationID]);
+            _alerts.Remove(noficationID);
         }
 
         /// <summary>
