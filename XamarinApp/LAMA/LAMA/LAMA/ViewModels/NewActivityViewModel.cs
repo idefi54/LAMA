@@ -72,7 +72,7 @@ namespace LAMA.ViewModels
 
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 			larpActivity = activity;
-			MapHandler.Instance.SetTemporaryPin(0, 0);
+			MapHandler.Instance.SetSelectionPin(0, 0);
 
 			Roles = new ObservableCollection<RoleItemViewModel>();
 
@@ -89,7 +89,7 @@ namespace LAMA.ViewModels
 				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
-				MapHandler.Instance.SetTemporaryPin(larpActivity.place.first, larpActivity.place.second);
+				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
 				foreach(Pair<string, int> role in activity.roles)
 				{
 					Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
@@ -237,7 +237,7 @@ namespace LAMA.ViewModels
 
 				return;
             }
-			(double lon, double lat) = MapHandler.Instance.GetTemporaryPin();
+			(double lon, double lat) = MapHandler.Instance.GetSelectionPin();
 			
 			EventList<Pair<string, int>> roles = new EventList<Pair<string, int>>();
 

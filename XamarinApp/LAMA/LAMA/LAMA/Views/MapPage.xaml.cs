@@ -26,11 +26,13 @@ namespace LAMA.Views
             layout.Children.Add(_setHomeButton);
         }
 
-        private async void OnPinClicked(PinClickedEventArgs e, int activityID, bool doubleClick)
+        private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
         {
             if (!doubleClick)
                 return;
-            Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
+
+            var rememberedList = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList;
+            Models.LarpActivity activity = rememberedList.getByID(activityID);
             await Navigation.PushAsync(new DisplayActivityPage(activity));
             e.Handled = true;
         }
@@ -92,6 +94,10 @@ namespace LAMA.Views
             // Handle the fucking map
             await Task.Delay(500);
 
+            
+            // test
+            MapHandler.Instance.AddAlert(20, 20, "ALERT");
+
             // Init Map View
             _mapView = new MapView
             {
@@ -114,9 +120,6 @@ namespace LAMA.Views
 
             layout.Children.Add(_mapView);
             layout.Children.Remove(activityIndicator);
-           
-            // test
-            MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
         }
 
         private async void SetHomeButton_Clicked(object sender, System.EventArgs e)
@@ -131,11 +134,11 @@ namespace LAMA.Views
                 Longitude = p.X
             };
             MapHandler.Instance.CurrentLocation = loc;
-            MapHandler.Instance.UpdateLocation(_mapView, false);
+            await MapHandler.Instance.UpdateLocation(_mapView, false);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
             MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
             MapHandler.Zoom(_mapView, 75);
-            MapHandler.SetZoomLimits(_mapView, 1, 100);
+            //MapHandler.SetZoomLimits(_mapView, 1, 100);
 
             await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
             return;
