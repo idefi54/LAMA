@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LAMA.ActivityGraphLib;
 using LAMA.Models;
 using Xamarin.Forms;
@@ -6,6 +7,11 @@ using Xamarin.Forms.Xaml;
 
 namespace LAMA.Views
 {
+    /// <summary>
+    /// <br>Don't create nor push this page.</br>
+    /// <br>Use static method <see cref="ShowCalendarPage(INavigation)"/> instead.</br>
+    /// </summary>
+
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CalendarPage : ContentPage
     {
@@ -16,15 +22,20 @@ namespace LAMA.Views
         private Color _color;
         private Label _dateLabel;
         private DateTime _date;
-        private ActivityGraph _graph;
         private DateTime _firstDayInMonth => _date.AddDays(-_date.Day + 1);
+        private TaskCompletionSource<DateTime> _taskCompletionSource;
 
-        public CalendarPage(ActivityGraph graph)
+        /// <summary>
+        /// Starts at null.
+        /// Selecting day on graph page updates this value.
+        /// </summary>
+
+        private CalendarPage()
         {
             // Standard initialization
             InitializeComponent();
-            _date = graph.TimeOffset;
-            _graph = graph;
+            var now = DateTime.Now;
+            _date = new DateTime(now.Year, now.Month, now.Day);
 
             // Create basic layout
             var grid = new Grid();
@@ -133,20 +144,22 @@ namespace LAMA.Views
         /// <param name="e"></param>
         private void ButtonClicked(object sender, EventArgs e)
         {
-            var time = _graph.TimeOffset;
-            TimeSpan excess = new TimeSpan(0, time.Hour, time.Minute, time.Second, time.Millisecond);
-
-            _graph.TimeOffset =
+            DateTime date =
                 _firstDayInMonth
-                .AddDays(int.Parse((sender as Button).Text) - 1) // Text carries order of the day in the month
-                .Add(-excess);                                   // Reset to start of the day
+                .AddDays(int.Parse((sender as Button).Text) - 1); // Text carries order of the day in the month
+
+            if (_taskCompletionSource != null)
+            {
+                _taskCompletionSource.SetResult(date);
+                _taskCompletionSource = null;
+            }
 
             // Get back to now offseted graph page
-            Navigation.PopModalAsync();
+            //Navigation.PopModalAsync();
         }
 
         /// <summary>
-        /// Refreshes calendar to current month.
+        /// Refreshes calendar visuals after clicking buttons. (updates to _date)
         /// </summary>
         private void Refresh()
         {
@@ -178,5 +191,29 @@ namespace LAMA.Views
             if (_date.Year == DateTime.Now.Year && _date.Month == DateTime.Now.Month)
                 _daysInMonth[DateTime.Now.Day - 1].BackgroundColor = Color.Red;
         }
+
+        private Task<DateTime> GetDate()
+        {
+            _taskCompletionSource = new TaskCompletionSource<DateTime>();
+            return _taskCompletionSource.Task;
+        }
+
+        /// <summary>
+        /// <br>Use like this:</br>
+        ///     <br><c>
+        ///     var date = await CalendarPage.ShowCalendarPage(navigation);
+        ///     </c></br>
+        /// </summary>
+        /// <param name="navigation"></param>
+        /// <returns></returns>
+        public static async Task<DateTime> ShowCalendarPage(INavigation navigation)
+        {
+            var page = new CalendarPage();
+            await navigation.PushModalAsync(page);
+            DateTime date = await page.GetDate();
+            await navigation.PopModalAsync();
+            return date;
+        }
+
     }
 }
