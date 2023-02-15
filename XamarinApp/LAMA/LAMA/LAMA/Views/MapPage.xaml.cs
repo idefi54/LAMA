@@ -30,7 +30,9 @@ namespace LAMA.Views
         {
             if (!doubleClick)
                 return;
-            Models.LarpActivity activity = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
+
+            var rememberedList = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList;
+            Models.LarpActivity activity = rememberedList.getByID(activityID);
             await Navigation.PushAsync(new DisplayActivityPage(activity));
             e.Handled = true;
         }
@@ -116,7 +118,7 @@ namespace LAMA.Views
             layout.Children.Remove(activityIndicator);
            
             // test
-            MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
+            //MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
         }
 
         private async void SetHomeButton_Clicked(object sender, System.EventArgs e)

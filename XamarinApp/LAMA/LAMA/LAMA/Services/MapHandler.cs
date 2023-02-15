@@ -115,6 +115,8 @@ namespace LAMA.Services
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
+            LoadActivities(view);
+
             foreach (Pin pin in _activities.Values)
                 view.Pins.Add(pin);
 
@@ -197,22 +199,40 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Adds the event to the internal data.
+        /// Adds the event to internal data.
         /// Also adds a pin to a MapView if specified.
         /// </summary>
-        /// <param name="lon"></param>
-        /// <param name="lat"></param>
-        /// <param name="activityID"></param>
+        /// <param name="activity"></param>
         /// <param name="view"></param>
-        public void AddActivity(double lon, double lat, int activityID, MapView view = null)
+        public void AddActivity(LarpActivity activity, MapView view = null)
         {
-            Pin pin = CreatePin(lon, lat, "normal");
-            //_activities.Add(activityID, pin);
-            _activities[activityID] = pin;
+            Pin pin = CreatePin(activity.place.first, activity.place.second, "normal");
             pin.Callout.Title =
-                $"Activity id: {activityID}\n" +
-                $"Double click to show the activity";
-            pin.Color = Xamarin.Forms.Color.Green;
+                $"Activity: {activity.name}\n"
+                + $"Double click to show the activity";
+
+            switch (activity.status)
+            {
+                case ActivityStatus.awaitingPrerequisites:
+                    pin.Color = Color.White; break;
+
+                case ActivityStatus.readyToLaunch:
+                    pin.Color = Color.Blue; break;
+
+                case ActivityStatus.launched:
+                    pin.Color = Color.Green; break;
+
+                case ActivityStatus.inProgress:
+                    pin.Color = Color.Orange; break;
+
+                case ActivityStatus.completed:
+                    pin.Color = Color.Gray; break;
+
+                default:
+                    break;
+            }
+
+            _activities[activity.ID] = pin;
             view?.Pins.Add(pin);
         }
 
@@ -356,38 +376,12 @@ namespace LAMA.Services
             p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
             return p;
         }
-        private void LoadActivities()
+        private void LoadActivities(MapView view = null)
         {
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
 
             for (int i = 0; i < rememberedList.Count; i++)
-            {
-                var activity = rememberedList[i];
-                var pin = CreatePin(activity.place.first, activity.place.second, activity.name);
-
-                switch (activity.status)
-                {
-                    case ActivityStatus.awaitingPrerequisites:
-                        pin.Color = Color.White; break;
-
-                    case ActivityStatus.readyToLaunch:
-                        pin.Color = Color.LightBlue; break;
-
-                    case ActivityStatus.launched:
-                        pin.Color = Color.LightGreen; break;
-
-                    case ActivityStatus.inProgress:
-                        pin.Color = Color.PeachPuff; break;
-
-                    case ActivityStatus.completed:
-                        pin.Color = Color.Gray; break;
-
-                    default:
-                        break;
-                }
-
-                _activities.Add(activity.ID, pin);
-            }
+                AddActivity(rememberedList[i], view);
         }
 
         // Event Handlers
