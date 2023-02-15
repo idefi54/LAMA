@@ -94,6 +94,11 @@ namespace LAMA.Views
             // Handle the fucking map
             await Task.Delay(500);
 
+            
+            // test
+            //MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
+            MapHandler.Instance.AddAlert(20, 20, "FUCK");
+
             // Init Map View
             _mapView = new MapView
             {
@@ -116,9 +121,6 @@ namespace LAMA.Views
 
             layout.Children.Add(_mapView);
             layout.Children.Remove(activityIndicator);
-           
-            // test
-            //MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
         }
 
         private async void SetHomeButton_Clicked(object sender, System.EventArgs e)

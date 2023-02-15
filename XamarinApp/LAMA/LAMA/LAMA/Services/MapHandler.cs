@@ -34,6 +34,7 @@ namespace LAMA.Services
         private long _time;
         private long _prevTime;
         private const long _doubleClickTime = 500;
+        private const float _pinScale = 0.7f;
 
         // Events
         public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
@@ -79,6 +80,8 @@ namespace LAMA.Services
             _time = 0;
             _prevTime = 0;
             CurrentLocation = null;
+
+            LoadActivities();
         }
 
         // Static methods do not need map data, they just work with given mapView.
@@ -115,13 +118,24 @@ namespace LAMA.Services
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
-            LoadActivities(view);
+            view.Pins.Clear();
+            _activities.Clear();
+            LoadActivities();
 
             foreach (Pin pin in _activities.Values)
+            {
                 view.Pins.Add(pin);
+                pin.Scale = _pinScale;
+            }
 
             foreach (Pin pin in _alerts.Values)
+            {
+                pin.Scale = _pinScale;
                 view.Pins.Add(pin);
+                
+            }
+
+            //RefreshMapView(view);
         }
 
         /// <summary>
@@ -249,8 +263,8 @@ namespace LAMA.Services
         {
             Pin p = CreatePin(lon, lat, "important");
             p.Callout.Title = text;
-            p.Color = Xamarin.Forms.Color.Red;
-            p.Callout.Color = Xamarin.Forms.Color.Red;
+            p.Color = Color.Red;
+            p.Callout.Color = Color.Red;
             _alerts.Add(_alertID, p);
             view?.Pins.Add(p);
 
@@ -368,12 +382,13 @@ namespace LAMA.Services
 
             return map;
         }
-        private Pin CreatePin(double lon, double lat, string label)
+        private Pin CreatePin(double lon, double lat, string label, MapView view = null)
         {
-            Pin p = new Pin();
+            Pin p = new Pin(view);
             p.Label = label;
             p.Position = new Position(lat, lon);
             p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
+            if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FUCK
             return p;
         }
         private void LoadActivities(MapView view = null)
