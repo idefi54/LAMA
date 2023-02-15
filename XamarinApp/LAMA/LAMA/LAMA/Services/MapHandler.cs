@@ -27,7 +27,7 @@ namespace LAMA.Services
         private Dictionary<long, Pin> _activities;
         private Dictionary<ulong, Pin> _alerts;
         private List<Pin> _pins;
-        private Pin _pin;
+        private Pin _selectionPin;
         private ulong _alertID;
         private static MapHandler _instance;
         private Stopwatch _stopwatch;
@@ -72,8 +72,8 @@ namespace LAMA.Services
             _pins = new List<Pin>();
             _activities = new Dictionary<long, Pin>();
             _alerts = new Dictionary<ulong, Pin>();
-            _pin = new Pin();
-            _pin.Label = "temp";
+            _selectionPin = new Pin();
+            _selectionPin.Label = "temp";
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
@@ -133,27 +133,57 @@ namespace LAMA.Services
                 pin.Scale = _pinScale;
                 view.Pins.Add(pin);
             }
+
+            // Zoom in when clicked home button
+            view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+            {
+                if (e.PropertyName == "MyLocationFollowProperty" || e.PropertyName == "MyLocationFollow")
+                    Zoom(view, 500);
+            };
         }
 
         /// <summary>
-        /// Sets up MapView with temporary pin. Click on map to relocate the pin.
-        /// Use GetTemporaryPin() method to get the pin location.
+        /// Sets up MapView with selection pin. Click on map to relocate the pin.
+        /// Use GetSelectionPin() method to get the pin location.
         /// </summary>
         /// <param name="view"></param>
-        public void MapViewSetupSelection(MapView view)
+        public void MapViewSetupSelection(MapView view, LarpActivity activity = null)
         {
             view.Map = CreateMap();
+            if (CurrentLocation != null)
+                view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
+
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClickedAdding;
 
-            if (!view.Pins.Contains(_pin))
-                view.Pins.Add(_pin);
+            view.Pins.Clear();
+
+            _activities.Clear();
+            LoadActivities();
+            _activities.Remove(activity.ID);
+            SetSelectionPin(activity.place.first, activity.place.second);
 
             foreach (Pin pin in _activities.Values)
+            {
                 view.Pins.Add(pin);
+                pin.Scale = _pinScale;
+            }
 
             foreach (Pin pin in _alerts.Values)
+            {
                 view.Pins.Add(pin);
+                pin.Scale = _pinScale;
+            }
+
+            if (!view.Pins.Contains(_selectionPin))
+                view.Pins.Add(_selectionPin);
+
+            // Zoom in when clicked home button
+            view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+            {
+                if (e.PropertyName == "MyLocationFollowProperty" || e.PropertyName == "MyLocationFollow")
+                    Zoom(view, 500);
+            };
         }
 
         /// <summary>
@@ -320,20 +350,20 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Gets the location of temporary pin.
+        /// Gets the location of selection pin.
         /// See MapViewSetupAdding() method for more information.
         /// Always returns last location from the last mapView where it was used.
         /// </summary>
         /// <returns></returns>
-        public (double, double) GetTemporaryPin() => (_pin.Position.Longitude, _pin.Position.Latitude);
+        public (double, double) GetSelectionPin() => (_selectionPin.Position.Longitude, _selectionPin.Position.Latitude);
 
         /// <summary>
-        /// Sets the location of temporary pin.
+        /// Sets the location of selection pin.
         /// See MapViewSetupAdding() method for more information.
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
-        public void SetTemporaryPin(double lon, double lat) => _pin.Position = new Position(lat, lon);
+        public void SetSelectionPin(double lon, double lat) => _selectionPin.Position = new Position(lat, lon);
 
         /// <summary>
         /// Enables or disables the icon showing our location from the gps.
@@ -424,7 +454,7 @@ namespace LAMA.Services
         }
         private void HandleMapClickedAdding(object sender, MapClickedEventArgs e)
         {
-            _pin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
+            _selectionPin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
             OnMapClick?.Invoke(e);
             e.Handled = true;
         }
