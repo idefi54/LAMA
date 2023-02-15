@@ -134,11 +134,11 @@ namespace LAMA.Views
                 Longitude = p.X
             };
             MapHandler.Instance.CurrentLocation = loc;
-            MapHandler.Instance.UpdateLocation(_mapView, false);
+            await MapHandler.Instance.UpdateLocation(_mapView, false);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
             MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
             MapHandler.Zoom(_mapView, 75);
-            MapHandler.SetZoomLimits(_mapView, 1, 100);
+            //MapHandler.SetZoomLimits(_mapView, 1, 100);
 
             await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
             return;

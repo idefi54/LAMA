@@ -132,10 +132,7 @@ namespace LAMA.Services
             {
                 pin.Scale = _pinScale;
                 view.Pins.Add(pin);
-                
             }
-
-            //RefreshMapView(view);
         }
 
         /// <summary>
@@ -318,7 +315,7 @@ namespace LAMA.Services
             var location = gpsAvailable ? await Geolocation.GetLastKnownLocationAsync() : CurrentLocation;
             if (location == null)
                 return;
-            view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude));
+            view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude), false);
             CurrentLocation = location;
         }
 
