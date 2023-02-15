@@ -96,8 +96,7 @@ namespace LAMA.Views
 
             
             // test
-            //MapHandler.Instance.AddActivity(0, 0, 125, _mapView);
-            MapHandler.Instance.AddAlert(20, 20, "FUCK");
+            MapHandler.Instance.AddAlert(20, 20, "ALERT");
 
             // Init Map View
             _mapView = new MapView

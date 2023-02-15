@@ -388,7 +388,7 @@ namespace LAMA.Services
             p.Label = label;
             p.Position = new Position(lat, lon);
             p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
-            if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FUCK
+            if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
             return p;
         }
         private void LoadActivities(MapView view = null)
