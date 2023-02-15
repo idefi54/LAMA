@@ -74,6 +74,7 @@ namespace LAMA.Services
             _alerts = new Dictionary<ulong, Pin>();
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
+            _selectionPin.Color = Color.FromHex("3A0E80");
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
@@ -248,26 +249,25 @@ namespace LAMA.Services
         public void AddActivity(LarpActivity activity, MapView view = null)
         {
             Pin pin = CreatePin(activity.place.first, activity.place.second, "normal");
-            pin.Callout.Title =
-                $"Activity: {activity.name}\n"
-                + $"Double click to show the activity";
+            pin.Callout.Title = $"{activity.name}";
+            pin.Callout.Subtitle = $"Double click to show the activity";
 
             switch (activity.status)
             {
                 case ActivityStatus.awaitingPrerequisites:
-                    pin.Color = Color.White; break;
+                    pin.Color = Color.Gray; break;
 
                 case ActivityStatus.readyToLaunch:
-                    pin.Color = Color.Blue; break;
+                    pin.Color = Color.FromHex("668067"); break; // LimeGreen
 
                 case ActivityStatus.launched:
-                    pin.Color = Color.Green; break;
+                    pin.Color = Color.ForestGreen; break;
 
                 case ActivityStatus.inProgress:
-                    pin.Color = Color.Orange; break;
+                    pin.Color = Color.DeepSkyBlue; break;
 
                 case ActivityStatus.completed:
-                    pin.Color = Color.Gray; break;
+                    pin.Color = Color.Black; break;
 
                 default:
                     break;
@@ -415,6 +415,16 @@ namespace LAMA.Services
             p.Label = label;
             p.Position = new Position(lat, lon);
             p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
+            p.Callout.Type = Mapsui.Rendering.Skia.CalloutType.Detail;
+
+            p.Callout.TitleFontAttributes = Xamarin.Forms.FontAttributes.Bold;
+            p.Callout.TitleFontName = "Verdana";
+            p.Callout.TitleFontSize *= 0.8;
+            
+            p.Callout.SubtitleFontName = "Verdana";
+            p.Callout.SubtitleFontAttributes = Xamarin.Forms.FontAttributes.Italic;
+            p.Callout.SubtitleFontSize = p.Callout.TitleFontSize * 0.7f;
+
             if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
             return p;
         }
