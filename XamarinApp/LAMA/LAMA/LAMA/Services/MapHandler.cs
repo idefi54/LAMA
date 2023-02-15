@@ -12,14 +12,19 @@ using System.Diagnostics;
 using System.Text;
 using Xamarin.Essentials;
 using System.Threading.Tasks;
+using LAMA.Models;
+
+using Color = Xamarin.Forms.Color;
+using ActivityStatus = LAMA.Models.LarpActivity.Status;
 
 namespace LAMA.Services
 {
+
     public class MapHandler
     {
         // Private fields
         private List<Feature> _symbols;
-        private Dictionary<int, Pin> _activities;
+        private Dictionary<long, Pin> _activities;
         private Dictionary<ulong, Pin> _notifications;
         private List<Pin> _pins;
         private Pin _pin;
@@ -31,7 +36,7 @@ namespace LAMA.Services
         private const long _doubleClickTime = 500;
 
         // Events
-        public delegate void PinClick(PinClickedEventArgs e, int activityID, bool doubleClick);
+        public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
         public delegate void MapClick(MapClickedEventArgs e);
         public event PinClick OnPinClick;
         public event MapClick OnMapClick;
@@ -64,7 +69,7 @@ namespace LAMA.Services
         {
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
-            _activities = new Dictionary<int, Pin>();
+            _activities = new Dictionary<long, Pin>();
             _notifications = new Dictionary<ulong, Pin>();
             _pin = new Pin();
             _pin.Label = "temp";
@@ -122,7 +127,7 @@ namespace LAMA.Services
         /// Use GetTemporaryPin() method to get the pin location.
         /// </summary>
         /// <param name="view"></param>
-        public void MapViewSetupAdding(MapView view)
+        public void MapViewSetupSelection(MapView view)
         {
             view.Map = CreateMap();
             view.PinClicked += HandlePinClicked;
@@ -350,6 +355,39 @@ namespace LAMA.Services
             p.Position = new Position(lat, lon);
             p.Callout.ArrowAlignment = Mapsui.Rendering.Skia.ArrowAlignment.Right;
             return p;
+        }
+        private void LoadActivities()
+        {
+            var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < rememberedList.Count; i++)
+            {
+                var activity = rememberedList[i];
+                var pin = CreatePin(activity.place.first, activity.place.second, activity.name);
+
+                switch (activity.status)
+                {
+                    case ActivityStatus.awaitingPrerequisites:
+                        pin.Color = Color.White; break;
+
+                    case ActivityStatus.readyToLaunch:
+                        pin.Color = Color.LightBlue; break;
+
+                    case ActivityStatus.launched:
+                        pin.Color = Color.LightGreen; break;
+
+                    case ActivityStatus.inProgress:
+                        pin.Color = Color.PeachPuff; break;
+
+                    case ActivityStatus.completed:
+                        pin.Color = Color.Gray; break;
+
+                    default:
+                        break;
+                }
+
+                _activities.Add(activity.ID, pin);
+            }
         }
 
         // Event Handlers

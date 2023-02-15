@@ -26,7 +26,7 @@ namespace LAMA.Views
             layout.Children.Add(_setHomeButton);
         }
 
-        private async void OnPinClicked(PinClickedEventArgs e, int activityID, bool doubleClick)
+        private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
         {
             if (!doubleClick)
                 return;
