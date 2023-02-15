@@ -99,8 +99,16 @@ namespace LAMA.Services
             Point p = SphericalMercator.FromLonLat(longitude, latitude);
             view.Navigator.CenterOn(p);
         }
-        public static void Zoom(MapView view, double resolution)
+
+        /// <summary>
+        /// Resolution is -1 by default. This will zoom to default resolution.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="resolution"></param>
+        public static void Zoom(MapView view, double resolution = -1)
         {
+            if (resolution == -1)
+                resolution = view.Map.Resolutions[view.Map.Resolutions.Count - 7];
             view.Navigator.ZoomTo(resolution);
         }
 
@@ -115,7 +123,7 @@ namespace LAMA.Services
         {
             view.Map = CreateMap();
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
-            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7], view.Map.Resolutions[2]);
+            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
@@ -138,8 +146,10 @@ namespace LAMA.Services
             // Zoom in when clicked home button
             view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
             {
-                if (e.PropertyName == "MyLocationFollowProperty" || e.PropertyName == "MyLocationFollow")
-                    Zoom(view, 500);
+                if (e.PropertyName == "MyLocationFollow")
+                {
+                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
+                }
             };
         }
 
@@ -151,6 +161,11 @@ namespace LAMA.Services
         public void MapViewSetupSelection(MapView view, LarpActivity activity = null)
         {
             view.Map = CreateMap();
+            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
+            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
+            CenterOn(view, activity.place.first, activity.place.second);
+            Zoom(view);
+
             if (CurrentLocation != null)
                 view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
 
@@ -162,7 +177,6 @@ namespace LAMA.Services
             _activities.Clear();
             LoadActivities();
             _activities.Remove(activity.ID);
-            SetSelectionPin(activity.place.first, activity.place.second);
 
             foreach (Pin pin in _activities.Values)
             {
@@ -176,15 +190,19 @@ namespace LAMA.Services
                 pin.Scale = _pinScale;
             }
 
+
+            SetSelectionPin(activity.place.first, activity.place.second);
             if (!view.Pins.Contains(_selectionPin))
                 view.Pins.Add(_selectionPin);
 
             // Zoom in when clicked home button
             view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
             {
-                if (e.PropertyName == "MyLocationFollowProperty" || e.PropertyName == "MyLocationFollow")
-                    Zoom(view, 500);
+                if (e.PropertyName == "MyLocationFollow")
+                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
             };
+
+            view.RefreshGraphics();
         }
 
         /// <summary>
@@ -250,7 +268,11 @@ namespace LAMA.Services
         {
             Pin pin = CreatePin(activity.place.first, activity.place.second, "normal");
             pin.Callout.Title = $"{activity.name}";
-            pin.Callout.Subtitle = $"Double click to show the activity";
+            pin.Callout.Subtitle =
+                $"Status: {activity.status}\n"
+                + $"Description: {activity.description}\n"
+                + "\n"
+                + $"Double click to show the activity.";
 
             switch (activity.status)
             {
