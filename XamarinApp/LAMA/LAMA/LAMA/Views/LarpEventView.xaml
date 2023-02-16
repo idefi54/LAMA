@@ -26,7 +26,15 @@
                        FontSize="Medium" IsVisible="{Binding CanChangeLarpEvent}"/>
                 <Button Text="Přidat" Command="{Binding AddChannelCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
 
-
+                <Label Text="{Binding StartDay}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Button Text="Nastavit začátek" Command="{Binding SetStartDay}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
+                
+                <Label Text="{Binding EndDay}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Button Text="Nastavit konec" Command="{Binding SetEndDay}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
