@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class DropdownMenuTestPage : ContentPage
+	public partial class DropdownMenuOverTestPage : ContentPage
 	{
-		public DropdownMenuTestPage()
+		public DropdownMenuOverTestPage()
 		{
 			InitializeComponent();
 
