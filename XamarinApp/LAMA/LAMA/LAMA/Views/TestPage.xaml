@@ -26,10 +26,11 @@
                 <Button Text="CPs" Clicked="OnCP"/>
                 <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
 
-                <Button Text="Hide Example" Clicked="OnHideExample"/>
-                <Button Text="Dropdown Menu Example" Clicked="OnDropdownExample"/>
+				<Button Text="Hide Example" Clicked="OnHideExample"/>
+				<Button Text="Dropdown Menu Over Example" Clicked="OnDropdownOverExample"/>
+				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
 
-            </StackLayout>
+			</StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>
