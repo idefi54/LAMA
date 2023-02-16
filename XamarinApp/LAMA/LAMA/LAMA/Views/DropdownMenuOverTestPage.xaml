@@ -34,7 +34,7 @@
 				In AbsoluteLayout.LayoutBounds replace 200 with desired height. Also change BackgroundColor to desired color.-->
 			<Frame x:Name="DropdownMenu"
 				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
-				   BackgroundColor="LightPink"
+				   BackgroundColor="LightBlue"
 				   IsVisible="{Binding ShowDropdown}">
 				<StackLayout>
 					<Label Text="Test Label"/>

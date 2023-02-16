@@ -8,13 +8,14 @@
 			 Title="Inventář">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Řadit" />
-        <ToolbarItem Text="Filtr" />
+        
+        <forms:BindableToolbarItem Text="Řazení a filtr" Command="{Binding ShowDropdownCommand}"/>
         <forms:BindableToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}" IsVisible ="{Binding CanChangeItems}"/>
     </ContentPage.ToolbarItems>
 
 
     <ContentPage.Content>
+        <AbsoluteLayout>
         <StackLayout  Spacing="0">
             <common:OurNavigationMenu></common:OurNavigationMenu>
             <ListView x:Name="ItemList" ItemsSource="{Binding ItemList}" SelectionMode="None" Margin="5,5,5,0">
@@ -59,5 +60,18 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackLayout>
+
+            <Frame x:Name="DropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+				   BackgroundColor="LightBlue"
+				   IsVisible="{Binding ShowDropdown}">
+                <StackLayout>
+                    <Label Text="Hledat"/>
+                    <Entry Text="{Binding FilterText}"/>
+                    <Button Text="Seřadit" Command="{Binding Order}"/>
+                </StackLayout>
+            </Frame>
+
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

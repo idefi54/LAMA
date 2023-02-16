@@ -22,9 +22,15 @@ namespace LAMA.ViewModels
         public Command<object> OpenDetailCommand { get; private set; }
         public bool CanAddCP { get {return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
 
-        public string filterText { get; set; }
+        string _filterText = string.Empty;
+        public string FilterText { get { return _filterText; } set { SetProperty(ref _filterText, value); OnFilter(); } }
 
+        public Command OrderByName { get; set; }
+        public Command OrderByNick { get; set; }
+        public Command ShowOrderAndFilter { get; set; }
 
+        bool _showDropdown = false;
+        public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value); } }
 
         public CPListViewModel(INavigation navigation)
         {
@@ -32,6 +38,9 @@ namespace LAMA.ViewModels
             AddCPCommand = new Command(OnMakeCP);
             OpenDetailCommand = new Command<object>(OnOpenDetail);
             CPList = new TrulyObservableCollection<CPViewModel>();
+            OrderByName = new Command(OnOrderByName);
+            OrderByNick = new Command(OnOrderByNick);
+            ShowOrderAndFilter = new Command(OnShowOrderAndFilter);
             LoadCPs();
         }
 
@@ -46,19 +55,10 @@ namespace LAMA.ViewModels
                 IDToViewModel.Add(list[i].ID, newOne);
             
             }
-            SQLEvents.dataChanged += OnChange;
             SQLEvents.created += OnCreated;
             SQLEvents.dataDeleted += OnDeleted;
         }
-        private void OnChange(Serializable changed, int index)
-        {
-            if (changed.GetType() != typeof(CP))
-            {
-                return;
-            }
-            //REFRESH DATA
-
-        }
+        
         private void OnCreated(Serializable made)
         {
             if (made.GetType() != typeof(CP))
@@ -66,8 +66,10 @@ namespace LAMA.ViewModels
                 return;
             }
             var item = (CP)made;
+            OnCancelFilter();
             CPList.Add(new CPViewModel(item));
             IDToViewModel.Add(item.ID, CPList[CPList.Count - 1]);
+            OnFilter();
 
         }
         private void OnDeleted(Serializable deleted)
@@ -77,9 +79,10 @@ namespace LAMA.ViewModels
                 return;
             }
             var item = (CP)deleted;
-
+            OnCancelFilter();
             CPList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
+            OnFilter();
         }
         async void OnMakeCP()
         {
@@ -103,24 +106,27 @@ namespace LAMA.ViewModels
         {
             OnCancelFilter();
 
+            if (FilterText.Length == 0)
+                return;
+
             rememberForFilter = CPList;
 
             TrulyObservableCollection<CPViewModel> newList = new TrulyObservableCollection<CPViewModel>();
 
             foreach(var cpView in CPList)
             {
-                if(cpView.Name.ToLower().Contains(filterText.ToLower()) || cpView.Nick.ToLower().Contains(filterText.ToLower()))
+                if(cpView.Name.ToLower().Contains(FilterText.ToLower()) || cpView.Nick.ToLower().Contains(FilterText.ToLower()))
                     newList.Add(cpView);
             }
-
-            SetProperty(ref _CPList, newList);
+            CPList = newList;
+            
 
         }
         void OnCancelFilter()
         {
             if(rememberForFilter != null)
-                SetProperty(ref _CPList, rememberForFilter);
-            rememberForFilter=null;
+                CPList = rememberForFilter;
+            rememberForFilter = null;
         }
 
 
@@ -160,6 +166,10 @@ namespace LAMA.ViewModels
                     }
                 }
             }
+        }
+        void OnShowOrderAndFilter()
+        {
+            ShowDropdown = !ShowDropdown;
         }
         
         class CompareByName : IComparer<CPViewModel>

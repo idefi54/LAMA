@@ -17,7 +17,8 @@ namespace LAMA.ViewModels
         public TrulyObservableCollection<InventoryItemViewModel> ItemList { get { return _ItemList; } private set { SetProperty(ref _ItemList, value); } }
         Dictionary<long, InventoryItemViewModel> IDToViewModel = new Dictionary<long, InventoryItemViewModel>();
 
-        public string FilterText { get; set; }
+        string _filterText = string.Empty;
+        public string FilterText { get { return _filterText; } set { SetProperty(ref _filterText, value); OnFilter(); } }
 
         public Xamarin.Forms.Command AddItemCommand { get; }
         
@@ -32,6 +33,11 @@ namespace LAMA.ViewModels
         INavigation Navigation;
 
         long maxId = 0;
+
+        public Command Order { get; set; }
+        public Command ShowDropdownCommand { get; set; }
+        bool _showDropdown = false;
+        public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value); } }
         
 
         public InventoryViewModel(INavigation navigation)
@@ -55,7 +61,8 @@ namespace LAMA.ViewModels
             ReturnItem = new Command<object>(OnReturnItem);
             OpenDetailCommand = new Command<object>(OnOpenDetail);
 
-            
+            Order = new Command(OnOrderByName);
+            ShowDropdownCommand = new Command(OnShowDropdown);
 
         }
         private async void OnOpenDetail(object obj)
@@ -82,9 +89,11 @@ namespace LAMA.ViewModels
             {
                 return;
             }
+            OnCancelFilter();
             var item = (InventoryItem)made;
             ItemList.Add(new InventoryItemViewModel(item));
             IDToViewModel.Add(item.ID, ItemList[ItemList.Count - 1]);
+            OnFilter();
 
         }
         private void OnDeleted(Serializable deleted)
@@ -93,10 +102,12 @@ namespace LAMA.ViewModels
             {
                 return;
             }
+            OnCancelFilter();
             var item = (InventoryItem)deleted;
 
             ItemList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
+            OnFilter();
         }
         
 
@@ -141,6 +152,9 @@ namespace LAMA.ViewModels
         {
             OnCancelFilter();
 
+            if (FilterText.Length == 0)
+                return;
+
             rememberForFilter = _ItemList;
 
             TrulyObservableCollection<InventoryItemViewModel> newList = new TrulyObservableCollection<InventoryItemViewModel>();
@@ -151,13 +165,13 @@ namespace LAMA.ViewModels
                     newList.Add(itemView);
             }
 
-            SetProperty(ref _ItemList, newList);
+            ItemList = newList;
 
         }
         void OnCancelFilter()
         {
             if (rememberForFilter != null)
-                SetProperty(ref _ItemList, rememberForFilter);
+                ItemList = rememberForFilter;
             rememberForFilter = null;
         }
 
@@ -193,6 +207,11 @@ namespace LAMA.ViewModels
                     }
                 }
             }
+        }
+
+        public void OnShowDropdown()
+        {
+            ShowDropdown = !ShowDropdown;
         }
 
         class CompareByName : IComparer<InventoryItemViewModel>
