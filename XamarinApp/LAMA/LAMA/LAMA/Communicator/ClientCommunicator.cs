@@ -160,14 +160,17 @@ namespace LAMA.Communicator
             {
                 try
                 {
+                    Debug.WriteLine("Before received data");
                     received = current.EndReceive(AR);
                     if (received == 0)
                     {
                         throw new SocketException();
                     }
+                    Debug.WriteLine("Finished Receiving");
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
+                    Debug.WriteLine("Socket exception receive data");
                     current.Close();
                     return;
                 }
@@ -192,27 +195,11 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
-                if (messageParts[1] == "DataUpdated")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                    }));
-                }
-                if (messageParts[1] == "ItemCreated")
-                {
-                    Device.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                    }));
-                }
-                if (messageParts[1] == "ItemDeleted")
-                {
-                    Device.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.ProcessCommand(message, current);
                     }));
                 }
                 //Received IDs from the server
@@ -238,20 +225,6 @@ namespace LAMA.Communicator
                     {
                         THIS.ClientRefused(Int32.Parse(messageParts[2]));
                     }));
-                }
-                //Rollback effects of previous messages (data updates and item creations)
-                if (messageParts[1] == "Rollback")
-                {
-                    if (messageParts[2] == "DataUpdated")
-                    {
-                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
-                    }
-                    if (messageParts[2] == "ItemCreated")
-                    {
-                        THIS.LastUpdate = Int64.Parse(messageParts[0]);
-                        THIS.modelChangesManager.RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
-                    }
                 }
             }
             try
@@ -313,9 +286,11 @@ namespace LAMA.Communicator
                 try
                 {
                     s.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), s);
+                    Debug.WriteLine("After begin receive");
                 }
                 catch (Exception ex) when(ex is SocketException || ex is ObjectDisposedException)
                 {
+                    Debug.WriteLine("Exception StartListening");
                     s.Close();
                     return;
                 }

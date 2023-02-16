@@ -259,7 +259,6 @@ namespace LAMA.Communicator
                             offset += 16;
                             string decodingBuffer = Encoding.UTF8.GetString(buffer);
                             decryptedBytes.AddRange(buffer);
-                            Debug.WriteLine(decodingBuffer + "\n");
                             if (decodingBuffer.Contains("|"))
                             {
                                 decrypted = decrypted + decodingBuffer.Substring(0, decodingBuffer.IndexOf("|") + 1);

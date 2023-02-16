@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Diagnostics;
 using LAMA.Singletons;
+using SQLite;
+using System.Linq;
 
 namespace LAMA.Communicator
 {
@@ -60,6 +62,11 @@ namespace LAMA.Communicator
                     if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
                 }
+                if (messageParts[1] == "CPLocations")
+                {
+                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    CPLocationsUpdated(messageParts.Skip(2).ToArray(), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(';') + 1));
+                }
                 //Rollback effect of some previous message
                 if (!server && (messageParts[1] == "Rollback"))
                 {
@@ -75,6 +82,33 @@ namespace LAMA.Communicator
                     }
                 }
             }
+        }
+
+        public void CPLocationsUpdated(string[] locations, long updateTime, string command)
+        {
+            int i = 0;
+            while (i < locations.Length)
+            {
+                long cpID = Int64.Parse(locations[i]);
+                string location = locations[i+1];
+                int locationIndex = 7;
+                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID).setAttribute(locationIndex, location);
+                i += 2;
+            }
+        }
+
+        public void SendCPLocations()
+        {
+            Debug.WriteLine($"Server Location: {DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0).getAttribute(7)}");
+            List<string> cpStrings = new List<string>();
+            for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
+            {
+                Models.CP cp = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i];
+                cpStrings.Add(cp.getID() + ";" + cp.getAttribute(7));
+            }
+            string cpStringTogether = string.Join(";", cpStrings);
+            string finalString = "CPLocations;" + cpStringTogether;
+            communicator.SendCommand(new Command(finalString, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "LAMA.Models.CP;Positions"));
         }
 
         /// <summary>
@@ -103,7 +137,9 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
             string command = "DataUpdated" + ";" + objectType + ";" + objectID + ";" + attributeIndex + ";" + changed.getAttribute(attributeIndex);
-            if (!testing) communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
+            if (!testing && !(objectType == "LAMA.Models.CP" &&
+                    changed.getAttributes()[attributeIndex] == "location"))
+                communicator.SendCommand(new Command(command, updateTime, objectType + ";" + objectID));
         }
 
         /// <summary>
@@ -173,7 +209,9 @@ namespace LAMA.Communicator
                 if (server)
                 {
                     // Notify every client
-                    if (!testing) communicator.SendCommand(new Command(command, updateTime, attributeID));
+                    if (!testing && !(objectType == "LAMA.Models.CP" &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).getAttributes()[indexAttribute] == "location")) 
+                        communicator.SendCommand(new Command(command, updateTime, attributeID));
                 }
             }
             else if (attributesCache.containsKey(attributeID) && server)

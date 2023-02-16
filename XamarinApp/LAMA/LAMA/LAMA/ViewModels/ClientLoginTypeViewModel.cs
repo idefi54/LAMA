@@ -2,6 +2,7 @@
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Xamarin.Forms;
 
@@ -16,24 +17,31 @@ namespace LAMA.ViewModels
 
         public ClientLoginTypeViewModel(ClientCommunicator communicator)
         {
+            Debug.WriteLine("ClientLoginTypeViewModel");
+            Debug.WriteLine(communicator);
             NewClientCommand = new Xamarin.Forms.Command(OnNewClient);
             ExistingClientCommand = new Xamarin.Forms.Command(OnExistingClient);
-            clientCommunicator= communicator;
+            Debug.WriteLine("Commands");
+            clientCommunicator = communicator;
         }
 
-        private async void OnNewClient()
+        private async void OnNewClient(object obj)
         {
+            Debug.WriteLine("OnNewClient");
             if (Device.RuntimePlatform == Device.WPF)
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new ClientChooseNamePage(clientCommunicator, true));
             }
             else
             {
-                await Shell.Current.GoToAsync($"//{nameof(ClientChooseNamePage)}?communicator={clientCommunicator}&newClient={true}");
+                //Debug.WriteLine("New Client");
+                //ClientChooseNamePage.InitPage(clientCommunicator, true);
+                //Debug.WriteLine("Before navigation");
+                await Shell.Current.Navigation.PushAsync(new ClientChooseNamePage(clientCommunicator, true));
             }
         }
 
-        private async void OnExistingClient()
+        private async void OnExistingClient(object obj)
         {
             if (Device.RuntimePlatform == Device.WPF)
             {
@@ -41,7 +49,7 @@ namespace LAMA.ViewModels
             }
             else
             {
-                await Shell.Current.GoToAsync($"//{nameof(ClientChooseNamePage)}?communicator={clientCommunicator}&newClient={false}");
+                await Shell.Current.Navigation.PushAsync(new ClientChooseNamePage(clientCommunicator, false));
             }
         }
     }

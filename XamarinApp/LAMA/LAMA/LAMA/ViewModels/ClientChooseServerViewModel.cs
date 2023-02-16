@@ -104,14 +104,26 @@ namespace LAMA.ViewModels
                         }
                     }
                 }
-                App.Current.MainPage = new NavigationPage(new ClientLoginTypePage(communicator))
+                if (Device.RuntimePlatform == Device.WPF)
                 {
-                    BarBackground = new SolidColorBrush(new Color((double)33 / 255, (double)144 / 255, (double)243 / 255)),
-                    BarBackgroundColor = new Color(33, 144, 243)
-                };
+                    App.Current.MainPage = new NavigationPage(new ClientLoginTypePage(communicator))
+                    {
+                        BarBackground = new SolidColorBrush(new Color((double)33 / 255, (double)144 / 255, (double)243 / 255)),
+                        BarBackgroundColor = new Color(33, 144, 243)
+                    };
+                }
+                else
+                {
+                    //ClientLoginTypePage.InitPage(communicator);
+                    await Shell.Current.Navigation.PushAsync(new ClientLoginTypePage(communicator));
+                    //await Shell.Current.GoToAsync($"//{nameof(ClientLoginTypePage)}");
+                }
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Exception Caught");
+                Debug.WriteLine(e.ToString());
+                Debug.WriteLine(e.Message);
                 ErrorLabel = e.ToString();
                 TryingToConnect = false;
                 LoginEnabled = true;

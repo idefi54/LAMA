@@ -13,6 +13,7 @@ using LAMA.Models;
 using LAMA.Singletons;
 using Xamarin.Forms;
 using SQLite;
+using System.Threading.Tasks;
 
 namespace LAMA.Communicator
 {
@@ -52,7 +53,7 @@ namespace LAMA.Communicator
         /// <summary>
         /// Start accepting clients and broadcasting messages to them
         /// </summary>
-        private void StartServer()
+        private async void StartServer()
         {
             logger.LogWrite("Starting Server");
             Debug.WriteLine("Starting Server");
@@ -64,6 +65,22 @@ namespace LAMA.Communicator
             {
                 ProcessBroadcast();
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
+
+            CancellationToken token = new CancellationToken();
+            await SendLocations(token);
+        }
+
+        public async Task SendLocations(CancellationToken token)
+        {
+            await Task.Run(async () =>
+            {
+                while (true)
+                {
+                    token.ThrowIfCancellationRequested();
+                    await Task.Delay(30_000);
+                    Device.BeginInvokeOnMainThread(() => modelChangesManager.SendCPLocations());
+                }
+            }, token);
         }
 
         /// <summary>
@@ -107,6 +124,7 @@ namespace LAMA.Communicator
                                     }
                                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                                     {
+                                        Debug.WriteLine("Socket exception ProcessBroadcast");
                                         client.Close();
                                         socketsToRemove.Add(entry.Key);
                                     }
@@ -134,6 +152,7 @@ namespace LAMA.Communicator
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                                 {
+                                    Debug.WriteLine("Socket exception ProcessBroadcast2");
                                     client.Close();
                                     socketsToRemove.Add(currentCommand.receiverID);
                                 }
@@ -177,7 +196,7 @@ namespace LAMA.Communicator
                 Device.BeginInvokeOnMainThread(new Action(() =>
                 {
                     THIS.logger.LogWrite("Client socket exception");
-                    Debug.WriteLine("Client socket exception");
+                    Debug.WriteLine("Client socket exception AcceptCallback");
                 }));
                 lock (ServerCommunicator.socketsLock)
                 {
@@ -205,12 +224,13 @@ namespace LAMA.Communicator
                 received = current.EndReceive(AR);
                 if (received == 0)
                 {
+                    Debug.WriteLine("SocketException ReceiveData");
                     throw new SocketException();
                 }
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                Debug.WriteLine("Socket Exception");
+                Debug.WriteLine("SocketException ReceiveData");
                 lock (ServerCommunicator.socketsLock)
                 {
                     current.Close();
@@ -239,25 +259,11 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
-                if (messageParts[1] == "DataUpdated")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.modelChangesManager.DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                    }));
-                }
-                if (messageParts[1] == "ItemCreated")
-                {
-                    Device.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.modelChangesManager.ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1), current);
-                    }));
-                }
-                if (messageParts[1] == "ItemDeleted")
-                {
-                    Device.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        THIS.modelChangesManager.ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), message.Substring(message.IndexOf(';') + 1));
+                        THIS.modelChangesManager.ProcessCommand(message, current);
                     }));
                 }
                 if (messageParts[1] == "Update")
@@ -477,7 +483,7 @@ namespace LAMA.Communicator
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
                     new Models.CP(0,
                     nick, nick, new EventList<string> { "server", "org" }, "", "", "", ""));
-            }
+            }   
             Debug.WriteLine("Initialization finished");
         }
 
