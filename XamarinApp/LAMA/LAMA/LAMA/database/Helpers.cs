@@ -31,19 +31,19 @@ namespace LAMA
         }
         public static long readLong (string input)
         {
-            int offset = 0;
-            long num = 0;
-            while (offset < input.Length && char.IsDigit(input[offset]))
-            {
-                num *= 10;
-                num += input[offset] - '0';
-                ++offset;
-            }
-            return num;
+            int i = 0;
+            return readLong(input, ref i);
         }
         public static long readLong(string input, ref int offset)
         {
-            
+            bool negative = false;
+            int i = offset;
+            while (i > 0 && Char.IsWhiteSpace(input[i]) && i < input.Length)
+            {
+                --i;
+            }
+            negative = input[i] == '-';
+
             long num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
             {
@@ -51,10 +51,20 @@ namespace LAMA
                 num += input[offset] - '0';
                 ++offset;
             }
+            if (negative)
+                return -num;
             return num;
         }
         public static int readInt(string input, ref int offset)
         {
+            bool negative = false;
+            int i = offset;
+            while(i>0 && Char.IsWhiteSpace(input[i]) && i< input.Length)
+            {
+                --i;
+            }
+            negative = input[i] == '-';
+
             int num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
             {
@@ -62,6 +72,8 @@ namespace LAMA
                 num += input[offset] - '0';
                 ++offset;
             }
+            if (negative)
+                return -num;
             return num;
         }
         public static int readInt(string input)
