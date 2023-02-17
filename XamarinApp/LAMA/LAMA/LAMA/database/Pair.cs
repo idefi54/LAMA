@@ -30,7 +30,7 @@ namespace LAMA
 
         public override string ToString()
         {
-            return _first.ToString() + ", " + _second.ToString();
+            return _first.ToString() + Helpers.separator + " " + _second.ToString();
         }
         public override bool Equals(object obj)
         {

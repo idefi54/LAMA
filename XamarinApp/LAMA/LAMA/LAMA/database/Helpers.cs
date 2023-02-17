@@ -9,6 +9,10 @@ namespace LAMA
 {
     class Helpers
     {
+
+        public static char separator = ',';
+
+
         public static EventList<long> readLongField(string input)
         {
             
@@ -89,7 +93,7 @@ namespace LAMA
         static string readString(string input, ref int offset)
         {
             StringBuilder output = new StringBuilder();
-            while (offset < input.Length && input[offset] != ',')
+            while (offset < input.Length && input[offset] != separator)
             {
                 output.Append(input[offset]);
                 ++offset;
@@ -110,11 +114,12 @@ namespace LAMA
         public static double readDouble(string input, ref int offset)
         {
 
-            int firstPart = readInt(input, ref offset);
+            
+            long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
             ++offset;
             int offset1 = offset;
-            int secondPart = readInt(input, ref offset);
+            long secondPart = readLong(input, ref offset);
             offset1 = offset - offset1;
             return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
         }
@@ -248,7 +253,7 @@ namespace LAMA
             for (int i = 0; i < input.Count; ++i)
             {
                 if (i != 0)
-                    output.Append(", ");
+                    output.Append(separator + " ");
                 output.Append(((int)input[i]).ToString());
             }
             return output.ToString();
