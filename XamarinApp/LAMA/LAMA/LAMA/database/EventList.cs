@@ -56,7 +56,7 @@ namespace LAMA
                 for (int i = 0; i < Count; ++i) 
                 {
                     if(!first)
-                        output.Append(",");
+                        output.Append(Helpers.separator + " ");
 
                     if(first)
                         first = false;
