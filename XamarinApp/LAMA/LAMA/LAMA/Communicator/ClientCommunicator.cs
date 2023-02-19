@@ -580,7 +580,7 @@ namespace LAMA.Communicator
             else
             {
                 logger.LogWrite("No exceptions");
-                Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu");
+                Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu123456789qwertzuiop");
                 string[] array = responseString.Split(',');
                 //Get server IP (check if it is valid)
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
