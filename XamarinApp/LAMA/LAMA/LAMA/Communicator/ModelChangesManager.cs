@@ -92,7 +92,10 @@ namespace LAMA.Communicator
                 long cpID = Int64.Parse(locations[i]);
                 string location = locations[i+1];
                 int locationIndex = 7;
-                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID).setAttribute(locationIndex, location);
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID) != null)
+                {
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID).setAttribute(locationIndex, location);
+                }
                 i += 2;
             }
         }

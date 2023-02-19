@@ -424,7 +424,7 @@ namespace LAMA.Communicator
                 }
             }
             Debug.WriteLine("No exceptions");
-            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu");
+            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
             byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
