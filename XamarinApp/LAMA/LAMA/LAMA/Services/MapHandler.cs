@@ -9,11 +9,11 @@ using Mapsui.Projection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Xamarin.Essentials;
 using System.Threading.Tasks;
 using LAMA.Models;
 
+using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 using Color = Xamarin.Forms.Color;
 using ActivityStatus = LAMA.Models.LarpActivity.Status;
 
@@ -24,8 +24,8 @@ namespace LAMA.Services
     {
         // Private fields
         private List<Feature> _symbols;
-        private Dictionary<long, Pin> _activities;
-        private Dictionary<ulong, Pin> _alerts;
+        private Dictionary<long, Pin> _activityPins;
+        private Dictionary<ulong, Pin> _alertPins;
         private List<Pin> _pins;
         private Pin _selectionPin;
         private ulong _alertID;
@@ -35,6 +35,7 @@ namespace LAMA.Services
         private long _prevTime;
         private const long _doubleClickTime = 500;
         private const float _pinScale = 0.7f;
+        private static Color _highlightColor = Color.FromHex("3A0E80");
 
         // Events
         public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
@@ -70,11 +71,11 @@ namespace LAMA.Services
         {
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
-            _activities = new Dictionary<long, Pin>();
-            _alerts = new Dictionary<ulong, Pin>();
+            _activityPins = new Dictionary<long, Pin>();
+            _alertPins = new Dictionary<ulong, Pin>();
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
-            _selectionPin.Color = Color.FromHex("3A0E80");
+            _selectionPin.Color = _highlightColor;
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
@@ -119,7 +120,7 @@ namespace LAMA.Services
         /// Sets up MapView for normal use.
         /// </summary>
         /// <param name="view"></param>
-        public void MapViewSetup(MapView view)
+        public void MapViewSetup(MapView view, LarpActivity activity = null)
         {
             view.Map = CreateMap();
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
@@ -128,23 +129,29 @@ namespace LAMA.Services
             view.MapClicked += HandleMapClicked;
 
             view.Pins.Clear();
-            _activities.Clear();
+            _activityPins.Clear();
             LoadActivities();
 
-            foreach (Pin pin in _activities.Values)
+            if (activity != null)
+            {
+                _activityPins[activity.ID].Color = _highlightColor;
+                CenterOn(view, activity.place.first, activity.place.second);
+            }
+
+            foreach (Pin pin in _activityPins.Values)
             {
                 view.Pins.Add(pin);
                 pin.Scale = _pinScale;
             }
 
-            foreach (Pin pin in _alerts.Values)
+            foreach (Pin pin in _alertPins.Values)
             {
                 pin.Scale = _pinScale;
                 view.Pins.Add(pin);
             }
 
             // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
             {
                 if (e.PropertyName == "MyLocationFollow")
                 {
@@ -174,17 +181,17 @@ namespace LAMA.Services
 
             view.Pins.Clear();
 
-            _activities.Clear();
+            _activityPins.Clear();
             LoadActivities();
-            _activities.Remove(activity.ID);
+            _activityPins.Remove(activity.ID);
 
-            foreach (Pin pin in _activities.Values)
+            foreach (Pin pin in _activityPins.Values)
             {
                 view.Pins.Add(pin);
                 pin.Scale = _pinScale;
             }
 
-            foreach (Pin pin in _alerts.Values)
+            foreach (Pin pin in _alertPins.Values)
             {
                 view.Pins.Add(pin);
                 pin.Scale = _pinScale;
@@ -214,8 +221,8 @@ namespace LAMA.Services
             view.Pins.Clear();
             view.HideCallouts();
 
-            foreach (Pin pin in _activities.Values) view.Pins.Add(pin);
-            foreach (Pin pin in _alerts.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _activityPins.Values) view.Pins.Add(pin);
+            foreach (Pin pin in _alertPins.Values) view.Pins.Add(pin);
             foreach (Pin pin in _pins) view.Pins.Add(pin);
         }
 
@@ -295,7 +302,7 @@ namespace LAMA.Services
                     break;
             }
 
-            _activities[activity.ID] = pin;
+            _activityPins[activity.ID] = pin;
             view?.Pins.Add(pin);
         }
 
@@ -314,7 +321,7 @@ namespace LAMA.Services
             p.Callout.Title = text;
             p.Color = Color.Red;
             p.Callout.Color = Color.Red;
-            _alerts.Add(_alertID, p);
+            _alertPins.Add(_alertID, p);
             view?.Pins.Add(p);
 
             return _alertID++;
@@ -328,8 +335,8 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemoveActivity(int activityID, MapView view = null)
         {
-            view?.Pins.Remove(_activities[activityID]);
-            _activities.Remove(activityID);
+            view?.Pins.Remove(_activityPins[activityID]);
+            _activityPins.Remove(activityID);
         }
 
         /// <summary>
@@ -340,8 +347,8 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemoveAlert(ulong noficationID, MapView view = null)
         {
-            view?.Pins.Remove(_alerts[noficationID]);
-            _alerts.Remove(noficationID);
+            view?.Pins.Remove(_alertPins[noficationID]);
+            _alertPins.Remove(noficationID);
         }
 
         /// <summary>
@@ -365,8 +372,7 @@ namespace LAMA.Services
         public async Task UpdateLocation(MapView view, bool gpsAvailable = true)
         {
             var location = gpsAvailable ? await Geolocation.GetLastKnownLocationAsync() : CurrentLocation;
-            if (location == null)
-                return;
+            if (location == null) return;
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude), false);
             CurrentLocation = location;
         }
@@ -442,7 +448,7 @@ namespace LAMA.Services
             p.Callout.TitleFontAttributes = Xamarin.Forms.FontAttributes.Bold;
             p.Callout.TitleFontName = "Verdana";
             p.Callout.TitleFontSize *= 0.8;
-            
+
             p.Callout.SubtitleFontName = "Verdana";
             p.Callout.SubtitleFontAttributes = Xamarin.Forms.FontAttributes.Italic;
             p.Callout.SubtitleFontSize = p.Callout.TitleFontSize * 0.7f;
@@ -470,8 +476,8 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            foreach (int id in _activities.Keys)
-                if (_activities[id] == e.Pin)
+            foreach (int id in _activityPins.Keys)
+                if (_activityPins[id] == e.Pin)
                 {
                     OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
                     break;
