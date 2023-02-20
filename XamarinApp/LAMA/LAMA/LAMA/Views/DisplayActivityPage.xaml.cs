@@ -17,10 +17,13 @@ namespace LAMA.Views
     public partial class DisplayActivityPage : ContentPage
     {
         private MapView _mapView;
+        private LarpActivity _activity;
+
         public DisplayActivityPage(LarpActivity activity)
         {
             InitializeComponent();
             BindingContext = new DisplayActivityViewModel(Navigation,activity);
+            _activity = activity;
         }
 
         protected async override void OnAppearing()
@@ -51,7 +54,8 @@ namespace LAMA.Views
                 HeightRequest = mapHeightRequest,
                 BackgroundColor = mapBackgroundColor
             };
-            MapHandler.Instance.MapViewSetup(_mapView);
+
+            MapHandler.Instance.MapViewSetup(_mapView, _activity);
             layout.Children.Remove(activityIndicator);
             layout.Children.Add(_mapView);
         }
