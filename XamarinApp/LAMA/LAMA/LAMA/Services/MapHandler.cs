@@ -188,7 +188,6 @@ namespace LAMA.Services
             view.Map = CreateMap();
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
-            CenterOn(view, activity.place.first, activity.place.second);
             Zoom(view);
 
             if (CurrentLocation != null)
@@ -202,7 +201,13 @@ namespace LAMA.Services
             _activityPins.Clear();
             LoadActivities();
             LoadCPs();
-            _activityPins.Remove(activity.ID);
+
+            if (activity != null)
+            {
+                CenterOn(view, activity.place.first, activity.place.second);
+                _activityPins.Remove(activity.ID);
+                SetSelectionPin(activity.place.first, activity.place.second);
+            }
 
             foreach (Pin pin in _activityPins.Values)
             {
@@ -221,8 +226,7 @@ namespace LAMA.Services
                 view.Pins.Add(pin);
                 pin.Scale = 0.5f;
             }
-
-            SetSelectionPin(activity.place.first, activity.place.second);
+            
             if (!view.Pins.Contains(_selectionPin))
                 view.Pins.Add(_selectionPin);
 
