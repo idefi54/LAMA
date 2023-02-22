@@ -107,6 +107,8 @@ namespace LAMA.Communicator
                     Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode();
                     Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
+                    Debug.WriteLine($"\ndata.Length: {data.Length}");
+                    Debug.WriteLine($"data {Convert.ToBase64String(data)}");
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
@@ -243,15 +245,16 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
+            Debug.WriteLine($"{Convert.ToBase64String(data)}");
             Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split('|');
+            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split(Separators.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(';');
+                string[] messageParts = message.Split(Separators.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -426,9 +429,9 @@ namespace LAMA.Communicator
             Debug.WriteLine("No exceptions");
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
-            byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
+            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
+            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
 
             //maxClientID = 0;
             IPAddress ipAddress;
@@ -450,23 +453,7 @@ namespace LAMA.Communicator
             THIS = this;
             Debug.WriteLine("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
-            /*
-            //Initialize Intervals
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
-            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
 
-            Debug.WriteLine("-------------------------------------0------------------------------------------");
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------1------------------------------------------");
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------2------------------------------------------");
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------3------------------------------------------");
-            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------4------------------------------------------");
-            */
             Debug.WriteLine("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
@@ -582,7 +569,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    string command = $"GiveID;{clientID};{cpID}";
+                    string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -596,7 +583,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[clientID] = current;
             }
-            SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         /// <summary>
@@ -608,6 +595,7 @@ namespace LAMA.Communicator
         /// <param name="clientID"></param>
         private void GiveNewClientID(Socket current, string clientName, string password, int clientID)
         {
+            Debug.WriteLine("GiveNewClientID");
             if (clientID == -1)
             {
                 maxClientID += 1;
@@ -620,7 +608,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -635,7 +623,7 @@ namespace LAMA.Communicator
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
             }
-            string command = $"GiveID;{clientID};{cpID}";
+            string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[clientID] = current;
@@ -683,8 +671,8 @@ namespace LAMA.Communicator
                 if (entry.time > lastUpdateTime)
                 {
                     string value = entry.value;
-                    string[] keyParts = entry.key.Split(';');
-                    string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
+                    string[] keyParts = entry.key.Split(Separators.messagePartSeparator);
+                    string command = "DataUpdated" + Separators.messagePartSeparator + keyParts[0] + Separators.messagePartSeparator + keyParts[1] + Separators.messagePartSeparator + keyParts[2] + Separators.messagePartSeparator + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }

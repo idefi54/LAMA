@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using LAMA.Extensions;
+using LAMA.Communicator;
 
 namespace LAMAtest
 {
@@ -22,14 +23,14 @@ namespace LAMAtest
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(123, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList < Pair<int, int> >(),
             new LAMA.EventList < Pair<string, int> >(), new EventList < Pair<long, string> >());
-            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
+            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(234, "testCP", "testCP234", new LAMA.EventList<string>(), "123456789",
             "facebook", "discord", "notes");
-            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("¦", cp.getAttributes())}";
+            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp.getAttributes())}";
             
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(345, "testItem", "test inventory item", 2, 3);
-            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join("¦", inventoryItem.getAttributes())}";
+            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem.getAttributes())}";
             Debug.WriteLine(command);
 
             manager.ProcessCommand(command, null);
@@ -79,9 +80,9 @@ namespace LAMAtest
             Assert.AreEqual(inventoryItem.ID, itemStored.ID, "inventoryItem ID Changed");
             Assert.AreEqual(inventoryItem.taken, itemStored.taken, "inventoryItem Taken Amount Changed");
 
-            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{activity.GetType().ToString()};{activity.getID()}";
-            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{cp.GetType().ToString()};{cp.getID()}";
-            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{inventoryItem.GetType().ToString()};{inventoryItem.getID()}";
+            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.getID()}";
+            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.getID()}";
+            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.getID()}";
 
             manager.ProcessCommand(command4, null);
             manager.ProcessCommand(command5, null);
@@ -96,14 +97,14 @@ namespace LAMAtest
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(124, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
+            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(235, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", "notes");
-            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("¦", cp.getAttributes())}";
+            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp.getAttributes())}";
 
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(346, "testItem", "test inventory item", 2, 3);
-            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join("¦", inventoryItem.getAttributes())}";
+            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem.getAttributes())}";
             Debug.WriteLine(command);
 
             manager.ProcessCommand(command, null);
@@ -114,9 +115,9 @@ namespace LAMAtest
             LAMA.RememberedList<LAMA.Models.CP, LAMA.Models.CPStorage> cpList = LAMA.DatabaseHolder<LAMA.Models.CP, LAMA.Models.CPStorage>.Instance.rememberedList;
             LAMA.RememberedList<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage> inventoryItemList = LAMA.DatabaseHolder<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage>.Instance.rememberedList;
 
-            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{activity.GetType().ToString()};{activity.getID()}";
-            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{cp.GetType().ToString()};{cp.getID()}";
-            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{inventoryItem.GetType().ToString()};{inventoryItem.getID()}";
+            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.getID()}";
+            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.getID()}";
+            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.getID()}";
 
             manager.ProcessCommand(command4, null);
             manager.ProcessCommand(command5, null);
@@ -137,41 +138,41 @@ namespace LAMAtest
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(125, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
+            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(236, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", "notes");
-            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("¦", cp.getAttributes())}";
+            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp.getAttributes())}";
 
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(347, "testItem", "test inventory item", 2, 3);
-            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join("¦", inventoryItem.getAttributes())}";
+            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem.getAttributes())}";
 
             manager.ProcessCommand(command, null);
             manager.ProcessCommand(command2, null);
             manager.ProcessCommand(command3, null);
 
-            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{1};{"testActivityChanged"}";
-            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{2};{"testDescriptionChanged"}";
-            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{3};{"Some"}";
-            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{4};{LAMA.Models.LarpActivity.EventType.preparation}";
-            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{6};{new Time(61)}";
-            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{7};{2}";
-            string command10 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{8};{new Time(121)}";
-            string command11 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{9};{new Pair<double, double>(10.2, 15.4)}";
-            string command12 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{10};{LAMA.Models.LarpActivity.Status.awaitingPrerequisites}";
+            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testActivityChanged"}";
+            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testDescriptionChanged"}";
+            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{"Some"}";
+            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.EventType.preparation}";
+            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{new Time(61)}";
+            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{2}";
+            string command10 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{new Time(121)}";
+            string command11 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{9}{Separators.messagePartSeparator}{new Pair<double, double>(10.2, 15.4)}";
+            string command12 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{10}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.Status.awaitingPrerequisites}";
 
-            string command13 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{1};{"testCPChanged"}";
-            string command14 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{2};{"testCP234Changed"}";
-            string command15 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{4};234567891";
-            string command16 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{5};{"facebookChanged"}";
-            string command17 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{6};{"discordChanged"}";
-            string command18 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{7};{new Pair<double, double>(13.02, 15.7)}";
-            string command19 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{8};{"notesChanged"}";
+            string command13 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testCPChanged"}";
+            string command14 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testCP234Changed"}";
+            string command15 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}234567891";
+            string command16 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{5}{Separators.messagePartSeparator}{"facebookChanged"}";
+            string command17 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{"discordChanged"}";
+            string command18 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{new Pair<double, double>(13.02, 15.7)}";
+            string command19 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{"notesChanged"}";
 
-            string command20 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{1};{"testItemChanged"}";
-            string command21 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{2};{"test inventory item2"}";
-            string command22 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{3};{3}";
-            string command23 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{4};{4}";
+            string command20 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testItemChanged"}";
+            string command21 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"test inventory item2"}";
+            string command22 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{3}";
+            string command23 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{4}";
 
             manager.ProcessCommand(command4, null);
             manager.ProcessCommand(command5, null);
@@ -228,9 +229,9 @@ namespace LAMAtest
             Assert.AreEqual(4, itemStored.free, "inventoryItem Free Amount wasn't updated");
             Assert.AreEqual(3, itemStored.taken, "inventoryItem Taken Amount wasn't updated");
 
-            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{activity.GetType().ToString()};{activity.getID()}";
-            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{cp.GetType().ToString()};{cp.getID()}";
-            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{inventoryItem.GetType().ToString()};{inventoryItem.getID()}";
+            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.getID()}";
+            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.getID()}";
+            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.getID()}";
 
             manager.ProcessCommand(command24, null);
             manager.ProcessCommand(command25, null);
@@ -244,41 +245,41 @@ namespace LAMAtest
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(126, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
+            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(237, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", "notes");
-            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("¦", cp.getAttributes())}";
+            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp.getAttributes())}";
 
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(348, "testItem", "test inventory item", 2, 3);
-            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join("¦", inventoryItem.getAttributes())}";
+            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem.getAttributes())}";
 
             manager.ProcessCommand(command, null);
             manager.ProcessCommand(command2, null);
             manager.ProcessCommand(command3, null);
 
-            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{1};{"testActivityChanged"}";
-            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{2};{"testDescriptionChanged"}";
-            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{3};{"Some"}";
-            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{4};{LAMA.Models.LarpActivity.EventType.preparation}";
-            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{6};{61}";
-            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{7};{2}";
-            string command10 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{8};{121}";
-            string command11 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{9};{new Pair<double, double>(10.2, 15.4)}";
-            string command12 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{activity.GetType().ToString()};{activity.ID};{10};{LAMA.Models.LarpActivity.Status.awaitingPrerequisites}";
+            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testActivityChanged"}";
+            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testDescriptionChanged"}";
+            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{"Some"}";
+            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.EventType.preparation}";
+            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{61}";
+            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{2}";
+            string command10 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{121}";
+            string command11 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{9}{Separators.messagePartSeparator}{new Pair<double, double>(10.2, 15.4)}";
+            string command12 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{10}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.Status.awaitingPrerequisites}";
 
-            string command13 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{1};{"testCPChanged"}";
-            string command14 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{2};{"testCP234Changed"}";
-            string command15 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{4};234567891";
-            string command16 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{5};{"facebookChanged"}";
-            string command17 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{6};{"discordChanged"}";
-            string command18 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{7};{new Pair<double, double>(13.02, 15.7)}";
-            string command19 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{cp.GetType().ToString()};{cp.ID};{8};{"notesChanged"}";
+            string command13 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testCPChanged"}";
+            string command14 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testCP234Changed"}";
+            string command15 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}234567891";
+            string command16 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{5}{Separators.messagePartSeparator}{"facebookChanged"}";
+            string command17 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{"discordChanged"}";
+            string command18 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{new Pair<double, double>(13.02, 15.7)}";
+            string command19 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{"notesChanged"}";
 
-            string command20 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{1};{"testItemChanged"}";
-            string command21 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{2};{"test inventory item2"}";
-            string command22 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{3};{3}";
-            string command23 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{4};{4}";
+            string command20 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testItemChanged"}";
+            string command21 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"test inventory item2"}";
+            string command22 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{3}";
+            string command23 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{4}";
 
             manager.ProcessCommand(command4, null);
             manager.ProcessCommand(command5, null);
@@ -305,28 +306,28 @@ namespace LAMAtest
             LAMA.RememberedList<LAMA.Models.CP, LAMA.Models.CPStorage> cpList = LAMA.DatabaseHolder<LAMA.Models.CP, LAMA.Models.CPStorage>.Instance.rememberedList;
             LAMA.RememberedList<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage> inventoryItemList = LAMA.DatabaseHolder<LAMA.Models.InventoryItem, LAMA.Models.InventoryItemStorage>.Instance.rememberedList;
 
-            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{1};{"testActivity"}";
-            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{2};{"testDescription"}";
-            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{3};{"None"}";
-            string command27 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{4};{LAMA.Models.LarpActivity.EventType.normal}";
-            string command28 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{6};{60}";
-            string command29 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{7};{1}";
-            string command30 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{8};{120}";
-            string command31 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{9};{new Pair<double, double>(10.1, 15.2)}";
-            string command32 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{activity.GetType().ToString()};{activity.ID};{10};{LAMA.Models.LarpActivity.Status.readyToLaunch}";
+            string command24 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testActivity"}";
+            string command25 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testDescription"}";
+            string command26 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{"None"}";
+            string command27 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.EventType.normal}";
+            string command28 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{60}";
+            string command29 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{1}";
+            string command30 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{120}";
+            string command31 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{9}{Separators.messagePartSeparator}{new Pair<double, double>(10.1, 15.2)}";
+            string command32 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.ID}{Separators.messagePartSeparator}{10}{Separators.messagePartSeparator}{LAMA.Models.LarpActivity.Status.readyToLaunch}";
 
-            string command33 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{1};{"testCP"}";
-            string command34 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{2};{"testCP234"}";
-            string command35 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{4};123456789";
-            string command36 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{5};{"facebook"}";
-            string command37 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{6};{"discord"}";
-            string command38 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{7};{new Pair<double, double>(0.0, 0.0)}";
-            string command39 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{cp.GetType().ToString()};{cp.ID};{8};{"notes"}";
+            string command33 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID};{1};{"testCP"}";
+            string command34 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"testCP234"}";
+            string command35 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}123456789";
+            string command36 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{5}{Separators.messagePartSeparator}{"facebook"}";
+            string command37 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{6}{Separators.messagePartSeparator}{"discord"}";
+            string command38 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{7}{Separators.messagePartSeparator}{new Pair<double, double>(0.0, 0.0)}";
+            string command39 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.ID}{Separators.messagePartSeparator}{8}{Separators.messagePartSeparator}{"notes"}";
 
-            string command40 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{1};{"testItem"}";
-            string command41 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{2};{"test inventory item"}";
-            string command42 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{3};{2}";
-            string command43 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;DataUpdated;{inventoryItem.GetType().ToString()};{inventoryItem.ID};{4};{3}";
+            string command40 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{1}{Separators.messagePartSeparator}{"testItem"}";
+            string command41 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{2}{Separators.messagePartSeparator}{"test inventory item"}";
+            string command42 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{3}{Separators.messagePartSeparator}{2}";
+            string command43 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}DataUpdated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.ID}{Separators.messagePartSeparator}{4}{Separators.messagePartSeparator}{3}";
 
             manager.ProcessCommand(command24, null);
             manager.ProcessCommand(command25, null);
@@ -386,9 +387,9 @@ namespace LAMAtest
             Assert.AreEqual(inventoryItem.ID, itemStored.ID, "inventoryItem ID not reverted");
             Assert.AreEqual(inventoryItem.taken, itemStored.taken, "inventoryItem Taken Amount not reverted");
 
-            string command44 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{activity.GetType().ToString()};{activity.getID()}";
-            string command45 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{cp.GetType().ToString()};{cp.getID()}";
-            string command46 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{inventoryItem.GetType().ToString()};{inventoryItem.getID()}";
+            string command44 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{activity.getID()}";
+            string command45 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{cp.getID()}";
+            string command46 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem.getID()}";
 
             manager.ProcessCommand(command24, null);
             manager.ProcessCommand(command25, null);
@@ -402,27 +403,27 @@ namespace LAMAtest
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(127, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
             60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{activity.GetType().ToString()};{String.Join("¦", activity.getAttributes())}";
+            string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
             LAMA.Models.CP cp = new LAMA.Models.CP(238, "testCP", "testCP234", new LAMA.EventList<string>(), 123456789.ToString(),
             "facebook", "discord", "notes");
-            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{cp.GetType().ToString()};{String.Join("¦", cp.getAttributes())}";
+            string command2 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp.getAttributes())}";
 
             LAMA.Models.InventoryItem inventoryItem = new LAMA.Models.InventoryItem(349, "testItem", "test inventory item", 2, 3);
-            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemCreated;{inventoryItem.GetType().ToString()};{String.Join("¦", inventoryItem.getAttributes())}";
+            string command3 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem.getAttributes())}";
 
 
             LAMA.Models.LarpActivity activity2 = new LAMA.Models.LarpActivity(127, "testActivity2", "testDescription2", "None2", LAMA.Models.LarpActivity.EventType.preparation, new LAMA.EventList<long>(),
             61, 2, 121, new Pair<double, double>(10.2, 15.3), LAMA.Models.LarpActivity.Status.awaitingPrerequisites, new LAMA.EventList<Pair<int, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
-            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;ItemCreated;{activity2.GetType().ToString()};{String.Join("¦", activity2.getAttributes())}";
+            string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity2.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity2.getAttributes())}";
 
             LAMA.Models.CP cp2 = new LAMA.Models.CP(238, "testCP2", "testCP2342", new LAMA.EventList<string>(), 234567891.ToString(),
             "facebook2", "discord2", "notes2");
-            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;ItemCreated;{cp2.GetType().ToString()};{String.Join("¦", cp2.getAttributes())}";
+            string command5 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{cp2.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), cp2.getAttributes())}";
 
             LAMA.Models.InventoryItem inventoryItem2 = new LAMA.Models.InventoryItem(349, "testItem2", "test inventory item2", 3, 4);
-            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};Rollback;ItemCreated;{inventoryItem2.GetType().ToString()};{String.Join("¦", inventoryItem2.getAttributes())}";
+            string command6 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{inventoryItem2.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), inventoryItem2.getAttributes())}";
 
             manager.ProcessCommand(command, null);
             manager.ProcessCommand(command2, null);
@@ -476,9 +477,9 @@ namespace LAMAtest
             Assert.AreEqual(inventoryItem2.ID, itemStored.ID, "inventoryItem ID not reverted");
             Assert.AreEqual(inventoryItem2.taken, itemStored.taken, "inventoryItem Taken Amount not reverted");
 
-            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{activity2.GetType().ToString()};{activity2.getID()}";
-            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{cp2.GetType().ToString()};{cp2.getID()}";
-            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()};ItemDeleted;{inventoryItem2.GetType().ToString()};{inventoryItem2.getID()}";
+            string command7 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{activity2.GetType().ToString()}{Separators.messagePartSeparator}{activity2.getID()}";
+            string command8 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{cp2.GetType().ToString()}{Separators.messagePartSeparator}{cp2.getID()}";
+            string command9 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemDeleted{Separators.messagePartSeparator}{inventoryItem2.GetType().ToString()}{Separators.messagePartSeparator}{inventoryItem2.getID()}";
 
             manager.ProcessCommand(command7, null);
             manager.ProcessCommand(command8, null);

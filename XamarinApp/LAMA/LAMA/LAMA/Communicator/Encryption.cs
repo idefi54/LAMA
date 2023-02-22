@@ -8,6 +8,7 @@ using static Mapsui.Providers.ArcGIS.TileInfo;
 using static Xamarin.Essentials.Permissions;
 using System.Linq;
 using System.Diagnostics;
+using Xamarin.Forms.Internals;
 
 namespace LAMA.Communicator
 {
@@ -233,6 +234,12 @@ namespace LAMA.Communicator
         /// <returns>Single decrypted message</returns>
         private static string ReadSingleMessageFromEncrypted(byte[] encrypted, out int offset, bool ECB = true)
         {
+            if (encrypted.Length % 16 != 0)
+            {
+                Debug.WriteLine($"Wrong length message: {encrypted.Length}");
+                offset = encrypted.Length;
+                return "";
+            }
             offset = 0;
             string decrypted = "";
             List<byte> decryptedBytes = new List<byte>();
@@ -254,14 +261,14 @@ namespace LAMA.Communicator
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
                         byte[] buffer = new byte[16];
-                        while (csDecrypt.Read(buffer, 0, 16) != 0)
+                        while (encrypted.Length - offset >= 16 && csDecrypt.Read(buffer, 0, 16) != 0)
                         {
                             offset += 16;
                             string decodingBuffer = Encoding.UTF8.GetString(buffer);
                             decryptedBytes.AddRange(buffer);
-                            if (decodingBuffer.Contains("|"))
+                            if (decodingBuffer.Contains(Separators.messageSeparator))
                             {
-                                decrypted = decrypted + decodingBuffer.Substring(0, decodingBuffer.IndexOf("|") + 1);
+                                decrypted = decrypted + decodingBuffer.Substring(0, decodingBuffer.IndexOf(Separators.messageSeparator) + 1);
                                 csDecrypt.Close();
                                 break;
                             }

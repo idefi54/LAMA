@@ -53,7 +53,7 @@ namespace LAMA.Communicator
         /// <param name="key">Key for the database</param>
         public Command(string text, string key)
         {
-            string[] messageParts = text.Split(';');
+            string[] messageParts = text.Split(Separators.messagePartSeparator);
             _command = text;
             _time = Int64.Parse(messageParts[0]);
             _key = key;
@@ -82,7 +82,7 @@ namespace LAMA.Communicator
         /// <param name="id">Id of the client receiving the message</param>
         public Command(string text, string key, int id)
         {
-            string[] messageParts = text.Split(';');
+            string[] messageParts = text.Split(Separators.messagePartSeparator);
             _command = text;
             _time = Int64.Parse(messageParts[0]);
             _key = key;
@@ -118,7 +118,7 @@ namespace LAMA.Communicator
         /// <returns></returns>
         public byte[] Encode()
         {
-            return Encryption.EncryptStringToBytes_Aes(_time + ";" + _command + "|");
+            return Encryption.EncryptStringToBytes_Aes(_time + Separators.messagePartSeparator.ToString() + _command + Separators.messageSeparator.ToString());
         }
 
         public void buildFromStrings(string[] input)
@@ -185,7 +185,7 @@ namespace LAMA.Communicator
         /// <returns></returns>
         public override string ToString()
         {
-            return time.ToString() + ";" + command;
+            return time.ToString() + Separators.messagePartSeparator + command;
         }
     }
 }
