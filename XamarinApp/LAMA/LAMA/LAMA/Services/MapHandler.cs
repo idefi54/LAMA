@@ -26,6 +26,7 @@ namespace LAMA.Services
         private List<Feature> _symbols;
         private Dictionary<long, Pin> _activityPins;
         private Dictionary<ulong, Pin> _alertPins;
+        private Dictionary<long, Pin> _cpPins;
         private List<Pin> _pins;
         private Pin _selectionPin;
         private ulong _alertID;
@@ -36,6 +37,7 @@ namespace LAMA.Services
         private const long _doubleClickTime = 500;
         private const float _pinScale = 0.7f;
         private static Color _highlightColor = Color.FromHex("3A0E80");
+        private Location _currentLocation;
 
         // Events
         public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
@@ -48,7 +50,15 @@ namespace LAMA.Services
         /// Might be changed on UpdateLocation() call.
         /// Can be set manually.
         /// </summary>
-        public Location CurrentLocation { get; set; }
+        public Location CurrentLocation
+        {
+            get => _currentLocation;
+            set
+            {
+                _currentLocation = value;
+                LocalStorage.cp.location = new Pair<double, double>(value.Longitude, value.Latitude);
+            }
+        }
 
         /// <summary>
         /// <para>
@@ -73,6 +83,7 @@ namespace LAMA.Services
             _pins = new List<Pin>();
             _activityPins = new Dictionary<long, Pin>();
             _alertPins = new Dictionary<ulong, Pin>();
+            _cpPins = new Dictionary<long, Pin>();
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
@@ -81,7 +92,7 @@ namespace LAMA.Services
             _stopwatch.Start();
             _time = 0;
             _prevTime = 0;
-            CurrentLocation = null;
+            _currentLocation = null;
 
             LoadActivities();
         }
@@ -131,6 +142,7 @@ namespace LAMA.Services
             view.Pins.Clear();
             _activityPins.Clear();
             LoadActivities();
+            LoadCPs();
 
             if (activity != null)
             {
@@ -148,6 +160,12 @@ namespace LAMA.Services
             {
                 pin.Scale = _pinScale;
                 view.Pins.Add(pin);
+            }
+
+            foreach (Pin pin in _cpPins.Values)
+            {
+                view.Pins.Add(pin);
+                pin.Scale = 0.5f;
             }
 
             // Zoom in when clicked home button
@@ -170,7 +188,6 @@ namespace LAMA.Services
             view.Map = CreateMap();
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
-            CenterOn(view, activity.place.first, activity.place.second);
             Zoom(view);
 
             if (CurrentLocation != null)
@@ -183,7 +200,14 @@ namespace LAMA.Services
 
             _activityPins.Clear();
             LoadActivities();
-            _activityPins.Remove(activity.ID);
+            LoadCPs();
+
+            if (activity != null)
+            {
+                CenterOn(view, activity.place.first, activity.place.second);
+                _activityPins.Remove(activity.ID);
+                SetSelectionPin(activity.place.first, activity.place.second);
+            }
 
             foreach (Pin pin in _activityPins.Values)
             {
@@ -197,13 +221,17 @@ namespace LAMA.Services
                 pin.Scale = _pinScale;
             }
 
-
-            SetSelectionPin(activity.place.first, activity.place.second);
+            foreach (Pin pin in _cpPins.Values)
+            {
+                view.Pins.Add(pin);
+                pin.Scale = 0.5f;
+            }
+            
             if (!view.Pins.Contains(_selectionPin))
                 view.Pins.Add(_selectionPin);
 
             // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
             {
                 if (e.PropertyName == "MyLocationFollow")
                     Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
@@ -237,7 +265,7 @@ namespace LAMA.Services
         public void AddSymbol(double lon, double lat, IEnumerable<IStyle> styles = null)
         {
             var feature = new Feature();
-            var point = Mapsui.Projection.SphericalMercator.FromLonLat(lon, lat);
+            var point = SphericalMercator.FromLonLat(lon, lat);
             feature.Geometry = point;
             if (styles != null)
                 foreach (Style style in styles)
@@ -305,6 +333,18 @@ namespace LAMA.Services
             _activityPins[activity.ID] = pin;
             view?.Pins.Add(pin);
         }
+
+        public void AddCP(CP cp, MapView view = null)
+        {
+            Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
+            pin.Scale = 0.2f;
+            pin.Color = Color.Orange;
+            pin.Callout.Title = cp.name;
+
+            _cpPins[cp.ID] = pin;
+            view?.Pins.Add(pin);
+        }
+
 
         /// <summary>
         /// Adds the alert to the internal data.
@@ -462,6 +502,15 @@ namespace LAMA.Services
 
             for (int i = 0; i < rememberedList.Count; i++)
                 AddActivity(rememberedList[i], view);
+        }
+
+        private void LoadCPs(MapView view = null)
+        {
+            var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < rememberedList.Count; i++)
+                if (rememberedList[i].ID != LocalStorage.cpID)
+                    AddCP(rememberedList[i], view);
         }
 
         // Event Handlers
