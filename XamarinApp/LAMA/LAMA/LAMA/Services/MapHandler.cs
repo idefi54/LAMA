@@ -27,6 +27,7 @@ namespace LAMA.Services
         private Dictionary<long, Pin> _activityPins;
         private Dictionary<ulong, Pin> _alertPins;
         private Dictionary<long, Pin> _cpPins;
+        private Dictionary<long, Pin> _pointOfInterestPins;
         private List<Pin> _pins;
         private Pin _selectionPin;
         private ulong _alertID;
@@ -48,7 +49,8 @@ namespace LAMA.Services
             Nothing = 0b0,
             Activities = 0b1,
             Alerts = 0b10,
-            CPs = 0b100
+            CPs = 0b100,
+            PointsOfIntrest = 0b1000
         }
 
         /// <summary>
@@ -132,6 +134,7 @@ namespace LAMA.Services
             _activityPins = new Dictionary<long, Pin>();
             _alertPins = new Dictionary<ulong, Pin>();
             _cpPins = new Dictionary<long, Pin>();
+            _pointOfInterestPins = new Dictionary<long, Pin>();
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
@@ -237,6 +240,13 @@ namespace LAMA.Services
                     pin.Scale = 0.5f;
                 }
 
+            if (IsFilteredIn(EntityTypes.PointsOfIntrest))
+                foreach (Pin pin in _cpPins.Values)
+                {
+                    view.Pins.Add(pin);
+                    pin.Scale = _pinScale;
+                }
+
             view.Refresh();
         }
 
@@ -264,6 +274,7 @@ namespace LAMA.Services
             LoadCPs();
 
             // TODO: load alerts when they are saved
+            // TODO: load points of interest when they are saved
 
             if (activity != null)
             {
