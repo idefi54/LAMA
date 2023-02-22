@@ -38,6 +38,54 @@ namespace LAMA.Services
         private const float _pinScale = 0.7f;
         private static Color _highlightColor = Color.FromHex("3A0E80");
         private Location _currentLocation;
+        private EntityTypes _filter = EntityTypes.Nothing;
+
+        /// <summary>
+        /// Things that can be shown on the map.
+        /// </summary>
+        public enum EntityTypes
+        {
+            Nothing = 0b0,
+            Activities = 0b1,
+            Alerts = 0b10,
+            CPs = 0b100
+        }
+
+        /// <summary>
+        /// Don't show these types on the map.
+        /// </summary>
+        /// <param name="types"></param>
+        public void FilterOut(EntityTypes types) => _filter |= types;
+        /// <summary>
+        /// Show these types on the map.
+        /// </summary>
+        /// <param name="types"></param>
+        public void FilterIn(EntityTypes types) => _filter &= ~types;
+        /// <summary>
+        /// Show ONLY these types on tha map;
+        /// </summary>
+        /// <param name="types"></param>
+        public void FilterInExclusive(EntityTypes types) => _filter = ~types;
+        /// <summary>
+        /// Show EVERYTHING BUT these types.
+        /// </summary>
+        /// <param name="types"></param>
+        public void FilterOutExclusive(EntityTypes types) => _filter = types;
+        /// <summary>
+        /// Are all of these types excluded from the map?
+        /// </summary>
+        /// <param name="types"></param>
+        public bool IsFilteredOut(EntityTypes types) => (_filter & types) == types;
+        /// <summary>
+        /// Can all of these types be shown on the map?
+        /// </summary>
+        /// <param name="types"></param>
+        /// <returns></returns>
+        public bool IsFilteredIn(EntityTypes types) => (_filter & types) == EntityTypes.Nothing;
+        /// <summary>
+        /// Show everything.
+        /// </summary>
+        public void FilterClear() => _filter = EntityTypes.Nothing;
 
         // Events
         public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
@@ -134,48 +182,10 @@ namespace LAMA.Services
         public void MapViewSetup(MapView view, LarpActivity activity = null)
         {
             view.Map = CreateMap();
-            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
-            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
 
-            view.Pins.Clear();
-            _activityPins.Clear();
-            LoadActivities();
-            LoadCPs();
-
-            if (activity != null)
-            {
-                _activityPins[activity.ID].Color = _highlightColor;
-                CenterOn(view, activity.place.first, activity.place.second);
-            }
-
-            foreach (Pin pin in _activityPins.Values)
-            {
-                view.Pins.Add(pin);
-                pin.Scale = _pinScale;
-            }
-
-            foreach (Pin pin in _alertPins.Values)
-            {
-                pin.Scale = _pinScale;
-                view.Pins.Add(pin);
-            }
-
-            foreach (Pin pin in _cpPins.Values)
-            {
-                view.Pins.Add(pin);
-                pin.Scale = 0.5f;
-            }
-
-            // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-            {
-                if (e.PropertyName == "MyLocationFollow")
-                {
-                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
-                }
-            };
+            ReloadMapView(view);
         }
 
         /// <summary>
@@ -186,21 +196,74 @@ namespace LAMA.Services
         public void MapViewSetupSelection(MapView view, LarpActivity activity = null)
         {
             view.Map = CreateMap();
+            view.PinClicked += HandlePinClicked;
+            view.MapClicked += HandleMapClickedAdding;
+
+            ReloadMapView(view, activity);
+
+            if (!view.Pins.Contains(_selectionPin))
+                view.Pins.Add(_selectionPin);
+        }
+
+        /// <summary>
+        /// Visually refreshes entities on themap.
+        /// </summary>
+        /// <param name="view"></param>
+        public void RefreshMapView(MapView view)
+        {
+            view.Pins.Clear();
+            view.HideCallouts();
+
+            if (IsFilteredIn(EntityTypes.Activities))
+                foreach (Pin pin in _activityPins.Values)
+                {
+                    view.Pins.Add(pin);
+                    pin.Scale = _pinScale;
+                }
+
+
+            if (IsFilteredIn(EntityTypes.Alerts))
+                foreach (Pin pin in _alertPins.Values)
+                {
+                    view.Pins.Add(pin);
+                    pin.Scale = _pinScale;
+                }
+
+
+            if (IsFilteredIn(EntityTypes.CPs))
+                foreach (Pin pin in _cpPins.Values)
+                {
+                    view.Pins.Add(pin);
+                    pin.Scale = 0.5f;
+                }
+
+            view.Refresh();
+        }
+
+        /// <summary>
+        /// Reloades all data not tagged in <see cref="_filter"/>.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="activity"></param>
+        public void ReloadMapView(MapView view, LarpActivity activity = null)
+        {
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
-            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 6], view.Map.Resolutions[2]);
+            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
 
             if (CurrentLocation != null)
                 view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
 
-            view.PinClicked += HandlePinClicked;
-            view.MapClicked += HandleMapClickedAdding;
-
             view.Pins.Clear();
 
             _activityPins.Clear();
+            _cpPins.Clear();
+            _alertPins.Clear();
+
             LoadActivities();
             LoadCPs();
+
+            // TODO: load alerts when they are saved
 
             if (activity != null)
             {
@@ -209,27 +272,6 @@ namespace LAMA.Services
                 SetSelectionPin(activity.place.first, activity.place.second);
             }
 
-            foreach (Pin pin in _activityPins.Values)
-            {
-                view.Pins.Add(pin);
-                pin.Scale = _pinScale;
-            }
-
-            foreach (Pin pin in _alertPins.Values)
-            {
-                view.Pins.Add(pin);
-                pin.Scale = _pinScale;
-            }
-
-            foreach (Pin pin in _cpPins.Values)
-            {
-                view.Pins.Add(pin);
-                pin.Scale = 0.5f;
-            }
-            
-            if (!view.Pins.Contains(_selectionPin))
-                view.Pins.Add(_selectionPin);
-
             // Zoom in when clicked home button
             view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
             {
@@ -237,21 +279,7 @@ namespace LAMA.Services
                     Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
             };
 
-            view.RefreshGraphics();
-        }
-
-        /// <summary>
-        /// Removes everything from the map and adds it again to ensure only relevant data is on the map.
-        /// </summary>
-        /// <param name="view"></param>
-        public void RefreshMapView(MapView view)
-        {
-            view.Pins.Clear();
-            view.HideCallouts();
-
-            foreach (Pin pin in _activityPins.Values) view.Pins.Add(pin);
-            foreach (Pin pin in _alertPins.Values) view.Pins.Add(pin);
-            foreach (Pin pin in _pins) view.Pins.Add(pin);
+            RefreshMapView(view);
         }
 
         /// <summary>
@@ -331,7 +359,9 @@ namespace LAMA.Services
             }
 
             _activityPins[activity.ID] = pin;
-            view?.Pins.Add(pin);
+
+            if (view != null && IsFilteredIn(EntityTypes.Activities))
+                view.Pins.Add(pin);
         }
 
         public void AddCP(CP cp, MapView view = null)
@@ -342,7 +372,9 @@ namespace LAMA.Services
             pin.Callout.Title = cp.name;
 
             _cpPins[cp.ID] = pin;
-            view?.Pins.Add(pin);
+
+            if (view != null && IsFilteredIn(EntityTypes.CPs))
+                view.Pins.Add(pin);
         }
 
 
@@ -361,8 +393,10 @@ namespace LAMA.Services
             p.Callout.Title = text;
             p.Color = Color.Red;
             p.Callout.Color = Color.Red;
-            _alertPins.Add(_alertID, p);
-            view?.Pins.Add(p);
+            _alertPins[_alertID] = p;
+
+            if (view != null && IsFilteredIn(EntityTypes.Alerts))
+                view.Pins.Add(p);
 
             return _alertID++;
         }
