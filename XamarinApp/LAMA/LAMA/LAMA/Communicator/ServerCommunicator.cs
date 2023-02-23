@@ -678,5 +678,50 @@ namespace LAMA.Communicator
                 }
             }
         }
+
+        /// <summary>
+        /// Send information to a client about all the changes since a certain time
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="id">Client id</param>
+        /// <param name="lastUpdateTime">The last time this client was updated</param>
+        public void SendUpdateAlt(Socket current, int id, long lastUpdateTime)
+        {
+            logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
+            for (int i = 0; i < objectsCache.Count; i++)
+            {
+                Command entry = objectsCache[i];
+                string[] keyParts = entry.key.Split(';');
+                string objectType = keyParts[0];
+                long ID = Int64.Parse(keyParts[1]);
+                if (entry.time > lastUpdateTime)
+                {
+                    Serializable serializable;
+                    if (objectType == "LAMA.Models.LarpActivity") serializable = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.CP") serializable = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.InventoryItem") serializable = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.ChatMessage") serializable = DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.EncyclopedyCategory") serializable = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.EncyclopedyRecord") serializable = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList.getByID(ID);
+                    else continue;
+                    string[] attributes = serializable.getAttributes();
+                    string command = "ItemCreated" + ";" + objectType + ";" + String.Join("¦", attributes);
+                    SendCommand(new Command(command, entry.time, entry.getKey(), id));
+                }
+            }
+
+            for (int i = 0; i < attributesCache.Count; i++)
+            {
+                TimeValue entry = attributesCache[i];
+                string[] keyParts = entry.key.Split(';');
+                Command creationEntry = objectsCache.getByKey(keyParts[0] + ";" + keyParts[1]);
+                if (entry.time > lastUpdateTime && entry.time > creationEntry.time && !(creationEntry.time > lastUpdateTime))
+                {
+                    string value = entry.value;
+                    string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
+                    SendCommand(new Command(command, entry.time, entry.key, id));
+                }
+            }
+        }
     }
 }
