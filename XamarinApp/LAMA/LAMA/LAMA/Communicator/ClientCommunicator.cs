@@ -38,11 +38,10 @@ namespace LAMA.Communicator
         //Thread the client listens on
         private Thread listener;
         //When was the client last updated from the server
-        public long lastUpdate;
         public long LastUpdate
         {
-            get { return lastUpdate; }
-            set { if (wasUpdated) { lastUpdate = value; } }
+            get { return LocalStorage.LastUpdateTime; }
+            set { if (wasUpdated) { LocalStorage.LastUpdateTime = value; } }
         }
         private bool wasUpdated = false;
 
@@ -273,7 +272,7 @@ namespace LAMA.Communicator
             string q = "";
             q += $"Update{Separators.messagePartSeparator}";
             q += LocalStorage.clientID;
-            SendCommand(new Command(q, lastUpdate, "None"));
+            SendCommand(new Command(q, LastUpdate, "None"));
         }
 
         /// <summary>
@@ -615,7 +614,7 @@ namespace LAMA.Communicator
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
 
 
-                THIS.lastUpdate = 0;
+                THIS.LastUpdate = LocalStorage.LastUpdateTime;
                 THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 logger.LogWrite("Subscribing to events");
@@ -714,7 +713,7 @@ namespace LAMA.Communicator
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
 
 
-                THIS.lastUpdate = 0;
+                THIS.LastUpdate = LocalStorage.LastUpdateTime;
                 THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 logger.LogWrite("Subscribing to events");
