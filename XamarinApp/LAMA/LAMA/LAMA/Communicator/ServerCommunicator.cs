@@ -691,7 +691,7 @@ namespace LAMA.Communicator
             for (int i = 0; i < objectsCache.Count; i++)
             {
                 Command entry = objectsCache[i];
-                string[] keyParts = entry.key.Split(';');
+                string[] keyParts = entry.key.Split(Separators.messageSeparator);
                 string objectType = keyParts[0];
                 long ID = Int64.Parse(keyParts[1]);
                 if (entry.time > lastUpdateTime)
@@ -705,7 +705,7 @@ namespace LAMA.Communicator
                     else if (objectType == "LAMA.Models.EncyclopedyRecord") serializable = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList.getByID(ID);
                     else continue;
                     string[] attributes = serializable.getAttributes();
-                    string command = "ItemCreated" + ";" + objectType + ";" + String.Join("¦", attributes);
+                    string command = "ItemCreated" + Separators.messageSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + String.Join(Separators.attributesSeparator.ToString(), attributes);
                     SendCommand(new Command(command, entry.time, entry.getKey(), id));
                 }
             }
@@ -713,12 +713,12 @@ namespace LAMA.Communicator
             for (int i = 0; i < attributesCache.Count; i++)
             {
                 TimeValue entry = attributesCache[i];
-                string[] keyParts = entry.key.Split(';');
-                Command creationEntry = objectsCache.getByKey(keyParts[0] + ";" + keyParts[1]);
+                string[] keyParts = entry.key.Split(Separators.messageSeparator);
+                Command creationEntry = objectsCache.getByKey(keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1]);
                 if (entry.time > lastUpdateTime && entry.time > creationEntry.time && !(creationEntry.time > lastUpdateTime))
                 {
                     string value = entry.value;
-                    string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
+                    string command = "DataUpdated" + Separators.messageSeparator.ToString() + keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1] + Separators.messageSeparator.ToString() + keyParts[2] + Separators.messageSeparator.ToString() + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
