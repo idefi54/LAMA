@@ -48,6 +48,7 @@ namespace LAMA.Communicator
         private Command currentCommand = null;
 
         private ModelChangesManager modelChangesManager;
+        private Compression compressionManager;
 
         private int maxClientID;
         /// <summary>
@@ -337,6 +338,15 @@ namespace LAMA.Communicator
         /// <exception cref="WrongCreadintialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
+            compressionManager = new Compression();
+            Debug.WriteLine("Compression testing");
+            byte[] compressed = compressionManager.Encode($"Testovací ;:> český string žščřť {Separators.messagePartSeparator}, {Separators.messageSeparator}, 123456789");
+            Debug.WriteLine(Convert.ToBase64String(compressed));
+            Debug.WriteLine(compressionManager.Decode(compressed));
+            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
+            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
+            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
+            Debug.WriteLine("Compression testing end");
             if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
             Debug.WriteLine("After LarpEvent.Name test");
