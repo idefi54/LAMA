@@ -179,7 +179,7 @@ namespace LAMA.Communicator
             Array.Copy(buffer, data, received);
             Debug.WriteLine($"Encoded message: {System.Convert.ToBase64String(data)}");
             Debug.WriteLine($"Message string received: {Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split('|');
+            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split(Separators.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
@@ -187,7 +187,7 @@ namespace LAMA.Communicator
                 message = message.Trim('\0');
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(';');
+                string[] messageParts = message.Split(Separators.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -271,7 +271,7 @@ namespace LAMA.Communicator
         private void RequestUpdate()
         {
             string q = "";
-            q += "Update;";
+            q += $"Update{Separators.messagePartSeparator}";
             q += LocalStorage.clientID;
             SendCommand(new Command(q, lastUpdate, "None"));
         }
@@ -395,11 +395,15 @@ namespace LAMA.Communicator
             LocalStorage.clientName = cpName;
             if (isNew)
             {
-                SendCommand(new Command($"GiveID;{cpName};{Encryption.EncryptPassword(password)};{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                SendCommand(new Command(
+                    $"GiveID{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             else
             {
-                SendCommand(new Command($"GiveIDExisting;{cpName};{Encryption.EncryptPassword(password)};{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                SendCommand(new Command(
+                    $"GiveIDExisting{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             if (broadcastTimer == null)
             {
@@ -434,7 +438,7 @@ namespace LAMA.Communicator
                         s.Connect(_IP, _port);
                         if (loggedIn && LocalStorage.clientID != -1)
                         {
-                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                            SendCommand(new Command($"ClientConnected{Separators.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                     }
                     catch (SocketException e)
@@ -520,7 +524,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void SendClientInfo()
         {
-            string command = "ClientConnected" + ";" + LocalStorage.clientID;
+            string command = "ClientConnected" + Separators.messagePartSeparator + LocalStorage.clientID;
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
         /// <summary>
