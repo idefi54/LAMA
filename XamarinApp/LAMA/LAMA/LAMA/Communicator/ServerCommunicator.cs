@@ -255,6 +255,7 @@ namespace LAMA.Communicator
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(Separators.messagePartSeparator);
+                Debug.WriteLine($"Message Parts: {messageParts.Length}");
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')

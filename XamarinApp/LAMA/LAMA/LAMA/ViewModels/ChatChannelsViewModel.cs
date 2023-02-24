@@ -21,7 +21,7 @@ namespace LAMA.ViewModels
         public Command<object> ChatChannelTapped { get; private set; }
         public string ChannelName { get; set; }
 
-        public bool CanCreateChannels = false;
+        public bool CanCreateChannels { get; set; }
         public ObservableCollection<String> Channels { get; set; }
 
         INavigation Navigation;
@@ -63,6 +63,7 @@ namespace LAMA.ViewModels
             }
 
             if (LocalStorage.cpID == 0) CanCreateChannels = true;
+            else CanCreateChannels = false;
         }
 
         private void PropagateChanged()

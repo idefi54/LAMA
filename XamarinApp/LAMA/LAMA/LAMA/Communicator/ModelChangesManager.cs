@@ -44,43 +44,42 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         public void ProcessCommand(string command, Socket current)
         {
+            Debug.WriteLine($"Command: {command}");
             string[] messageParts = command.Split(Separators.messagePartSeparator);
-            if (!server)
+            //Some attribute got updated
+            if (messageParts[1] == "DataUpdated")
             {
-                //Some attribute got updated
-                if (messageParts[1] == "DataUpdated")
+                if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ItemCreated")
+            {
+                Debug.WriteLine("ItemCreated");
+                if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ItemDeleted")
+            {
+                if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+            }
+            if (messageParts[1] == "CPLocations")
+            {
+                if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                CPLocationsUpdated(messageParts.Skip(2).ToArray(), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+            }
+            //Rollback effect of some previous message
+            if (!server && (messageParts[1] == "Rollback"))
+            {
+                if (messageParts[2] == "DataUpdated")
                 {
-                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    DataUpdated(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+                    if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
                 }
-                if (messageParts[1] == "ItemCreated")
+                if (messageParts[2] == "ItemCreated")
                 {
-                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
-                }
-                if (messageParts[1] == "ItemDeleted")
-                {
-                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    ItemDeleted(messageParts[2], Int32.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
-                }
-                if (messageParts[1] == "CPLocations")
-                {
-                    if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    CPLocationsUpdated(messageParts.Skip(2).ToArray(), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
-                }
-                //Rollback effect of some previous message
-                if (!server && (messageParts[1] == "Rollback"))
-                {
-                    if (messageParts[2] == "DataUpdated")
-                    {
-                        if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                        RollbackDataUpdated(messageParts[3], Int32.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
-                    }
-                    if (messageParts[2] == "ItemCreated")
-                    {
-                        if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                        RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
-                    }
+                    if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                    RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
                 }
             }
         }
