@@ -224,7 +224,7 @@ namespace LAMA.Communicator
                 rollbackCommand = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute + Separators.messagePartSeparator.ToString() + attributesCache.getByKey(attributeID).value;
                 try
                 {
-                    if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode());
+                    if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode(communicator.CompressionManager));
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
@@ -509,7 +509,7 @@ namespace LAMA.Communicator
             rollbackCommand += objectsCache.getByKey(objectID).command;
             try
             {
-                if (!testing) current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode());
+                if (!testing) current.Send((new Command(rollbackCommand, objectsCache.getByKey(objectID).time, objectID)).Encode(communicator.CompressionManager));
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {

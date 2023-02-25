@@ -23,6 +23,7 @@ namespace LAMA.Communicator
         {
             get { return logger; }
         }
+        public Compression CompressionManager { get; set; }
         //Managed to connect to the server
         private bool _connected = false;
         public bool connected
@@ -100,8 +101,8 @@ namespace LAMA.Communicator
                             }
                             logger.LogWrite($"Sending: {currentCommand.command}");
                             Debug.WriteLine($"Sending: {currentCommand.command}");
-                            byte[] data = currentCommand.Encode();
-                            Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
+                            byte[] data = currentCommand.Encode(CompressionManager);
+                            Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                             try
                             {
                                 s.Send(data);
@@ -177,8 +178,8 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             Debug.WriteLine($"Encoded message: {System.Convert.ToBase64String(data)}");
-            Debug.WriteLine($"Message string received: {Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split(Separators.messageSeparator);
+            Debug.WriteLine($"Message string received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
@@ -538,6 +539,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password)
         {
+            CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             LarpEvent.Name = serverName;
@@ -637,6 +639,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             LarpEvent.Name = serverName;
