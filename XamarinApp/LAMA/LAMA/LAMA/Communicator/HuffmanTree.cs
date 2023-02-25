@@ -153,6 +153,106 @@ namespace LAMA.Communicator
             return decoded;
         }
 
+        public string DecodeFromAESBytes(byte[] bytes, out int offset)
+        {
+            HuffmanNode current = this.Root;
+            string decoded = "";
+
+            int i = 0;
+            while (i < bytes.Length / 16) {
+                int j = 0;
+                byte[] byteBlock = new byte[16];
+                byteBlock[0] = bytes[16 * i];
+                byteBlock[1] = bytes[16 * i + 1];
+                byteBlock[2] = bytes[16 * i + 2];
+                byteBlock[3] = bytes[16 * i + 3];
+                byteBlock[4] = bytes[16 * i + 4];
+                byteBlock[5] = bytes[16 * i + 5];
+                byteBlock[6] = bytes[16 * i + 6];
+                byteBlock[7] = bytes[16 * i + 7];
+                byteBlock[8] = bytes[16 * i + 8];
+                byteBlock[9] = bytes[16 * i + 9];
+                byteBlock[10] = bytes[16 * i + 10];
+                byteBlock[11] = bytes[16 * i + 11];
+                byteBlock[12] = bytes[16 * i + 12];
+                byteBlock[13] = bytes[16 * i + 13];
+                byteBlock[14] = bytes[16 * i + 14];
+                byteBlock[15] = bytes[16 * i + 15];
+                BitArray bits = new BitArray(byteBlock);
+                while (j < 16 * 8)
+                {
+                    bool bit = bits[j];
+                    if (bit)
+                    {
+                        if (current.Right != null)
+                        {
+                            current = current.Right;
+                        }
+                    }
+                    else
+                    {
+                        if (current.Left != null)
+                        {
+                            current = current.Left;
+                        }
+                    }
+
+                    if (IsLeaf(current))
+                    {
+                        if (current.Symbol == Separators.messageSeparator)
+                        {
+                            decoded += current.Symbol;
+                            //skip the rest of the block modify offset
+                            offset = i + 1;
+                            return decoded;
+                        }
+                        else if (current.Symbol != HuffmanTree.specialCharacter)
+                        {
+                            decoded += current.Symbol;
+                        }
+                        else
+                        {
+                            int counter = 0;
+                            if (littleEndian)
+                            {
+                                int position = j + 8;
+                                while (bits[position] != false)
+                                {
+                                    position--;
+                                    counter++;
+                                }
+                            }
+                            else
+                            {
+                                int position = j + 1;
+                                while (bits[position] != false)
+                                {
+                                    position++;
+                                    counter++;
+                                }
+                            }
+                            if (counter == 0) counter = 1;
+                            byte[] utf8Bytes = new byte[counter];
+                            BitArray utf8Bits = new BitArray(counter * 8);
+                            for (int k = 0; k < utf8Bits.Length; k++)
+                            {
+                                utf8Bits[k] = bits[j + k + 1];
+                            }
+                            utf8Bits.CopyTo(utf8Bytes, 0);
+                            char[] symbols = Encoding.UTF8.GetString(utf8Bytes).ToCharArray();
+                            decoded += symbols[0];
+                            j += counter * 8;
+                        }
+                        current = this.Root;
+                    }
+                    j++;
+                }
+                i++;
+            }
+            offset = i;
+            return decoded;
+        }
+
         public bool IsLeaf(HuffmanNode node)
         {
             return (node.Left == null && node.Right == null);

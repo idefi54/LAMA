@@ -116,9 +116,9 @@ namespace LAMA.Communicator
         /// Get encoded representation of the command (using AES algorithm)
         /// </summary>
         /// <returns></returns>
-        public byte[] Encode()
+        public byte[] Encode(Compression compressor)
         {
-            return Encryption.EncryptStringToBytes_Aes(_time + Separators.messagePartSeparator.ToString() + _command + Separators.messageSeparator.ToString());
+            return Encryption.HuffmanCompressAESEncode(_time + Separators.messagePartSeparator.ToString() + _command + Separators.messageSeparator.ToString(), compressor);
         }
 
         public void buildFromStrings(string[] input)

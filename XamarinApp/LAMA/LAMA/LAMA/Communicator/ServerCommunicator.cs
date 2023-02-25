@@ -24,6 +24,7 @@ namespace LAMA.Communicator
         {
             get { return logger; }
         }
+        public Compression CompressionManager { get; set; }
 
         public long LastUpdate
         {
@@ -48,7 +49,6 @@ namespace LAMA.Communicator
         private Command currentCommand = null;
 
         private ModelChangesManager modelChangesManager;
-        private Compression compressionManager;
 
         private int maxClientID;
         /// <summary>
@@ -106,10 +106,8 @@ namespace LAMA.Communicator
                 {
                     logger.LogWrite($"Sending: {currentCommand.command}");
                     Debug.WriteLine($"Sending: {currentCommand.command}");
-                    byte[] data = currentCommand.Encode();
-                    Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
-                    Debug.WriteLine($"\ndata.Length: {data.Length}");
-                    Debug.WriteLine($"data {Convert.ToBase64String(data)}");
+                    byte[] data = currentCommand.Encode(CompressionManager);
+                    Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
@@ -246,10 +244,9 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"{Convert.ToBase64String(data)}");
-            Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split(Separators.messageSeparator);
-
+            Debug.WriteLine($"Message Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
+            Debug.WriteLine($"Messages.Length: {messages.Length}");
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
@@ -338,11 +335,18 @@ namespace LAMA.Communicator
         /// <exception cref="WrongCreadintialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
-            compressionManager = new Compression();
+            CompressionManager = new Compression();
+            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             Debug.WriteLine("Compression testing");
-            byte[] compressed = compressionManager.Encode($"Testovací ;:> český string žščřť {Separators.messagePartSeparator}, {Separators.messageSeparator}, 123456789");
-            Debug.WriteLine(Convert.ToBase64String(compressed));
-            Debug.WriteLine(compressionManager.Decode(compressed));
+            byte[] compressed = CompressionManager.Encode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}");
+            Debug.WriteLine($"compressed length {compressed.Length}");
+            string decompressed = CompressionManager.Decode(compressed);
+            Debug.WriteLine(decompressed);
+            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}", CompressionManager);
+            string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
+            Debug.WriteLine("Uncompressed");
+            Debug.WriteLine(Convert.ToBase64String(encrypted));
+            Debug.WriteLine(decrypted);
             //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
             //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
@@ -438,7 +442,7 @@ namespace LAMA.Communicator
                 }
             }
             Debug.WriteLine("No exceptions");
-            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
+            //Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
             //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));

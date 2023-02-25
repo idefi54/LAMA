@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
-    internal class Compression
+    public class Compression
     {
         private HuffmanTree huffmanTree;
         public Compression()
@@ -130,6 +130,11 @@ namespace LAMA.Communicator
         public string Decode(byte[] bytes)
         {
             return huffmanTree.Decode(bytes);
+        }
+
+        public string DecodeFromAESBytes(byte[] bytes, out int offsetEnd)
+        {
+            return huffmanTree.DecodeFromAESBytes(bytes, out offsetEnd);
         }
     }
 }
