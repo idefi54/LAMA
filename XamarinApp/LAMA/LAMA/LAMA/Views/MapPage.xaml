@@ -15,12 +15,11 @@
         <AbsoluteLayout
             VerticalOptions="FillAndExpand"
             HorizontalOptions="FillAndExpand"
-            Padding="0"
-            BackgroundColor="AliceBlue">
+            Padding="0">
             <common:OurNavigationMenu>
             </common:OurNavigationMenu>
 
-            <StackLayout BackgroundColor="ForestGreen"
+            <StackLayout
                   HorizontalOptions="FillAndExpand"
                   VerticalOptions="FillAndExpand"
                   AbsoluteLayout.LayoutFlags="All"
