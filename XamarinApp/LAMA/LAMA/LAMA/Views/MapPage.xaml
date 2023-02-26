@@ -3,12 +3,68 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:common="clr-namespace:LAMA.Views"
              x:Class="LAMA.Views.MapPage"
-			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms">
+			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             Padding="0">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Filter" Command="{Binding FilterDropdown}"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
-        <StackLayout  Spacing="0">
-            <common:OurNavigationMenu></common:OurNavigationMenu>
-            <StackLayout>
+        <AbsoluteLayout
+            VerticalOptions="FillAndExpand"
+            HorizontalOptions="FillAndExpand"
+            Padding="0"
+            BackgroundColor="AliceBlue">
+            <common:OurNavigationMenu>
+            </common:OurNavigationMenu>
+
+            <StackLayout BackgroundColor="ForestGreen"
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  AbsoluteLayout.LayoutFlags="All"
+                  AbsoluteLayout.LayoutBounds="0,0,1,1">
+
+                <Button
+                    x:Name="SetHomeLocationButton"
+                    Text="Change Home Location"/>
+
+                <Grid
+                    x:Name="MapLayout"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
+                    Padding="0"
+                    >
+
+                </Grid>
+
             </StackLayout>
-        </StackLayout>
+
+            <!--Dropdown content must be bellow, so it is rendered on top of the previous one. x:Name is relevant only for animation.-->
+            <!--This serves as a disabling of classical page content-->
+            <BoxView x:Name ="Fadeout"
+					 HorizontalOptions="Fill" VerticalOptions="Fill"
+                     AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"
+					 BackgroundColor="#000000" Opacity="0.2"
+					 IsVisible="{Binding ShowDropdown}"/>
+            <!--This is the actual dropdown menu. It apears it needs to be in the frame for some reason.
+				In AbsoluteLayout.LayoutBounds replace 200 with desired height. Also change BackgroundColor to desired color.-->
+            <Frame x:Name="DropdownMenu"
+				   AbsoluteLayout.LayoutBounds="0,0,1,1"
+				   BackgroundColor="Transparent"
+                   AbsoluteLayout.LayoutFlags="All"
+				   IsVisible="{Binding ShowDropdown}"
+                   Padding="0">
+                <Grid
+                    x:Name="FilterGrid"
+                    BackgroundColor="#2B2B2B"
+                    Padding="0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start">
+                   
+                </Grid>
+            </Frame>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
