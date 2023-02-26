@@ -27,6 +27,7 @@ namespace LAMA.Services
         private Dictionary<long, Pin> _activityPins;
         private Dictionary<ulong, Pin> _alertPins;
         private Dictionary<long, Pin> _cpPins;
+        private Dictionary<long, Pin> _pointOfInterestPins;
         private List<Pin> _pins;
         private Pin _selectionPin;
         private ulong _alertID;
@@ -38,54 +39,80 @@ namespace LAMA.Services
         private const float _pinScale = 0.7f;
         private static Color _highlightColor = Color.FromHex("3A0E80");
         private Location _currentLocation;
-        private EntityTypes _filter = EntityTypes.Nothing;
+        private EntityType _filter = EntityType.Nothing;
 
         /// <summary>
         /// Things that can be shown on the map.
         /// </summary>
-        public enum EntityTypes
+        public enum EntityType
         {
             Nothing = 0b0,
             Activities = 0b1,
             Alerts = 0b10,
-            CPs = 0b100
+            CPs = 0b100,
+            PointsOfIntrest = 0b1000
+        }
+
+        /// <summary>
+        /// Filters the types in or out.
+        /// </summary>
+        /// <param name="types"></param>
+        /// <param name="show"></param>
+        public void Filter(EntityType types, bool show)
+        {
+            if (show) FilterIn(types);
+            else FilterOut(types);
+        }
+
+        /// <summary>
+        /// Filters the types exclusively.
+        /// </summary>
+        /// <param name="types"></param>
+        /// <param name="show">
+        ///     <br>True means show nothing but the types.</br>
+        ///     <br>False means show everything but the types.</br>
+        /// </param>
+        public void FilterExclusive(EntityType types, bool show)
+        {
+            if (show) FilterInExclusive(types);
+            else FilterOutExclusive(types);
         }
 
         /// <summary>
         /// Don't show these types on the map.
         /// </summary>
         /// <param name="types"></param>
-        public void FilterOut(EntityTypes types) => _filter |= types;
+        private void FilterOut(EntityType types) => _filter |= types;
         /// <summary>
         /// Show these types on the map.
         /// </summary>
         /// <param name="types"></param>
-        public void FilterIn(EntityTypes types) => _filter &= ~types;
+        private void FilterIn(EntityType types) => _filter &= ~types;
         /// <summary>
         /// Show ONLY these types on tha map;
         /// </summary>
         /// <param name="types"></param>
-        public void FilterInExclusive(EntityTypes types) => _filter = ~types;
+        private void FilterInExclusive(EntityType types) => _filter = ~types;
         /// <summary>
         /// Show EVERYTHING BUT these types.
         /// </summary>
         /// <param name="types"></param>
-        public void FilterOutExclusive(EntityTypes types) => _filter = types;
+        private void FilterOutExclusive(EntityType types) => _filter = types;
         /// <summary>
         /// Are all of these types excluded from the map?
         /// </summary>
         /// <param name="types"></param>
-        public bool IsFilteredOut(EntityTypes types) => (_filter & types) == types;
+        public bool IsFilteredOut(EntityType types) => (_filter & types) == types;
         /// <summary>
         /// Can all of these types be shown on the map?
         /// </summary>
         /// <param name="types"></param>
         /// <returns></returns>
-        public bool IsFilteredIn(EntityTypes types) => (_filter & types) == EntityTypes.Nothing;
+        public bool IsFilteredIn(EntityType types) => (_filter & types) == EntityType.Nothing;
         /// <summary>
         /// Show everything.
         /// </summary>
-        public void FilterClear() => _filter = EntityTypes.Nothing;
+        public void FilterClear() => _filter = EntityType.Nothing;
 
         // Events
         public delegate void PinClick(PinClickedEventArgs e, long activityID, bool doubleClick);
@@ -132,6 +159,7 @@ namespace LAMA.Services
             _activityPins = new Dictionary<long, Pin>();
             _alertPins = new Dictionary<ulong, Pin>();
             _cpPins = new Dictionary<long, Pin>();
+            _pointOfInterestPins = new Dictionary<long, Pin>();
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
@@ -214,7 +242,7 @@ namespace LAMA.Services
             view.Pins.Clear();
             view.HideCallouts();
 
-            if (IsFilteredIn(EntityTypes.Activities))
+            if (IsFilteredIn(EntityType.Activities))
                 foreach (Pin pin in _activityPins.Values)
                 {
                     view.Pins.Add(pin);
@@ -222,7 +250,7 @@ namespace LAMA.Services
                 }
 
 
-            if (IsFilteredIn(EntityTypes.Alerts))
+            if (IsFilteredIn(EntityType.Alerts))
                 foreach (Pin pin in _alertPins.Values)
                 {
                     view.Pins.Add(pin);
@@ -230,11 +258,18 @@ namespace LAMA.Services
                 }
 
 
-            if (IsFilteredIn(EntityTypes.CPs))
+            if (IsFilteredIn(EntityType.CPs))
                 foreach (Pin pin in _cpPins.Values)
                 {
                     view.Pins.Add(pin);
                     pin.Scale = 0.5f;
+                }
+
+            if (IsFilteredIn(EntityType.PointsOfIntrest))
+                foreach (Pin pin in _cpPins.Values)
+                {
+                    view.Pins.Add(pin);
+                    pin.Scale = _pinScale;
                 }
 
             view.Refresh();
@@ -264,6 +299,7 @@ namespace LAMA.Services
             LoadCPs();
 
             // TODO: load alerts when they are saved
+            // TODO: load points of interest when they are saved
 
             if (activity != null)
             {
@@ -360,7 +396,7 @@ namespace LAMA.Services
 
             _activityPins[activity.ID] = pin;
 
-            if (view != null && IsFilteredIn(EntityTypes.Activities))
+            if (view != null && IsFilteredIn(EntityType.Activities))
                 view.Pins.Add(pin);
         }
 
@@ -373,7 +409,7 @@ namespace LAMA.Services
 
             _cpPins[cp.ID] = pin;
 
-            if (view != null && IsFilteredIn(EntityTypes.CPs))
+            if (view != null && IsFilteredIn(EntityType.CPs))
                 view.Pins.Add(pin);
         }
 
@@ -395,7 +431,7 @@ namespace LAMA.Services
             p.Callout.Color = Color.Red;
             _alertPins[_alertID] = p;
 
-            if (view != null && IsFilteredIn(EntityTypes.Alerts))
+            if (view != null && IsFilteredIn(EntityType.Alerts))
                 view.Pins.Add(p);
 
             return _alertID++;

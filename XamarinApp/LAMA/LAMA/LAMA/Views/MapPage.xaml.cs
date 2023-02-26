@@ -4,6 +4,8 @@ using Xamarin.Forms.Xaml;
 using LAMA.Services;
 using Xamarin.Essentials;
 using Mapsui.UI.Forms;
+using LAMA.ViewModels;
+using System;
 
 namespace LAMA.Views
 {
@@ -11,31 +13,42 @@ namespace LAMA.Views
     public partial class MapPage : ContentPage
     {
         private MapView _mapView;
-        private Button _setHomeButton;
 
         public MapPage()
         {
             InitializeComponent();
-            MapHandler.Instance.OnPinClick += OnPinClicked;
-            _setHomeButton = new Button();
-            _setHomeButton.Clicked += SetHomeButton_Clicked;
-            _setHomeButton.Text = "Set Home Location";
-            _setHomeButton.TextColor = Color.Black;
-            _setHomeButton.BackgroundColor = Color.Yellow;
-            var layout = (Content as StackLayout);
-            layout.Children.Add(_setHomeButton);
+            BindingContext = new MapPageViewModel(() => _mapView);
+
+            int row = 0;
+            foreach (MapHandler.EntityType type in Enum.GetValues(typeof(MapHandler.EntityType)))
+            {
+                LayoutOptions center = LayoutOptions.Center;
+
+                var label = new Label
+                {
+                    Text = $"{type}:",
+                    HorizontalOptions = LayoutOptions.End,
+                    VerticalOptions = center,
+                    FontAttributes = FontAttributes.Bold,
+                };
+
+                var checkBox = new CheckBox
+                {
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = center,
+                    IsChecked = true,
+                    Color = Color.Green,
+                };
+                checkBox.CheckedChanged += (object sender, CheckedChangedEventArgs e) =>
+                    MapHandler.Instance.Filter(type, e.Value);
+
+                FilterGrid.Children.Add(label, 0, row);
+                FilterGrid.Children.Add(checkBox, 1, row);
+                row++;
+            }
         }
 
-        private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
-        {
-            if (!doubleClick)
-                return;
 
-            var rememberedList = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList;
-            Models.LarpActivity activity = rememberedList.getByID(activityID);
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
-            e.Handled = true;
-        }
 
         private async Task<bool> CheckLocationAvailable()
         {
@@ -45,8 +58,7 @@ namespace LAMA.Views
 
                 if (status != PermissionStatus.Granted)
                     return false;
-            }
-            else
+            } else
             {
                 return false;
             }
@@ -66,16 +78,15 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var layout = (Content as StackLayout);
 
             // Add activity indicator
             var activityIndicator = new ActivityIndicator
             {
                 VerticalOptions = LayoutOptions.CenterAndExpand,
-                HorizontalOptions = LayoutOptions.CenterAndExpand
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                IsRunning = true
             };
-            activityIndicator.IsRunning = true;
-            layout.Children.Add(activityIndicator);
+            MapLayout.Children.Add(activityIndicator);
 
             // Handle permissions and location
             if (Device.RuntimePlatform != Device.WPF)
@@ -94,7 +105,6 @@ namespace LAMA.Views
             // Handle the fucking map
             await Task.Delay(500);
 
-            
             // test
             MapHandler.Instance.AddAlert(20, 20, "ALERT");
 
@@ -103,7 +113,8 @@ namespace LAMA.Views
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                BackgroundColor = Color.Gray
+                BackgroundColor = Color.Gray,
+                //HeightRequest = Application.Current.MainPage.Height
             };
             MapHandler.Instance.MapViewSetup(_mapView);
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
@@ -113,18 +124,29 @@ namespace LAMA.Views
             {
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
                 MapHandler.Zoom(_mapView);
-                _setHomeButton.BackgroundColor = Color.Gray;
-                _setHomeButton.Text = "Change Home Location";
+                SetHomeLocationButton.BackgroundColor = Color.Gray;
+                SetHomeLocationButton.Text = "Change Home Location";
             }
+            SetHomeLocationButton.Clicked += SetHomeClicked;
 
-            layout.Children.Add(_mapView);
-            layout.Children.Remove(activityIndicator);
+            MapLayout.Children.Remove(activityIndicator);
+            MapLayout.Children.Add(_mapView);
         }
 
-        private async void SetHomeButton_Clicked(object sender, System.EventArgs e)
+        protected override void OnDisappearing()
         {
-            _setHomeButton.BackgroundColor = Color.Gray;
-            _setHomeButton.Text = "Change Home Location";
+            base.OnDisappearing();
+            if (_mapView == null)
+                return;
+
+            MapLayout.Children.Remove(_mapView);
+            _mapView = null;
+        }
+
+        private async void SetHomeClicked(object sender, System.EventArgs e)
+        {
+            SetHomeLocationButton.BackgroundColor = Color.Gray;
+            SetHomeLocationButton.Text = "Change Home Location";
 
             Mapsui.Geometries.Point p = Mapsui.Projection.SphericalMercator.ToLonLat(_mapView.Viewport.Center.X, _mapView.Viewport.Center.Y);
             Location loc = new Location
@@ -137,23 +159,12 @@ namespace LAMA.Views
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
             MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
             MapHandler.Zoom(_mapView);
-            //MapHandler.SetZoomLimits(_mapView, 1, 100);
 
             if (Device.RuntimePlatform != Device.WPF)
             {
                 await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
             }
             return;
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            if (_mapView == null)
-                return;
-
-            (Content as StackLayout).Children.Remove(_mapView);
-            _mapView = null;
         }
     }
 }
