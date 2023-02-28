@@ -36,7 +36,7 @@
                     Text="Change Home Location"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    Clicked="{Binding SaveHome}"/>
+                    Command="{Binding SaveHome}"/>
 
                     <Label Text="Edit"/>
                     <Switch IsToggled="{Binding Editing}"/>
