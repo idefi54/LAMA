@@ -6,6 +6,8 @@ using Xamarin.Essentials;
 using Mapsui.UI.Forms;
 using LAMA.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace LAMA.Views
 {
@@ -17,8 +19,9 @@ namespace LAMA.Views
         public MapPage()
         {
             InitializeComponent();
-            BindingContext = new MapPageViewModel(() => _mapView);
+            BindingContext = new MapViewModel(() => _mapView);
 
+            // Add options into the filter
             int row = 0;
             foreach (MapHandler.EntityType type in Enum.GetValues(typeof(MapHandler.EntityType)))
             {
@@ -47,8 +50,6 @@ namespace LAMA.Views
                 row++;
             }
         }
-
-
 
         private async Task<bool> CheckLocationAvailable()
         {
@@ -105,9 +106,6 @@ namespace LAMA.Views
             // Handle the fucking map
             await Task.Delay(500);
 
-            // test
-            MapHandler.Instance.AddAlert(20, 20, "ALERT");
-
             // Init Map View
             _mapView = new MapView
             {
@@ -116,9 +114,14 @@ namespace LAMA.Views
                 BackgroundColor = Color.Gray,
                 //HeightRequest = Application.Current.MainPage.Height
             };
+
             MapHandler.Instance.MapViewSetup(_mapView);
+            MapHandler.Instance.OnPinClick += OnPinClicked;
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
+
+            // test
+            MapHandler.Instance.AddAlert(20, 20, "ALERT", _mapView);
 
             if (MapHandler.Instance.CurrentLocation != null)
             {
@@ -136,6 +139,8 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            MapHandler.Instance.MapDataSave();
+
             if (_mapView == null)
                 return;
 
@@ -143,28 +148,21 @@ namespace LAMA.Views
             _mapView = null;
         }
 
-        private async void SetHomeClicked(object sender, System.EventArgs e)
+        private async void SetHomeClicked(object sender, EventArgs e)
         {
             SetHomeLocationButton.BackgroundColor = Color.Gray;
             SetHomeLocationButton.Text = "Change Home Location";
+        }
 
-            Mapsui.Geometries.Point p = Mapsui.Projection.SphericalMercator.ToLonLat(_mapView.Viewport.Center.X, _mapView.Viewport.Center.Y);
-            Location loc = new Location
-            {
-                Latitude = p.Y,
-                Longitude = p.X
-            };
-            MapHandler.Instance.CurrentLocation = loc;
-            await MapHandler.Instance.UpdateLocation(_mapView, false);
-            MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null);
-            MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
-            MapHandler.Zoom(_mapView);
+        private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
+        {
+            if (!doubleClick)
+                return;
 
-            if (Device.RuntimePlatform != Device.WPF)
-            {
-                await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
-            }
-            return;
+            var rememberedList = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList;
+            Models.LarpActivity activity = rememberedList.getByID(activityID);
+            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            e.Handled = true;
         }
     }
 }

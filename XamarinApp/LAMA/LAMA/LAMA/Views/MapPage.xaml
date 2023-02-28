@@ -16,8 +16,6 @@
             VerticalOptions="FillAndExpand"
             HorizontalOptions="FillAndExpand"
             Padding="0">
-            <common:OurNavigationMenu>
-            </common:OurNavigationMenu>
 
             <StackLayout
                   HorizontalOptions="FillAndExpand"
@@ -25,18 +23,31 @@
                   AbsoluteLayout.LayoutFlags="All"
                   AbsoluteLayout.LayoutBounds="0,0,1,1">
 
-                <Button
+                <common:OurNavigationMenu>
+                </common:OurNavigationMenu>
+
+                <StackLayout
+                    Orientation="Horizontal"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    
+                    <Button
                     x:Name="SetHomeLocationButton"
-                    Text="Change Home Location"/>
+                    Text="Change Home Location"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Clicked="{Binding SaveHome}"/>
+
+                    <Label Text="Edit"/>
+                    <Switch IsToggled="{Binding Editing}"/>
+
+                </StackLayout>
 
                 <Grid
                     x:Name="MapLayout"
                     HorizontalOptions="FillAndExpand"
                     VerticalOptions="FillAndExpand"
-                    Padding="0"
-                    >
-
-                </Grid>
+                    Padding="0"/>
 
             </StackLayout>
 
