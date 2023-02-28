@@ -316,6 +316,7 @@ namespace LAMA.Services
         {
             view.Pins.Clear();
             view.HideCallouts();
+            view.Drawables.Clear();
 
             if (IsFilteredIn(EntityType.Activities))
                 foreach (Pin pin in _activityPins.Values)
@@ -340,15 +341,20 @@ namespace LAMA.Services
                 }
 
             if (IsFilteredIn(EntityType.PointsOfIntrest))
-                foreach (Pin pin in _cpPins.Values)
+                foreach (Pin pin in _pointOfInterestPins.Values)
                 {
                     view.Pins.Add(pin);
                     pin.Scale = _pinScale;
                 }
 
             if (IsFilteredIn(EntityType.Polylines))
+            {
                 foreach (Polyline polyline in _polyLines.Values)
                     view.Drawables.Add(polyline);
+                
+                foreach (Polyline polyline in _polylineBuffer)
+                    view.Drawables.Add(polyline);
+            }
 
             view.Pins.Add(_selectionPin);
             _selectionPin.IsVisible = _selectionPinVisible;
