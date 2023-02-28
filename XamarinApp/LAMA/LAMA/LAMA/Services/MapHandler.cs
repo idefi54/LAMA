@@ -36,6 +36,7 @@ namespace LAMA.Services
 
         // Pins
         private Pin _selectionPin;
+        private bool _selectionPinVisible; // Because pin's property throws FRICKING exceptions.
         private Pin _polylinePin;
         private const float _pinScale = 0.7f;
         private static XColor _highlightColor = XColor.FromHex("3A0E80");
@@ -100,10 +101,11 @@ namespace LAMA.Services
             _pointOfInterestPins = new Dictionary<long, Pin>();
             _polyLines = new Dictionary<long, Polyline>();
             _polylineBuffer = new Stack<Polyline>();
-            _selectionPin = new Pin();
             _polylinePin = new Pin();
+            _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
+            _selectionPinVisible = false;
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
@@ -229,8 +231,9 @@ namespace LAMA.Services
             view.Map = CreateMap();
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClicked;
+            _selectionPinVisible = false;
 
-            ReloadMapView(view);
+            ReloadMapView(view, activity);
         }
 
         /// <summary>
@@ -238,16 +241,14 @@ namespace LAMA.Services
         /// Use GetSelectionPin() method to get the pin location.
         /// </summary>
         /// <param name="view"></param>
-        public void MapViewSetupSelection(MapView view, LarpActivity activity = null)
+        public void MapViewSetupSelection(MapView view, LarpActivity activity)
         {
             view.Map = CreateMap();
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClickedAdding;
+            _selectionPinVisible = false;
 
             ReloadMapView(view, activity);
-
-            if (!view.Pins.Contains(_selectionPin))
-                view.Pins.Add(_selectionPin);
         }
 
         /// <summary>
@@ -260,6 +261,51 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
+        }
+
+        /// <summary>
+        /// Reloades all data not tagged in <see cref="_filter"/>.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="activity"></param>
+        public void ReloadMapView(MapView view, LarpActivity activity = null)
+        {
+            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
+            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
+            Zoom(view);
+
+            if (CurrentLocation != null)
+                view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
+
+            view.Pins.Clear();
+
+            _activityPins.Clear();
+            _cpPins.Clear();
+            _alertPins.Clear();
+
+            LoadActivities();
+            LoadCPs();
+
+            // TODO: load alerts when they are saved
+            // TODO: load points of interest when they are saved
+
+            if (activity != null)
+            {
+                CenterOn(view, activity.place.first, activity.place.second);
+                SetSelectionPin(activity.place.first, activity.place.second);
+                _selectionPin.Position = _activityPins[activity.ID].Position;
+                _selectionPinVisible = true;
+                _activityPins.Remove(activity.ID);
+            }
+
+            // Zoom in when clicked home button
+            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+            {
+                if (e.PropertyName == "MyLocationFollow")
+                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
+            };
+
+            RefreshMapView(view);
         }
 
         /// <summary>
@@ -304,6 +350,9 @@ namespace LAMA.Services
                 foreach (Polyline polyline in _polyLines.Values)
                     view.Drawables.Add(polyline);
 
+            view.Pins.Add(_selectionPin);
+            _selectionPin.IsVisible = _selectionPinVisible;
+
             _polylinePin.Label = "temp";
             view.Pins.Add(_polylinePin);
             _polylinePin.Scale = 0.3f;
@@ -311,49 +360,6 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
 
             view.Refresh();
-        }
-
-        /// <summary>
-        /// Reloades all data not tagged in <see cref="_filter"/>.
-        /// </summary>
-        /// <param name="view"></param>
-        /// <param name="activity"></param>
-        public void ReloadMapView(MapView view, LarpActivity activity = null)
-        {
-            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
-            SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
-            Zoom(view);
-
-            if (CurrentLocation != null)
-                view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
-
-            view.Pins.Clear();
-
-            _activityPins.Clear();
-            _cpPins.Clear();
-            _alertPins.Clear();
-
-            LoadActivities();
-            LoadCPs();
-
-            // TODO: load alerts when they are saved
-            // TODO: load points of interest when they are saved
-
-            if (activity != null)
-            {
-                CenterOn(view, activity.place.first, activity.place.second);
-                _activityPins.Remove(activity.ID);
-                SetSelectionPin(activity.place.first, activity.place.second);
-            }
-
-            // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-            {
-                if (e.PropertyName == "MyLocationFollow")
-                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
-            };
-
-            RefreshMapView(view);
         }
 
         /// <summary>
@@ -579,8 +585,9 @@ namespace LAMA.Services
         public void PolylineStart(MapView view = null)
         {
             var polyline = new Polyline();
+            polyline.IsClickable = true;
             polyline.Clicked += (object sender, DrawableClickedEventArgs e) =>
-                OnMapClick?.Invoke(e.Point);
+                PolyLineClick(e.Point);
 
             _polyLines.Add(_polyLineID++, polyline);
             _polylineBuffer.Push(polyline);
@@ -739,15 +746,19 @@ namespace LAMA.Services
         private void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
             if (_editing)
-            {
-                _polylineBuffer.Peek().Positions.Add(e.Point);
-                _polylinePin.Position = e.Point;
-                _polylinePin.IsVisible = true;
-            }
+                PolyLineClick(e.Point);
 
             OnMapClick?.Invoke(e.Point);
             e.Handled = true;
         }
+
+        private void PolyLineClick(Position pos)
+        {
+            _polylineBuffer.Peek().Positions.Add(pos);
+            _polylinePin.Position = pos;
+            _polylinePin.IsVisible = true;
+        }
+
         private void HandleMapClickedAdding(object sender, MapClickedEventArgs e)
         {
             _selectionPin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
