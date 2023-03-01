@@ -6,10 +6,12 @@ namespace LAMA.Extensions
 {
 	public static class DateTimeExtension
 	{
+		private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
 		public static DateTime UnixTimeStampMillisecondsToDateTime(long unixTimeStamp)
 		{
-			DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-			dateTime = dateTime.AddMilliseconds(unixTimeStamp).ToLocalTime();
+			DateTime dateTime = UnixEpoch;
+			dateTime = dateTime.AddMilliseconds(unixTimeStamp);
 			return dateTime;
 		}
 
