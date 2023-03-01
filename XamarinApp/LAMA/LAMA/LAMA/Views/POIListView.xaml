@@ -36,7 +36,7 @@
 
                                     <TapGestureRecognizer 
     										NumberOfTapsRequired="2"
-    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIViewModel}}, Path=OpenDetails}"		
+    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=OpenDetails}"		
     										CommandParameter="{Binding .}">
                                     </TapGestureRecognizer>
 
