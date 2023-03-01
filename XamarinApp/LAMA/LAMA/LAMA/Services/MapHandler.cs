@@ -285,9 +285,9 @@ namespace LAMA.Services
 
             LoadActivities();
             LoadCPs();
+            LoadPointsOfIntrest();
 
             // TODO: load alerts when they are saved
-            // TODO: load points of interest when they are saved
 
             if (activity != null)
             {
@@ -351,7 +351,7 @@ namespace LAMA.Services
             {
                 foreach (Polyline polyline in _polyLines.Values)
                     view.Drawables.Add(polyline);
-                
+
                 foreach (Polyline polyline in _polylineBuffer)
                     view.Drawables.Add(polyline);
             }
@@ -491,6 +491,18 @@ namespace LAMA.Services
                 view.Pins.Add(pin);
         }
 
+        public void AddPointOfInterest(PointOfInterest poi, MapView view = null)
+        {
+            Pin pin = CreatePin(poi.Coordinates.first, poi.Coordinates.second, "POI", view);
+            pin.Scale = 0.5f;
+            pin.Color = XColor.Beige;
+            pin.Callout.Title = poi.Name;
+
+            _pointOfInterestPins[poi.ID] = pin;
+
+            if (view != null && IsFilteredIn(EntityType.PointsOfIntrest))
+                view.Pins.Add(pin);
+        }
 
         /// <summary>
         /// Adds the alert to the internal data.
@@ -713,7 +725,6 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 AddActivity(rememberedList[i], view);
         }
-
         private void LoadCPs(MapView view = null)
         {
             var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
@@ -721,6 +732,13 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 if (rememberedList[i].ID != LocalStorage.cpID)
                     AddCP(rememberedList[i], view);
+        }
+        private void LoadPointsOfIntrest(MapView view = null)
+        {
+            var rememberedList = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < rememberedList.Count; i++)
+                AddPointOfInterest(rememberedList[i], view);
         }
         #endregion
 
