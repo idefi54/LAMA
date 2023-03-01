@@ -11,7 +11,7 @@ namespace LAMA.Models
     {
         public enum Status { ready, onBreak, onActivity};
 
-        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity};
+        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI};
 
         long _ID;
         public long ID { get { return _ID; } }
