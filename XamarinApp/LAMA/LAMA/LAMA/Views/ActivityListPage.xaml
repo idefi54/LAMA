@@ -18,8 +18,9 @@
 		<ToolbarItem Text="Nová Aktivita" Command="{Binding AddActivityCommand}"/>
 	</ContentPage.ToolbarItems>
 
+
 	<ContentPage.Content>
-        <StackLayout  Spacing="0">
+		<StackLayout  Spacing="0">
             <common:OurNavigationMenu></common:OurNavigationMenu>
             <ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
                 <ListView.ItemTemplate>
@@ -38,29 +39,24 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
                                 <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding Detail}" FontSize="Micro" TextColor="Gray" />
-                                <!--<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
-										Command="{Binding Path=BindingContext.LarpActivityTapped, Source={x:Reference Name=LarpActivityList}}"
-										CommandParameter="{Binding .}"/>-->
-                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+									
+								<OnPlatform x:TypeArguments="View">
+									<On Platform="WPF">
+										<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+										    Command="{Binding Path=BindingContext.LarpActivityTapped, Source={x:Reference Name=LarpActivityList}}"
+										    CommandParameter="{Binding .}"/>
+									</On>
+								</OnPlatform>
+								<Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
 										Command="{Binding Path=BindingContext.RemoveLarpActivity, Source={x:Reference Name=LarpActivityList}}"
 										CommandParameter="{Binding .}"/>
-                                <!--IsVisible="{Binding ShowDeleteButton}"/>-->
 
                                 <Grid.GestureRecognizers>
-                                    <!--<TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding LarpActivityTapped}" CommandParameter="{Binding .}"/>
-									<TapGestureRecognizer 
-										NumberOfTapsRequired="1"
-										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ActivityListViewModel}}, Path=LarpActivityTapped}"		
-										CommandParameter="{Binding .}">
-									</TapGestureRecognizer>-->
                                     <TapGestureRecognizer 
 										NumberOfTapsRequired="2"
 										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityListViewModel}}, Path=LarpActivityTapped}"		
 										CommandParameter="{Binding .}">
                                     </TapGestureRecognizer>
-                                    <!--<SwipeGestureRecognizer Direction="Left" 
-															Command="{Binding Path=BindingContext.ShowRemoveButton, Source={x:Reference Name=LarpActivityList}}"
-															CommandParameter="{Binding .}"/>-->
                                 </Grid.GestureRecognizers>
                             </Grid>
                         </ViewCell>
