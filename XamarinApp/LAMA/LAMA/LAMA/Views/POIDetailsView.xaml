@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.POIDetailsView">
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Změnit" Command="{Binding Edit}" IsVisible="{Binding CanChange}" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Jméno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+            <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+            <Label Text="Popis"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" />
+            <Label Text="{Binding Description}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" />
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
