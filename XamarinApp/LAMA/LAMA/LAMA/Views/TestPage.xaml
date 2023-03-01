@@ -34,6 +34,7 @@
 				<Button Text="Dropdown Menu Over Example" Clicked="OnDropdownOverExample"/>
 				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
 
+				<Button Text="Switch To Admin" Clicked="SwitchToAdmin"/>
 			</StackLayout>
         </ScrollView>
     </ContentPage.Content>

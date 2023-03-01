@@ -8,56 +8,71 @@
 			 Title="Inventář">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Řadit" />
-        <ToolbarItem Text="Filtr" />
+        
+        <forms:BindableToolbarItem Text="Řazení a filtr" Command="{Binding ShowDropdownCommand}"/>
         <forms:BindableToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}" IsVisible ="{Binding CanChangeItems}"/>
     </ContentPage.ToolbarItems>
 
 
     <ContentPage.Content>
-        <StackLayout  Spacing="0">
+		<StackLayout>
             <common:OurNavigationMenu></common:OurNavigationMenu>
-            <ListView x:Name="ItemList" ItemsSource="{Binding ItemList}" SelectionMode="None" Margin="5,5,5,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="5" Margin="5" >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
-                                <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding Detail}" FontSize="Micro" TextColor="Gray" />
-                                <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Text="{Binding Free}" FontSize="Small" TextColor="Gray" />
-                                <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="1" Text="{Binding Borrowed}" FontSize="Small" TextColor="Gray" />
 
-                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
-										Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
-										CommandParameter="{Binding .}"/>
-                                <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
-										Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
-										CommandParameter="{Binding .}"/>
+			<Frame x:Name="DropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,150"
+				   BackgroundColor="LightBlue"
+				   IsVisible="{Binding ShowDropdown}">
+				<StackLayout>
+					<Label Text="Hledat"/>
+					<Entry Text="{Binding FilterText}"/>
+					<Button Text="Seřadit" Command="{Binding Order}"/>
+				</StackLayout>
+			</Frame>
+			
+			<StackLayout  Spacing="0">
+                <ListView x:Name="ItemList" ItemsSource="{Binding ItemList}" SelectionMode="None" Margin="5,5,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="5" Margin="5" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding Detail}" FontSize="Micro" TextColor="Gray" />
+                                    <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="1" Text="{Binding Free}" FontSize="Small" TextColor="Gray" />
+                                    <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="1" Text="{Binding Borrowed}" FontSize="Small" TextColor="Gray" />
 
-                                <Grid.GestureRecognizers>
+                                    <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+										    Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
+										    CommandParameter="{Binding .}"/>
+                                    <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="DarkRed" TextColor="White"
+										    Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
+										    CommandParameter="{Binding .}"/>
 
-                                    <TapGestureRecognizer 
-										NumberOfTapsRequired="2"
-										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:InventoryViewModel}}, Path=OpenDetailCommand}"		
-										CommandParameter="{Binding .}">
-                                    </TapGestureRecognizer>
+                                    <Grid.GestureRecognizers>
 
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                                        <TapGestureRecognizer 
+										    NumberOfTapsRequired="2"
+										    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:InventoryViewModel}}, Path=OpenDetailCommand}"		
+										    CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
+
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

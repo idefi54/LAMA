@@ -2,6 +2,7 @@
 using LAMA.Singletons;
 using LAMA.Views;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
@@ -10,13 +11,17 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class InventoryViewModel 
+    public class InventoryViewModel :BaseViewModel
     {
-        public TrulyObservableCollection<InventoryItemViewModel> ItemList { get; }
+        TrulyObservableCollection<InventoryItemViewModel> _ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
+        public TrulyObservableCollection<InventoryItemViewModel> ItemList { get { return _ItemList; } private set { SetProperty(ref _ItemList, value); } }
         Dictionary<long, InventoryItemViewModel> IDToViewModel = new Dictionary<long, InventoryItemViewModel>();
 
-        public Xamarin.Forms.Command AddItemCommand { get; }
+        string _filterText = string.Empty;
+        public string FilterText { get { return _filterText; } set { SetProperty(ref _filterText, value); OnFilter(); } }
 
+        public Xamarin.Forms.Command AddItemCommand { get; }
+        
         //
         public Command<object> BorrowItem { get; private set; }
 
@@ -29,6 +34,11 @@ namespace LAMA.ViewModels
 
         long maxId = 0;
 
+        public Command Order { get; set; }
+        public Command ShowDropdownCommand { get; set; }
+        bool _showDropdown = false;
+        public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value); } }
+        
 
         public InventoryViewModel(INavigation navigation)
         {
@@ -51,7 +61,8 @@ namespace LAMA.ViewModels
             ReturnItem = new Command<object>(OnReturnItem);
             OpenDetailCommand = new Command<object>(OnOpenDetail);
 
-            
+            Order = new Command(OnOrderByName);
+            ShowDropdownCommand = new Command(OnShowDropdown);
 
         }
         private async void OnOpenDetail(object obj)
@@ -78,9 +89,11 @@ namespace LAMA.ViewModels
             {
                 return;
             }
+            OnCancelFilter();
             var item = (InventoryItem)made;
             ItemList.Add(new InventoryItemViewModel(item));
             IDToViewModel.Add(item.ID, ItemList[ItemList.Count - 1]);
+            OnFilter();
 
         }
         private void OnDeleted(Serializable deleted)
@@ -89,10 +102,12 @@ namespace LAMA.ViewModels
             {
                 return;
             }
+            OnCancelFilter();
             var item = (InventoryItem)deleted;
 
             ItemList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
+            OnFilter();
         }
         
 
@@ -124,9 +139,94 @@ namespace LAMA.ViewModels
         {
             await Navigation.PushAsync(new CreateInventoryItemView());
         }
+
+
+
+
+
+
+
+        TrulyObservableCollection<InventoryItemViewModel> rememberForFilter = null;
+
+        void OnFilter()
+        {
+            OnCancelFilter();
+
+            if (FilterText.Length == 0)
+                return;
+
+            rememberForFilter = _ItemList;
+
+            TrulyObservableCollection<InventoryItemViewModel> newList = new TrulyObservableCollection<InventoryItemViewModel>();
+
+            foreach (var itemView in ItemList)
+            {
+                if (itemView.Name.ToLower().Contains(FilterText.ToLower()))
+                    newList.Add(itemView);
+            }
+
+            ItemList = newList;
+
+        }
+        void OnCancelFilter()
+        {
+            if (rememberForFilter != null)
+                ItemList = rememberForFilter;
+            rememberForFilter = null;
+        }
+
+
+
+        bool nameDescended = false;
+        void OnOrderByName()
+        {
+            nameDescended = !nameDescended;
+            order(nameDescended, new CompareByName());
+        }
         
+        void order(bool ascending, IComparer<InventoryItemViewModel> comparer)
+        {
+            // just bubble sort because i wanna do it super simply and in place
+            // and i am too lazy to do merge sort in place
+            bool changed = true;
+            while (changed)
+            {
+                changed = false;
+                // one pass
+                for (int i = 0; i < ItemList.Count - 1; ++i)
+                {
+                    if ((ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) < 0) ||
+                        (!ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) > 0))
+                    {
+                        //swap 
+                        var temp = ItemList[i];
+                        ItemList[i] = ItemList[i + 1];
+                        ItemList[i + 1] = temp;
+                        if (!changed)
+                            changed = true;
+                    }
+                }
+            }
+        }
+
+        public void OnShowDropdown()
+        {
+            ShowDropdown = !ShowDropdown;
+        }
+
+        class CompareByName : IComparer<InventoryItemViewModel>
+        {
+            public int Compare(InventoryItemViewModel x, InventoryItemViewModel y)
+            {
+                return x.Name.CompareTo(y.Name);
+            }
+        }
         
-            
-            
+
+
+
+
+
+
     }
 }

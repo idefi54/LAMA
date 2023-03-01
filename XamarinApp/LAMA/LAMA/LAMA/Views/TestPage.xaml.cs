@@ -143,7 +143,30 @@ namespace LAMA.Views
             await Navigation.PushAsync(new DropdownMenuAboveTestPage());
 		}
 
+        void SwitchToAdmin(object sender, EventArgs args)
+		{
+            var admin = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(0);
+            if (admin == null)
+            {
+                admin = new CP(0, "admin me", "admin", new EventList<string>(), "", "", "", "");
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(admin);
 
+            }
+            if (!admin.permissions.Contains(CP.PermissionType.SetPermission))
+                admin.permissions.Add(CP.PermissionType.SetPermission);
+            if (!admin.permissions.Contains(CP.PermissionType.ChangeEncyclopedy))
+                admin.permissions.Add(CP.PermissionType.ChangeEncyclopedy);
+            if (!admin.permissions.Contains(CP.PermissionType.ManageInventory))
+                admin.permissions.Add(CP.PermissionType.ManageInventory);
+            if (!admin.permissions.Contains(CP.PermissionType.ChangeActivity))
+                admin.permissions.Add(CP.PermissionType.ChangeActivity);
+            if (!admin.permissions.Contains(CP.PermissionType.ChangeCP))
+                admin.permissions.Add(CP.PermissionType.ChangeCP);
+
+            LocalStorage.cpID = 0;
+
+            DisplayAlert("Current user:", admin.name, "ok");
+        }
 
 
 
