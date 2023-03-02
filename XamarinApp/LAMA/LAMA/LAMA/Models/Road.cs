@@ -28,13 +28,22 @@ namespace LAMA.Models
         public Road()
         {
             coordinates.dataChanged += onCoordinatesUpdated;
+            color.dataChanged += onColorUpdated;
         }
+        public Road(long id)
+        {
+            this.id = id;
+            coordinates.dataChanged += onCoordinatesUpdated;
+            color.dataChanged += onColorUpdated;
+        }
+        double thickness;
+        public double Thickness { get { return thickness; } set { thickness = value; updateValue(3,thickness.ToString()); } }
 
 
-        RememberedList<CP, CPStorage> list = null;
+        RememberedList<Road, RoadStorage> list = null;
         public void addedInto(object holder)
         {
-            list = holder as RememberedList<CP, CPStorage>;
+            list = holder as RememberedList<Road, RoadStorage>;
         }
         public void removed()
         {
@@ -46,12 +55,11 @@ namespace LAMA.Models
         }
 
 
-        static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes", "permissions" };
+        static string[] attributes = new string[] { "ID", "coordinates", "color", "thickness"};
 
         public long getID()
         {
-            return _ID;
+            return id;
         }
         public int numOfAttributes()
         {
@@ -66,46 +74,21 @@ namespace LAMA.Models
             switch (index)
             {
                 case 0:
-                    _ID = Helpers.readLong(value);
+                    id = Helpers.readLong(value);
                     break;
                 case 1:
-                    _name = value;
+                    coordinates = Helpers.readDoublePairField(value);
+                    coordinates.dataChanged += onCoordinatesUpdated;
                     break;
                 case 2:
-                    _nick = value;
+                    color = Helpers.readDoubleField(value);
+                    color.dataChanged += onColorUpdated;
                     break;
                 case 3:
-                    _roles = Helpers.readStringField(value);
-                    _roles.dataChanged += onRolesChange;
+                    int i = 0;
+                    thickness = Helpers.readDouble(value, ref i);
                     break;
-                case 4:
-                    _phone = value;
-                    break;
-                case 5:
-                    _facebook = value;
-                    break;
-                case 6:
-                    _discord = value;
-                    break;
-                case 7:
-                    _location = Helpers.readDoublePair(value);
-                    break;
-                case 8:
-                    _notes = value;
-                    break;
-                case 9:
-                    var temp = Helpers.readIntField(value);
-                    _permissions = new EventList<PermissionType>();
-                    foreach (var a in temp)
-                    {
-                        _permissions.Add((PermissionType)a);
-                    }
-                    _permissions.dataChanged += onPermissionsChange;
-                    break;
-
-
-
-
+                
             }
         }
 
@@ -122,16 +105,10 @@ namespace LAMA.Models
         {
             switch (i)
             {
-                case 0: return _ID.ToString();
-                case 1: return _name;
-                case 2: return _nick;
-                case 3: return _roles.ToString();
-                case 4: return _phone;
-                case 5: return _facebook;
-                case 6: return _discord;
-                case 7: return _location.ToString();
-                case 8: return _notes;
-                case 9: return Helpers.EnumEventListToString(_permissions);
+                case 0: return id.ToString();
+                case 1: return coordinates.ToString();
+                case 2: return color.ToString();
+                case 3: return thickness.ToString();
             }
             throw new Exception("wring index called");
         }
@@ -147,7 +124,7 @@ namespace LAMA.Models
 
         public int getTypeID()
         {
-            return 1;
+            return 8;
         }
 
         public event EventHandler<int> IGotUpdated;
