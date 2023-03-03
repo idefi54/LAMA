@@ -31,16 +31,8 @@
 				<Label Text="Typ aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Picker Title="Typ aktivity" ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}" HorizontalOptions="Start">
-					<!--<Picker.ItemsSource>
-						<x:Array Type="{x:Type x:String}">
-							<x:String>Organizační</x:String>
-							<x:String>Vedlejší event</x:String>
-							<x:String>Hlavní event</x:String>
-						</x:Array>
-					</Picker.ItemsSource>-->
-				</Picker>
-
+				<Picker Title="Typ aktivity" HorizontalOptions="Start"
+						ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}"/>
 
 				<Label Text="Časové rozmezí"
 					   HorizontalTextAlignment="Start"
@@ -61,11 +53,11 @@
 					</Grid.ColumnDefinitions>
 
 					<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Start}"/>
-					<DatePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start" Date="{Binding Start}"/>
+					<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+					<DatePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start" Date="{Binding StartTime}"/>
 					<Label Grid.Row="3" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Duration}"/>
-					<DatePicker Grid.Row="5" Grid.Column="0" HorizontalOptions="Start" Date="{Binding Duration}"/>
+					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+					<DatePicker Grid.Row="5" Grid.Column="0" HorizontalOptions="Start" Date="{Binding EndTime}"/>
 				</Grid>
 
 
@@ -138,16 +130,10 @@
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
 
-                <Label Text="Lokace"
+				<Label Text="Lokace"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-
-                <!--
-				<StackLayout Orientation="Horizontal">
-					<Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-					<Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
-				</StackLayout>
-				-->
+				
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>

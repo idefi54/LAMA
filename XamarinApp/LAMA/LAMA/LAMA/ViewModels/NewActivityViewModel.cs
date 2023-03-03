@@ -21,11 +21,10 @@ namespace LAMA.ViewModels
 		private string _description;
 		private string _type;
 		private int _typeIndex;
+
         private DateTime _startTime;
         private DateTime _endTime;
-  //      private DateTime _duration;
-		//private DateTime _start;
-		//private int _day;
+
 		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
 		private string _preparations;
@@ -37,11 +36,10 @@ namespace LAMA.ViewModels
 		public string Description { get { return _description; } set { SetProperty(ref _description , value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
+
         public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
         public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
-  //      public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
-		//public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
-		//public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
+
 		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
@@ -89,7 +87,7 @@ namespace LAMA.ViewModels
 				//Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
 				//Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				StartTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				EndTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
+				EndTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
 				//Day = activity.day;
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
