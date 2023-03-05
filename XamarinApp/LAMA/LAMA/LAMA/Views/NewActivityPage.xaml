@@ -42,22 +42,22 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="30" />
 						<RowDefinition Height="auto" />
-						<RowDefinition Height="auto" />
 						<RowDefinition Height="30" />
-						<RowDefinition Height="auto" />
 						<RowDefinition Height="auto" />
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="auto" />
 						<ColumnDefinition Width="auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
 					<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
 					<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
-					<DatePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start" Date="{Binding StartTime}"/>
-					<Label Grid.Row="3" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDate}" Command="{Binding SetStartTimeDateCommand}"/>
+					<Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
 					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
-					<DatePicker Grid.Row="5" Grid.Column="0" HorizontalOptions="Start" Date="{Binding EndTime}"/>
+					<Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDate}" Command="{Binding SetEndTimeDateCommand}"/>
 				</Grid>
 
 

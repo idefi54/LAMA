@@ -24,6 +24,8 @@ namespace LAMA.ViewModels
 
         private DateTime _startTime;
         private DateTime _endTime;
+		private DateTime _startDate;
+		private DateTime _endDate;
 
 		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
@@ -39,6 +41,8 @@ namespace LAMA.ViewModels
 
         public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
         public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+        public DateTime StartDate { get { return _startDate; } set { SetProperty(ref _startDate, value); } }
+        public DateTime EndDate { get { return _endDate; } set { SetProperty(ref _endDate, value); } }
 
 		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
@@ -84,11 +88,10 @@ namespace LAMA.ViewModels
 				Description = larpActivity.description;
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
-				//Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
-				//Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+
 				StartTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
 				EndTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
-				//Day = activity.day;
+
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
 				foreach(Pair<string, int> role in activity.roles)
@@ -107,13 +110,17 @@ namespace LAMA.ViewModels
 				Description = "";
 				Type = EventType.normal.ToString();
 				TypeIndex = (int)EventType.normal;
-				//Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
-				//Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				StartTime = DateTime.Now.AddMinutes(30); //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+
+				DateTime now = DateTime.Now;
+				now = now.AddSeconds(-now.Second);
+
+				StartTime = now.AddMinutes(30);
 				EndTime = StartTime.AddHours(1);
-				//Day = 0;
+
 				Preparations = "";
 			}
+			StartDate = StartTime;
+			EndDate = EndTime;
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
@@ -130,6 +137,30 @@ namespace LAMA.ViewModels
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
 			AddNewRole = new Command(OnAddNewRole);
 			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
+
+			SetStartTimeDateCommand = new Command(OnSetStartTimeDate);
+			SetEndTimeDateCommand = new Command(OnSetEndTimeDate);
+		}
+
+		public Command SetStartTimeDateCommand { get; }
+		public Command SetEndTimeDateCommand { get; }
+
+		public async void OnSetStartTimeDate()
+		{
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation);
+			if (date != null)
+			{
+				StartDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
+			}
+		}
+
+		public async void OnSetEndTimeDate()
+		{
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation);
+			if (date != null)
+			{
+				EndDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
+			}
 		}
 
 		private void OnRemoveRole(RoleItemViewModel role)
@@ -268,8 +299,12 @@ namespace LAMA.ViewModels
 
 			int tmp_day = 0;
 
-			long start = StartTime.ToUnixTimeMilliseconds();
-			long duration = EndTime.ToUnixTimeMilliseconds() - start;
+			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0, 0, DateTimeKind.Utc);
+			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0, 0, DateTimeKind.Utc);
+
+
+			long start = finalStart.ToUnixTimeMilliseconds();
+			long duration = finalEnd.ToUnixTimeMilliseconds() - start;
 
 			LarpActivity larpActivity = new LarpActivity(
 				10,
