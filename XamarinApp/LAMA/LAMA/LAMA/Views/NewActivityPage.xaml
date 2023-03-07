@@ -53,10 +53,40 @@
 					</Grid.ColumnDefinitions>
 
 					<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+					<OnPlatform x:TypeArguments="View">
+						<On Platform="iOS">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="Android">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="UWP">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="WPF">
+							<StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+								<Picker ItemsSource="{Binding StartTimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
+								<Picker ItemsSource="{Binding StartTimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
+							</StackLayout>
+						</On>
+					</OnPlatform>
 					<Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDate}" Command="{Binding SetStartTimeDateCommand}"/>
+					
 					<Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+					<OnPlatform x:TypeArguments="View">
+						<On Platform="iOS">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="Android">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+						</On>
+						<On Platform="UWP">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+						</On>
+						<On Platform="WPF">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+						</On>
+					</OnPlatform>
 					<Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDate}" Command="{Binding SetEndTimeDateCommand}"/>
 				</Grid>
 

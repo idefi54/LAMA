@@ -22,8 +22,8 @@ namespace LAMA.ViewModels
 		private string _type;
 		private int _typeIndex;
 
-        private DateTime _startTime;
-        private DateTime _endTime;
+		private DateTime _startTime;
+		private DateTime _endTime;
 		private DateTime _startDate;
 		private DateTime _endDate;
 
@@ -33,26 +33,51 @@ namespace LAMA.ViewModels
 		private string _location;
 		private List<string> _typeList;
 
-		public string Id { get { return _id; } set { SetProperty(ref _id , value); } }
-		public string Name { get { return _name; } set { SetProperty(ref _name , value); } }
-		public string Description { get { return _description; } set { SetProperty(ref _description , value); } }
+		public string Id { get { return _id; } set { SetProperty(ref _id, value); } }
+		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
+		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
 
-        public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
-        public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
-        public DateTime StartDate { get { return _startDate; } set { SetProperty(ref _startDate, value); } }
-        public DateTime EndDate { get { return _endDate; } set { SetProperty(ref _endDate, value); } }
+		public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
+		public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+		public DateTime StartDate { get { return _startDate; } set { SetProperty(ref _startDate, value); } }
+		public DateTime EndDate { get { return _endDate; } set { SetProperty(ref _endDate, value); } }
 
-		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
+		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
-		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
+		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
-		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
+		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList, value); } }
 
-        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
+
+		public ObservableCollection<int> StartTimeStringHourOptions { get; }
+		public ObservableCollection<int> StartTimeStringMinuteOptions { get; }
+
+		private int _startTimeStringHourSelected;
+		public int StartTimeStringHourSelected
+		{ 
+			get { return _startTimeStringHourSelected; }
+			set 
+			{
+				StartTime = new DateTime(2000, 1, 1, value, StartTime.Minute, 0);
+				SetProperty(ref _startTimeStringHourSelected, value);
+			}
+		}
+
+		private int _startTimeStringMinuteSelected;
+		public int StartTimeStringMinuteSelected
+		{
+			get { return _startTimeStringMinuteSelected; }
+			set
+			{
+				StartTime = new DateTime(2000, 1, 1, StartTime.Hour, value, 0);
+				SetProperty(ref _startTimeStringMinuteSelected, value); 
+			}
+		}
 
 		//public NewActivityViewModel()
 		//{
@@ -79,6 +104,17 @@ namespace LAMA.ViewModels
 
 			Roles = new ObservableCollection<RoleItemViewModel>();
 
+			StartTimeStringHourOptions = new ObservableCollection<int>();
+			StartTimeStringMinuteOptions = new ObservableCollection<int>();
+
+			for (int i = 0; i < 24; i++)
+			{
+				StartTimeStringHourOptions.Add(i);
+			}
+			for (int i = 0; i < 60; i += 15)
+			{
+				StartTimeStringMinuteOptions.Add(i);
+			}
 
 			if (larpActivity != null)
             {
@@ -119,6 +155,12 @@ namespace LAMA.ViewModels
 
 				Preparations = "";
 			}
+
+			StartTimeStringHourSelected = StartTime.Hour;
+			StartTimeStringMinuteSelected = StartTime.Minute;
+
+			
+
 			StartDate = StartTime;
 			EndDate = EndTime;
 
