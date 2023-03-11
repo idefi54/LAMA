@@ -25,6 +25,9 @@ namespace LAMA.Views
             int row = 0;
             foreach (MapHandler.EntityType type in Enum.GetValues(typeof(MapHandler.EntityType)))
             {
+                if (type == MapHandler.EntityType.Nothing)
+                    continue;
+
                 LayoutOptions center = LayoutOptions.Center;
 
                 var label = new Label
@@ -148,7 +151,7 @@ namespace LAMA.Views
             _mapView = null;
         }
 
-        private async void SetHomeClicked(object sender, EventArgs e)
+        private void SetHomeClicked(object sender, EventArgs e)
         {
             SetHomeLocationButton.BackgroundColor = Color.Gray;
             SetHomeLocationButton.Text = "Change Home Location";
