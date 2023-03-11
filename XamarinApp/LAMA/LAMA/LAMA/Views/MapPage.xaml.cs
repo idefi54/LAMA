@@ -45,9 +45,13 @@ namespace LAMA.Views
                     VerticalOptions = center,
                     IsChecked = true,
                     Color = Color.Green,
+                    BackgroundColor = Color.Black,
                 };
                 checkBox.CheckedChanged += (object sender, CheckedChangedEventArgs e) =>
+                {
                     MapHandler.Instance.Filter(type, e.Value);
+                    MapHandler.Instance.RefreshMapView(_mapView);
+                };
 
                 FilterGrid.Children.Add(label, 0, row);
                 FilterGrid.Children.Add(checkBox, 1, row);
