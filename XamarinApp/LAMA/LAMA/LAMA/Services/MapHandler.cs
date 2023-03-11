@@ -18,6 +18,7 @@ using XColor = Xamarin.Forms.Color;
 using MColor = Mapsui.Styles.Color;
 using ActivityStatus = LAMA.Models.LarpActivity.Status;
 using SkiaSharp.Views.Forms;
+using Xamarin.Forms;
 
 namespace LAMA.Services
 {
@@ -92,7 +93,7 @@ namespace LAMA.Services
 
         private MapHandler()
         {
-            MapControl.UseGPU = false;
+            MapControl.UseGPU = Device.RuntimePlatform != Device.WPF;
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
             _activityPins = new Dictionary<long, Pin>();
