@@ -16,8 +16,11 @@ using LAMA.Models;
 using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 using XColor = Xamarin.Forms.Color;
 using MColor = Mapsui.Styles.Color;
+using XPoint = Xamarin.Forms.Point;
+using MPoint = Mapsui.Geometries.Point;
 using ActivityStatus = LAMA.Models.LarpActivity.Status;
 using SkiaSharp.Views.Forms;
+using Xamarin.Forms;
 
 namespace LAMA.Services
 {
@@ -92,7 +95,7 @@ namespace LAMA.Services
 
         private MapHandler()
         {
-            MapControl.UseGPU = false;
+            MapControl.UseGPU = Device.RuntimePlatform != Device.WPF;
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
             _activityPins = new Dictionary<long, Pin>();
@@ -204,7 +207,7 @@ namespace LAMA.Services
         }
         public static void CenterOn(MapView view, double longitude, double latitude)
         {
-            Point p = SphericalMercator.FromLonLat(longitude, latitude);
+            MPoint p = SphericalMercator.FromLonLat(longitude, latitude);
             view.Navigator.CenterOn(p);
         }
 
@@ -410,7 +413,7 @@ namespace LAMA.Services
             var point = SphericalMercator.FromLonLat(lon, lat);
             feature.Geometry = point;
             if (styles != null)
-                foreach (Style style in styles)
+                foreach (var style in styles)
                     feature.Styles.Add(style);
 
             _symbols.Add(feature);
