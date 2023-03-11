@@ -36,6 +36,7 @@ namespace LAMA.Views
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = center,
                     FontAttributes = FontAttributes.Bold,
+                    TextColor = Color.White,
                 };
 
                 var checkBox = new CheckBox
