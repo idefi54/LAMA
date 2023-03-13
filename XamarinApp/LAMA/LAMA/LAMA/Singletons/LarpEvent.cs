@@ -31,6 +31,7 @@ namespace LAMA.Singletons
                         SQLConnectionWrapper.makeConnection();
                     }
                     Debug.WriteLine("After make connection");
+                    Debug.WriteLine(name);
                     Debug.WriteLine(SQLConnectionWrapper.connection.ToString());
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     Debug.WriteLine("After getting name");
@@ -63,9 +64,15 @@ namespace LAMA.Singletons
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
                     }
                     instance.init();
+                    Debug.WriteLine("LarpEvent.Instance created");
                     return instance;
                 }
             }
+        }
+
+        public void DeleteData()
+        {
+            instance = null;
         }
 
         static EventList<DateTimeOffset> _Days = null;
@@ -86,6 +93,7 @@ namespace LAMA.Singletons
             get { return Instance.name; }
             set
             {
+                Debug.WriteLine("Setting name");
                 Instance.name = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
