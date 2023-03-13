@@ -65,12 +65,12 @@
 						</On>
 						<On Platform="WPF">
 							<StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-								<Picker ItemsSource="{Binding StartTimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
-								<Picker ItemsSource="{Binding StartTimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
 							</StackLayout>
 						</On>
 					</OnPlatform>
-					<Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDate}" Command="{Binding SetStartTimeDateCommand}"/>
+					<Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDateString}" Command="{Binding SetStartTimeDateCommand}"/>
 					
 					<Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
 					<OnPlatform x:TypeArguments="View">
@@ -84,10 +84,13 @@
 							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
 						</On>
 						<On Platform="WPF">
-							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+							<StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding EndTimeStringHourSelected}"/>
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding EndTimeStringMinuteSelected}"/>
+							</StackLayout>
 						</On>
 					</OnPlatform>
-					<Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDate}" Command="{Binding SetEndTimeDateCommand}"/>
+					<Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDateString}" Command="{Binding SetEndTimeDateCommand}"/>
 				</Grid>
 
 

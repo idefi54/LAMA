@@ -11,6 +11,7 @@ using static LAMA.Models.LarpActivity;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Globalization;
 
 namespace LAMA.ViewModels
 {
@@ -21,11 +22,6 @@ namespace LAMA.ViewModels
 		private string _description;
 		private string _type;
 		private int _typeIndex;
-
-		private DateTime _startTime;
-		private DateTime _endTime;
-		private DateTime _startDate;
-		private DateTime _endDate;
 
 		private ObservableCollection<RoleItemViewModel> _roles;
 		private List<string> _equipment;
@@ -39,10 +35,6 @@ namespace LAMA.ViewModels
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
 
-		public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
-		public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
-		public DateTime StartDate { get { return _startDate; } set { SetProperty(ref _startDate, value); } }
-		public DateTime EndDate { get { return _endDate; } set { SetProperty(ref _endDate, value); } }
 
 		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
@@ -53,9 +45,51 @@ namespace LAMA.ViewModels
 
 		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
+		#region Time
 
-		public ObservableCollection<int> StartTimeStringHourOptions { get; }
-		public ObservableCollection<int> StartTimeStringMinuteOptions { get; }
+		private DateTime _startTime;
+		public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
+
+		private DateTime _endTime;
+		public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+
+		private DateTime _startDate;
+		public DateTime StartDate
+		{
+			get
+			{
+				return _startDate;
+			}
+			set
+			{
+				SetProperty(ref _startDate, value);
+				StartDateString = StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+			}
+		}
+
+		private DateTime _endDate;
+		public DateTime EndDate
+		{
+			get
+			{
+				return _endDate;
+			}
+			set
+			{
+				SetProperty(ref _endDate, value);
+				EndDateString = EndDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+			}
+		}
+
+		private string _startDateString;
+		public string StartDateString { get { return _startDateString; } set { SetProperty(ref _startDateString, value); } }
+		private string _endDateString;
+		public string EndDateString { get { return _endDateString; } set { SetProperty(ref _endDateString, value);} }
+
+
+		public ObservableCollection<int> TimeStringHourOptions { get; }
+		public ObservableCollection<int> TimeStringMinuteOptions { get; }
+
 
 		private int _startTimeStringHourSelected;
 		public int StartTimeStringHourSelected
@@ -78,6 +112,31 @@ namespace LAMA.ViewModels
 				SetProperty(ref _startTimeStringMinuteSelected, value); 
 			}
 		}
+
+
+		private int _endTimeStringHourSelected;
+		public int EndTimeStringHourSelected
+		{
+			get { return _endTimeStringHourSelected; }
+			set
+			{
+				EndTime = new DateTime(2000, 1, 1, value, EndTime.Minute, 0);
+				SetProperty(ref _endTimeStringHourSelected, value);
+			}
+		}
+
+		private int _endTimeStringMinuteSelected;
+		public int EndTimeStringMinuteSelected
+		{
+			get { return _endTimeStringMinuteSelected; }
+			set
+			{
+				EndTime = new DateTime(2000, 1, 1, EndTime.Hour, value, 0);
+				SetProperty(ref _endTimeStringMinuteSelected, value);
+			}
+		}
+
+		#endregion Time
 
 		//public NewActivityViewModel()
 		//{
@@ -104,16 +163,16 @@ namespace LAMA.ViewModels
 
 			Roles = new ObservableCollection<RoleItemViewModel>();
 
-			StartTimeStringHourOptions = new ObservableCollection<int>();
-			StartTimeStringMinuteOptions = new ObservableCollection<int>();
+			TimeStringHourOptions = new ObservableCollection<int>();
+			TimeStringMinuteOptions = new ObservableCollection<int>();
 
 			for (int i = 0; i < 24; i++)
 			{
-				StartTimeStringHourOptions.Add(i);
+				TimeStringHourOptions.Add(i);
 			}
-			for (int i = 0; i < 60; i += 15)
+			for (int i = 0; i < 60; i += 5)
 			{
-				StartTimeStringMinuteOptions.Add(i);
+				TimeStringMinuteOptions.Add(i);
 			}
 
 			if (larpActivity != null)
@@ -125,8 +184,8 @@ namespace LAMA.ViewModels
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
 
-				StartTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				EndTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
+				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
 
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
@@ -150,19 +209,20 @@ namespace LAMA.ViewModels
 				DateTime now = DateTime.Now;
 				now = now.AddSeconds(-now.Second);
 
-				StartTime = now.AddMinutes(30);
-				EndTime = StartTime.AddHours(1);
+				StartDate = now.AddMinutes(30);
+				EndDate = StartTime.AddHours(1);
 
 				Preparations = "";
 			}
 
+			StartTime = StartDate;
+			EndTime = EndDate;
+
 			StartTimeStringHourSelected = StartTime.Hour;
 			StartTimeStringMinuteSelected = StartTime.Minute;
 
-			
-
-			StartDate = StartTime;
-			EndDate = EndTime;
+			EndTimeStringHourSelected = EndTime.Hour;
+			EndTimeStringMinuteSelected = EndTime.Minute;
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
@@ -239,7 +299,10 @@ namespace LAMA.ViewModels
 				messageBuilder.AppendLine("Nemohou být dvě role se stejným názvem.");
             }
 
-			if(StartTime >= EndTime)
+			DateTime start = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0);
+			DateTime end = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0);
+
+			if(start >= end)
 			{
 				messageBuilder.AppendLine("Čas začátku musí být před časem konce.");
 			}
