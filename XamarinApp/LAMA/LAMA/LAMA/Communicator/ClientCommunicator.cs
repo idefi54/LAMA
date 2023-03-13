@@ -69,6 +69,8 @@ namespace LAMA.Communicator
         private Timer connectionTimer;
         private Timer broadcastTimer;
 
+        public string clientRefusedMessage = "";
+
         public void KillConnectionTimer()
         {
             if (connectionTimer != null)
@@ -223,7 +225,7 @@ namespace LAMA.Communicator
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.ClientRefused(Int32.Parse(messageParts[2]));
+                        THIS.ClientRefused(Int32.Parse(messageParts[2]), messageParts[3]);
                     }));
                 }
             }
@@ -259,10 +261,11 @@ namespace LAMA.Communicator
         /// Client was refused by the server (incorrect password, or the client already exists)
         /// </summary>
         /// <param name="clientId"></param>
-        private void ClientRefused(int clientId)
+        private void ClientRefused(int clientId, string message)
         {
             loggedIn = true;
             LocalStorage.clientID = clientId;
+            clientRefusedMessage = message;
         }
 
         /// <summary>

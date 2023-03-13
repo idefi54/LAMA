@@ -68,6 +68,10 @@ namespace LAMA.ViewModels
                     {
                         break;
                     }
+                    else if (communicator.clientRefusedMessage != "")
+                    {
+                        throw new ClientRefusedException(communicator.clientRefusedMessage);
+                    }
                     else
                     {
                         timer += 0.5f;
@@ -83,6 +87,7 @@ namespace LAMA.ViewModels
                 ErrorLabel = e.ToString();
                 CreatingCP = false;
                 LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
                 return;
             }
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one

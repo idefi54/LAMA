@@ -99,4 +99,16 @@ namespace LAMA.Communicator
         public ServerConnectionRefusedException(string message, Exception inner)
             : base(message, inner) { }
     }
+
+    /// <summary>
+    /// Server refused the client
+    /// </summary>
+    public class ClientRefusedException : Exception
+    {
+        public ClientRefusedException() { }
+        public ClientRefusedException(string message)
+            : base(message) { }
+        public ClientRefusedException(string message, Exception inner)
+            : base(message, inner) { }
+    }
 }

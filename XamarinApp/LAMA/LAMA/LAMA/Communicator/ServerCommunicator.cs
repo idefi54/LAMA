@@ -598,7 +598,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[clientID] = current;
             }
-            SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client doesn't exist", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         /// <summary>
@@ -623,7 +623,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client with this name already exists", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
