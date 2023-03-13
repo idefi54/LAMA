@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using LAMA.Models;
+using LAMA.Singletons;
 
 namespace LAMA
 {
@@ -74,6 +75,7 @@ namespace LAMA
                 if (_connection != null)
                     _connection.CloseAsync().Wait();
 
+                LarpEvent.Instance.DeleteData();
                 _connection = null;
                 File.Delete(path);
                 makeConnection();
