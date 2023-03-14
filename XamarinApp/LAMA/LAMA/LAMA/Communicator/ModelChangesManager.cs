@@ -205,6 +205,11 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
+                if (objectType == "LAMA.Models.Road")
+                {
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
                     Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
@@ -289,6 +294,11 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.PointOfInterest")
                 {
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                }
+
+                if (objectType == "LAMA.Models.Road")
+                {
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
@@ -531,6 +541,33 @@ namespace LAMA.Communicator
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
+
+
+            if (objectType == "LAMA.Models.Road")
+            {
+                Models.Road road = new Models.Road();
+                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
+                road.buildFromStrings(attributtes);
+                string objectID = objectType + Separators.messagePartSeparator.ToString() + road.getID();
+
+                if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
+                {
+                    objectsCache.add(new Command(command, updateTime, objectID));
+                    if (!server || testing)
+                    {
+                        objectIgnoreCreation = objectID;
+                    }
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.add(road);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                    }
+                    // Notify every client of item creation
+                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
+                }
+                else if (server) ItemCreatedSendRollback(objectID, current);
+            }
         }
 
         /// <summary>
@@ -722,11 +759,34 @@ namespace LAMA.Communicator
 
                 if (objectsCache.containsKey(objectID))
                 {
-
                     pi = DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(messageID);
                     objectsCache.getByKey(objectID).command = command;
                     objectsCache.getByKey(objectID).time = updateTime;
                     pi.buildFromStrings(attributtes);
+                    for (int i = 0; i < attributtes.Length; i++)
+                    {
+                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                    }
+                }
+            }
+
+
+            if (objectType == "LAMA.Models.Road")
+            {
+                Models.Road road = new Models.Road();
+                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
+                road.buildFromStrings(attributtes);
+                string objectID = objectType + Separators.messagePartSeparator.ToString() + road.getID();
+                long messageID = road.getID();
+
+                if (objectsCache.containsKey(objectID))
+                {
+                    road = DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(messageID);
+                    objectsCache.getByKey(objectID).command = command;
+                    objectsCache.getByKey(objectID).time = updateTime;
+                    road.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
@@ -826,6 +886,13 @@ namespace LAMA.Communicator
                 {
                     nAttributes = removedPointOfInterest.numOfAttributes();
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.removeByID(objectID);
+                }
+
+                Models.Road removedRoad;
+                if (objectType == "LAMA.Models.Road" && (removedRoad = DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID)) != null)
+                {
+                    nAttributes = removedRoad.numOfAttributes();
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.removeByID(objectID);
                 }
 
                 for (int i = 0; i < nAttributes; i++)
