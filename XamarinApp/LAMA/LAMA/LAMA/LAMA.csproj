@@ -17,10 +17,112 @@
 
   <ItemGroup>
     <None Remove="marker.png" />
+    <None Remove="Resources\Icons\accept_1.png" />
+    <None Remove="Resources\Icons\accept_cr.png" />
+    <None Remove="Resources\Icons\add_sq.png" />
+    <None Remove="Resources\Icons\aim_1.png" />
+    <None Remove="Resources\Icons\arrow_cr.png" />
+    <None Remove="Resources\Icons\bag_3_open.png" />
+    <None Remove="Resources\Icons\box.png" />
+    <None Remove="Resources\Icons\calendar.png" />
+    <None Remove="Resources\Icons\card_1_add.png" />
+    <None Remove="Resources\Icons\card_1_minus.png" />
+    <None Remove="Resources\Icons\connection_2.png" />
+    <None Remove="Resources\Icons\electro_2.png" />
+    <None Remove="Resources\Icons\eye_1.png" />
+    <None Remove="Resources\Icons\fix_2.png" />
+    <None Remove="Resources\Icons\flag_2.png" />
+    <None Remove="Resources\Icons\game_pad_non_wire.png" />
+    <None Remove="Resources\Icons\gear_2.png" />
+    <None Remove="Resources\Icons\home_2_1.png" />
+    <None Remove="Resources\Icons\layers_2.png" />
+    <None Remove="Resources\Icons\location_1.png" />
+    <None Remove="Resources\Icons\location_1_add.png" />
+    <None Remove="Resources\Icons\location_1_minus.png" />
+    <None Remove="Resources\Icons\location_3_profile.png" />
+    <None Remove="Resources\Icons\map.png" />
+    <None Remove="Resources\Icons\menu_1.png" />
+    <None Remove="Resources\Icons\message_1_dots.png" />
+    <None Remove="Resources\Icons\message_2_exp-1.png" />
+    <None Remove="Resources\Icons\mini_faster.png" />
+    <None Remove="Resources\Icons\mini_next.png" />
+    <None Remove="Resources\Icons\mini_pause.png" />
+    <None Remove="Resources\Icons\mini_play.png" />
+    <None Remove="Resources\Icons\mini_stop.png" />
+    <None Remove="Resources\Icons\music_1.png" />
+    <None Remove="Resources\Icons\no_cr-1.png" />
+    <None Remove="Resources\Icons\no_cr.png" />
+    <None Remove="Resources\Icons\pen_1.png" />
+    <None Remove="Resources\Icons\phone.png" />
+    <None Remove="Resources\Icons\prize_1.png" />
+    <None Remove="Resources\Icons\profiles_1.png" />
+    <None Remove="Resources\Icons\profiles_2.png" />
+    <None Remove="Resources\Icons\profile_close_1.png" />
+    <None Remove="Resources\Icons\profile_close_1_minus.png" />
+    <None Remove="Resources\Icons\profile_close_add.png" />
+    <None Remove="Resources\Icons\save_1.png" />
+    <None Remove="Resources\Icons\shield.png" />
+    <None Remove="Resources\Icons\shirt_1.png" />
+    <None Remove="Resources\Icons\sword.png" />
+    <None Remove="Resources\Icons\tes_2.png" />
+    <None Remove="Resources\Icons\time_1.png" />
+    <None Remove="Resources\Icons\X_simple_1.png" />
+    <None Remove="stop_cr.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="marker.png" />
+    <EmbeddedResource Include="Resources\Icons\accept_1.png" />
+    <EmbeddedResource Include="Resources\Icons\accept_cr.png" />
+    <EmbeddedResource Include="Resources\Icons\add_sq.png" />
+    <EmbeddedResource Include="Resources\Icons\aim_1.png" />
+    <EmbeddedResource Include="Resources\Icons\arrow_cr.png" />
+    <EmbeddedResource Include="Resources\Icons\bag_3_open.png" />
+    <EmbeddedResource Include="Resources\Icons\box.png" />
+    <EmbeddedResource Include="Resources\Icons\calendar.png" />
+    <EmbeddedResource Include="Resources\Icons\card_1_add.png" />
+    <EmbeddedResource Include="Resources\Icons\card_1_minus.png" />
+    <EmbeddedResource Include="Resources\Icons\connection_2.png" />
+    <EmbeddedResource Include="Resources\Icons\electro_2.png" />
+    <EmbeddedResource Include="Resources\Icons\eye_1.png" />
+    <EmbeddedResource Include="Resources\Icons\fix_2.png" />
+    <EmbeddedResource Include="Resources\Icons\flag_2.png" />
+    <EmbeddedResource Include="Resources\Icons\game_pad_non_wire.png" />
+    <EmbeddedResource Include="Resources\Icons\gear_2.png" />
+    <EmbeddedResource Include="Resources\Icons\home_2_1.png" />
+    <EmbeddedResource Include="Resources\Icons\layers_2.png" />
+    <EmbeddedResource Include="Resources\Icons\location_1.png" />
+    <EmbeddedResource Include="Resources\Icons\location_1_add.png" />
+    <EmbeddedResource Include="Resources\Icons\location_1_minus.png" />
+    <EmbeddedResource Include="Resources\Icons\location_3_profile.png" />
+    <EmbeddedResource Include="Resources\Icons\map.png" />
+    <EmbeddedResource Include="Resources\Icons\marker.png" />
+    <EmbeddedResource Include="Resources\Icons\menu_1.png" />
+    <EmbeddedResource Include="Resources\Icons\message_1_dots.png" />
+    <EmbeddedResource Include="Resources\Icons\message_2_exp-1.png" />
+    <EmbeddedResource Include="Resources\Icons\mini_faster.png" />
+    <EmbeddedResource Include="Resources\Icons\mini_next.png" />
+    <EmbeddedResource Include="Resources\Icons\mini_pause.png" />
+    <EmbeddedResource Include="Resources\Icons\mini_play.png" />
+    <EmbeddedResource Include="Resources\Icons\mini_stop.png" />
+    <EmbeddedResource Include="Resources\Icons\music_1.png" />
+    <EmbeddedResource Include="Resources\Icons\no_cr-1.png" />
+    <EmbeddedResource Include="Resources\Icons\no_cr.png" />
+    <EmbeddedResource Include="Resources\Icons\pen_1.png" />
+    <EmbeddedResource Include="Resources\Icons\phone.png" />
+    <EmbeddedResource Include="Resources\Icons\prize_1.png" />
+    <EmbeddedResource Include="Resources\Icons\profiles_1.png" />
+    <EmbeddedResource Include="Resources\Icons\profiles_2.png" />
+    <EmbeddedResource Include="Resources\Icons\profile_close_1.png" />
+    <EmbeddedResource Include="Resources\Icons\profile_close_1_minus.png" />
+    <EmbeddedResource Include="Resources\Icons\profile_close_add.png" />
+    <EmbeddedResource Include="Resources\Icons\save_1.png" />
+    <EmbeddedResource Include="Resources\Icons\shield.png" />
+    <EmbeddedResource Include="Resources\Icons\shirt_1.png" />
+    <EmbeddedResource Include="Resources\Icons\stop_cr.png" />
+    <EmbeddedResource Include="Resources\Icons\sword.png" />
+    <EmbeddedResource Include="Resources\Icons\tes_2.png" />
+    <EmbeddedResource Include="Resources\Icons\time_1.png" />
+    <EmbeddedResource Include="Resources\Icons\X_simple_1.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -114,6 +216,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\EncyclopedyRecordView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ExampleImagePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\HideExamplePage.xaml">

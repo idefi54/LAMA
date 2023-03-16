@@ -143,6 +143,12 @@ namespace LAMA.Views
             await Navigation.PushAsync(new DropdownMenuAboveTestPage());
 		}
 
+
+        async void OnImageExample(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new ExampleImagePage());
+        }
+
         void SwitchToAdmin(object sender, EventArgs args)
 		{
             var admin = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(0);

@@ -21,6 +21,8 @@ using MPoint = Mapsui.Geometries.Point;
 using ActivityStatus = LAMA.Models.LarpActivity.Status;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
+using System.Reflection;
+using System.IO;
 
 namespace LAMA.Services
 {
@@ -484,6 +486,12 @@ namespace LAMA.Services
         public void AddCP(CP cp, MapView view = null)
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
+            pin.Type = PinType.Icon;
+
+            Assembly myAssembly = Assembly.GetExecutingAssembly();
+            Stream myStream = myAssembly.GetManifestResourceStream("LAMA.Resources.Icons.stop_cr.png");
+            
+            pin.Icon = myStream.ToBytes();
             pin.Scale = 0.2f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
@@ -698,7 +706,7 @@ namespace LAMA.Services
         {
             var map = new Mapsui.Map();
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
-            map.Layers.Add(CreateMarkersLayer());
+            //map.Layers.Add(CreateMarkersLayer());
 
             return map;
         }
