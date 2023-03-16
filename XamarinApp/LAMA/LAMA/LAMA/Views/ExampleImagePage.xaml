@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:LAMA.Extensions"
+             x:Class="LAMA.Views.ExampleImagePage">
+    <ContentPage.Content>
+        <StackLayout>
+			<Image Source="{extensions:ImageResource 'LAMA.Resources.Icons.eye_1.png'}" />
+			<ImageButton WidthRequest="100" HeightRequest="100"
+						 Source="{Binding CurrentImagePath, Mode=TwoWay}" 
+						 Command="{Binding ButtonExampleCommand}"/>
+		</StackLayout>
+    </ContentPage.Content>
+</ContentPage>
