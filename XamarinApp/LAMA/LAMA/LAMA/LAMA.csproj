@@ -17,10 +17,12 @@
 
   <ItemGroup>
     <None Remove="marker.png" />
+    <None Remove="stop_cr.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="marker.png" />
+    <EmbeddedResource Include="Resources\Icons\marker.png" />
+    <EmbeddedResource Include="Resources\Icons\stop_cr.png" />
   </ItemGroup>
 
   <ItemGroup>
