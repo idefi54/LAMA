@@ -130,11 +130,17 @@ namespace LAMA
             
             long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
-            ++offset;
-            int offset1 = offset;
-            long secondPart = readLong(input, ref offset);
-            offset1 = offset - offset1;
-            return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+            skipWhiteSpace(input, ref offset);
+            if (input[offset] == '.' || input[offset] == ',')
+            {
+                ++offset;
+                int offset1 = offset;
+                long secondPart = readLong(input, ref offset);
+                offset1 = offset - offset1;
+                return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+            }
+            else
+                return firstPart;
         }
         public static Pair<double, double> readDoublePair(string input)
         {
@@ -302,6 +308,14 @@ namespace LAMA
                 ++i;
             }
             return output;
+        }
+
+        static void skipWhiteSpace(string input, ref int offset)
+        {
+            while(offset < input.Length && char.IsWhiteSpace(input[offset]))
+            {
+                ++offset;
+            }
         }
     }
 }
