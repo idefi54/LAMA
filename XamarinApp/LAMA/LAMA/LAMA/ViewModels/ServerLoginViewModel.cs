@@ -92,7 +92,12 @@ namespace LAMA.ViewModels
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             if (Device.RuntimePlatform == Device.WPF)
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new MapPage());
+                App.Current.MainPage = new NavigationPage(new MapPage())
+                {
+                    BarBackground = new SolidColorBrush(new Color((double)33 / 255, (double)144 / 255, (double)243 / 255)),
+                    BarBackgroundColor = new Color(33, 144, 243)
+                };
+                //await Application.Current.MainPage.Navigation.PushAsync(new MapPage());
                 //LAMA.App.Current.MainPage = new MapPage();
             }
             else

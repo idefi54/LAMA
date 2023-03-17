@@ -23,6 +23,7 @@ namespace LAMA.Communicator
         {
             get { return logger; }
         }
+        public Compression CompressionManager { get; set; }
         //Managed to connect to the server
         private bool _connected = false;
         public bool connected
@@ -38,11 +39,10 @@ namespace LAMA.Communicator
         //Thread the client listens on
         private Thread listener;
         //When was the client last updated from the server
-        public long lastUpdate;
         public long LastUpdate
         {
-            get { return lastUpdate; }
-            set { if (wasUpdated) { lastUpdate = value; } }
+            get { return LocalStorage.LastUpdateTime; }
+            set { if (wasUpdated) { LocalStorage.LastUpdateTime = value; } }
         }
         private bool wasUpdated = false;
 
@@ -101,8 +101,8 @@ namespace LAMA.Communicator
                             }
                             logger.LogWrite($"Sending: {currentCommand.command}");
                             Debug.WriteLine($"Sending: {currentCommand.command}");
-                            byte[] data = currentCommand.Encode();
-                            Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
+                            byte[] data = currentCommand.Encode(CompressionManager);
+                            Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                             try
                             {
                                 s.Send(data);
@@ -178,8 +178,8 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             Debug.WriteLine($"Encoded message: {System.Convert.ToBase64String(data)}");
-            Debug.WriteLine($"Message string received: {Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split('|');
+            Debug.WriteLine($"Message string received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
@@ -187,7 +187,7 @@ namespace LAMA.Communicator
                 message = message.Trim('\0');
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(';');
+                string[] messageParts = message.Split(Separators.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -271,9 +271,9 @@ namespace LAMA.Communicator
         private void RequestUpdate()
         {
             string q = "";
-            q += "Update;";
+            q += $"Update{Separators.messagePartSeparator}";
             q += LocalStorage.clientID;
-            SendCommand(new Command(q, lastUpdate, "None"));
+            SendCommand(new Command(q, LastUpdate, "None"));
         }
 
         /// <summary>
@@ -395,11 +395,15 @@ namespace LAMA.Communicator
             LocalStorage.clientName = cpName;
             if (isNew)
             {
-                SendCommand(new Command($"GiveID;{cpName};{Encryption.EncryptPassword(password)};{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                SendCommand(new Command(
+                    $"GiveID{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             else
             {
-                SendCommand(new Command($"GiveIDExisting;{cpName};{Encryption.EncryptPassword(password)};{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                SendCommand(new Command(
+                    $"GiveIDExisting{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             if (broadcastTimer == null)
             {
@@ -434,7 +438,7 @@ namespace LAMA.Communicator
                         s.Connect(_IP, _port);
                         if (loggedIn && LocalStorage.clientID != -1)
                         {
-                            SendCommand(new Command($"ClientConnected;{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                            SendCommand(new Command($"ClientConnected{Separators.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                         }
                     }
                     catch (SocketException e)
@@ -520,7 +524,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void SendClientInfo()
         {
-            string command = "ClientConnected" + ";" + LocalStorage.clientID;
+            string command = "ClientConnected" + Separators.messagePartSeparator + LocalStorage.clientID;
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
         /// <summary>
@@ -535,6 +539,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password)
         {
+            CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             LarpEvent.Name = serverName;
@@ -580,7 +585,7 @@ namespace LAMA.Communicator
             else
             {
                 logger.LogWrite("No exceptions");
-                Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu");
+                Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu123456789qwertzuiop");
                 string[] array = responseString.Split(',');
                 //Get server IP (check if it is valid)
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
@@ -611,7 +616,7 @@ namespace LAMA.Communicator
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
 
 
-                THIS.lastUpdate = 0;
+                THIS.LastUpdate = LocalStorage.LastUpdateTime;
                 THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 logger.LogWrite("Subscribing to events");
@@ -634,6 +639,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
             LarpEvent.Name = serverName;
@@ -710,7 +716,7 @@ namespace LAMA.Communicator
                 }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2000));
 
 
-                THIS.lastUpdate = 0;
+                THIS.LastUpdate = LocalStorage.LastUpdateTime;
                 THIS.wasUpdated = false;
                 modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache);
                 logger.LogWrite("Subscribing to events");

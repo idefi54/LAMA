@@ -133,6 +133,16 @@ namespace LAMA
             }
         }
 
+        public static long LastUpdateTime
+        {
+            get { return Instance._lastUpdateTime; }
+            set
+            {
+                Instance._lastUpdateTime = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+
         public static CP cp { get { return DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(cpID); } }
 
 
@@ -143,6 +153,7 @@ namespace LAMA
         public int _clientID { get; set; }
         public int _cpID { get; set; } = -1;
         public int _maxClientID { get; set; } = -1;
+        public long _lastUpdateTime { get; set; } = 0;
 
     }
 

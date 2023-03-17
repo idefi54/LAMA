@@ -24,6 +24,7 @@ namespace LAMA.Communicator
         {
             get { return logger; }
         }
+        public Compression CompressionManager { get; set; }
 
         public long LastUpdate
         {
@@ -105,8 +106,8 @@ namespace LAMA.Communicator
                 {
                     logger.LogWrite($"Sending: {currentCommand.command}");
                     Debug.WriteLine($"Sending: {currentCommand.command}");
-                    byte[] data = currentCommand.Encode();
-                    Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
+                    byte[] data = currentCommand.Encode(CompressionManager);
+                    Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
@@ -243,15 +244,16 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"{Encryption.DecryptStringFromBytes_Aes(data)}");
-            string[] messages = Encryption.DecryptStringFromBytes_Aes(data).Split('|');
-
+            Debug.WriteLine($"Message Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
+            Debug.WriteLine($"Messages.Length: {messages.Length}");
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(';');
+                string[] messageParts = message.Split(Separators.messagePartSeparator);
+                Debug.WriteLine($"Message Parts: {messageParts.Length}");
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -333,6 +335,22 @@ namespace LAMA.Communicator
         /// <exception cref="WrongCreadintialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
+            CompressionManager = new Compression();
+            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
+            Debug.WriteLine("Compression testing");
+            byte[] compressed = CompressionManager.Encode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}");
+            Debug.WriteLine($"compressed length {compressed.Length}");
+            string decompressed = CompressionManager.Decode(compressed);
+            Debug.WriteLine(decompressed);
+            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}", CompressionManager);
+            string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
+            Debug.WriteLine("Uncompressed");
+            Debug.WriteLine(Convert.ToBase64String(encrypted));
+            Debug.WriteLine(decrypted);
+            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
+            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
+            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
+            Debug.WriteLine("Compression testing end");
             if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
             Debug.WriteLine("After LarpEvent.Name test");
@@ -424,11 +442,11 @@ namespace LAMA.Communicator
                 }
             }
             Debug.WriteLine("No exceptions");
-            Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu");
+            //Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
-            byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
+            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
+            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
 
             //maxClientID = 0;
             IPAddress ipAddress;
@@ -450,23 +468,7 @@ namespace LAMA.Communicator
             THIS = this;
             Debug.WriteLine("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
-            /*
-            //Initialize Intervals
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestCP;
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestInventoryItem;
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestLarpActivity;
-            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.GiveNewInterval += intervalsManager.OnIntervalRequestChatMessage;
 
-            Debug.WriteLine("-------------------------------------0------------------------------------------");
-            DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------1------------------------------------------");
-            DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------2------------------------------------------");
-            DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------3------------------------------------------");
-            DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.InvokeGiveNewInterval();
-            Debug.WriteLine("-------------------------------------4------------------------------------------");
-            */
             Debug.WriteLine("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
@@ -582,7 +584,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    string command = $"GiveID;{clientID};{cpID}";
+                    string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -596,7 +598,7 @@ namespace LAMA.Communicator
             {
                 clientSockets[clientID] = current;
             }
-            SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         /// <summary>
@@ -608,6 +610,7 @@ namespace LAMA.Communicator
         /// <param name="clientID"></param>
         private void GiveNewClientID(Socket current, string clientName, string password, int clientID)
         {
+            Debug.WriteLine("GiveNewClientID");
             if (clientID == -1)
             {
                 maxClientID += 1;
@@ -620,7 +623,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    SendCommand(new Command($"ClientRefused;{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -635,7 +638,7 @@ namespace LAMA.Communicator
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
             }
-            string command = $"GiveID;{clientID};{cpID}";
+            string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[clientID] = current;
@@ -683,8 +686,53 @@ namespace LAMA.Communicator
                 if (entry.time > lastUpdateTime)
                 {
                     string value = entry.value;
-                    string[] keyParts = entry.key.Split(';');
-                    string command = "DataUpdated" + ";" + keyParts[0] + ";" + keyParts[1] + ";" + keyParts[2] + ";" + value;
+                    string[] keyParts = entry.key.Split(Separators.messagePartSeparator);
+                    string command = "DataUpdated" + Separators.messagePartSeparator + keyParts[0] + Separators.messagePartSeparator + keyParts[1] + Separators.messagePartSeparator + keyParts[2] + Separators.messagePartSeparator + value;
+                    SendCommand(new Command(command, entry.time, entry.key, id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send information to a client about all the changes since a certain time
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="id">Client id</param>
+        /// <param name="lastUpdateTime">The last time this client was updated</param>
+        public void SendUpdateAlt(Socket current, int id, long lastUpdateTime)
+        {
+            logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
+            for (int i = 0; i < objectsCache.Count; i++)
+            {
+                Command entry = objectsCache[i];
+                string[] keyParts = entry.key.Split(Separators.messageSeparator);
+                string objectType = keyParts[0];
+                long ID = Int64.Parse(keyParts[1]);
+                if (entry.time > lastUpdateTime)
+                {
+                    Serializable serializable;
+                    if (objectType == "LAMA.Models.LarpActivity") serializable = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.CP") serializable = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.InventoryItem") serializable = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.ChatMessage") serializable = DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.EncyclopedyCategory") serializable = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(ID);
+                    else if (objectType == "LAMA.Models.EncyclopedyRecord") serializable = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList.getByID(ID);
+                    else continue;
+                    string[] attributes = serializable.getAttributes();
+                    string command = "ItemCreated" + Separators.messageSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + String.Join(Separators.attributesSeparator.ToString(), attributes);
+                    SendCommand(new Command(command, entry.time, entry.getKey(), id));
+                }
+            }
+
+            for (int i = 0; i < attributesCache.Count; i++)
+            {
+                TimeValue entry = attributesCache[i];
+                string[] keyParts = entry.key.Split(Separators.messageSeparator);
+                Command creationEntry = objectsCache.getByKey(keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1]);
+                if (entry.time > lastUpdateTime && entry.time > creationEntry.time && !(creationEntry.time > lastUpdateTime))
+                {
+                    string value = entry.value;
+                    string command = "DataUpdated" + Separators.messageSeparator.ToString() + keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1] + Separators.messageSeparator.ToString() + keyParts[2] + Separators.messageSeparator.ToString() + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }

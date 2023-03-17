@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.POIEditView">
+    
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Uložit" Command="{Binding Save}" />
+        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding Cancel}" />
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Jméno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+            <Entry Text="{Binding Name}" FontSize="Medium" />
+
+            <Label Text="Popis"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" />
+            <Entry Text="{Binding Description}" FontSize="Medium" />
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
