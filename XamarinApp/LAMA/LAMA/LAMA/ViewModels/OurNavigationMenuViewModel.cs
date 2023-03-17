@@ -1,4 +1,5 @@
-﻿using LAMA.Views;
+﻿using LAMA.Communicator;
+using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,10 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command GoToChat { get; }
         public Xamarin.Forms.Command GoToActivityGraph { get; }
         public Xamarin.Forms.Command GoToEncyclopedy { get; }
+        public Xamarin.Forms.Command GoToCP { get; }
+        public Xamarin.Forms.Command GoToInventory { get; }
+        public Xamarin.Forms.Command GoToLarpEvent { get; }
+        public Xamarin.Forms.Command GoToPOI { get; }
 
         public OurNavigationMenuViewModel()
         {
@@ -22,6 +27,10 @@ namespace LAMA.ViewModels
             GoToChat = new Xamarin.Forms.Command(OnGoToChat);
             GoToActivityGraph = new Xamarin.Forms.Command(OnGoToActivityGraph);
             GoToEncyclopedy = new Xamarin.Forms.Command(OnGoToEncyclopedy);
+            GoToCP = new Xamarin.Forms.Command(OnGoToCP);
+            GoToInventory = new Xamarin.Forms.Command(OnGoToInventory);
+            GoToLarpEvent = new Xamarin.Forms.Command(OnGoToLarpEvent);
+            GoToPOI = new Xamarin.Forms.Command(OnGoToPOI);
         }
 
         private async void OnGoToMap(object obj)
@@ -52,6 +61,24 @@ namespace LAMA.ViewModels
         private async void OnGoToEncyclopedy(object obj)
         {
             await App.Current.MainPage.Navigation.PushAsync(new EncyclopedyCategoryView(null));
+        }
+
+        private async void OnGoToCP(object obj)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new CPListView());
+        }
+        private async void OnGoToInventory(object obj)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new InventoryView());
+        }
+        private async void OnGoToLarpEvent(object obj)
+        {
+            throw new Exception("not implemented, it's in another branch");
+            //await App.Current.MainPage.Navigation.PushAsync(new LarpEventView());
+        }
+       private async void OnGoToPOI(object obj)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new POIListView());
         }
     }
 }
