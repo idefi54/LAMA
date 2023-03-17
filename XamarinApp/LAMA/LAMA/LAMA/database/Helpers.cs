@@ -10,7 +10,7 @@ namespace LAMA
     class Helpers
     {
 
-        public static char separator = ',';
+        public static char separator = '⸬';
 
 
         public static EventList<long> readLongField(string input)
@@ -41,9 +41,7 @@ namespace LAMA
             while(!char.IsDigit(input[offset]) && offset < input.Length)
             {
                 if (input[offset] == '-')
-                {
                     negative = true;
-                }
                 ++offset;
             }
 
