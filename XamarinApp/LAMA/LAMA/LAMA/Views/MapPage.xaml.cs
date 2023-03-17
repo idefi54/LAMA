@@ -25,6 +25,9 @@ namespace LAMA.Views
             int row = 0;
             foreach (MapHandler.EntityType type in Enum.GetValues(typeof(MapHandler.EntityType)))
             {
+                if (type == MapHandler.EntityType.Nothing)
+                    continue;
+
                 LayoutOptions center = LayoutOptions.Center;
 
                 var label = new Label
@@ -33,6 +36,7 @@ namespace LAMA.Views
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = center,
                     FontAttributes = FontAttributes.Bold,
+                    TextColor = Color.White,
                 };
 
                 var checkBox = new CheckBox
@@ -41,9 +45,13 @@ namespace LAMA.Views
                     VerticalOptions = center,
                     IsChecked = true,
                     Color = Color.Green,
+                    BackgroundColor = Color.Black,
                 };
                 checkBox.CheckedChanged += (object sender, CheckedChangedEventArgs e) =>
+                {
                     MapHandler.Instance.Filter(type, e.Value);
+                    MapHandler.Instance.RefreshMapView(_mapView);
+                };
 
                 FilterGrid.Children.Add(label, 0, row);
                 FilterGrid.Children.Add(checkBox, 1, row);
@@ -148,7 +156,7 @@ namespace LAMA.Views
             _mapView = null;
         }
 
-        private async void SetHomeClicked(object sender, EventArgs e)
+        private void SetHomeClicked(object sender, EventArgs e)
         {
             SetHomeLocationButton.BackgroundColor = Color.Gray;
             SetHomeLocationButton.Text = "Change Home Location";

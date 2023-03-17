@@ -15,7 +15,7 @@ namespace LAMA
 
         public static EventList<long> readLongField(string input)
         {
-            
+
 
             EventList<long> output = new EventList<long>();
             if (input == null)
@@ -29,20 +29,13 @@ namespace LAMA
             }
             return output;
         }
-        public static long readLong (string input)
+        public static long readLong(string input)
         {
             int i = 0;
             return readLong(input, ref i);
         }
         public static long readLong(string input, ref int offset)
         {
-            bool negative = false;
-            int i = offset;
-            while (i > 0 && Char.IsWhiteSpace(input[i]) && i < input.Length)
-            {
-                --i;
-            }
-            negative = input[i] == '-';
 
             long num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
@@ -84,7 +77,7 @@ namespace LAMA
 
         public static EventList<int> readIntField(string input)
         {
-            
+
             EventList<int> output = new EventList<int>();
             if (input == null)
                 return output;
@@ -269,6 +262,38 @@ namespace LAMA
                 output.Append(((int)input[i]).ToString());
             }
             return output.ToString();
+        }
+
+        public static EventList<double> readDoubleField(string input)
+        {
+            EventList<double> output = new EventList<double>();
+            if (input == null)
+                return output;
+            int i = 0;
+            while (i < input.Length)
+            {
+                skipNonDigits(input, ref i);
+                output.Add(readDouble(input, ref i));
+                ++i;
+            }
+            return output;
+        }
+        public static EventList<Pair<double, double>> readDoublePairField(string input)
+        {
+            EventList<Pair<double, double>> output = new EventList<Pair<double, double>>();
+            if (input == null)
+                return output;
+            int i = 0;
+            while (i < input.Length)
+            {
+                skipNonDigits(input, ref i);
+                double first = readDouble(input, ref i);
+                skipNonDigits(input, ref i);
+                double second = readDouble(input, ref i);
+                output.Add(new Pair<double, double>(first, second));
+                ++i;
+            }
+            return output;
         }
     }
 }

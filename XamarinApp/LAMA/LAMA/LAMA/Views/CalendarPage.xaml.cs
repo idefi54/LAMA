@@ -22,7 +22,9 @@ namespace LAMA.Views
         private Color _color;
         private Label _dateLabel;
         private DateTime _date;
+        private DateTime? _highlightDay;
         private DateTime _firstDayInMonth => _date.AddDays(-_date.Day + 1);
+        private string _dateLabelText => $"{_date.Month:00}.{_date.Year:0000}";
         private TaskCompletionSource<DateTime> _taskCompletionSource;
 
         /// <summary>
@@ -30,26 +32,32 @@ namespace LAMA.Views
         /// Selecting day on graph page updates this value.
         /// </summary>
 
-        private CalendarPage()
+        private CalendarPage(DateTime? highlightDay = null)
         {
+
+            highlightDay = DateTime.Now.AddMonths(2);
+
             // Standard initialization
             InitializeComponent();
-            var now = DateTime.Now;
-            _date = new DateTime(now.Year, now.Month, now.Day);
 
-            // Create basic layout
-            var grid = new Grid();
+            _date = highlightDay ?? DateTime.Now;
+            // Get rid of time (date only)
+            _date = new DateTime(_date.Year, _date.Month, _date.Day);
+     
+            _highlightDay = highlightDay;
+
 
             // Create GUI
-            (_dateLabel, _leftButton, _rightButton) = CreateDateControl(grid);
-            _daysInMonth = CreateDaysInMonth(grid);
-            _daysInWeek = CreateDaysInWeek(grid);
+            (_dateLabel, _leftButton, _rightButton) = CreateDateControl();
+            _daysInMonth = CreateDaysInMonth();
+            _daysInWeek = CreateDaysInWeek();
 
             // Assign root layout
-            Content = grid;
+            Content = new Grid();
+            Refresh(Content as Grid);
         }
 
-        private Button[] CreateDaysInMonth(Grid grid)
+        private Button[] CreateDaysInMonth()
         {
             // 31 days in a month max
             var daysInMonth = new Button[31];
@@ -70,23 +78,12 @@ namespace LAMA.Views
 
                 // Clicking the button will adjust the graph time offset to that day
                 daysInMonth[i].Clicked += ButtonClicked;
-
-                // Add only corrent number of buttons
-                if (i < daysInCurrentMonth)
-                    grid.Children.Add(
-                        daysInMonth[i],
-                        (i + (int)_firstDayInMonth.DayOfWeek) % 7,
-                        (i + (int)_firstDayInMonth.DayOfWeek) / 7 + 2);
             }
-
-            // Set current day as red
-            if (_date.Year == DateTime.Now.Year && _date.Month == DateTime.Now.Month)
-                daysInMonth[DateTime.Now.Day - 1].BackgroundColor = Color.Red;
 
             return daysInMonth;
         }
 
-        private Label[] CreateDaysInWeek(Grid grid)
+        private Label[] CreateDaysInWeek()
         {
             // 7 days in a week
             var daysInWeek = new Label[7];
@@ -100,19 +97,18 @@ namespace LAMA.Views
                     VerticalOptions = LayoutOptions.Center,
                     HorizontalOptions = LayoutOptions.Center,
                 };
-                grid.Children.Add(daysInWeek[i], i, 1);
             }
 
             return daysInWeek;
         }
 
-        private (Label, Button, Button) CreateDateControl(Grid grid)
+        private (Label, Button, Button) CreateDateControl()
         {
             var dateLabel = new Label();
-            dateLabel.Text = $"{_date.Day:00}.{_date.Month:00}.{_date.Year:0000}";
+            dateLabel.Text = _dateLabelText;
             dateLabel.VerticalOptions = LayoutOptions.Center;
             dateLabel.HorizontalOptions = LayoutOptions.Center;
-            grid.Children.Add(dateLabel, 3, 0);
+            dateLabel.FontAttributes = FontAttributes.Bold;
 
             var leftButton = new Button();
             leftButton.Text = "<";
@@ -121,8 +117,7 @@ namespace LAMA.Views
             leftButton.BackgroundColor = Color.FromUint(0u);
             leftButton.FontSize = 20;
             leftButton.TextColor = Color.Blue;
-            leftButton.Clicked += (object sender, EventArgs e) => { _date = _date.AddMonths(-1); Refresh(); };
-            grid.Children.Add(leftButton, 2, 0);
+            leftButton.Clicked += (object sender, EventArgs e) => { _date = _date.AddMonths(-1); Refresh(Content as Grid); };
 
             var rightButton = new Button();
             rightButton.Text = ">";
@@ -131,8 +126,7 @@ namespace LAMA.Views
             rightButton.BackgroundColor = Color.FromUint(0u);
             rightButton.FontSize = 20;
             rightButton.TextColor = Color.Blue;
-            rightButton.Clicked += (object sender, EventArgs e) => { _date = _date.AddMonths(1); Refresh(); };
-            grid.Children.Add(rightButton, 4, 0);
+            rightButton.Clicked += (object sender, EventArgs e) => { _date = _date.AddMonths(1); Refresh(Content as Grid); };
 
             return (dateLabel, leftButton, rightButton);
         }
@@ -153,20 +147,16 @@ namespace LAMA.Views
                 _taskCompletionSource.SetResult(date);
                 _taskCompletionSource = null;
             }
-
-            // Get back to now offseted graph page
-            //Navigation.PopModalAsync();
         }
 
         /// <summary>
         /// Refreshes calendar visuals after clicking buttons. (updates to _date)
         /// </summary>
-        private void Refresh()
+        private void Refresh(Grid grid)
         {
-            Grid grid = Content as Grid;
             grid.Children.Clear();
 
-            _dateLabel.Text = $"{_date.Day:00}.{_date.Month:00}.{_date.Year:0000}";
+            _dateLabel.Text = _dateLabelText;
 
             // Add date control row
             grid.Children.Add(_dateLabel, 3, 0);
@@ -182,6 +172,9 @@ namespace LAMA.Views
             for (int i = 0; i < daysInCurrentMonth; i++)
             {
                 _daysInMonth[i].BackgroundColor = _color;
+                _daysInMonth[i].BorderWidth = 0;
+                _daysInMonth[i].BorderColor = Color.Transparent;
+
                 grid.Children.Add(
                     _daysInMonth[i],
                     (i + (int)_firstDayInMonth.DayOfWeek) % 7,
@@ -190,6 +183,15 @@ namespace LAMA.Views
 
             if (_date.Year == DateTime.Now.Year && _date.Month == DateTime.Now.Month)
                 _daysInMonth[DateTime.Now.Day - 1].BackgroundColor = Color.Red;
+
+            if (_highlightDay != null
+                && _date.Year == _highlightDay?.Year
+                && _date.Month == _highlightDay?.Month)
+            {
+                var button = _daysInMonth[_highlightDay.Value.Day - 1];
+                button.BorderColor = Color.DarkGreen;
+                button.BorderWidth = 7;
+            }
         }
 
         private Task<DateTime> GetDate()
@@ -206,7 +208,7 @@ namespace LAMA.Views
         /// </summary>
         /// <param name="navigation"></param>
         /// <returns></returns>
-        public static async Task<DateTime> ShowCalendarPage(INavigation navigation)
+        public static async Task<DateTime> ShowCalendarPage(INavigation navigation, DateTime? highlightDay = null)
         {
             var page = new CalendarPage();
             await navigation.PushModalAsync(page);
