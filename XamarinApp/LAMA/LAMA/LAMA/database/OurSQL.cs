@@ -40,7 +40,7 @@ namespace LAMA
     //singleton connection 
     class SQLConnectionWrapper
     {
-        public static string databaseName = "database.db";
+        public static string databaseName = "LamaTotallyUniqueDatabaseDeffinitelyNotDuplicate.db";
 
 
         public static SQLiteAsyncConnection connection { get { return _connection; } }
