@@ -69,6 +69,8 @@ namespace LAMA.Models
         {
             updateValue(9, Helpers.EnumEventListToString(_permissions));
         }
+        string _password = string.Empty;
+        public string password { get { return _password; } set { _password = value; updateValue(10, value); } }
 
         public CP()
         {
@@ -120,7 +122,7 @@ namespace LAMA.Models
 
 
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes", "permissions" };
+            "discord", "location", "notes", "permissions", "password" };
 
         public long getID()
         {
@@ -166,10 +168,9 @@ namespace LAMA.Models
                     }
                     _permissions.dataChanged += onPermissionsChange;
                     break;
-                    
-
-
-
+                case 10:
+                    _password = value;
+                    break;
             }
         }
 
@@ -196,6 +197,7 @@ namespace LAMA.Models
                 case 7: return _location.ToString();
                 case 8: return _notes;
                 case 9: return Helpers.EnumEventListToString(_permissions);
+                case 10: return _password;
             }
             throw new Exception("wring index called");
         }
