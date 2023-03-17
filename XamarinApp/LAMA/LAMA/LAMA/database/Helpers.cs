@@ -36,6 +36,16 @@ namespace LAMA
         }
         public static long readLong(string input, ref int offset)
         {
+            bool negative = false;
+
+            while(!char.IsDigit(input[offset]) && offset < input.Length)
+            {
+                if (input[offset] == '-')
+                {
+                    negative = true;
+                }
+                ++offset;
+            }
 
             long num = 0;
             while (offset < input.Length && char.IsDigit(input[offset]))
