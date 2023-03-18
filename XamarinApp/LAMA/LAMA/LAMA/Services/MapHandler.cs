@@ -266,6 +266,8 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
+            foreach (long id in _polyLines.Keys)
+                SavePolyline(id);
         }
 
         /// <summary>
@@ -291,6 +293,7 @@ namespace LAMA.Services
             LoadActivities();
             LoadCPs();
             LoadPointsOfIntrest();
+            LoadRoads();
 
             // TODO: load alerts when they are saved
 
@@ -664,9 +667,10 @@ namespace LAMA.Services
         /// <returns></returns>
         public long AddPolyline(Polyline polyline, MapView view = null)
         {
-            _polyLines.Add(_polyLineID++, polyline);
+            long id = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.nextID();
+            _polyLines.Add(id, polyline);
             view?.Drawables.Add(polyline);
-            return _polyLineID;
+            return id;
         }
 
         /// <summary>
@@ -676,6 +680,42 @@ namespace LAMA.Services
         {
             foreach (var polyline in _polylineBuffer)
                 AddPolyline(polyline);
+        }
+
+        private void SavePolyline(long id)
+        {
+            var road = new Road();
+            var polyline = _polyLines[id];
+            var c = polyline.StrokeColor;
+
+            road.ID = id;
+            road.Thickness = polyline.StrokeWidth;
+            road.Color.Add(c.R);
+            road.Color.Add(c.G);
+            road.Color.Add(c.B);
+            road.Color.Add(c.A);
+
+            foreach (var pos in polyline.Positions)
+                road.Coordinates.Add(new Pair<double, double>(pos.Longitude, pos.Latitude));
+
+            DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.add(road);
+        }
+        private long LoadRoad(Road road)
+        {
+            var polyline = new Polyline();
+            polyline.StrokeWidth = (float)road.Thickness;
+            polyline.StrokeColor = new XColor(
+                road.Color[0], // R
+                road.Color[1], // G
+                road.Color[2], // B
+                road.Color[3]  // A
+                );
+
+            foreach (var coords in road.Coordinates)
+                polyline.Positions.Add(new Position(coords.second, coords.first));
+
+            _polyLines.Add(road.ID, polyline);
+            return road.ID;
         }
         #endregion
 
@@ -750,6 +790,13 @@ namespace LAMA.Services
 
             for (int i = 0; i < rememberedList.Count; i++)
                 AddPointOfInterest(rememberedList[i], view);
+        }
+        private void LoadRoads(MapView view = null)
+        {
+            var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < rememberedList.Count; i++)
+                LoadRoad(rememberedList[i]);
         }
         #endregion
 
