@@ -6,6 +6,7 @@ using Xamarin.Essentials;
 using Mapsui.UI.Forms;
 using LAMA.ViewModels;
 using System;
+using LAMA.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -87,6 +88,10 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
+
+            bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
+            EditLabel.IsVisible = canEdit;
+            EditSwitch.IsVisible = canEdit;
 
             // Add activity indicator
             var activityIndicator = new ActivityIndicator

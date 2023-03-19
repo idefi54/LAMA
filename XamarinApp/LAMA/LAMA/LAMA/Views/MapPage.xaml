@@ -38,8 +38,8 @@
                     VerticalOptions="Center"
                     Command="{Binding SaveHome}"/>
 
-                    <Label Text="Edit"/>
-                    <Switch IsToggled="{Binding Editing}"/>
+                    <Label x:Name="EditLabel" Text="Edit"/>
+                    <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}"/>
 
                 </StackLayout>
 
