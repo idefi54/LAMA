@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xamarin.Forms.Platform.WPF;
 using Xamarin.Forms;
+using LAMA.Services;
 
 namespace LAMA.WPF
 {
@@ -27,7 +28,9 @@ namespace LAMA.WPF
         {
             InitializeComponent();
             Xamarin.Forms.Forms.Init();
+            MapHandler.UseGPU = false;
             LoadApplication(new LAMA.App());
+            
 
             MouseDown += MainWindow_MouseDown;
             MouseMove += MainWindow_MouseMove;

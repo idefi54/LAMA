@@ -48,7 +48,6 @@ namespace LAMA.Services
 
         // IDs
         private ulong _alertID;
-        private long _polyLineID;
 
         // Double clicking
         private Stopwatch _stopwatch;
@@ -60,6 +59,12 @@ namespace LAMA.Services
         private EntityType _filter = EntityType.Nothing;
         private bool _editing;
         #endregion
+
+        public static bool UseGPU
+        {
+            get => MapControl.UseGPU;
+            set => MapControl.UseGPU = value;
+        }
 
         /// <summary>
         /// Holds current location of this device.
@@ -97,7 +102,6 @@ namespace LAMA.Services
 
         private MapHandler()
         {
-            MapControl.UseGPU = Device.RuntimePlatform != Device.WPF;
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
             _activityPins = new Dictionary<long, Pin>();
@@ -117,8 +121,6 @@ namespace LAMA.Services
             _time = 0;
             _prevTime = 0;
             _currentLocation = null;
-
-            LoadActivities();
         }
 
         #region FILTER
@@ -228,33 +230,30 @@ namespace LAMA.Services
 
         #region GENERAL MAPVIEW HANDLING
         /// <summary>
-        /// Sets up MapView for normal use.
+        /// General MapView setup. Creates a Map, loads data and adds events.
         /// </summary>
-        /// <param name="view"></param>
-        public void MapViewSetup(MapView view, LarpActivity activity = null)
+        /// <param name="view">MapView you want to setup.</param>
+        /// <param name="showSelection">Show the selection pin on the map.</param>
+        /// <param name="relocateSelection">Can relocate the selection pin by clicking on the map.</param>
+        public void MapViewSetup(MapView view, bool showSelection = false, bool relocateSelection = false)
         {
             view.Map = CreateMap();
             view.PinClicked += HandlePinClicked;
-            view.MapClicked += HandleMapClicked;
-            _selectionPinVisible = false;
+            if (relocateSelection) view.MapClicked += HandleMapClickedSelection;
+            else view.MapClicked += HandleMapClicked;
+           
+            _selectionPinVisible = showSelection;
+           
+            if (_currentLocation == null)
+            {
+                SetLocationVisible(view, false);
+                SetSelectionPin(0, 0);
+            }
+            else
+                SetSelectionPin(_currentLocation.Longitude, _currentLocation.Latitude);
 
-            ReloadMapView(view, activity);
-        }
-
-        /// <summary>
-        /// Sets up MapView with selection pin. Click on map to relocate the pin.
-        /// Use GetSelectionPin() method to get the pin location.
-        /// </summary>
-        /// <param name="view"></param>
-        public void MapViewSetupSelection(MapView view, LarpActivity activity)
-        {
-            view.Map = CreateMap();
-            view.PinClicked += HandlePinClicked;
-            view.MapClicked += HandleMapClickedAdding;
-            _selectionPin.Position = new Position(0, 0);
-            _selectionPinVisible = true;
-
-            ReloadMapView(view, activity);
+            ReloadMapView(view);
+            RefreshMapView(view);
         }
 
         /// <summary>
@@ -276,7 +275,7 @@ namespace LAMA.Services
         /// </summary>
         /// <param name="view"></param>
         /// <param name="activity"></param>
-        public void ReloadMapView(MapView view, LarpActivity activity = null)
+        public void ReloadMapView(MapView view)
         {
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
@@ -290,22 +289,12 @@ namespace LAMA.Services
             _activityPins.Clear();
             _cpPins.Clear();
             _alertPins.Clear();
+            _polyLines.Clear();
 
             LoadActivities();
             LoadCPs();
             LoadPointsOfIntrest();
             LoadRoads();
-
-            // TODO: load alerts when they are saved
-
-            if (activity != null)
-            {
-                CenterOn(view, activity.place.first, activity.place.second);
-                SetSelectionPin(activity.place.first, activity.place.second);
-                _selectionPin.Position = _activityPins[activity.ID].Position;
-                _selectionPinVisible = true;
-                _activityPins.Remove(activity.ID);
-            }
 
             // Zoom in when clicked home button
             view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
@@ -313,8 +302,6 @@ namespace LAMA.Services
                 if (e.PropertyName == "MyLocationFollow")
                     Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
             };
-
-            RefreshMapView(view);
         }
 
         /// <summary>
@@ -564,7 +551,7 @@ namespace LAMA.Services
         /// </summary>
         /// <param name="activityID"></param>
         /// <param name="view"></param>
-        public void RemoveActivity(int activityID, MapView view = null)
+        public void RemoveActivity(long activityID, MapView view = null)
         {
             view?.Pins.Remove(_activityPins[activityID]);
             _activityPins.Remove(activityID);
@@ -580,6 +567,12 @@ namespace LAMA.Services
         {
             view?.Pins.Remove(_alertPins[noficationID]);
             _alertPins.Remove(noficationID);
+        }
+
+        public void RemovePOI(long poiID, MapView view = null)
+        {
+            view?.Pins.Remove(_pointOfInterestPins[poiID]);
+            _pointOfInterestPins.Remove(poiID);
         }
 
         /// <summary>
@@ -849,7 +842,7 @@ namespace LAMA.Services
             _polylinePin.IsVisible = true;
         }
 
-        private void HandleMapClickedAdding(object sender, MapClickedEventArgs e)
+        private void HandleMapClickedSelection(object sender, MapClickedEventArgs e)
         {
             _selectionPin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
             OnMapClick?.Invoke(e.Point);
