@@ -251,7 +251,8 @@ namespace LAMA.Services
             view.Map = CreateMap();
             view.PinClicked += HandlePinClicked;
             view.MapClicked += HandleMapClickedAdding;
-            _selectionPinVisible = false;
+            _selectionPin.Position = new Position(0, 0);
+            _selectionPinVisible = true;
 
             ReloadMapView(view, activity);
         }
@@ -330,14 +331,14 @@ namespace LAMA.Services
                 foreach (Pin pin in _activityPins.Values)
                 {
                     view.Pins.Add(pin);
-                    pin.Scale = _pinScale;
+                    //pin.Scale = _pinScale;
                 }
 
             if (IsFilteredIn(EntityType.Alerts))
                 foreach (Pin pin in _alertPins.Values)
                 {
                     view.Pins.Add(pin);
-                    pin.Scale = _pinScale;
+                    //pin.Scale = _pinScale;
                 }
 
 
@@ -345,14 +346,14 @@ namespace LAMA.Services
                 foreach (Pin pin in _cpPins.Values)
                 {
                     view.Pins.Add(pin);
-                    pin.Scale = 0.5f;
+                    //pin.Scale = 0.5f;
                 }
 
             if (IsFilteredIn(EntityType.PointsOfIntrest))
                 foreach (Pin pin in _pointOfInterestPins.Values)
                 {
                     view.Pins.Add(pin);
-                    pin.Scale = _pinScale;
+                    //pin.Scale = _pinScale;
                 }
 
             if (IsFilteredIn(EntityType.Polylines))
@@ -459,22 +460,25 @@ namespace LAMA.Services
                 + "\n"
                 + $"Double click to show the activity.";
 
+            pin.Type = PinType.Icon;
+            pin.Icon = GetIcon("sword");
+
             switch (activity.status)
             {
                 case ActivityStatus.awaitingPrerequisites:
-                    pin.Color = XColor.Gray; break;
+                    pin.Icon = GetIcon("time_1"); break;
 
                 case ActivityStatus.readyToLaunch:
-                    pin.Color = XColor.FromHex("668067"); break; // LimeGreen
+                    pin.Icon = GetIcon("mini_next"); break;
 
                 case ActivityStatus.launched:
-                    pin.Color = XColor.ForestGreen; break;
+                    pin.Icon = GetIcon("profile_close_add"); break;
 
                 case ActivityStatus.inProgress:
-                    pin.Color = XColor.DeepSkyBlue; break;
+                    pin.Icon = GetIcon("sword"); break;
 
                 case ActivityStatus.completed:
-                    pin.Color = XColor.Black; break;
+                    pin.Icon = GetIcon("accept_cr"); break;
 
                 default:
                     break;
@@ -490,11 +494,7 @@ namespace LAMA.Services
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
             pin.Type = PinType.Icon;
-
-            Assembly myAssembly = Assembly.GetExecutingAssembly();
-            Stream myStream = myAssembly.GetManifestResourceStream("LAMA.Resources.Icons.stop_cr.png");
-            
-            pin.Icon = myStream.ToBytes();
+            pin.Icon = GetIcon("location_3_profile");
             pin.Scale = 0.2f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
@@ -508,6 +508,8 @@ namespace LAMA.Services
         public void AddPointOfInterest(PointOfInterest poi, MapView view = null)
         {
             Pin pin = CreatePin(poi.Coordinates.first, poi.Coordinates.second, "POI", view);
+            pin.Type = PinType.Icon;
+            pin.Icon = GetIcon("flag_2");
             pin.Scale = 0.5f;
             pin.Color = XColor.Beige;
             pin.Callout.Title = poi.Name;
@@ -530,6 +532,8 @@ namespace LAMA.Services
         public ulong AddAlert(double lon, double lat, string text, MapView view = null)
         {
             Pin p = CreatePin(lon, lat, "important");
+            p.Type = PinType.Icon;
+            p.Icon = GetIcon("message_2_exp-1");
             p.Callout.Title = text;
             p.Color = XColor.Red;
             p.Callout.Color = XColor.Red;
@@ -538,7 +542,7 @@ namespace LAMA.Services
             if (view != null && IsFilteredIn(EntityType.Alerts))
                 view.Pins.Add(p);
 
-            p.Scale = _pinScale;
+            //p.Scale = _pinScale;
             return _alertID++;
         }
 
@@ -766,7 +770,7 @@ namespace LAMA.Services
             p.Callout.SubtitleFontAttributes = Xamarin.Forms.FontAttributes.Italic;
             p.Callout.SubtitleFontSize = p.Callout.TitleFontSize * 0.7f;
 
-            if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
+            //if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
             return p;
         }
         private void LoadActivities(MapView view = null)
@@ -797,6 +801,10 @@ namespace LAMA.Services
 
             for (int i = 0; i < rememberedList.Count; i++)
                 LoadRoad(rememberedList[i]);
+        }
+        private byte[] GetIcon(string name)
+        {
+            return typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png").ToBytes();
         }
         #endregion
 
