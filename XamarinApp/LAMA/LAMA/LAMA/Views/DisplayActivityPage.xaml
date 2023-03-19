@@ -51,11 +51,10 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<Label Grid.Row="0" Grid.Column="0" Text="Den konání:" HorizontalOptions="Start" VerticalOptions="End"/>
-					<Label Grid.Row="0" Grid.Column="2" Text="{Binding DayIndex}" HorizontalOptions="Start" VerticalOptions="Center"/>
-
-					<Label Grid.Row="1" Grid.Column="0" Text="Začátek:" HorizontalOptions="Start" VerticalOptions="End"/>
-					<Label Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Start}"/>
+					<Label Grid.Row="0" Grid.Column="0" Text="Začátek:" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Label Grid.Row="0" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Start}"/>
+					<Label Grid.Row="1" Grid.Column="0" Text="Konec:" HorizontalOptions="Start" VerticalOptions="End"/>
+					<Label Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" Text="{Binding End}"/>
 					<Label Grid.Row="2" Grid.Column="0" Text="Délka trvání:" HorizontalOptions="Start" VerticalOptions="End"/>
 					<Label Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Duration}"/>
 				</Grid>

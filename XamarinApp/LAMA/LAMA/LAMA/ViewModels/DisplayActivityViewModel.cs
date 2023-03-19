@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using System.Linq;
 using LAMA.Services;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace LAMA.ViewModels
 {
@@ -23,27 +24,33 @@ namespace LAMA.ViewModels
 		private string _name;
 		private string _description;
 		private string _type;
-		private string _duration;
-		private string _start;
 		private string _dayIndex;
 		private TrulyObservableCollection<RoleItemViewModel> _roles;
 		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
 
+		private string _start;
+		private string _end;
+		private string _duration;
 
 		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
-		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
-		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
 		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
-        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
+		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
+		public string End { get { return _end; } set { SetProperty(ref _end, value); } }
+		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
+
+
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		private bool _isRegistered;
@@ -85,10 +92,9 @@ namespace LAMA.ViewModels
 			Name = _activity.name;
 			Description = _activity.description;
 			Type = _activity.eventType.ToString();
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.duration);
-			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
-			Start = dt.Hour + ":" + dt.Minute;
+
+			UpdateDisplayedTime();
+
 			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
@@ -111,6 +117,19 @@ namespace LAMA.ViewModels
 
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
+		}
+
+		private void UpdateDisplayedTime()
+		{
+
+			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
+			Start = startDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
+
+			DateTime endDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start + _activity.duration);
+			End = endDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
+
+			TimeSpan durationTimeSpan = endDateTime - startDateTime;
+			Duration = durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
 		}
 
 		private async void OnEdit()
@@ -217,10 +236,8 @@ namespace LAMA.ViewModels
 				Dependencies.Add(new LarpActivityShortItemViewModel(la));
 			}
 
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.duration);
-			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.start);
-			Start = dt.Hour + ":" + dt.Minute;
+			UpdateDisplayedTime();
+
 			DayIndex = (larpActivityDTO.day + 1) + ".";
 			Preparations = larpActivityDTO.preparationNeeded;
 			Location = larpActivityDTO.place.ToString();

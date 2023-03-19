@@ -31,36 +31,15 @@
 				<Label Text="Typ aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Picker Title="Typ aktivity" ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}" HorizontalOptions="Start">
-					<!--<Picker.ItemsSource>
-						<x:Array Type="{x:Type x:String}">
-							<x:String>Organizační</x:String>
-							<x:String>Vedlejší event</x:String>
-							<x:String>Hlavní event</x:String>
-						</x:Array>
-					</Picker.ItemsSource>-->
-				</Picker>
-
+				<Picker Title="Typ aktivity" HorizontalOptions="Start"
+						ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}"/>
 
 				<Label Text="Časové rozmezí"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<!--
-				<Grid ColumnDefinitions="*,*" RowDefinitions="100">
-					<StackLayout Orientation="Horizontal" Grid.Column="0">
-						<Label Text="Začátek"/>
-						<TimePicker></TimePicker>
-					</StackLayout>
-					<StackLayout Orientation="Horizontal" Grid.Column="1">
-						<Label Text="Konec"/>
-						<TimePicker></TimePicker>
-					</StackLayout>
-				</Grid>
-				-->
 
 				<Grid Padding="0,0,0,0">
 					<Grid.RowDefinitions>
-						<RowDefinition Height="auto" />
 						<RowDefinition Height="30" />
 						<RowDefinition Height="auto" />
 						<RowDefinition Height="30" />
@@ -68,24 +47,50 @@
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="auto" />
-						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<Picker Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Title="Den konání" SelectedIndex="{Binding Day}" HorizontalOptions="Start" VerticalOptions="Center">
-						<Picker.ItemsSource>
-							<x:Array Type="{x:Type x:String}">
-								<x:String>Pondělí 12.4.</x:String>
-								<x:String>Úterý 13.4.</x:String>
-								<x:String>Středa 14.4.</x:String>
-							</x:Array>
-						</Picker.ItemsSource>
-					</Picker>
-
-					<Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="2" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Start}"/>
-					<Label Grid.Row="3" Grid.Column="0" Text="Délka trvání" HorizontalOptions="Start" VerticalOptions="End"/>
-					<TimePicker Grid.Row="4" Grid.Column="0" HorizontalOptions="Start" Time="{Binding Duration}"/>
+					<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
+					<OnPlatform x:TypeArguments="View">
+						<On Platform="iOS">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="Android">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="UWP">
+							<TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="WPF">
+							<StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
+							</StackLayout>
+						</On>
+					</OnPlatform>
+					<Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDateString}" Command="{Binding SetStartTimeDateCommand}"/>
+					
+					<Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
+					<OnPlatform x:TypeArguments="View">
+						<On Platform="iOS">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+						</On>
+						<On Platform="Android">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+						</On>
+						<On Platform="UWP">
+							<TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+						</On>
+						<On Platform="WPF">
+							<StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding EndTimeStringHourSelected}"/>
+								<Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding EndTimeStringMinuteSelected}"/>
+							</StackLayout>
+						</On>
+					</OnPlatform>
+					<Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDateString}" Command="{Binding SetEndTimeDateCommand}"/>
 				</Grid>
 
 
@@ -158,16 +163,10 @@
 				<Button Text="+" HorizontalOptions="Start"></Button>
 
 
-                <Label Text="Lokace"
+				<Label Text="Lokace"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-
-                <!--
-				<StackLayout Orientation="Horizontal">
-					<Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-					<Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
-				</StackLayout>
-				-->
+				
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>
