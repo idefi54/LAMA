@@ -621,7 +621,7 @@ namespace LAMA.Services
             polyline.Clicked += (object sender, DrawableClickedEventArgs e) =>
                 PolyLineClick(e.Point);
 
-            _polyLines.Add(_polyLineID++, polyline);
+            //_polyLines.Add(_polyLineID++, polyline);
             _polylineBuffer.Push(polyline);
             view?.Drawables.Add(polyline);
             _editing = true;
@@ -714,7 +714,7 @@ namespace LAMA.Services
             foreach (var coords in road.Coordinates)
                 polyline.Positions.Add(new Position(coords.second, coords.first));
 
-            _polyLines.Add(road.ID, polyline);
+            _polyLines[road.ID] = polyline;
             return road.ID;
         }
         #endregion

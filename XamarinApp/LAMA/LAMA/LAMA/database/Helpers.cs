@@ -38,7 +38,7 @@ namespace LAMA
         {
             bool negative = false;
 
-            while(!char.IsDigit(input[offset]) && offset < input.Length)
+            while (!char.IsDigit(input[offset]) && offset < input.Length)
             {
                 if (input[offset] == '-')
                     negative = true;
@@ -60,7 +60,7 @@ namespace LAMA
         {
             bool negative = false;
             int i = offset;
-            while(i>0 && Char.IsWhiteSpace(input[i]) && i< input.Length)
+            while (i > 0 && Char.IsWhiteSpace(input[i]) && i < input.Length)
             {
                 --i;
             }
@@ -127,20 +127,18 @@ namespace LAMA
         public static double readDouble(string input, ref int offset)
         {
 
-            
             long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
             skipWhiteSpace(input, ref offset);
-            if (input[offset] == '.' || input[offset] == ',')
-            {
-                ++offset;
-                int offset1 = offset;
-                long secondPart = readLong(input, ref offset);
-                offset1 = offset - offset1;
-                return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
-            }
-            else
+
+            if (offset >= input.Length || (input[offset] != '.' && input[offset] != ','))
                 return firstPart;
+
+            ++offset;
+            int offset1 = offset;
+            long secondPart = readLong(input, ref offset);
+            offset1 = offset - offset1;
+            return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
         }
         public static Pair<double, double> readDoublePair(string input)
         {
@@ -312,7 +310,7 @@ namespace LAMA
 
         static void skipWhiteSpace(string input, ref int offset)
         {
-            while(offset < input.Length && char.IsWhiteSpace(input[offset]))
+            while (offset < input.Length && char.IsWhiteSpace(input[offset]))
             {
                 ++offset;
             }
