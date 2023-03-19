@@ -121,14 +121,15 @@ namespace LAMA.ViewModels
 
 		private void UpdateDisplayedTime()
 		{
-			DateTime durationDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.duration);
-			Duration = durationDateTime.Hour + "h " + durationDateTime.Minute + "m";
 
 			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
 			Start = startDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
 
 			DateTime endDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start + _activity.duration);
 			End = endDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
+
+			TimeSpan durationTimeSpan = endDateTime - startDateTime;
+			Duration = durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
 		}
 
 		private async void OnEdit()
