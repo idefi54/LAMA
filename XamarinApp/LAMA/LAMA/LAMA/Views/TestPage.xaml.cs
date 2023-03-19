@@ -168,6 +168,8 @@ namespace LAMA.Views
                 admin.permissions.Add(CP.PermissionType.ChangeActivity);
             if (!admin.permissions.Contains(CP.PermissionType.ChangeCP))
                 admin.permissions.Add(CP.PermissionType.ChangeCP);
+            if (!admin.permissions.Contains(CP.PermissionType.EditMap))
+                admin.permissions.Add(CP.PermissionType.EditMap);
 
             LocalStorage.cpID = 0;
 
