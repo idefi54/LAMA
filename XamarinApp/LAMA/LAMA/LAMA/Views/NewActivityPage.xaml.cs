@@ -59,7 +59,21 @@ namespace LAMA.Views
                 HeightRequest = mapHeightRequest,
                 BackgroundColor = mapBackgroundColor
             };
-            MapHandler.Instance.MapViewSetupSelection(_mapView, Activity);
+
+            MapHandler mapHandler = MapHandler.Instance;
+            mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: true);
+
+            if (Activity != null)
+            {
+                long id = Activity.ID;
+                double lon = Activity.place.first;
+                double lat = Activity.place.second;
+
+                mapHandler.RemoveActivity(id, _mapView);
+                mapHandler.SetSelectionPin(lon, lat);
+                MapHandler.CenterOn(_mapView, lon, lat);
+            }
+
             layout.Children.Remove(activityIndicator);
             layout.Children.Add(_mapView);
         }
