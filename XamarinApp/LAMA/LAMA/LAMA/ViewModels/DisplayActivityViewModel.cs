@@ -131,7 +131,7 @@ namespace LAMA.ViewModels
 			End = endDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
 
 			TimeSpan durationTimeSpan = endDateTime - startDateTime;
-			Duration = durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
+			Duration = (int)durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
 		}
 
 		private async void OnEdit()
