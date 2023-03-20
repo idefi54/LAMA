@@ -604,7 +604,7 @@ namespace LAMA.Communicator
                 }
                 else
                 {
-                    throw new NotAnIPAddressException("IP adresa serveru není validní");
+                    throw new NotAnIPAddressException($"IP adresa serveru není validní {array[0].Trim('"')}");
                 }
                 THIS = this;
                 _port = int.Parse(array[1]);
@@ -703,7 +703,7 @@ namespace LAMA.Communicator
                 }
                 else
                 {
-                    throw new NotAnIPAddressException("IP adresa serveru není validní");
+                    throw new NotAnIPAddressException($"IP adresa serveru není validní {array[0].Trim('"')}");
                 }
                 THIS = this;
                 _port = int.Parse(array[1]);

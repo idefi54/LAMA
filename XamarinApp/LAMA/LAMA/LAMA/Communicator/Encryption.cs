@@ -384,6 +384,7 @@ namespace LAMA.Communicator
             {
                 byte[] encodedPart = encrypted.Skip(16*offset).ToArray();
                 byte[] decrypted = Encryption.DecryptFromBytesToBytes_Aes(encodedPart, ECB);
+                if (decrypted == null) break;
                 string uncompressed = compressor.DecodeFromAESBytes(decrypted, out offsetChange);
                 messages.Add(uncompressed);
                 offset += offsetChange;
