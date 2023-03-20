@@ -210,7 +210,7 @@ namespace LAMA.ViewModels
 				now = now.AddSeconds(-now.Second);
 
 				StartDate = now.AddMinutes(30);
-				EndDate = StartTime.AddHours(1);
+				EndDate = StartDate.AddHours(1);
 
 				Preparations = "";
 			}
@@ -218,11 +218,11 @@ namespace LAMA.ViewModels
 			StartTime = StartDate;
 			EndTime = EndDate;
 
-			StartTimeStringHourSelected = StartTime.Hour;
-			StartTimeStringMinuteSelected = StartTime.Minute;
+			StartTimeStringHourSelected = StartTime.Hour - StartTime.Hour%5;
+			StartTimeStringMinuteSelected = StartTime.Minute - StartTime.Minute%5;
 
-			EndTimeStringHourSelected = EndTime.Hour;
-			EndTimeStringMinuteSelected = EndTime.Minute;
+			EndTimeStringHourSelected = EndTime.Hour - EndTime.Hour%5;
+			EndTimeStringMinuteSelected = EndTime.Minute - EndTime.Minute%5;
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
