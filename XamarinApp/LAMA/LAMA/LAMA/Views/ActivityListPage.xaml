@@ -22,6 +22,24 @@
 
 
 	<ContentPage.Content>
+		<StackLayout>
+			<Frame x:Name="SortDropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+				   BackgroundColor="LightBlue"
+				   IsVisible="{Binding ShowSortDropdown}">
+				<StackLayout>
+					<Label Text="HAHA"/>
+				</StackLayout>
+			</Frame>
+			<Frame x:Name="FilterDropdownMenu"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+				   BackgroundColor="LightGreen"
+				   IsVisible="{Binding ShowFilterDropdown}">
+				<StackLayout>
+					<Label Text="hehe"/>
+				</StackLayout>
+			</Frame>
+		<AbsoluteLayout>
 		<StackLayout  Spacing="0">
             <common:OurNavigationMenu></common:OurNavigationMenu>
             <ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
@@ -66,5 +84,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackLayout>
-    </ContentPage.Content>
+		</AbsoluteLayout>
+		</StackLayout>
+	</ContentPage.Content>
 </ContentPage>

@@ -11,11 +11,13 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class ActivityListViewModel
+    public class ActivityListViewModel : BaseViewModel
     {
 
         public Command TestChangeValues { get; }
         public Command TestRefresh { get; }
+        public Command SortCommand { get; }
+        public Command FilterCommand { get; }
         public Command AddActivityCommand { get; }
         public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
@@ -30,6 +32,12 @@ namespace LAMA.ViewModels
         INavigation Navigation;
 
         public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
+        private bool _showSortDropdown;
+        public bool ShowSortDropdown { get { return _showSortDropdown; } set { SetProperty(ref _showSortDropdown, value); } }
+
+        private bool _showFilterDropdown;
+        public bool ShowFilterDropdown { get { return _showFilterDropdown; } set { SetProperty(ref _showFilterDropdown, value); } }
 
         //int maxId = 0;
 
@@ -94,6 +102,8 @@ namespace LAMA.ViewModels
             TestChangeValues = new Command(TestChangeLastActivityValues);
             TestRefresh = new Command(RefreshCollection);
 
+            SortCommand = new Command(ToggleSort);
+            FilterCommand = new Command(ToggleFilter);
 
 
             SQLEvents.created += PropagateCreated;
@@ -152,6 +162,18 @@ namespace LAMA.ViewModels
         }
 
         #endregion
+
+        private void ToggleSort()
+		{
+            ShowSortDropdown = !ShowSortDropdown;
+            ShowFilterDropdown = false;
+		}
+
+        private void ToggleFilter()
+		{
+            ShowFilterDropdown = !ShowFilterDropdown;
+            ShowSortDropdown = false;
+		}
 
         private void TestChangeLastActivityValues(object obj)
 		{
