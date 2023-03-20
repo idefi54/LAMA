@@ -65,6 +65,8 @@ namespace LAMA.ViewModels
 			}
 		}
 
+		public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
 
 
 		LarpActivity _activity;

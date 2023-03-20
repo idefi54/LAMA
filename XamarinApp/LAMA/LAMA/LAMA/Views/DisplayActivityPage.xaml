@@ -6,11 +6,12 @@
              Title="Zobrazení Aktivity"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
+             xmlns:forms="clr-namespace:LAMA.Forms"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
-		<ToolbarItem Text="Upravit" Command="{Binding EditCommand}"/>
+		<forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
 	</ContentPage.ToolbarItems>
 	
 	<ContentPage.Content>

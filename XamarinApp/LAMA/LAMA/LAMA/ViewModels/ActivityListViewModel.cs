@@ -29,6 +29,8 @@ namespace LAMA.ViewModels
 
         INavigation Navigation;
 
+        public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
         //int maxId = 0;
 
         public ActivityListViewModel(INavigation navigation)
