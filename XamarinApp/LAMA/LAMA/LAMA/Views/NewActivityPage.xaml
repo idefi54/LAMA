@@ -14,7 +14,7 @@
 	
     <ContentPage.Content>
 		<ScrollView>
-			<StackLayout Padding="15" >
+			<StackLayout Padding="15,15,30,15" >
 				<Label Text="Název aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
@@ -104,7 +104,7 @@
 								<Entry IsVisible="{Binding Editable}" IsEnabled="{Binding Editable}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
 								<Label IsVisible="{Binding Editable, Converter={Converters:InverseBoolConverter}}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
 								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding MaxCount}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-								<Button Text="-"
+								<Button Text="-" Padding="5"
 										Command="{Binding Path=BindingContext.RemoveRole, Source={x:Reference Name=RoleList}}"
 										CommandParameter="{Binding .}"/>
 							</StackLayout>
@@ -146,21 +146,21 @@
 				<Label Text="Vybavení"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<!--
-				<StackLayout Orientation="Vertical">
-					<StackLayout Orientation="Horizontal">
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Truhla s pokladem"/>
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-						<Button Text="-"></Button>
-					</StackLayout>
-					<StackLayout Orientation="Horizontal">
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="Povoz"/>
-						<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="1" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-						<Button Text="-"></Button>
-					</StackLayout>
+				<StackLayout x:Name="ItemList" BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<StackLayout Orientation="Horizontal">
+								<Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+								<Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding Count}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+								<Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding MaxCount}"/>
+								<Button Text="Odebrat" Padding="5"
+										Command="{Binding Path=BindingContext.RemoveItem, Source={x:Reference Name=ItemList}}"
+										CommandParameter="{Binding .}"/>
+							</StackLayout>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
 				</StackLayout>
-				-->
-				<Button Text="+" HorizontalOptions="Start"></Button>
+				<Button Text="Přidat předmět" HorizontalOptions="Start" Command="{Binding AddNewItem}"/>
 
 
 				<Label Text="Lokace"

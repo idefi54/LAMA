@@ -24,6 +24,7 @@ namespace LAMA.ViewModels
 		private int _typeIndex;
 
 		private ObservableCollection<RoleItemViewModel> _roles;
+		private ObservableCollection<ItemItemViewModel> _items;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -37,6 +38,7 @@ namespace LAMA.ViewModels
 
 
 		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public ObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -153,6 +155,20 @@ namespace LAMA.ViewModels
 
 		private IMessageService _messageService;
 
+		public Command SetStartTimeDateCommand { get; }
+		public Command SetEndTimeDateCommand { get; }
+
+		public Xamarin.Forms.Command SaveCommand { get; }
+		public ICommand CancelCommand { get; }
+		public Command AddDependencyCommand { get; }
+		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
+
+		public Command AddNewRole { get; }
+		public Command<RoleItemViewModel> RemoveRole { get; }
+
+		public Command AddNewItem { get; }
+		public Command<ItemItemViewModel> RemoveItem { get; }
+
 		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
 		{
 			_messageService = DependencyService.Get<IMessageService>();
@@ -162,6 +178,7 @@ namespace LAMA.ViewModels
 			MapHandler.Instance.SetSelectionPin(0, 0);
 
 			Roles = new ObservableCollection<RoleItemViewModel>();
+			Items = new ObservableCollection<ItemItemViewModel>();
 
 			TimeStringHourOptions = new ObservableCollection<int>();
 			TimeStringMinuteOptions = new ObservableCollection<int>();
@@ -239,13 +256,12 @@ namespace LAMA.ViewModels
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
 			AddNewRole = new Command(OnAddNewRole);
 			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
+			AddNewItem = new Command(OnAddNewItem);
+			RemoveItem = new Command<ItemItemViewModel>(OnRemoveItem);
 
 			SetStartTimeDateCommand = new Command(OnSetStartTimeDate);
 			SetEndTimeDateCommand = new Command(OnSetEndTimeDate);
 		}
-
-		public Command SetStartTimeDateCommand { get; }
-		public Command SetEndTimeDateCommand { get; }
 
 		public async void OnSetStartTimeDate()
 		{
@@ -273,6 +289,16 @@ namespace LAMA.ViewModels
 		private void OnAddNewRole()
 		{
 			Roles.Add(new RoleItemViewModel("role", 1, 0, true));
+		}
+
+		private void OnRemoveItem(ItemItemViewModel item)
+		{
+			Items.Remove(item);
+		}
+
+		private void OnAddNewItem()
+		{
+			Items.Add(new ItemItemViewModel(0,"test",Items.Count+1,1));
 		}
 
 		private bool ValidateSave()
@@ -316,11 +342,6 @@ namespace LAMA.ViewModels
 			return message == "";
 		}
 
-		public Xamarin.Forms.Command SaveCommand { get; }
-		public ICommand CancelCommand { get; }
-		public Command AddDependencyCommand { get; }
-		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
-
 		public void OnAddDependency()
 		{
 			HashSet<long> dependencies = new HashSet<long>();
@@ -349,9 +370,6 @@ namespace LAMA.ViewModels
 		{
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
 		}
-
-		public Command AddNewRole { get; }
-		public Command<RoleItemViewModel> RemoveRole {get; }
 
 		private async void OnCancel()
 		{

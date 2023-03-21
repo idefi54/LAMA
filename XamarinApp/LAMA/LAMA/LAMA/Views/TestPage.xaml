@@ -17,10 +17,13 @@
         <ScrollView>
             <StackLayout Spacing="10">
 
-                <common:OurNavigationMenu>
-                </common:OurNavigationMenu>
+				<common:OurNavigationMenu/>
 
-                <Button Text="ResetDatabase" Clicked="OnResetDatabase"/>
+                <Button Text="ResetDatabase" Clicked="OnResetDatabase" Background="red"/>
+
+				<Button Text="Switch To Admin" Clicked="SwitchToAdmin" Background="red"/>
+				
+				<Button Text="Switch To User" Clicked="SwitchToUser" Background="red"/>
 
                 <Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
                 <Button Text="NewActivity" Clicked="OnNewActivity"/>
@@ -34,8 +37,6 @@
 				<Button Text="Dropdown Menu Over Example" Clicked="OnDropdownOverExample"/>
 				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
 				<Button Text="Image Example" Clicked="OnImageExample"/>
-
-				<Button Text="Switch To Admin" Clicked="SwitchToAdmin"/>
 			</StackLayout>
         </ScrollView>
     </ContentPage.Content>
