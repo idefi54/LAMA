@@ -140,13 +140,6 @@ namespace LAMA.ViewModels
 
 		#endregion Time
 
-		//public NewActivityViewModel()
-		//{
-		//          SaveCommand = new Command(OnSave, ValidateSave);
-		//          CancelCommand = new Command(OnCancel);
-		//          this.PropertyChanged +=
-		//              (_, __) => SaveCommand.ChangeCanExecute();
-		//      }
 
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;
@@ -447,6 +440,7 @@ namespace LAMA.ViewModels
 				items.Add(item.ToPair());
             }
 
+			//is not used at saving, no dataloss here
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
 			int tmp_day = 0;
