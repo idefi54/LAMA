@@ -258,6 +258,7 @@ namespace LAMA.Models
                 return;
 
             Pair<string, int> roleToRemove = roles[index];
+            registrationByRole.RemoveAll(x => x.second == roleToRemove.first);
             roles.RemoveAt(index);
 
             roles.RemoveAll(x => x.first == roleToRemove.first);

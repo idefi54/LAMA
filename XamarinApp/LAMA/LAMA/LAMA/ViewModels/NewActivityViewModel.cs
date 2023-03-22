@@ -140,13 +140,6 @@ namespace LAMA.ViewModels
 
 		#endregion Time
 
-		//public NewActivityViewModel()
-		//{
-		//          SaveCommand = new Command(OnSave, ValidateSave);
-		//          CancelCommand = new Command(OnCancel);
-		//          this.PropertyChanged +=
-		//              (_, __) => SaveCommand.ChangeCanExecute();
-		//      }
 
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;

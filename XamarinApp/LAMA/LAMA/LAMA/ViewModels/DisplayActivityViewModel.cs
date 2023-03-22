@@ -238,7 +238,10 @@ namespace LAMA.ViewModels
 			_activity.UpdateRoles(larpActivityDTO.roles);
 			foreach(var role in larpActivityDTO.roles)
 			{
-				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
+				int registered = _activity.registrationByRole
+					.Where(x => x.second.Trim() == role.first)
+					.Count();
+				Roles.Add(new RoleItemViewModel(role.first, role.second, registered, false));
 			}
 
 			Items.Clear();
