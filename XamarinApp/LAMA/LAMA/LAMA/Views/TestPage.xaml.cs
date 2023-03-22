@@ -29,7 +29,7 @@ namespace LAMA.Views
                 "Udělat aplikaci.\nZaplnit ji daty.\nVyrazit do přírody.",
                 LarpActivity.EventType.normal, new EventList<long>(),
                 999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
-                new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
+                new EventList<Pair<long, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
 
             var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
             if (me == null)
@@ -151,10 +151,11 @@ namespace LAMA.Views
 
         void SwitchToAdmin(object sender, EventArgs args)
 		{
-            var admin = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(0);
+            int id = 0;
+            var admin = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(id);
             if (admin == null)
             {
-                admin = new CP(0, "admin me", "admin", new EventList<string>(), "", "", "", "");
+                admin = new CP(id, "The Great and Powerful One", "admin", new EventList<string>(), "", "", "", "");
                 DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(admin);
 
             }
@@ -171,9 +172,35 @@ namespace LAMA.Views
             if (!admin.permissions.Contains(CP.PermissionType.EditMap))
                 admin.permissions.Add(CP.PermissionType.EditMap);
 
-            LocalStorage.cpID = 0;
+            LocalStorage.cpID = id;
 
             DisplayAlert("Current user:", admin.name, "ok");
+        }
+
+        void SwitchToUser(object sender, EventArgs args)
+        {
+            int id = 117;
+            var user = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(id);
+            if (user == null)
+            {
+                user = new CP(id, "John 117", "john117", new EventList<string>(), "", "", "", "");
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(user);
+
+            }
+            if (user.permissions.Contains(CP.PermissionType.ChangeEncyclopedy))
+                user.permissions.Remove(CP.PermissionType.ChangeEncyclopedy);
+            if (user.permissions.Contains(CP.PermissionType.ManageInventory))
+                user.permissions.Remove(CP.PermissionType.ManageInventory);
+            if (user.permissions.Contains(CP.PermissionType.ChangeActivity))
+                user.permissions.Remove(CP.PermissionType.ChangeActivity);
+            if (user.permissions.Contains(CP.PermissionType.ChangeCP))
+                user.permissions.Remove(CP.PermissionType.ChangeCP);
+            if (user.permissions.Contains(CP.PermissionType.EditMap))
+                user.permissions.Remove(CP.PermissionType.EditMap);
+
+            LocalStorage.cpID = id;
+
+            DisplayAlert("Current user:", user.name, "ok");
         }
 
 
