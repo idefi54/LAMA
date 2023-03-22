@@ -26,6 +26,7 @@ namespace LAMA.ViewModels
 		private string _type;
 		private string _dayIndex;
 		private TrulyObservableCollection<RoleItemViewModel> _roles;
+		private TrulyObservableCollection<ItemItemViewModel> _items;
 		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
@@ -39,6 +40,7 @@ namespace LAMA.ViewModels
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
 		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public TrulyObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
@@ -114,6 +116,15 @@ namespace LAMA.ViewModels
 					.Count();
 				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
+
+			_items = new TrulyObservableCollection<ItemItemViewModel>();
+			foreach(var item in _activity.requiredItems)
+            {
+				InventoryItem invItem = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+				_items.Add(new ItemItemViewModel(invItem, item.second));
+            }
+			
+
 
 			isRegistered = IsRegistered();
 
@@ -229,6 +240,14 @@ namespace LAMA.ViewModels
 			{
 				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
 			}
+
+			Items.Clear();
+			_activity.UpdateItems(larpActivityDTO.requiredItems);
+			foreach(var item in larpActivityDTO.requiredItems)
+            {
+				InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+				Items.Add(new ItemItemViewModel(invItem, item.second));
+            }
 
 			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);

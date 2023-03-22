@@ -210,6 +210,11 @@ namespace LAMA.ViewModels
 				{
 					Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
 				}
+				foreach(Pair<long, int> item in activity.requiredItems)
+				{
+					InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+					Items.Add(new ItemItemViewModel(invItem, item.second));
+				}
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
 					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
@@ -436,6 +441,12 @@ namespace LAMA.ViewModels
 			}
 
 			EventList<Pair<long, int>> items = new EventList<Pair<long, int>>();
+
+			foreach(var item in _items)
+            {
+				items.Add(item.ToPair());
+            }
+
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
 			int tmp_day = 0;
@@ -463,7 +474,8 @@ namespace LAMA.ViewModels
 				roles, 
 				registered);
 
-			_createNewActivity(new LarpActivityDTO(larpActivity));
+			var activityDto = new LarpActivityDTO(larpActivity);
+			_createNewActivity(activityDto);
 
 			// This will pop the current page off the navigation stack
 			if (Device.RuntimePlatform == Device.WPF)

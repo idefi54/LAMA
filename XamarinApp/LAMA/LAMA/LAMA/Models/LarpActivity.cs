@@ -254,13 +254,46 @@ namespace LAMA.Models
 
         public void CompletelyRemoveRole(int index)
 		{
-            if (index >= roles.Count)
+            if (index >= roles.Count || index < 0)
                 return;
 
             Pair<string, int> roleToRemove = roles[index];
             roles.RemoveAt(index);
 
             roles.RemoveAll(x => x.first == roleToRemove.first);
+        }
+
+        public void UpdateItems(List<Pair<long,int>> newItems)
+        {
+            for (int i = requiredItems.Count - 1; i >= 0; i--)
+            {
+                var machItems = newItems.Where((x) => { return x.first == requiredItems[i].first; });
+                if (machItems.Count() == 0)
+				{
+                    CompletelyRemoveItem(i);
+				}
+                else
+				{
+                    requiredItems[i] = machItems.First();
+				}
+            }
+
+            foreach (Pair<long,int> id in newItems)
+            {
+                if (requiredItems.Where((x) => { return x.first == id.first; }).Count() == 0)
+                    requiredItems.Add(id);
+            }
+        }
+
+        public void CompletelyRemoveItem(int index)
+        {
+            if (index >= requiredItems.Count || index < 0)
+                return;
+
+            Pair<long, int> itemToRemove = requiredItems[index];
+            requiredItems.RemoveAt(index);
+
+            requiredItems.RemoveAll(x => x.first == itemToRemove.first);
         }
 
 

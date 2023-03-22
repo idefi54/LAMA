@@ -45,14 +45,14 @@ namespace LAMA.ViewModels
 			_maxCount = max;
 		}
 
-        public ItemItemViewModel(InventoryItem item) : this(item.ID, item.name, item.taken + item.free, item.free)
+        public ItemItemViewModel(InventoryItem item, int current = 1) : this(item.ID, item.name, item.taken + item.free, current)
         {
 
         }
 
 		public Pair<long, int> ToPair()
 		{
-			return new Pair<long, int>(ItemID, _maxCount);
+			return new Pair<long, int>(ItemID, _count);
 		}
 	}
 }
