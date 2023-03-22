@@ -106,22 +106,21 @@
 				<Label Text="Vybavení"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-				<Grid Padding="0,0,0,20">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="auto" />
-						<RowDefinition Height="auto" />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto" />
-						<ColumnDefinition Width="20" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-
-					<Label Grid.Row="0" Grid.Column="0" Text="Truhla s pokladem"/>
-					<Label Grid.Row="0" Grid.Column="2" Text="1" MinimumWidthRequest="100" WidthRequest="100"/>
-					<Label Grid.Row="1" Grid.Column="0" Text="Povoz"/>
-					<Label Grid.Row="1" Grid.Column="2" Text="4" MinimumWidthRequest="100" WidthRequest="100"/>
-				</Grid>
+				<StackLayout BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<Grid HorizontalOptions="Fill">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="auto" />
+									<ColumnDefinition Width="20" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
+								<Label Grid.Row="0" Grid.Column="2" Text="{Binding Count}" MinimumWidthRequest="100" WidthRequest="100"/>
+							</Grid>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</StackLayout>
 
 
                 <Label Text="Lokace"
