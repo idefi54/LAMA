@@ -19,7 +19,7 @@ namespace LAMA.Models.DTO
         public long start {get; set;}
         public Pair<double, double> place {get; set;}
         public Status status {get; set;}
-        public List<Pair<int, int>> requiredItems {get; set;}
+        public List<Pair<long, int>> requiredItems {get; set;}
         public List<Pair<string, int>> roles {get; set;}
         public List<Pair<long, string>> registrationByRole {get; set;}
 
@@ -46,7 +46,7 @@ namespace LAMA.Models.DTO
             return new LarpActivity(ID, name, description, preparationNeeded, eventType,
                 new EventList<long>(prerequisiteIDs),
                 duration, day, start, place, status,
-                new EventList<Pair<int, int>>(requiredItems),
+                new EventList<Pair<long, int>>(requiredItems),
                 new EventList<Pair<string, int>>(roles),
                 new EventList<Pair<long, string>>(registrationByRole));
         }

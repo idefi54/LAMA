@@ -29,7 +29,7 @@ namespace LAMA.Views
                 "Udělat aplikaci.\nZaplnit ji daty.\nVyrazit do přírody.",
                 LarpActivity.EventType.normal, new EventList<long>(),
                 999, 0, 666, new Pair<double, double>(0, 0), LarpActivity.Status.launched,
-                new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
+                new EventList<Pair<long, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
 
             var me = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(666);
             if (me == null)

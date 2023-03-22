@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LAMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ namespace LAMA.ViewModels
     public class ItemItemViewModel : BaseViewModel
 	{
 
-		private int _itemID;
+		public long ItemID { get; private set; }
 
 		private string _name;
 		public string Name => _name.ToString();//{ get { return _name.ToString(); } set { SetProperty(ref _name, value); } }
@@ -36,17 +37,22 @@ namespace LAMA.ViewModels
 		private int _maxCount;
 		public string MaxCount => "/" + _maxCount.ToString();
 
-		public ItemItemViewModel(int id, string name, int max, int current = 1)
+		public ItemItemViewModel(long id, string name, int max, int current = 1)
 		{
-			_itemID = id;
+			ItemID = id;
 			_name = name;
 			_count = current;
 			_maxCount = max;
 		}
 
-		public Pair<int, int> ToPair()
+        public ItemItemViewModel(InventoryItem item) : this(item.ID, item.name, item.taken + item.free, item.free)
+        {
+
+        }
+
+		public Pair<long, int> ToPair()
 		{
-			return new Pair<int, int>(_itemID, _maxCount);
+			return new Pair<long, int>(ItemID, _maxCount);
 		}
 	}
 }

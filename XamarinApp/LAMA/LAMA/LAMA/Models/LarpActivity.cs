@@ -120,8 +120,8 @@ namespace LAMA.Models
             }
         }
 
-        EventList<Pair<int, int>> _requiredItems = new EventList<Pair<int, int>>();
-        public EventList<Pair<int, int>> requiredItems
+        EventList<Pair<long, int>> _requiredItems = new EventList<Pair<long, int>>();
+        public EventList<Pair<long, int>> requiredItems
         {
             get { return _requiredItems;}
         }
@@ -159,7 +159,7 @@ namespace LAMA.Models
             initChangeListeners();
         }
         public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
-            long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<int, int>>requiredItems, 
+            long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<long, int>>requiredItems, 
             EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations)
         {
             _ID = ID;
@@ -384,7 +384,7 @@ namespace LAMA.Models
                     _status = (Status)Helpers.findIndex(Enum.GetNames(typeof(Status)), value);
                     break;
                 case 11:
-                    _requiredItems = Helpers.readIntPairField(value);
+                    _requiredItems = Helpers.readLongIntPairField(value);
                     _requiredItems.dataChanged += requiredItemsChange;
                     break;
                 case 12:

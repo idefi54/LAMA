@@ -208,7 +208,7 @@ namespace LAMA.ActivityGraphLib
                 start: startMinutes,
                 place: new Pair<double, double>(0.0, 0.0),
                 status: status,
-                requiredItems: new EventList<Pair<int, int>>(),
+                requiredItems: new EventList<Pair<long, int>>(),
                 roles: new EventList<Pair<string, int>>(),
                 registrations: new EventList<Pair<long, string>>()
                 );

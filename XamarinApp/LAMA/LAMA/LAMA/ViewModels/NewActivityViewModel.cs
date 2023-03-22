@@ -298,7 +298,25 @@ namespace LAMA.ViewModels
 
 		private void OnAddNewItem()
 		{
-			Items.Add(new ItemItemViewModel(0,"test",Items.Count+1,1));
+
+			HashSet<long> items = new HashSet<long>();
+			foreach (var item in Items)
+			{
+				items.Add(item.ItemID);
+			}
+
+			_navigation.PushAsync(new ItemSelectionPage(
+				SaveItem,
+				(InventoryItem item) =>
+				{
+					return !items.Contains(item.ID);
+				}
+				));
+		}
+
+		public void SaveItem(InventoryItem item)
+		{
+			Items.Add(new ItemItemViewModel(item));
 		}
 
 		private bool ValidateSave()
@@ -417,7 +435,7 @@ namespace LAMA.ViewModels
 				dependencies.Add(item.LarpActivity.ID);
 			}
 
-			EventList<Pair<int, int>> items = new EventList<Pair<int, int>>();
+			EventList<Pair<long, int>> items = new EventList<Pair<long, int>>();
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
 
 			int tmp_day = 0;
