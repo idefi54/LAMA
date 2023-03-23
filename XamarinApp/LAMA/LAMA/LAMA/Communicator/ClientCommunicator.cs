@@ -12,6 +12,7 @@ using System.Diagnostics;
 using LAMA.Singletons;
 using Xamarin.Forms;
 using Mapsui.Providers.Wms;
+using LAMA.Models;
 
 namespace LAMA.Communicator
 {
@@ -84,6 +85,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void ProcessBroadcast()
         {
+            //Debug.WriteLine(DatabaseHolder<CP, CPStorage>.Instance.rememberedList.Count);
             lock (socketLock)
             {
                 if (s.Connected)
@@ -604,7 +606,7 @@ namespace LAMA.Communicator
                 }
                 else
                 {
-                    throw new NotAnIPAddressException("IP adresa serveru není validní");
+                    throw new NotAnIPAddressException($"IP adresa serveru není validní {array[0].Trim('"')}");
                 }
                 THIS = this;
                 _port = int.Parse(array[1]);
@@ -703,7 +705,7 @@ namespace LAMA.Communicator
                 }
                 else
                 {
-                    throw new NotAnIPAddressException("IP adresa serveru není validní");
+                    throw new NotAnIPAddressException($"IP adresa serveru není validní {array[0].Trim('"')}");
                 }
                 THIS = this;
                 _port = int.Parse(array[1]);

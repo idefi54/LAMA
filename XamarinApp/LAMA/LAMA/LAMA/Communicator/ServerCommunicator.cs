@@ -351,7 +351,7 @@ namespace LAMA.Communicator
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
             //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
             Debug.WriteLine("Compression testing end");
-            if (name != LarpEvent.Name && LarpEvent.Name != null) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
+            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
             Debug.WriteLine("After LarpEvent.Name test");
             LarpEvent.Name = name;
@@ -485,7 +485,9 @@ namespace LAMA.Communicator
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
                     new Models.CP(0,
                     nick, nick, new EventList<string> { "server", "org" }, "", "", "", ""));
-            }   
+            }
+            //Server should have all permissions
+            PermissionsManager.GiveAllPermissions();
             Debug.WriteLine("Initialization finished");
         }
 
