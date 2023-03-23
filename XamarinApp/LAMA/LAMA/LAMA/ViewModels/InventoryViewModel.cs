@@ -182,7 +182,7 @@ namespace LAMA.ViewModels
         void OnOrderByName()
         {
             nameDescended = !nameDescended;
-            SortHelper.BubbleSort(ItemList, nameDescended, new CompareByName());
+            SortHelper.BubbleSort(ItemList, new CompareByName(nameDescended));
         }
 
         public void OnShowDropdown()
@@ -192,9 +192,19 @@ namespace LAMA.ViewModels
 
         class CompareByName : IComparer<InventoryItemViewModel>
         {
+            int _ascendingCorrection;
+
+            public CompareByName(bool ascending = true)
+            {
+                if (ascending)
+                    _ascendingCorrection = 1;
+                else
+                    _ascendingCorrection = -1;
+            }
+
             public int Compare(InventoryItemViewModel x, InventoryItemViewModel y)
             {
-                return x.Name.CompareTo(y.Name);
+                return x.Name.CompareTo(y.Name) * _ascendingCorrection;
             }
         }
         
