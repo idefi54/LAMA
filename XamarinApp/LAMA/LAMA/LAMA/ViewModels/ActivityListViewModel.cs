@@ -289,6 +289,8 @@ namespace LAMA.ViewModels
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
             DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);
+
+            ActivitySorter.ApplySort();
         }
     }
 }

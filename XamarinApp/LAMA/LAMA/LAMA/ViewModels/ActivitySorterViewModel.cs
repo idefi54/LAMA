@@ -57,9 +57,13 @@ namespace LAMA.ViewModels
             ApplySort();
         }
 
+        bool _startAscending;
         private void OnSortStart()
         {
-
+            _startAscending = !_startAscending;
+            SortStartString = _startAscending ? "/\\ Začátek" : "\\/ Začátek";
+            _comparator.AddComparer(new ActivityStartComparator(_startAscending));
+            ApplySort();
         }
 
         private void OnSortPeople()
