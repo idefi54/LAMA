@@ -12,6 +12,7 @@ using System.Diagnostics;
 using LAMA.Singletons;
 using Xamarin.Forms;
 using Mapsui.Providers.Wms;
+using LAMA.Models;
 
 namespace LAMA.Communicator
 {
@@ -84,6 +85,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void ProcessBroadcast()
         {
+            //Debug.WriteLine(DatabaseHolder<CP, CPStorage>.Instance.rememberedList.Count);
             lock (socketLock)
             {
                 if (s.Connected)

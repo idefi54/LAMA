@@ -1,8 +1,10 @@
-﻿using System;
+﻿using BruTile.Web;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Xsl;
 
@@ -157,6 +159,8 @@ namespace LAMA.Communicator
         {
             HuffmanNode current = this.Root;
             string decoded = "";
+            BitArray carryoverBits = new BitArray(0);
+            BitArray utf8Bits = new BitArray(8);
 
             int i = 0;
             while (i < bytes.Length / 16) {
@@ -179,8 +183,47 @@ namespace LAMA.Communicator
                 byteBlock[14] = bytes[16 * i + 14];
                 byteBlock[15] = bytes[16 * i + 15];
                 BitArray bits = new BitArray(byteBlock);
-                while (j < 16 * 8)
+                while (j < bits.Length)
                 {
+                    if (carryoverBits.Count > 0)
+                    {
+                        BitArray firstByte = new BitArray(8);
+                        if (carryoverBits.Count >= 8)
+                        {
+                            for (int iter = 0; iter < 8; iter++)
+                            {
+                                firstByte[iter] = carryoverBits[iter];
+                            }
+                        }
+                        else
+                        {
+                            for (int iter = 0; iter < carryoverBits.Count; iter++)
+                            {
+                                firstByte[iter] = carryoverBits[iter];
+                            }
+                            for (int iter = 0; iter < 8 - carryoverBits.Count; iter++)
+                            {
+                                firstByte[iter + carryoverBits.Count] = bits[iter];
+                            }
+                        }
+                        int counter = getUTFCharacterByteLength(firstByte);
+                        byte[] utf8Bytes = new byte[counter];
+                        utf8Bits = new BitArray(counter * 8);
+                        for (int k = 0; k < carryoverBits.Count; k++)
+                        {
+                            utf8Bits[k] = carryoverBits[k];
+                        }
+                        for (int k = 0; k < utf8Bits.Length - carryoverBits.Count; k++)
+                        {
+                            utf8Bits[k + carryoverBits.Count] = bits[k];
+                        }
+                        utf8Bits.CopyTo(utf8Bytes, 0);
+                        char[] symbols = Encoding.UTF8.GetString(utf8Bytes).ToCharArray();
+                        decoded += symbols[0];
+                        j += (utf8Bits.Length - carryoverBits.Count);
+                        current = this.Root;
+                        carryoverBits = new BitArray(0);
+                    }
                     bool bit = bits[j];
                     if (bit)
                     {
@@ -212,36 +255,44 @@ namespace LAMA.Communicator
                         }
                         else
                         {
-                            int counter = 0;
-                            if (littleEndian)
+                            int counter;
+                            if (j + 8 < bits.Count)
                             {
-                                int position = j + 8;
-                                while (bits[position] != false)
+                                BitArray firstByte = new BitArray(8);
+                                for (int iter = 1; iter < 9; iter++)
                                 {
-                                    position--;
-                                    counter++;
+                                    firstByte[iter-1] = bits[j + iter];
                                 }
+                                counter = getUTFCharacterByteLength(firstByte);
+                                if (counter * 8 + j >= bits.Length)
+                                {
+                                    carryoverBits = new BitArray(bits.Length - (j + 1));
+                                    for (int iter = j + 1; iter < bits.Length; iter++)
+                                    {
+                                        carryoverBits[iter - (j + 1)] = bits[iter];
+                                    }
+                                    break;
+                                }
+                                byte[] utf8Bytes = new byte[counter];
+                                utf8Bits = new BitArray(counter * 8);
+                                for (int k = 0; k < utf8Bits.Length; k++)
+                                {
+                                    utf8Bits[k] = bits[j + k + 1];
+                                }
+                                utf8Bits.CopyTo(utf8Bytes, 0);
+                                char[] symbols = Encoding.UTF8.GetString(utf8Bytes).ToCharArray();
+                                decoded += symbols[0];
+                                j += counter * 8;
                             }
                             else
                             {
-                                int position = j + 1;
-                                while (bits[position] != false)
+                                carryoverBits = new BitArray(bits.Length - (j + 1));
+                                for (int iter = j + 1; iter < bits.Length; iter++)
                                 {
-                                    position++;
-                                    counter++;
+                                    carryoverBits[iter - (j + 1)] = bits[iter];
                                 }
+                                break;
                             }
-                            if (counter == 0) counter = 1;
-                            byte[] utf8Bytes = new byte[counter];
-                            BitArray utf8Bits = new BitArray(counter * 8);
-                            for (int k = 0; k < utf8Bits.Length; k++)
-                            {
-                                utf8Bits[k] = bits[j + k + 1];
-                            }
-                            utf8Bits.CopyTo(utf8Bytes, 0);
-                            char[] symbols = Encoding.UTF8.GetString(utf8Bytes).ToCharArray();
-                            decoded += symbols[0];
-                            j += counter * 8;
                         }
                         current = this.Root;
                     }
@@ -251,6 +302,31 @@ namespace LAMA.Communicator
             }
             offset = i;
             return decoded;
+        }
+
+        private int getUTFCharacterByteLength(BitArray bits)
+        {
+            int counter = 0;
+            if (littleEndian)
+            {
+                int position = 7;
+                while (bits[position] != false)
+                {
+                    position--;
+                    counter++;
+                }
+            }
+            else
+            {
+                int position = 0;
+                while (bits[position] != false)
+                {
+                    position++;
+                    counter++;
+                }
+            }
+            if (counter == 0) counter = 1;
+            return counter;
         }
 
         public bool IsLeaf(HuffmanNode node)
