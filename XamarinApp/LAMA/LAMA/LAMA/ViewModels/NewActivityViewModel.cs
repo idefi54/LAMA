@@ -233,10 +233,10 @@ namespace LAMA.ViewModels
 			StartTime = StartDate;
 			EndTime = EndDate;
 
-			StartTimeStringHourSelected = StartTime.Hour - StartTime.Hour%5;
+			StartTimeStringHourSelected = StartTime.Hour;
 			StartTimeStringMinuteSelected = StartTime.Minute - StartTime.Minute%5;
 
-			EndTimeStringHourSelected = EndTime.Hour - EndTime.Hour%5;
+			EndTimeStringHourSelected = EndTime.Hour;
 			EndTimeStringMinuteSelected = EndTime.Minute - EndTime.Minute%5;
 
 			_navigation = navigation;
