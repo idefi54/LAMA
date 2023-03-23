@@ -41,11 +41,14 @@ namespace LAMA.ViewModels
 
         //int maxId = 0;
 
+        public ActivitySorterViewModel ActivitySorter { get; }
+
         public ActivityListViewModel(INavigation navigation)
         {
             Navigation = navigation;
 
             LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
+            ActivitySorter = new ActivitySorterViewModel(LarpActivityListItems);
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {

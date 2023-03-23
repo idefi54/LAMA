@@ -8,12 +8,6 @@
 			 x:Name="ActivitiesPage"
 			 Title="Seznam Aktivit">
 
-	<!--
-	<ContentPage.BindingContext>
-		<viewmodel:ActivityListViewModel/>
-	</ContentPage.BindingContext>
-	-->
-
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Řadit" Command="{Binding SortCommand}"/>
 		<ToolbarItem Text="Filtr" Command="{Binding FilterCommand}"/>
@@ -24,15 +18,18 @@
 	<ContentPage.Content>
 		<StackLayout>
 			<Frame x:Name="SortDropdownMenu"
-				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
 				   BackgroundColor="LightBlue"
 				   IsVisible="{Binding ShowSortDropdown}">
-				<StackLayout>
-					<Label Text="HAHA"/>
-				</StackLayout>
+				<Grid><!--BindingContext="{Binding Source={RelativeSource Self}, Path=ActivitySorter}">-->
+					<Button Grid.Row="0" Grid.Column="0"
+						Text="{Binding ActivitySorter.SortNameString}" Command="{Binding ActivitySorter.SortNameCommand}"/>
+					<Button Grid.Row="0" Grid.Column="1" HeightRequest="100"
+						Text="{Binding ActivitySorter.SortStartString}" Command="{Binding ActivitySorter.SortStartCommand}"/>
+					<Button Grid.Row="0" Grid.Column="2" HeightRequest="150"
+						Text="{Binding ActivitySorter.SortPeopleString}" Command="{Binding ActivitySorter.SortPeopleCommand}"/>
+				</Grid>
 			</Frame>
 			<Frame x:Name="FilterDropdownMenu"
-				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
 				   BackgroundColor="LightGreen"
 				   IsVisible="{Binding ShowFilterDropdown}">
 				<StackLayout>
