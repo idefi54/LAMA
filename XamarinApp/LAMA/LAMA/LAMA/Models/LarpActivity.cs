@@ -9,7 +9,7 @@ namespace LAMA.Models
     public class LarpActivity : Serializable
     {
         public enum EventType { normal, preparation };
-        public enum Status { awaitingPrerequisites, readyToLaunch, launched, inProgress, completed };
+        public enum Status { awaitingPrerequisites, readyToLaunch, launched, inProgress, completed, cancelled };
 
         long _ID;
         public long ID { get { return _ID; } }

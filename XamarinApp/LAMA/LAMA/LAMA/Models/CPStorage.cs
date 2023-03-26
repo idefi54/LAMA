@@ -20,6 +20,7 @@ namespace LAMA.Models
         public string notes { get; set; }
         public string permissions { get; set; }
         public string password { get; set; }
+        public string keepMeUpdatedOn { get; set; }
         public long lastChange { get; set; }
 
 
@@ -36,10 +37,11 @@ namespace LAMA.Models
             notes = input[8];
             permissions = input[9];
             password = input[10];
+            keepMeUpdatedOn = input[11];
         }
         public string[] getStrings()
         {
-            return new string[] { ID.ToString(), name, nick, roles, phone, facebook, discord, location, notes, permissions, password};
+            return new string[] { ID.ToString(), name, nick, roles, phone, facebook, discord, location, notes, permissions, password, keepMeUpdatedOn};
         }
         public long getID()
         {

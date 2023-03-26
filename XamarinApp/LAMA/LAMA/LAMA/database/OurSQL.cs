@@ -50,16 +50,21 @@ namespace LAMA
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string path = Path.Combine(directory, databaseName);
 
-            
+
 
             if (!File.Exists(path))
-                File.Create(path).Flush();
+            {
+                var file = File.Create(path);
+                file.Flush();
+                file.Close();
+            }
 
             Debug.WriteLine("Before connection");
             _connection = new SQLiteAsyncConnection(path);
             Debug.WriteLine("Connection established");
             Debug.WriteLine(_connection);
 
+            
             return _connection;
         }
 
