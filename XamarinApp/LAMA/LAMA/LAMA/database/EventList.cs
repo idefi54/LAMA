@@ -36,6 +36,7 @@ namespace LAMA
                 if (what.Equals(this[i])) 
                 {
                     RemoveAt(i);
+                    dataChanged.Invoke();
                     return;
                 }
             }
