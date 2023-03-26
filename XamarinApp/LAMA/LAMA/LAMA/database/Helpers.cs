@@ -58,12 +58,16 @@ namespace LAMA
         }
         public static int readInt(string input, ref int offset)
         {
+
+
             bool negative = false;
             int i = offset;
-            while(i>0 && Char.IsWhiteSpace(input[i]) && i< input.Length)
+            while(offset < input.Length && i>0 && Char.IsWhiteSpace(input[i]) && i< input.Length)
             {
                 --i;
             }
+            if (offset >= input.Length)
+                return 0;
             negative = input[i] == '-';
 
             int num = 0;
@@ -126,12 +130,13 @@ namespace LAMA
 
         public static double readDouble(string input, ref int offset)
         {
-
+            if (input == null)
+                return 0;
             
             long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
             skipWhiteSpace(input, ref offset);
-            if (input[offset] == '.' || input[offset] == ',')
+            if ( offset < input.Length && (input[offset] == '.' || input[offset] == ','))
             {
                 ++offset;
                 int offset1 = offset;
@@ -266,14 +271,15 @@ namespace LAMA
             return output;
         }
 
-        public static string EnumEventListToString(EventList<CP.PermissionType> input)
+
+        public static string EnumEventListToString<T>(EventList<T> input) where T:Enum 
         {
             StringBuilder output = new StringBuilder();
             for (int i = 0; i < input.Count; ++i)
             {
                 if (i != 0)
                     output.Append(separator + " ");
-                output.Append(((int)input[i]).ToString());
+                output.Append((int)(object)input[i]);
             }
             return output.ToString();
         }

@@ -38,8 +38,9 @@ namespace LAMA.Views
                 DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(me);
 
             }
-            if (!me.permissions.Contains(CP.PermissionType.SetPermission))
-                me.permissions.Add(CP.PermissionType.SetPermission);
+
+            me.MakeMeAdmin();
+            
 
             LocalStorage.cpID = 666;
 
