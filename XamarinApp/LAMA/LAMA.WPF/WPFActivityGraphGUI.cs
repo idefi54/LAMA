@@ -95,7 +95,7 @@ namespace LAMA.UWP
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
                 calendarButton.Clicked += async (object sender, EventArgs args) => {
-                    graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation);
+                    graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation, graph.TimeOffset);
                 };
                 grid.Children.Add(calendarButton, 2, 0);
             }

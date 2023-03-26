@@ -263,7 +263,7 @@ namespace LAMA.ViewModels
 
 		public async void OnSetStartTimeDate()
 		{
-			DateTime date = await CalendarPage.ShowCalendarPage(_navigation);
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation, StartDate);
 			if (date != null)
 			{
 				StartDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
@@ -272,7 +272,7 @@ namespace LAMA.ViewModels
 
 		public async void OnSetEndTimeDate()
 		{
-			DateTime date = await CalendarPage.ShowCalendarPage(_navigation);
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation, EndDate);
 			if (date != null)
 			{
 				EndDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
