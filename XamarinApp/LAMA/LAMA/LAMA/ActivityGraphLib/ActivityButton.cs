@@ -40,7 +40,7 @@ namespace LAMA.ActivityGraphLib
         {
             var now = DateTime.Now;
             //var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
-            var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start);
+            var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start).ToLocalTime();
             //var time = new DateTime(now.Year, now.Month, 1, start.Hour, start.Minute, 0);
             var span = start - _activityGraph.TimeOffset;
 

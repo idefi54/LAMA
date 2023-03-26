@@ -50,10 +50,11 @@ namespace LAMA.WPF
 
             if (currPage != null)
             {
+                float difference = (float)(Height - currPage.Height);
                 TouchTracking.TouchActionEventArgs args = new TouchTracking.TouchActionEventArgs(
                     id: touchId,
                     type: type,
-                    location: new TouchTracking.TouchTrackingPoint(x, y),
+                    location: new TouchTracking.TouchTrackingPoint(x, y - difference),
                     isInContact: true);
 
                 currPage.OnTouchEffectAction(this, args);
