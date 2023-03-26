@@ -66,6 +66,7 @@
     <Compile Include="IOSActivityGraphGUI.cs" />
     <Compile Include="IOSNotificationManager.cs" />
     <Compile Include="IOSNotificationReciever.cs" />
+    <Compile Include="IOSToast.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <None Include="Entitlements.plist" />
