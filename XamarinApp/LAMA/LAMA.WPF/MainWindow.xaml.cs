@@ -50,7 +50,7 @@ namespace LAMA.WPF
 
             if (currPage != null)
             {
-                float difference = (float)(Height - currPage.Height);
+                float difference = (float)(ActualHeight - currPage.Height);
                 TouchTracking.TouchActionEventArgs args = new TouchTracking.TouchActionEventArgs(
                     id: touchId,
                     type: type,
