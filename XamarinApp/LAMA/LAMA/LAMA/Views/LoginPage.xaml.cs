@@ -17,6 +17,13 @@ namespace LAMA.Views
         {
             InitializeComponent();
             this.BindingContext = new LoginViewModel();
+            if (Device.RuntimePlatform != Device.WPF)
+            {
+                App.Current.Resources["CommandBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+                App.Current.Resources["DefaultTitleBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+                App.Current.Resources["DefaultTabbedBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+                App.Current.Resources["AccentColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+            }
         }
     }
 }

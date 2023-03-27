@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:common="clr-namespace:LAMA.Views"
+             xmlns:colors="clr-namespace:LAMA.Colors"
              x:Class="LAMA.Views.TestPage">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -19,11 +20,11 @@
 
 				<common:OurNavigationMenu/>
 
-                <Button Text="ResetDatabase" Clicked="OnResetDatabase" Background="red"/>
+                <Button Text="ResetDatabase" Clicked="OnResetDatabase" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}"/>
 
-				<Button Text="Switch To Admin" Clicked="SwitchToAdmin" Background="red"/>
-				
-				<Button Text="Switch To User" Clicked="SwitchToUser" Background="red"/>
+                <Button Text="Switch To Admin" Clicked="SwitchToAdmin" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}"/>
+
+                <Button Text="Switch To User" Clicked="SwitchToUser" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}"/>
 
                 <Button Text="DisplayActivity" Clicked="OnDisplayActivity"/>
                 <Button Text="NewActivity" Clicked="OnNewActivity"/>

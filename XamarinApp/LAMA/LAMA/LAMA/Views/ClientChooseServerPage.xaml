@@ -4,11 +4,19 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:LAMA.Views"
+             xmlns:colors="clr-namespace:LAMA.Colors"
              mc:Ignorable="d"
              x:Class="LAMA.Views.ClientChooseServerPage"
 			 Shell.NavBarIsVisible="False"
 			 Shell.FlyoutBehavior="Disabled"
 			 Title="Přihlásit se">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="CadetBlue"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout  Spacing="0">
             <ScrollView>
