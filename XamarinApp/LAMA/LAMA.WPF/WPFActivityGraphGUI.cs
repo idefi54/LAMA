@@ -101,6 +101,7 @@ namespace LAMA.UWP
             }
 
             // Edit control
+            if (LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph))
             {
                 var editStack = new StackLayout();
                 editStack.Orientation = StackOrientation.Horizontal;
