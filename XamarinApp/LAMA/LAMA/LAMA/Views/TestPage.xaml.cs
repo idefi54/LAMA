@@ -171,6 +171,8 @@ namespace LAMA.Views
                 admin.permissions.Add(CP.PermissionType.ChangeCP);
             if (!admin.permissions.Contains(CP.PermissionType.EditMap))
                 admin.permissions.Add(CP.PermissionType.EditMap);
+            if (!admin.permissions.Contains(CP.PermissionType.EditGraph))
+                admin.permissions.Add(CP.PermissionType.EditGraph);
 
             LocalStorage.cpID = id;
 
