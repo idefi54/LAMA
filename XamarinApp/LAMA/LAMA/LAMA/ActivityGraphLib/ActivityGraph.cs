@@ -39,13 +39,18 @@ namespace LAMA.ActivityGraphLib
         /// <summary>
         /// Vertical offset of graph view while zoomed.
         /// </summary>
-        public float OffsetY { get; private set; }
+        public float OffsetY
+        {
+            get => _offsetY * _maxOffsetY;
+            private set => _offsetY = value / _maxOffsetY;
+        }
+        private float _offsetY;
 
         /// <summary>
         /// Max height of the graph.
         /// </summary>
         public float Height => _height;
-        
+
         /// <summary>
         /// Vertical offset of the canvas layout containing the activity graph.
         /// </summary>
@@ -298,6 +303,7 @@ namespace LAMA.ActivityGraphLib
             paint.StrokeWidth = 1;
             canvas.DrawLine(0, _height * Zoom + OffsetY, _width, _height * Zoom + OffsetY, paint);
 
+            // Scroll Indicator
             paint.Color = SKColors.Gray;
             float offset = 0;
             canvas.DrawLine(5, offset, 5, _height - 200 + offset, paint);
@@ -404,6 +410,16 @@ namespace LAMA.ActivityGraphLib
         public void InvalidateSurface()
         {
             _canvasView.InvalidateSurface();
+        }
+
+        /// <summary>
+        /// Offsets the graph, so the activity is on the screen.
+        /// </summary>
+        /// <param name="activity"></param>
+        public void FocusOnActivity(LarpActivity activity)
+        {
+            TimeOffset = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
+            _offsetY = (float)activity.GraphY;
         }
 
         private IEnumerable<ActivityButton> ActivityButtons()

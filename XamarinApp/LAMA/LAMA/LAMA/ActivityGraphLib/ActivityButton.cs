@@ -145,7 +145,6 @@ namespace LAMA.ActivityGraphLib
 
                 // Y
                 y = _activityGraph.ToPixels((y - (float)Height / 2 - _activityGraph.XamOffset) / _activityGraph.Zoom);
-
                 Activity.GraphY = (y  - _activityGraph.OffsetY / _activityGraph.Zoom) / (_activityGraph.Height - (float)Height);
             }
         }
