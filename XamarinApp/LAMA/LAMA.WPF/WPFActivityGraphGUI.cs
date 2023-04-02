@@ -75,15 +75,17 @@ namespace LAMA.UWP
 
                 var plusButton = new Button();
                 plusButton.Text = "+";
-                plusButton.VerticalOptions = LayoutOptions.Center;
-                plusButton.HorizontalOptions = LayoutOptions.Center;
+                plusButton.FontAttributes = FontAttributes.Bold;
+                plusButton.VerticalOptions = LayoutOptions.Fill;
+                plusButton.HorizontalOptions = LayoutOptions.Fill;
                 plusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom += 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(plusButton, 0, 0);
 
                 var minusButton = new Button();
+                minusButton.FontAttributes = FontAttributes.Bold;
                 minusButton.Text = "-";
-                minusButton.VerticalOptions = LayoutOptions.Center;
-                minusButton.HorizontalOptions = LayoutOptions.Center;
+                minusButton.VerticalOptions = LayoutOptions.Fill;
+                minusButton.HorizontalOptions = LayoutOptions.Fill;
                 minusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom -= 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(minusButton, 1, 0);
             }
@@ -92,6 +94,7 @@ namespace LAMA.UWP
             {
                 var calendarButton = new Button();
                 calendarButton.Text = "Calendar";
+                calendarButton.FontAttributes = FontAttributes.Bold;
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
                 calendarButton.Clicked += async (object sender, EventArgs args) => {
