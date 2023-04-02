@@ -127,7 +127,7 @@ namespace LAMA.ActivityGraphLib
         /// <returns></returns>
         public float FromTime(DateTime time)
         {
-            TimeSpan difference = TimeOffset - time;
+            TimeSpan difference = time - TimeOffset;
             return FromPixels((float)difference.TotalMinutes * MinuteWidth * Zoom);
         }
 
@@ -266,7 +266,7 @@ namespace LAMA.ActivityGraphLib
                 }
 
                 paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -OffsetY);
-                paint.Color = (time == 0) ? SKColors.Red : SKColors.Blue;
+                paint.Color = (time == 0) ? SKColors.LightGreen : SKColors.Blue;
                 paint.Color = paint.Color.WithAlpha(125);
                 paint.StrokeWidth = (time == 0) ? 3 : 1;
 
@@ -277,6 +277,14 @@ namespace LAMA.ActivityGraphLib
                     _height * Zoom + OffsetY,
                     paint
                     );
+
+                paint.Color = SKColors.Red;
+                paint.StrokeWidth = 3;
+
+                float x = ToPixels(FromTime(DateTime.Now));
+                canvas.DrawLine(
+                    x, 0, x, _height * Zoom + OffsetY,
+                    paint);
             }
 
             if (DateView?.TranslationX < 0)

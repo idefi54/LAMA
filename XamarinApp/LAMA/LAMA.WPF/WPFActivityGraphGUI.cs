@@ -153,7 +153,7 @@ namespace LAMA.UWP
             dateLabel.VerticalOptions = LayoutOptions.CenterAndExpand;
             dateLabel.HorizontalOptions = LayoutOptions.CenterAndExpand;
             dateLabel.FontAttributes = FontAttributes.Bold;
-            dateLabel.TextColor = Color.Red;
+            dateLabel.TextColor = Color.Green;
             dateLabel.Text = $"{now.Day:00}.{now.Month:00}.{now.Year:0000}";
             dateStack.Children.Add(dateLabel);
 
