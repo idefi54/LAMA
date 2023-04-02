@@ -9,9 +9,10 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
-	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
-		<forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}"/>
+        <ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
 	</ContentPage.ToolbarItems>
 	
 	<ContentPage.Content>

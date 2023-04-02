@@ -75,6 +75,7 @@ namespace LAMA.ViewModels
 
 
 		public Command SignUpCommand { get; }
+		public Command ShowOnGraphCommand { get; }
 		public Command EditCommand { get; }
 
 
@@ -129,6 +130,7 @@ namespace LAMA.ViewModels
 			isRegistered = IsRegistered();
 
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
+			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
 		}
 
@@ -191,6 +193,11 @@ namespace LAMA.ViewModels
 
 			isRegistered = IsRegistered();
 		}
+
+		private async void OnShowOnGraph()
+        {
+			await Navigation.PushAsync(new ActivityGraphPage(_activity));
+        }
 
         private async void UnregisterAsync()
         {
