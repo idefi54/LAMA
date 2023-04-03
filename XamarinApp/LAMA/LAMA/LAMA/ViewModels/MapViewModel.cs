@@ -88,14 +88,21 @@ namespace LAMA.ViewModels
 
             if (_keyboard.IsKeyPressed("LeftCtrl") && key == "Z")
                 MapHandler.Instance.PolylineUndo(_getMapView());
+
+            if (key == "System")
+                MapHandler.Instance.PolylineDeletion();
         }
 
         private void OnKeyUp(string key)
         {
-            if (key != "LeftShift" || _getMapView() == null || !Editing)
+            if (_getMapView() == null || !Editing)
                 return;
 
-            MapHandler.Instance.PolylineFinish(_getMapView());
+            if (key == "LeftShift")
+                MapHandler.Instance.PolylineFinish(_getMapView());
+
+            if (key == "System")
+                MapHandler.Instance.PolylineStopDeletion();
         }
     }
 }
