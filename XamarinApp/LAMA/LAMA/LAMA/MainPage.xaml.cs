@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,12 @@ namespace LAMA
         public MainPage()
         {
             InitializeComponent();
+            App.Current.Resources["CommandBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+            App.Current.Resources["DefaultTitleBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+            App.Current.Resources["DefaultTabbedBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+            App.Current.Resources["AccentColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+
+            Debug.WriteLine("Main Page");
         }
 
         protected async override void OnAppearing()
