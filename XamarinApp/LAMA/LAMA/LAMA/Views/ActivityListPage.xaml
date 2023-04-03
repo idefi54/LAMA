@@ -42,52 +42,50 @@
 					<Label Text="hehe"/>
 				</StackLayout>
 			</Frame>
-		<AbsoluteLayout>
-		<StackLayout  Spacing="0">
-            <common:OurNavigationMenu></common:OurNavigationMenu>
-            <ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="5" Margin="5" >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+			<StackLayout  Spacing="0">
+					<common:OurNavigationMenu></common:OurNavigationMenu>
+					<ListView x:Name="LarpActivityList" ItemsSource="{Binding LarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<ViewCell>
+									<Grid Padding="5" Margin="5" >
+										<Grid.RowDefinitions>
+											<RowDefinition Height="auto" />
+											<RowDefinition Height="auto" />
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="50" />
+											<ColumnDefinition Width="*" />
+											<ColumnDefinition Width="auto" />
+											<ColumnDefinition Width="auto" />
+										</Grid.ColumnDefinitions>
+										<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
                                 <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding Detail}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
-									
-								<OnPlatform x:TypeArguments="View">
-									<On Platform="WPF">
-										<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+
+										<OnPlatform x:TypeArguments="View">
+											<On Platform="WPF">
+												<Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
 										    Command="{Binding Path=BindingContext.LarpActivityTapped, Source={x:Reference Name=LarpActivityList}}"
 										    CommandParameter="{Binding .}"/>
-									</On>
-								</OnPlatform>
+											</On>
+										</OnPlatform>
 								<Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 										Command="{Binding Path=BindingContext.RemoveLarpActivity, Source={x:Reference Name=LarpActivityList}}"
 										CommandParameter="{Binding .}"/>
 
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer 
+										<Grid.GestureRecognizers>
+											<TapGestureRecognizer 
 										NumberOfTapsRequired="2"
 										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityListViewModel}}, Path=LarpActivityTapped}"		
 										CommandParameter="{Binding .}">
-                                    </TapGestureRecognizer>
-                                </Grid.GestureRecognizers>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackLayout>
-		</AbsoluteLayout>
+											</TapGestureRecognizer>
+										</Grid.GestureRecognizers>
+									</Grid>
+								</ViewCell>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</StackLayout>
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
