@@ -15,5 +15,8 @@ namespace LAMA.Colors
         public static Color ButtonTextColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         public static Color DisabledButtonColor = new Color(0.6f, 0.6f, 0.6f, 1.0f);
         public static Color DeleteButtonColor = new Color(0.9f, 0.3f, 0.2f, 1.0f);
+
+        public static Color MyMessageColor = Color.LightSkyBlue;
+        public static Color OtherMessageColor = Color.LightGray;
     }
 }
