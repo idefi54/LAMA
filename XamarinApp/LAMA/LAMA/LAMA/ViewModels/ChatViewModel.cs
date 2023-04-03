@@ -21,7 +21,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command MessageSentCommand { get; }
         public Xamarin.Forms.Command ReturnToChatChannelsCommand { get; }
         public string MessageText { get; set; }
-        public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; }
+        public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; set; }
 
         INavigation Navigation;
 
@@ -30,6 +30,14 @@ namespace LAMA.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int channelID;
+
+        private void SortMessagesInPlace(ObservableCollection<ChatMessageViewModel> collection)
+        {
+            ObservableCollection<ChatMessageViewModel> temp;
+            temp = new ObservableCollection<ChatMessageViewModel>(collection.OrderByDescending(p => p.ChatMessage.sentAt));
+            collection.Clear();
+            foreach (ChatMessageViewModel j in temp) collection.Add(j);
+        }
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -76,6 +84,8 @@ namespace LAMA.ViewModels
                 if (item.ChatMessage.getID() > maxId)
                     maxId = item.ChatMessage.getID();
             }
+
+            SortMessagesInPlace(ChatMessageListItems);
             /*
             #region population of the test database
             if (DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.Count == 0)
@@ -119,16 +129,16 @@ namespace LAMA.ViewModels
 
             item = new ChatMessageViewModel(message);
             ChatMessageListItems.Add(item);
-            ChatMessageListItems.OrderBy(x => x.Time);
+            SortMessagesInPlace(ChatMessageListItems);
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
-            Debug.WriteLine("Propagate Changed");
             if (changed == null || changed.GetType() != typeof(ChatMessage))
                 return;
 
             ChatMessage message = (ChatMessage)changed;
+            Debug.WriteLine($"Message {message.message}, Received by server {message.receivedByServer}");
 
             ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
 
@@ -136,6 +146,7 @@ namespace LAMA.ViewModels
                 return;
 
             item.UpdateMessage(message);
+            SortMessagesInPlace(ChatMessageListItems);
         }
 
         private void PropagateDeleted(Serializable deleted)
@@ -151,6 +162,7 @@ namespace LAMA.ViewModels
             {
                 ChatMessageListItems.Remove(item);
             }
+            SortMessagesInPlace(ChatMessageListItems);
         }
     }
 }

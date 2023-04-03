@@ -19,6 +19,7 @@ namespace LAMA.ViewModels
 
         public string Time => chatMessage == null ? "" : TimeFormat(DateTimeOffset.FromUnixTimeMilliseconds(chatMessage.sentAt).LocalDateTime);
 
+        public bool ReceivedByServer => chatMessage == null ? false : chatMessage.receivedByServer;
         public Xamarin.Forms.Color HeaderColor => chatMessage.from == LocalStorage.clientName ? Xamarin.Forms.Color.LightSkyBlue : Xamarin.Forms.Color.LightGray;
 
         public Thickness Margin => chatMessage.from == LocalStorage.clientName ? new Thickness(100, 10, 20, 10) : new Thickness(20, 10, 100, 10);
