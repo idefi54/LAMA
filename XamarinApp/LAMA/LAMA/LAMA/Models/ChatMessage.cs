@@ -55,6 +55,13 @@ namespace LAMA.Models
         {
             return attributes;
         }
+
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int which, string value)
         {
             switch(which)
