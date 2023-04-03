@@ -57,7 +57,8 @@ namespace LAMA.Services
 
         // Other
         private EntityType _filter = EntityType.Nothing;
-        private bool _editing;
+        private bool _polylineAddition;
+        private bool _polylineDeletion;
         #endregion
 
         public static bool UseGPU
@@ -241,15 +242,14 @@ namespace LAMA.Services
             view.PinClicked += HandlePinClicked;
             if (relocateSelection) view.MapClicked += HandleMapClickedSelection;
             else view.MapClicked += HandleMapClicked;
-           
+
             _selectionPinVisible = showSelection;
-           
+
             if (_currentLocation == null)
             {
                 SetLocationVisible(view, false);
                 SetSelectionPin(0, 0);
-            }
-            else
+            } else
                 SetSelectionPin(_currentLocation.Longitude, _currentLocation.Latitude);
 
             ReloadMapView(view);
@@ -262,7 +262,7 @@ namespace LAMA.Services
         /// </summary>
         public void MapDataSave()
         {
-            _editing = false;
+            _polylineAddition = false;
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
@@ -616,12 +616,12 @@ namespace LAMA.Services
             var polyline = new Polyline();
             polyline.IsClickable = true;
             polyline.Clicked += (object sender, DrawableClickedEventArgs e) =>
-                PolyLineClick(e.Point);
+                PolyLineClick(e.Point, sender as MapView);
 
             //_polyLines.Add(_polyLineID++, polyline);
             _polylineBuffer.Push(polyline);
             view?.Drawables.Add(polyline);
-            _editing = true;
+            _polylineAddition = true;
         }
 
         /// <summary>
@@ -632,7 +632,7 @@ namespace LAMA.Services
         public void PolylineFinish(MapView view = null)
         {
             _polylinePin.IsVisible = false;
-            _editing = false;
+            _polylineAddition = false;
         }
 
         /// <summary>
@@ -678,6 +678,9 @@ namespace LAMA.Services
             foreach (var polyline in _polylineBuffer)
                 AddPolyline(polyline);
         }
+
+        public void PolylineDeletion() { _polylineDeletion = true; }
+        public void PolylineStopDeletion() { _polylineDeletion = false; }
 
         private void SavePolyline(long id)
         {
@@ -828,18 +831,64 @@ namespace LAMA.Services
         }
         private void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
-            if (_editing)
-                PolyLineClick(e.Point);
+            if (_polylineAddition || _polylineDeletion)
+                PolyLineClick(e.Point, sender as MapView);
 
             OnMapClick?.Invoke(e.Point);
             e.Handled = true;
         }
 
-        private void PolyLineClick(Position pos)
+        private void PolyLineClick(Position pos, MapView view)
         {
-            _polylineBuffer.Peek().Positions.Add(pos);
-            _polylinePin.Position = pos;
-            _polylinePin.IsVisible = true;
+            if (!_polylineDeletion)
+            {
+                _polylineBuffer.Peek().Positions.Add(pos);
+                _polylinePin.Position = pos;
+                _polylinePin.IsVisible = true;
+                return;
+            }
+
+            float deletionDistance = 10;
+            List<Position> toRemove = new List<Position>();
+
+            MPoint point1 = SphericalMercator.FromLonLat(pos.Longitude, pos.Latitude);
+            double resolution = view.GetMapInfo(point1).Resolution;
+
+            foreach (var polyline in _polylineBuffer)
+            {
+                for (int i = 0; i < polyline.Positions.Count; i++)
+                {
+                    var position = polyline.Positions[i];
+                    MPoint point2 = position.ToMapsui();
+
+                    if (point1.Distance(point2) / resolution < deletionDistance)
+                        toRemove.Add(position);
+                }
+
+                foreach (var position in toRemove)
+                    polyline.Positions.Remove(position);
+
+                toRemove.Clear();
+            }
+
+
+            foreach (var polyline in _polyLines.Values)
+            {
+                for (int i = 0; i < polyline.Positions.Count; i++)
+                {
+                    var position = polyline.Positions[i];
+                    MPoint point2 = position.ToMapsui();
+
+                    if (point1.Distance(point2) / resolution < deletionDistance)
+                        toRemove.Add(position);
+                }
+
+                foreach (var position in toRemove)
+                    polyline.Positions.Remove(position);
+
+                toRemove.Clear();
+            }
+
         }
 
         private void HandleMapClickedSelection(object sender, MapClickedEventArgs e)
