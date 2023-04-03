@@ -378,6 +378,13 @@ namespace LAMA.Models
             }
             throw new Exception("wrong index selected");
         }
+
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int i, string value)
         {
 
