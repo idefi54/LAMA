@@ -7,6 +7,8 @@ using LAMA.Singletons;
 using SQLite;
 using System.Linq;
 using Xamarin.Forms.Shapes;
+using Newtonsoft.Json.Converters;
+using Xamarin.Forms.Internals;
 
 namespace LAMA.Communicator
 {
@@ -173,41 +175,49 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.EncyclopedyCategory")
                 {
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.EncyclopedyRecord")
                 {
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.PointOfInterest")
                 {
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Models.Road")
                 {
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttribute(indexAttribute, value);
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).InvokeIGotUpdated(indexAttribute);
                 }
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
@@ -440,6 +450,7 @@ namespace LAMA.Communicator
 
             if (objectType == "LAMA.Models.ChatMessage")
             {
+                Debug.WriteLine("LAMA.Models.ChatMessage");
                 Models.ChatMessage cm = new Models.ChatMessage();
                 string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
@@ -454,6 +465,15 @@ namespace LAMA.Communicator
                         objectIgnoreCreation = objectID;
                     }
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.add(cm);
+                    if (server)
+                    {
+                        cm.sentAt = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        cm.InvokeIGotUpdated(cm.getAttributeNames().IndexOf("sentAt"));
+                        cm.receivedByServer = true;
+                        cm.InvokeIGotUpdated(cm.getAttributeNames().IndexOf("receivedByServer"));
+                        Debug.WriteLine($"{cm.getAttributeNames().IndexOf("receivedByServer")}");
+                        Debug.WriteLine($"Received by server: {cm.receivedByServer}");
+                    }
                     for (int i = 0; i < attributtes.Length; i++)
                     {
                         attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));

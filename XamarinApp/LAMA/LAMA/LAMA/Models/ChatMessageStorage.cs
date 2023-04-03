@@ -16,6 +16,8 @@ namespace LAMA.Models
         
         public long sentAt { get; set; }
 
+        public bool receivedByServer { get; set; }
+
         public long lastChange
         {
             get { return sentAt; }
@@ -29,10 +31,11 @@ namespace LAMA.Models
             channel = Helpers.readInt(input[2]);
             message = input[3];
             sentAt = Helpers.readLong(input[4]);
+            receivedByServer = input[5] == "True" ? true : false;
         }
         public string[] getStrings()
         {
-            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString() };
+            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
         }
         public long getID()
         {
