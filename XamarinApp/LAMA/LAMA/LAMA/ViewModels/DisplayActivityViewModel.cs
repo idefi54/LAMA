@@ -185,6 +185,10 @@ namespace LAMA.ViewModels
 				_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,selectedRole));
 				var editedRole = Roles.Where(role => role.Name == selectedRole).FirstOrDefault();
 				editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+
+				var toast = DependencyService.Get<ToastInterface>();
+				if(toast != null)
+					toast.DoTheThing("test");
 			}
 			else
             {
