@@ -20,6 +20,7 @@ namespace LAMA.ViewModels
         public Command FilterCommand { get; }
         public Command AddActivityCommand { get; }
         public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        public TrulyObservableCollection<ActivityListItemViewModel> FilteredLarpActivityListItems { get; }
 
         public Command<object> LarpActivityTapped { get; private set; }
 
@@ -42,17 +43,22 @@ namespace LAMA.ViewModels
         //int maxId = 0;
 
         public ActivitySorterViewModel ActivitySorter { get; }
+        public ActivityFilterViewModel ActivityFilter { get; }
 
         public ActivityListViewModel(INavigation navigation)
         {
             Navigation = navigation;
 
             LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
-            ActivitySorter = new ActivitySorterViewModel(LarpActivityListItems);
+            FilteredLarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
+            ActivitySorter = new ActivitySorterViewModel(FilteredLarpActivityListItems);
+            ActivityFilter = new ActivityFilterViewModel(LarpActivityListItems, FilteredLarpActivityListItems, ActivitySorter.ApplySort);
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
-                LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]));
+                var item = new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]);
+                LarpActivityListItems.Add(item);
+                FilteredLarpActivityListItems.Add(item);
             }
 
             //foreach(ActivityListItemViewModel item in LarpActivityListItems)
@@ -129,6 +135,8 @@ namespace LAMA.ViewModels
 
             item = new ActivityListItemViewModel(activity);
             LarpActivityListItems.Add(item);
+
+            ActivityFilter.ApplyFilter();
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
@@ -147,6 +155,8 @@ namespace LAMA.ViewModels
 
             item.UpdateActivity(activity);
             LarpActivityListItems.RefreshItem(LarpActivityListItems.IndexOf(item)); //this should hopefuly update the single line... but I still advise using INotifyPropertyChange
+
+            ActivityFilter.ApplyFilter();
         }
 
         private void PropagateDeleted(Serializable deleted)
@@ -162,6 +172,8 @@ namespace LAMA.ViewModels
             {
                 LarpActivityListItems.Remove(item);
             }
+
+            ActivityFilter.ApplyFilter();
         }
 
         #endregion
@@ -243,6 +255,8 @@ namespace LAMA.ViewModels
 					}
 				}
                 DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.removeByID(activityViewModel.LarpActivity.getID());
+
+                ActivityFilter.ApplyFilter();
             }
         }
 
@@ -290,7 +304,7 @@ namespace LAMA.ViewModels
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
             DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);
 
-            ActivitySorter.ApplySort();
+            ActivityFilter.ApplyFilter();
         }
     }
 }
