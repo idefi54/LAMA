@@ -15,7 +15,6 @@ namespace LAMA.Models
             EditGraph
         }
 
-        public enum UpdateTypes { CPs, GPSFast, GPSSlow, Chat }; 
         long _ID;
         public long ID { get { return _ID; } }
         
