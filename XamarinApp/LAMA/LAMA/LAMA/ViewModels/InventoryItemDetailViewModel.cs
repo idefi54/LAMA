@@ -102,9 +102,9 @@ namespace LAMA.ViewModels
                 return;
             var toast = DependencyService.Get<ToastInterface>();
             if (_item.Return(_returnNum, CPIDs[CPNames[_returnName]]))
-                toast.DoTheThing("Úspěšně vráceno " + _returnName + " kusů od " + CPNames[_returnName]);
+                toast?.DoTheThing("Úspěšně vráceno " + _returnName + " kusů od " + CPNames[_returnName]);
             else
-                toast.DoTheThing("Vrácení selhalo");
+                toast?.DoTheThing("Vrácení selhalo");
             NumBorrowed = _item.taken.ToString();
             NumFree = _item.free.ToString();
 
