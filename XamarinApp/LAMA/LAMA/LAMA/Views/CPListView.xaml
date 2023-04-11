@@ -14,17 +14,7 @@
 
     <ContentPage.Content>
         <StackLayout>
-            <Frame x:Name="DropdownMenu"
-				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
-				   BackgroundColor="LightBlue"
-				   IsVisible="{Binding ShowDropdown}">
-                <StackLayout>
-                    <Label Text="Hledat"/>
-                    <Entry Text="{Binding FilterText}"/>
-                    <Button Text="Seřadit podle jména" Command="{Binding OrderByName}"/>
-                    <Button Text="Seřadit podle přezdívky" Command="{Binding OrderByNick}"/>
-                </StackLayout>
-            </Frame>
+            
             <ListView x:Name="CPList" ItemsSource="{Binding CPList}" SelectionMode="None" Margin="5,5,5,0">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -58,7 +48,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Frame x:Name="DropdownMenu"
+            <Frame x:Name="dropdownMenu"
 				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
 				   BackgroundColor="{x:Static colors:ColorPalette.LighterPrimaryColor}"
 				   IsVisible="{Binding ShowDropdown}">
@@ -69,6 +59,6 @@
                     <Button Text="Seřadit podle přezdívky" Command="{Binding OrderByNick}"/>
                 </StackLayout>
             </Frame>
-        </AbsoluteLayout>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
