@@ -73,13 +73,8 @@ namespace LAMA.Models
         }
         string _password = string.Empty;
         public string password { get { return _password; } set { _password = value; updateValue(10, value); } }
-
-        EventList<UpdateTypes> _keepMeUpdatedOn = new EventList<UpdateTypes>();
-        public EventList<UpdateTypes> KeepMeUpdatedOn { get { return _keepMeUpdatedOn; } }
-        private void onUpdatesChanged()
-        {
-            updateValue(11, Helpers.EnumEventListToString(_keepMeUpdatedOn));
-        }
+        
+        
 
         public CP()
         {
@@ -91,7 +86,6 @@ namespace LAMA.Models
         {
             _roles.dataChanged += onRolesChange;
             _permissions.dataChanged += onPermissionsChange;
-            _keepMeUpdatedOn.dataChanged += onUpdatesChanged;
             _ID = ID;
             _name = name;
             _nick = nick;
@@ -132,7 +126,7 @@ namespace LAMA.Models
 
 
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes", "permissions", "password", "keepMeUpdatedOn" };
+            "discord", "location", "notes", "permissions", "password"};
 
         public long getID()
         {
@@ -188,15 +182,7 @@ namespace LAMA.Models
                 case 10:
                     _password = value;
                     break;
-                case 11:
-                    temp = Helpers.readIntField(value);
-                    _keepMeUpdatedOn = new EventList<UpdateTypes>();
-                    foreach (var a in temp)
-                    {
-                        _keepMeUpdatedOn.Add((UpdateTypes)a);
-                    }
-                    _keepMeUpdatedOn.dataChanged += onUpdatesChanged;
-                    break;
+               
             }
         }
 
@@ -224,7 +210,7 @@ namespace LAMA.Models
                 case 8: return _notes;
                 case 9: return Helpers.EnumEventListToString(_permissions);
                 case 10: return _password;
-                case 11: return Helpers.EnumEventListToString(_keepMeUpdatedOn);
+                
             }
             throw new Exception("wring index called");
         }
