@@ -75,15 +75,17 @@ namespace LAMA.UWP
 
                 var plusButton = new Button();
                 plusButton.Text = "+";
-                plusButton.VerticalOptions = LayoutOptions.Center;
-                plusButton.HorizontalOptions = LayoutOptions.Center;
+                plusButton.FontAttributes = FontAttributes.Bold;
+                plusButton.VerticalOptions = LayoutOptions.Fill;
+                plusButton.HorizontalOptions = LayoutOptions.Fill;
                 plusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom += 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(plusButton, 0, 0);
 
                 var minusButton = new Button();
+                minusButton.FontAttributes = FontAttributes.Bold;
                 minusButton.Text = "-";
-                minusButton.VerticalOptions = LayoutOptions.Center;
-                minusButton.HorizontalOptions = LayoutOptions.Center;
+                minusButton.VerticalOptions = LayoutOptions.Fill;
+                minusButton.HorizontalOptions = LayoutOptions.Fill;
                 minusButton.Clicked += (object sender, EventArgs args) => { graph.Zoom -= 0.25f; canvasView.InvalidateSurface(); };
                 grid.Children.Add(minusButton, 1, 0);
             }
@@ -92,15 +94,17 @@ namespace LAMA.UWP
             {
                 var calendarButton = new Button();
                 calendarButton.Text = "Calendar";
+                calendarButton.FontAttributes = FontAttributes.Bold;
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
                 calendarButton.Clicked += async (object sender, EventArgs args) => {
-                    graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation);
+                    graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation, graph.TimeOffset);
                 };
                 grid.Children.Add(calendarButton, 2, 0);
             }
 
             // Edit control
+            if (LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph))
             {
                 var editStack = new StackLayout();
                 editStack.Orientation = StackOrientation.Horizontal;
@@ -149,7 +153,7 @@ namespace LAMA.UWP
             dateLabel.VerticalOptions = LayoutOptions.CenterAndExpand;
             dateLabel.HorizontalOptions = LayoutOptions.CenterAndExpand;
             dateLabel.FontAttributes = FontAttributes.Bold;
-            dateLabel.TextColor = Color.Red;
+            dateLabel.TextColor = Color.Green;
             dateLabel.Text = $"{now.Day:00}.{now.Month:00}.{now.Year:0000}";
             dateStack.Children.Add(dateLabel);
 

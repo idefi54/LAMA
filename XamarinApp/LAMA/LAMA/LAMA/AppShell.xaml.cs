@@ -25,7 +25,7 @@ namespace LAMA
             }
             else
             {
-                await Shell.Current.GoToAsync("//LoginPage");
+                await Shell.Current.GoToAsync("//ClientChooseServerPage");
             }
         }
     }

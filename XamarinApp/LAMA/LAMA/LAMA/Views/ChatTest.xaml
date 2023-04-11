@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             xmlns:extensions="clr-namespace:LAMA.Extensions"
              x:Class="LAMA.Views.ChatTest"
 			 x:Name="ChatPage">
     <ContentPage.Resources>
@@ -35,13 +36,15 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="200"/>
                                             <ColumnDefinition Width="200*" />
+                                            <ColumnDefinition Width="20"/>
                                         </Grid.ColumnDefinitions>
-                                        <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Color="{Binding HeaderColor}"/>
+                                        <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Color="{Binding HeaderColor}"/>
                                         <Label Grid.Row="0"
                                      Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" VerticalTextAlignment="Center" Padding="10"/>
                                         <Label Grid.Row="0"
                                      Grid.Column="1" Text="{Binding Time}" HorizontalTextAlignment="End" VerticalTextAlignment="Center" Padding="10"/>
-                                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="10"
+                                        <Image Source="{extensions:ImageResource 'LAMA.Resources.Icons.accept_1.png'}" Grid.Row="0" Grid.Column="2" WidthRequest="24" HeightRequest="24" TranslationY="8" TranslationX="-8" IsVisible="{Binding ReceivedByServer}" />
+                                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Padding="10"
                                    Text="{Binding Text}" />
                                     </Grid>
                                 </Frame>

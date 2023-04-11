@@ -21,7 +21,7 @@ namespace LAMAtest
         {
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(123, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
-            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList < Pair<int, int> >(),
+            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList < Pair<long, int> >(),
             new LAMA.EventList < Pair<string, int> >(), new EventList < Pair<long, string> >());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
@@ -95,7 +95,7 @@ namespace LAMAtest
         {
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(124, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
-            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
+            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<long, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
@@ -136,7 +136,7 @@ namespace LAMAtest
         {
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(125, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
-            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
+            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<long, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
@@ -243,7 +243,7 @@ namespace LAMAtest
         {
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(126, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
-            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
+            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<long, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
@@ -401,7 +401,7 @@ namespace LAMAtest
         {
             LAMA.Communicator.ModelChangesManager manager = InitModelChangesManager();
             LAMA.Models.LarpActivity activity = new LAMA.Models.LarpActivity(127, "testActivity", "testDescription", "None", LAMA.Models.LarpActivity.EventType.normal, new LAMA.EventList<long>(),
-            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<int, int>>(),
+            60, 1, 120, new Pair<double, double>(10.1, 15.2), LAMA.Models.LarpActivity.Status.readyToLaunch, new LAMA.EventList<Pair<long, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity.getAttributes())}";
 
@@ -414,7 +414,7 @@ namespace LAMAtest
 
 
             LAMA.Models.LarpActivity activity2 = new LAMA.Models.LarpActivity(127, "testActivity2", "testDescription2", "None2", LAMA.Models.LarpActivity.EventType.preparation, new LAMA.EventList<long>(),
-            61, 2, 121, new Pair<double, double>(10.2, 15.3), LAMA.Models.LarpActivity.Status.awaitingPrerequisites, new LAMA.EventList<Pair<int, int>>(),
+            61, 2, 121, new Pair<double, double>(10.2, 15.3), LAMA.Models.LarpActivity.Status.awaitingPrerequisites, new LAMA.EventList<Pair<long, int>>(),
             new LAMA.EventList<Pair<string, int>>(), new EventList<Pair<long, string>>());
             string command4 = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}{Separators.messagePartSeparator}Rollback{Separators.messagePartSeparator}ItemCreated{Separators.messagePartSeparator}{activity2.GetType().ToString()}{Separators.messagePartSeparator}{String.Join(Separators.attributesSeparator.ToString(), activity2.getAttributes())}";
 

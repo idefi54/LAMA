@@ -145,6 +145,8 @@ namespace LAMA.ViewModels
         {
             if (Device.RuntimePlatform == Device.WPF)
             {
+                //App.Current.MainPage = new TestPage();
+                //await App.Current.MainPage.Navigation.PopToRootAsync();
                 await App.Current.MainPage.Navigation.PushAsync(new TestPage());
                 //LAMA.App.Current.MainPage = new TestPage();
             }

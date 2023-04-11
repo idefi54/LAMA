@@ -39,8 +39,18 @@ namespace LAMA.ActivityGraphLib
         /// <summary>
         /// Vertical offset of graph view while zoomed.
         /// </summary>
-        public float OffsetY { get; private set; }
-        
+        public float OffsetY
+        {
+            get => _offsetY * _maxOffsetY;
+            private set => _offsetY = value / _maxOffsetY;
+        }
+        private float _offsetY;
+
+        /// <summary>
+        /// Max height of the graph.
+        /// </summary>
+        public float Height => _height;
+
         /// <summary>
         /// Vertical offset of the canvas layout containing the activity graph.
         /// </summary>
@@ -122,7 +132,7 @@ namespace LAMA.ActivityGraphLib
         /// <returns></returns>
         public float FromTime(DateTime time)
         {
-            TimeSpan difference = TimeOffset - time;
+            TimeSpan difference = time - TimeOffset;
             return FromPixels((float)difference.TotalMinutes * MinuteWidth * Zoom);
         }
 
@@ -204,7 +214,10 @@ namespace LAMA.ActivityGraphLib
         /// <param name="canvas"></param>
         public void Draw(SKCanvas canvas)
         {
+            // Background Color
             canvas.Clear(SKColors.Black);
+
+            // Buttons -> edit mode
             foreach (ActivityButton button in ActivityButtons())
             {
                 button.Update();
@@ -214,13 +227,17 @@ namespace LAMA.ActivityGraphLib
             SKPaint paint = new SKPaint();
             paint.Color = SKColors.Blue;
             paint.StrokeWidth = 1;
+
+            // Topmost horizontal line
             canvas.DrawLine(0, 5, _width, 5, paint);
 
+            // Columns
             int columnCount = (int)Math.Round(_width / _columnWidth / Zoom);
             float minutePosition = _columnWidth * Zoom - TimeOffset.Minute * (_columnWidth * Zoom / 60);
             float columnOffset = minutePosition % (_columnWidth * Zoom);
             if (columnOffset < 0) columnOffset += _columnWidth * Zoom;
 
+            // Times for columns
             if (TimeLabels != null)
                 foreach (Label label in TimeLabels)
                     label.IsVisible = false;
@@ -228,6 +245,7 @@ namespace LAMA.ActivityGraphLib
             if (_dateLabel != null)
                 _dateLabel.Text = $"{TimeOffset.Day:00}.{TimeOffset.Month:00}.{TimeOffset.Year:0000}";
 
+            // Columns + day separators
             for (int i = 0; i < columnCount; i++)
             {
                 int time = (TimeOffset.Hour + i) % 24;
@@ -253,7 +271,7 @@ namespace LAMA.ActivityGraphLib
                 }
 
                 paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -OffsetY);
-                paint.Color = (time == 0) ? SKColors.Red : SKColors.Blue;
+                paint.Color = (time == 0) ? SKColors.LightGreen : SKColors.Blue;
                 paint.Color = paint.Color.WithAlpha(125);
                 paint.StrokeWidth = (time == 0) ? 3 : 1;
 
@@ -264,6 +282,14 @@ namespace LAMA.ActivityGraphLib
                     _height * Zoom + OffsetY,
                     paint
                     );
+
+                paint.Color = SKColors.Red;
+                paint.StrokeWidth = 3;
+
+                float x = ToPixels(FromTime(DateTime.Now));
+                canvas.DrawLine(
+                    x, 0, x, _height * Zoom + OffsetY,
+                    paint);
             }
 
             if (DateView?.TranslationX < 0)
@@ -277,6 +303,7 @@ namespace LAMA.ActivityGraphLib
             paint.StrokeWidth = 1;
             canvas.DrawLine(0, _height * Zoom + OffsetY, _width, _height * Zoom + OffsetY, paint);
 
+            // Scroll Indicator
             paint.Color = SKColors.Gray;
             float offset = 0;
             canvas.DrawLine(5, offset, 5, _height - 200 + offset, paint);
@@ -383,6 +410,16 @@ namespace LAMA.ActivityGraphLib
         public void InvalidateSurface()
         {
             _canvasView.InvalidateSurface();
+        }
+
+        /// <summary>
+        /// Offsets the graph, so the activity is on the screen.
+        /// </summary>
+        /// <param name="activity"></param>
+        public void FocusOnActivity(LarpActivity activity)
+        {
+            TimeOffset = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
+            _offsetY = (float)activity.GraphY;
         }
 
         private IEnumerable<ActivityButton> ActivityButtons()

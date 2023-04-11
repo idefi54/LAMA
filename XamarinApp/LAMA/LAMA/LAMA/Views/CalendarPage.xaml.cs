@@ -34,9 +34,6 @@ namespace LAMA.Views
 
         private CalendarPage(DateTime? highlightDay = null)
         {
-
-            highlightDay = DateTime.Now.AddMonths(2);
-
             // Standard initialization
             InitializeComponent();
 
@@ -210,7 +207,7 @@ namespace LAMA.Views
         /// <returns></returns>
         public static async Task<DateTime> ShowCalendarPage(INavigation navigation, DateTime? highlightDay = null)
         {
-            var page = new CalendarPage();
+            var page = new CalendarPage(highlightDay);
             await navigation.PushModalAsync(page);
             DateTime date = await page.GetDate();
             await navigation.PopModalAsync();

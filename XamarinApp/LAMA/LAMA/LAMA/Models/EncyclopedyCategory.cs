@@ -89,6 +89,12 @@ namespace LAMA.Models
 
         static string[] attributes = { "ID", "Name", "Description", "ChildCategories", "Records"};
 
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int i, string value)
         {
             switch(i)

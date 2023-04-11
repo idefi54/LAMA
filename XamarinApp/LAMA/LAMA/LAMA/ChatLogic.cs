@@ -7,7 +7,8 @@ namespace LAMA
 {
     public class ChatLogic
     {
-        //DatabaseHolder<Models.ChatMessage>
+        //DatabaseHolder<Models.
+        //>
 
         
 
@@ -54,7 +55,7 @@ namespace LAMA
             Debug.WriteLine(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count);
             database.add(new Models.ChatMessage( 
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(LocalStorage.cpID).name, 
-                channelID, message,DateTimeOffset.Now.ToUnixTimeMilliseconds()));
+                channelID, message,DateTimeOffset.Now.ToUnixTimeMilliseconds(), LocalStorage.cpID == 0));
         }
 
     }

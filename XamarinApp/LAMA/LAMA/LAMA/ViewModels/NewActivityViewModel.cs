@@ -10,6 +10,8 @@ using LAMA.Views;
 using static LAMA.Models.LarpActivity;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Text;
+using System.Globalization;
 
 namespace LAMA.ViewModels
 {
@@ -20,44 +22,124 @@ namespace LAMA.ViewModels
 		private string _description;
 		private string _type;
 		private int _typeIndex;
-		//private DateTime _startTime;
-		//private DateTime _endTime;
-		private DateTime _duration;
-		private DateTime _start;
-		private int _day;
+
 		private ObservableCollection<RoleItemViewModel> _roles;
+		private ObservableCollection<ItemItemViewModel> _items;
 		private List<string> _equipment;
 		private string _preparations;
 		private string _location;
 		private List<string> _typeList;
 
-		public string Id { get { return _id; } set { SetProperty(ref _id , value); } }
-		public string Name { get { return _name; } set { SetProperty(ref _name , value); } }
-		public string Description { get { return _description; } set { SetProperty(ref _description , value); } }
+		public string Id { get { return _id; } set { SetProperty(ref _id, value); } }
+		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
+		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
-		//public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime , value); } }
-		//public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime , value); } }
-		public DateTime Duration { get { return _duration; } set { SetProperty(ref _duration , value); } }
-		public DateTime Start { get { return _start; } set { SetProperty(ref _start , value);} }
-		public int Day { get { return _day; } set { SetProperty(ref _day , value); } }
-		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles , value); } }
+
+
+		public ObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public ObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
-		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations , value); } }
+		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
-		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList , value); } }
+		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList, value); } }
 
-        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+		#region Time
+
+		private DateTime _startTime;
+		public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
+
+		private DateTime _endTime;
+		public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+
+		private DateTime _startDate;
+		public DateTime StartDate
+		{
+			get
+			{
+				return _startDate;
+			}
+			set
+			{
+				SetProperty(ref _startDate, value);
+				StartDateString = StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+			}
+		}
+
+		private DateTime _endDate;
+		public DateTime EndDate
+		{
+			get
+			{
+				return _endDate;
+			}
+			set
+			{
+				SetProperty(ref _endDate, value);
+				EndDateString = EndDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+			}
+		}
+
+		private string _startDateString;
+		public string StartDateString { get { return _startDateString; } set { SetProperty(ref _startDateString, value); } }
+		private string _endDateString;
+		public string EndDateString { get { return _endDateString; } set { SetProperty(ref _endDateString, value);} }
 
 
-		//public NewActivityViewModel()
-		//{
-		//          SaveCommand = new Command(OnSave, ValidateSave);
-		//          CancelCommand = new Command(OnCancel);
-		//          this.PropertyChanged +=
-		//              (_, __) => SaveCommand.ChangeCanExecute();
-		//      }
+		public ObservableCollection<int> TimeStringHourOptions { get; }
+		public ObservableCollection<int> TimeStringMinuteOptions { get; }
+
+
+		private int _startTimeStringHourSelected;
+		public int StartTimeStringHourSelected
+		{ 
+			get { return _startTimeStringHourSelected; }
+			set 
+			{
+				StartTime = new DateTime(2000, 1, 1, value, StartTime.Minute, 0);
+				SetProperty(ref _startTimeStringHourSelected, value);
+			}
+		}
+
+		private int _startTimeStringMinuteSelected;
+		public int StartTimeStringMinuteSelected
+		{
+			get { return _startTimeStringMinuteSelected; }
+			set
+			{
+				StartTime = new DateTime(2000, 1, 1, StartTime.Hour, value, 0);
+				SetProperty(ref _startTimeStringMinuteSelected, value); 
+			}
+		}
+
+
+		private int _endTimeStringHourSelected;
+		public int EndTimeStringHourSelected
+		{
+			get { return _endTimeStringHourSelected; }
+			set
+			{
+				EndTime = new DateTime(2000, 1, 1, value, EndTime.Minute, 0);
+				SetProperty(ref _endTimeStringHourSelected, value);
+			}
+		}
+
+		private int _endTimeStringMinuteSelected;
+		public int EndTimeStringMinuteSelected
+		{
+			get { return _endTimeStringMinuteSelected; }
+			set
+			{
+				EndTime = new DateTime(2000, 1, 1, EndTime.Hour, value, 0);
+				SetProperty(ref _endTimeStringMinuteSelected, value);
+			}
+		}
+
+		#endregion Time
+
 
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;
@@ -65,6 +147,20 @@ namespace LAMA.ViewModels
 		private LarpActivity larpActivity;
 
 		private IMessageService _messageService;
+
+		public Command SetStartTimeDateCommand { get; }
+		public Command SetEndTimeDateCommand { get; }
+
+		public Xamarin.Forms.Command SaveCommand { get; }
+		public ICommand CancelCommand { get; }
+		public Command AddDependencyCommand { get; }
+		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
+
+		public Command AddNewRole { get; }
+		public Command<RoleItemViewModel> RemoveRole { get; }
+
+		public Command AddNewItem { get; }
+		public Command<ItemItemViewModel> RemoveItem { get; }
 
 		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
 		{
@@ -75,7 +171,19 @@ namespace LAMA.ViewModels
 			MapHandler.Instance.SetSelectionPin(0, 0);
 
 			Roles = new ObservableCollection<RoleItemViewModel>();
+			Items = new ObservableCollection<ItemItemViewModel>();
 
+			TimeStringHourOptions = new ObservableCollection<int>();
+			TimeStringMinuteOptions = new ObservableCollection<int>();
+
+			for (int i = 0; i < 24; i++)
+			{
+				TimeStringHourOptions.Add(i);
+			}
+			for (int i = 0; i < 60; i += 5)
+			{
+				TimeStringMinuteOptions.Add(i);
+			}
 
 			if (larpActivity != null)
             {
@@ -85,14 +193,20 @@ namespace LAMA.ViewModels
 				Description = larpActivity.description;
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.duration);
-				Start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				Day = activity.day;
+
+				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
+
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);
 				foreach(Pair<string, int> role in activity.roles)
 				{
 					Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
+				}
+				foreach(Pair<long, int> item in activity.requiredItems)
+				{
+					InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+					Items.Add(new ItemItemViewModel(invItem, item.second));
 				}
 				foreach(int id in larpActivity.prerequisiteIDs)
 				{
@@ -106,11 +220,24 @@ namespace LAMA.ViewModels
 				Description = "";
 				Type = EventType.normal.ToString();
 				TypeIndex = (int)EventType.normal;
-				Duration = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(360000);
-				Start = DateTime.Now; //DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				Day = 0;
+
+				DateTime now = DateTime.Now;
+				now = now.AddSeconds(-now.Second);
+
+				StartDate = now.AddMinutes(30);
+				EndDate = StartDate.AddHours(1);
+
 				Preparations = "";
 			}
+
+			StartTime = StartDate;
+			EndTime = EndDate;
+
+			StartTimeStringHourSelected = StartTime.Hour - StartTime.Hour%5;
+			StartTimeStringMinuteSelected = StartTime.Minute - StartTime.Minute%5;
+
+			EndTimeStringHourSelected = EndTime.Hour - EndTime.Hour%5;
+			EndTimeStringMinuteSelected = EndTime.Minute - EndTime.Minute%5;
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
@@ -127,6 +254,29 @@ namespace LAMA.ViewModels
 			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
 			AddNewRole = new Command(OnAddNewRole);
 			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
+			AddNewItem = new Command(OnAddNewItem);
+			RemoveItem = new Command<ItemItemViewModel>(OnRemoveItem);
+
+			SetStartTimeDateCommand = new Command(OnSetStartTimeDate);
+			SetEndTimeDateCommand = new Command(OnSetEndTimeDate);
+		}
+
+		public async void OnSetStartTimeDate()
+		{
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation, StartDate);
+			if (date != null)
+			{
+				StartDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
+			}
+		}
+
+		public async void OnSetEndTimeDate()
+		{
+			DateTime date = await CalendarPage.ShowCalendarPage(_navigation, EndDate);
+			if (date != null)
+			{
+				EndDate = new DateTime(date.Year, date.Month, date.Day,0,0,0, DateTimeKind.Utc);
+			}
 		}
 
 		private void OnRemoveRole(RoleItemViewModel role)
@@ -139,14 +289,42 @@ namespace LAMA.ViewModels
 			Roles.Add(new RoleItemViewModel("role", 1, 0, true));
 		}
 
+		private void OnRemoveItem(ItemItemViewModel item)
+		{
+			Items.Remove(item);
+		}
+
+		private void OnAddNewItem()
+		{
+
+			HashSet<long> items = new HashSet<long>();
+			foreach (var item in Items)
+			{
+				items.Add(item.ItemID);
+			}
+
+			_navigation.PushAsync(new ItemSelectionPage(
+				SaveItem,
+				(InventoryItem item) =>
+				{
+					return !items.Contains(item.ID);
+				}
+				));
+		}
+
+		public void SaveItem(InventoryItem item)
+		{
+			Items.Add(new ItemItemViewModel(item));
+		}
+
 		private bool ValidateSave()
 		{
-			string message = "";
+			StringBuilder messageBuilder = new StringBuilder();
 
 			if (String.IsNullOrWhiteSpace(_name)
 				|| String.IsNullOrWhiteSpace(_description))
             {
-				message += "Název aktivity a popis aktivity musí být vyplněny.\n";
+				messageBuilder.AppendLine("Název aktivity a popis aktivity musí být vyplněny.");
             }
 
 			bool duplicates = false;
@@ -160,8 +338,18 @@ namespace LAMA.ViewModels
 			}
 			if (duplicates)
             {
-				message += "Nemohou být dvě role se stejným názvem.\n";
+				messageBuilder.AppendLine("Nemohou být dvě role se stejným názvem.");
             }
+
+			DateTime start = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0);
+			DateTime end = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0);
+
+			if(start >= end)
+			{
+				messageBuilder.AppendLine("Čas začátku musí být před časem konce.");
+			}
+
+			string message = messageBuilder.ToString();
 
 			if(message != "")
             {
@@ -169,11 +357,6 @@ namespace LAMA.ViewModels
             }
 			return message == "";
 		}
-
-		public Xamarin.Forms.Command SaveCommand { get; }
-		public ICommand CancelCommand { get; }
-		public Command AddDependencyCommand { get; }
-		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
 
 		public void OnAddDependency()
 		{
@@ -203,9 +386,6 @@ namespace LAMA.ViewModels
 		{
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
 		}
-
-		public Command AddNewRole { get; }
-		public Command<RoleItemViewModel> RemoveRole {get; }
 
 		private async void OnCancel()
 		{
@@ -253,8 +433,24 @@ namespace LAMA.ViewModels
 				dependencies.Add(item.LarpActivity.ID);
 			}
 
-			EventList<Pair<int, int>> items = new EventList<Pair<int, int>>();
+			EventList<Pair<long, int>> items = new EventList<Pair<long, int>>();
+
+			foreach(var item in _items)
+            {
+				items.Add(item.ToPair());
+            }
+
+			//is not used at saving, no dataloss here
 			EventList<Pair<long, string>> registered = new EventList<Pair<long, string>>();
+
+			int tmp_day = 0;
+
+			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0, 0, DateTimeKind.Utc);
+			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0, 0, DateTimeKind.Utc);
+
+
+			long start = finalStart.ToUnixTimeMilliseconds();
+			long duration = finalEnd.ToUnixTimeMilliseconds() - start;
 
 			LarpActivity larpActivity = new LarpActivity(
 				10,
@@ -263,16 +459,17 @@ namespace LAMA.ViewModels
 				Preparations is null ? "" : Preparations,
 				(LarpActivity.EventType)Enum.Parse(typeof(LarpActivity.EventType), Type),
 				dependencies,
-				Duration.ToUnixTimeMilliseconds(),
-				Day,
-				Start.ToUnixTimeMilliseconds(),
+				duration,
+				tmp_day,
+				start,
 				new Pair<double, double>(lon, lat), 
 				LarpActivity.Status.readyToLaunch,
 				items, 
 				roles, 
 				registered);
 
-			_createNewActivity(new LarpActivityDTO(larpActivity));
+			var activityDto = new LarpActivityDTO(larpActivity);
+			_createNewActivity(activityDto);
 
 			// This will pop the current page off the navigation stack
 			if (Device.RuntimePlatform == Device.WPF)

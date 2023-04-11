@@ -38,15 +38,18 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public void Update()
         {
-            var now = DateTime.Now;
-            //var time = new DateTime(now.Year, now.Month, _activity.day, _activity.start.hours, _activity.start.minutes, 0);
-            var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start);
-            //var time = new DateTime(now.Year, now.Month, 1, start.Hour, start.Minute, 0);
+            var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start).ToLocalTime();
             var span = start - _activityGraph.TimeOffset;
 
-            Activity.GraphY = Math.Max(0, Activity.GraphY);
+
+            Activity.GraphY = Math.Max(0, Math.Min(1, Activity.GraphY));
+            float y = (float)Activity.GraphY * (_activityGraph.Height - (float)Height);
+            
+
+            //Activity.GraphY = Math.Max(0, Activity.GraphY);
+            //Activity.GraphY = Math.Min(_activityGraph.Height - Height, Activity.GraphY);
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
-            TranslationY = _activityGraph.FromPixels((float)Activity.GraphY * _activityGraph.Zoom + _activityGraph.OffsetY);
+            TranslationY = _activityGraph.FromPixels(y * _activityGraph.Zoom + _activityGraph.OffsetY);
             WidthRequest = _activityGraph.FromPixels(Activity.duration * _activityGraph.MinuteWidth * _activityGraph.Zoom);
 
             IsVisible = TranslationY >= - Height / 3;
@@ -141,8 +144,8 @@ namespace LAMA.ActivityGraphLib
                 Activity.day = newTime.Day;
 
                 // Y
-                y = _activityGraph.ToPixels(y - (float)Height / 2 - _activityGraph.XamOffset);
-                Activity.GraphY = y / _activityGraph.Zoom - _activityGraph.OffsetY / _activityGraph.Zoom;
+                y = _activityGraph.ToPixels((y - (float)Height / 2 - _activityGraph.XamOffset) / _activityGraph.Zoom);
+                Activity.GraphY = (y  - _activityGraph.OffsetY / _activityGraph.Zoom) / (_activityGraph.Height - (float)Height);
             }
         }
 
@@ -208,7 +211,7 @@ namespace LAMA.ActivityGraphLib
                 start: startMinutes,
                 place: new Pair<double, double>(0.0, 0.0),
                 status: status,
-                requiredItems: new EventList<Pair<int, int>>(),
+                requiredItems: new EventList<Pair<long, int>>(),
                 roles: new EventList<Pair<string, int>>(),
                 registrations: new EventList<Pair<long, string>>()
                 );

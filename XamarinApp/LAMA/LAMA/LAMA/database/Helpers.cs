@@ -38,7 +38,7 @@ namespace LAMA
         {
             bool negative = false;
 
-            while(!char.IsDigit(input[offset]) && offset < input.Length)
+            while (!char.IsDigit(input[offset]) && offset < input.Length)
             {
                 if (input[offset] == '-')
                     negative = true;
@@ -318,7 +318,7 @@ namespace LAMA
 
         static void skipWhiteSpace(string input, ref int offset)
         {
-            while(offset < input.Length && char.IsWhiteSpace(input[offset]))
+            while (offset < input.Length && char.IsWhiteSpace(input[offset]))
             {
                 ++offset;
             }

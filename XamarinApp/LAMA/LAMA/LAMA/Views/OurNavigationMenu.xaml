@@ -3,9 +3,10 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="LAMA.Views.OurNavigationMenu"
+    xmlns:colors="clr-namespace:LAMA.Colors"
     Padding="0" 
     Spacing="0"
-    BackgroundColor="#b2ffff">
+    BackgroundColor="{x:Static colors:ColorPalette.LighterPrimaryColor}">
     <StackLayout.IsVisible>
         <OnPlatform x:TypeArguments="x:Boolean">
             <On Platform="Android">false</On>

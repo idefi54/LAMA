@@ -21,25 +21,47 @@ namespace LAMA.Models
         /// <summary>
         /// unix timestamp in milliseconds
         /// </summary>
-        public long sentAt { get { return _sentAt; } }
+        public long sentAt { 
+            get { return _sentAt; }
+            set { 
+                _sentAt = value;
+                updateValue(4, value.ToString());
+            }
+        }
+
+        bool _receivedByServer;
+        public bool receivedByServer { 
+            get { return  _receivedByServer; } 
+            set { 
+                _receivedByServer = value; 
+                updateValue(5, value.ToString());
+            }
+        }
 
         public long getID()
         {
             return _ID;
         }
-        static string[] attributes = new string[] { "ID","from", "channel", "message", "sentAt" };
+        static string[] attributes = new string[] { "ID","from", "channel", "message", "sentAt", "receivedByServer" };
         public int getTypeID()
         {
             return 4;
         }
         public string[] getAttributes()
         {
-            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString() };
+            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
         }
         public string[] getAttributeNames()
         {
             return attributes;
         }
+
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int which, string value)
         {
             switch(which)
@@ -59,9 +81,18 @@ namespace LAMA.Models
                 case 4: 
                     _sentAt = Helpers.readLong(value);
                     break;
+                case 5:
+                    _receivedByServer = value == "True" ? true : false;
+                    break;
 
             }
         }
+
+        void updateValue(int index, string newVal)
+        {
+            list?.sqlConnection.changeData(index, newVal, this);
+        }
+
         public int numOfAttributes()
         { return attributes.Length; }
 
@@ -92,13 +123,14 @@ namespace LAMA.Models
 
         public ChatMessage()
         { }
-        public ChatMessage(string from, int channel, string message, long sentAt)
+        public ChatMessage(string from, int channel, string message, long sentAt, bool receivedByServer)
         {
             _from = from;
             _channel = channel;
             _message = message;
             _sentAt = sentAt;
             _ID = _sentAt + LocalStorage.cpID * 1000000000000;
+            _receivedByServer = receivedByServer;
         }
 
         public event EventHandler<int> IGotUpdated;

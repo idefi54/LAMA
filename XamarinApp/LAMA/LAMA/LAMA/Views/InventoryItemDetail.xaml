@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:colors="clr-namespace:LAMA.Colors"
              x:Class="LAMA.Views.InventoryItemDetail"
 			 Title="Detaily Předmětu">
     <ContentPage.Content>
@@ -74,7 +75,7 @@
                 </StackLayout>
                 <Button Text="Vrátit" Command="{Binding DetailedReturnCommand}" IsVisible="{Binding ManageInventory}" HorizontalOptions="FillAndExpand" ></Button>
 
-                <Button Text="Smazat" Command="{Binding DeleteCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding ManageInventory}" BackgroundColor="Red"/>
+                <Button Text="Smazat" Command="{Binding DeleteCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding ManageInventory}" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}"/>
 
             </StackLayout>
         </ScrollView>

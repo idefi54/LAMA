@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xamarin.Forms.Platform.WPF;
 using Xamarin.Forms;
+using LAMA.Services;
+using System.Diagnostics;
 
 namespace LAMA.WPF
 {
@@ -27,11 +29,24 @@ namespace LAMA.WPF
         {
             InitializeComponent();
             Xamarin.Forms.Forms.Init();
+            MapHandler.UseGPU = false;
             LoadApplication(new LAMA.App());
+            
 
             MouseDown += MainWindow_MouseDown;
             MouseMove += MainWindow_MouseMove;
             MouseUp += MainWindow_MouseUp;
+
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                string primaryHex = Colors.ColorPalette.PrimaryColor.ToHex();
+                System.Windows.Media.Color primaryColor = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(primaryHex);
+                //App.Current.Resources["WindowBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
+                App.Current.Resources["CommandBarBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
+                App.Current.Resources["DefaultTitleBarBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
+                App.Current.Resources["DefaultTabbedBarBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
+                App.Current.Resources["AccentColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
+            }
         }
 
         private void SendTouchEvent(long touchId, TouchTracking.TouchActionType type, float x, float y)
@@ -47,10 +62,11 @@ namespace LAMA.WPF
 
             if (currPage != null)
             {
+                float difference = (float)(ActualHeight - currPage.Height);
                 TouchTracking.TouchActionEventArgs args = new TouchTracking.TouchActionEventArgs(
                     id: touchId,
                     type: type,
-                    location: new TouchTracking.TouchTrackingPoint(x, y),
+                    location: new TouchTracking.TouchTrackingPoint(x, y - difference),
                     isInContact: true);
 
                 currPage.OnTouchEffectAction(this, args);

@@ -109,6 +109,13 @@ namespace LAMA.Models
         {
             return _ID;
         }
+
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int i, string s)
         {
             switch (i)

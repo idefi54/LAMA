@@ -11,10 +11,11 @@ namespace LAMA.Models
     {
         public enum Status { ready, onBreak, onActivity};
 
-        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI};
+        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI, EditMap,
+            EditGraph
+        }
 
-        public enum UpdateTypes { CPs, GPSFast, GPSSlow, Chat};
-
+        public enum UpdateTypes { CPs, GPSFast, GPSSlow, Chat }; 
         long _ID;
         public long ID { get { return _ID; } }
         
@@ -146,6 +147,13 @@ namespace LAMA.Models
         {
             return attributes;
         }
+
+        public void setAttributeDatabase(int index, string value)
+        {
+            setAttribute(index, value);
+            updateValue(index, value);
+        }
+
         public void setAttribute(int index, string value)
         {
             switch(index)

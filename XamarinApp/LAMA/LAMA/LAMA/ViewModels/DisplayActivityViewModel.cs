@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using System.Linq;
 using LAMA.Services;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace LAMA.ViewModels
 {
@@ -23,27 +24,35 @@ namespace LAMA.ViewModels
 		private string _name;
 		private string _description;
 		private string _type;
-		private string _duration;
-		private string _start;
 		private string _dayIndex;
 		private TrulyObservableCollection<RoleItemViewModel> _roles;
+		private TrulyObservableCollection<ItemItemViewModel> _items;
 		private ObservableCollection<string> _equipment;
 		private string _preparations;
 		private string _location;
 
+		private string _start;
+		private string _end;
+		private string _duration;
 
 		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
-		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
-		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
 		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		public TrulyObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
 		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
-        public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+
+
+		public string Start { get { return _start; } set { SetProperty(ref _start, value); } }
+		public string End { get { return _end; } set { SetProperty(ref _end, value); } }
+		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
+
+
+		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		private bool _isRegistered;
@@ -58,12 +67,15 @@ namespace LAMA.ViewModels
 			}
 		}
 
+		public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
 
 
 		LarpActivity _activity;
 
 
 		public Command SignUpCommand { get; }
+		public Command ShowOnGraphCommand { get; }
 		public Command EditCommand { get; }
 
 
@@ -85,10 +97,9 @@ namespace LAMA.ViewModels
 			Name = _activity.name;
 			Description = _activity.description;
 			Type = _activity.eventType.ToString();
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.duration);
-			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
-			Start = dt.Hour + ":" + dt.Minute;
+
+			UpdateDisplayedTime();
+
 			DayIndex = (_activity.day + 1) + ".";
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
@@ -107,10 +118,33 @@ namespace LAMA.ViewModels
 				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
 
+			_items = new TrulyObservableCollection<ItemItemViewModel>();
+			foreach(var item in _activity.requiredItems)
+            {
+				InventoryItem invItem = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+				_items.Add(new ItemItemViewModel(invItem, item.second));
+            }
+			
+
+
 			isRegistered = IsRegistered();
 
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
+			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
+		}
+
+		private void UpdateDisplayedTime()
+		{
+
+			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
+			Start = startDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
+
+			DateTime endDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start + _activity.duration);
+			End = endDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
+
+			TimeSpan durationTimeSpan = endDateTime - startDateTime;
+			Duration = (int)durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
 		}
 
 		private async void OnEdit()
@@ -160,6 +194,11 @@ namespace LAMA.ViewModels
 			isRegistered = IsRegistered();
 		}
 
+		private async void OnShowOnGraph()
+        {
+			await Navigation.PushAsync(new ActivityGraphPage(_activity));
+        }
+
         private async void UnregisterAsync()
         {
 			long cpID = LocalStorage.cpID;
@@ -206,8 +245,19 @@ namespace LAMA.ViewModels
 			_activity.UpdateRoles(larpActivityDTO.roles);
 			foreach(var role in larpActivityDTO.roles)
 			{
-				Roles.Add(new RoleItemViewModel(role.first, role.second, 0, false));
+				int registered = _activity.registrationByRole
+					.Where(x => x.second.Trim() == role.first)
+					.Count();
+				Roles.Add(new RoleItemViewModel(role.first, role.second, registered, false));
 			}
+
+			Items.Clear();
+			_activity.UpdateItems(larpActivityDTO.requiredItems);
+			foreach(var item in larpActivityDTO.requiredItems)
+            {
+				InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
+				Items.Add(new ItemItemViewModel(invItem, item.second));
+            }
 
 			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
@@ -217,10 +267,8 @@ namespace LAMA.ViewModels
 				Dependencies.Add(new LarpActivityShortItemViewModel(la));
 			}
 
-			DateTime dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.duration);
-			Duration = dt.Hour + "h " + dt.Minute + "m";
-			dt = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(larpActivityDTO.start);
-			Start = dt.Hour + ":" + dt.Minute;
+			UpdateDisplayedTime();
+
 			DayIndex = (larpActivityDTO.day + 1) + ".";
 			Preparations = larpActivityDTO.preparationNeeded;
 			Location = larpActivityDTO.place.ToString();

@@ -25,17 +25,12 @@ namespace LAMA.Singletons
                 {
                     LarpEvent result = null;
                     string name = typeof(LarpEvent).Name;
-                    Debug.WriteLine("Before make connection");
                     if (SQLConnectionWrapper.connection == null)
                     {
                         SQLConnectionWrapper.makeConnection();
                     }
-                    Debug.WriteLine("After make connection");
-                    Debug.WriteLine(name);
-                    Debug.WriteLine(SQLConnectionWrapper.connection.ToString());
+
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
-                    Debug.WriteLine("After getting name");
-                    Debug.WriteLine(a);
                     a.Wait();
                     if (a.Result.Count == 0)
                         SQLConnectionWrapper.connection.CreateTableAsync<LarpEvent>().Wait();
@@ -64,7 +59,6 @@ namespace LAMA.Singletons
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
                     }
                     instance.init();
-                    Debug.WriteLine("LarpEvent.Instance created");
                     return instance;
                 }
             }
@@ -93,7 +87,6 @@ namespace LAMA.Singletons
             get { return Instance.name; }
             set
             {
-                Debug.WriteLine("Setting name");
                 Instance.name = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
@@ -205,6 +198,13 @@ namespace LAMA.Singletons
         {
             return Id;
         }
+
+        public void setAttributeDatabase(int i, string value)
+        {
+            setAttribute(i, value);
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+        }
+
         public void setAttribute(int i, string value)
         {
             switch(i)
