@@ -189,13 +189,15 @@ namespace LAMA.Models
 
 
 
-        public void Borrow(int howMany)
+        public bool Borrow(int howMany)
         {
             if (howMany <= free)
             {
                 free = free - howMany;
                 taken = taken + howMany;
+                return true;
             }
+            return false;
         }
 
         private int findBorrowerIndex(long borrower)
@@ -208,7 +210,7 @@ namespace LAMA.Models
             return -1;
         }
 
-        public void Borrow(int howMany, long who)
+        public bool Borrow(int howMany, long who)
         {
             if (howMany <= free)
             {
@@ -223,17 +225,21 @@ namespace LAMA.Models
                 {
                     takenBy[index] = new Pair<long, int>(who, takenBy[index].second + howMany);
                 }
+                return true;
             }
+            return false;
         }
-        public void Return (int howMany)
+        public bool Return (int howMany)
         {
             if(howMany <= taken)
             {       
                 taken = taken - howMany;
                 free = free + howMany;
+                return true;
             }
+            return false;
         }
-        public void Return (int howMany, long who)
+        public bool Return (int howMany, long who)
         {
             int index = findBorrowerIndex(who);
             if (howMany <= taken && index != -1 && takenBy[index].second >= howMany) 
@@ -245,7 +251,9 @@ namespace LAMA.Models
                     takenBy.RemoveAt(index);
                 else
                     takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
+                return true;
             }
+            return false;
         }
 
 

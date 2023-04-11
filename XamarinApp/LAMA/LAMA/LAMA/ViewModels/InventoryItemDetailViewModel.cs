@@ -80,20 +80,31 @@ namespace LAMA.ViewModels
             if (_howManyBorrow < 1)
                 return;
 
-            _item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]);
+            var toast = DependencyService.Get<ToastInterface>();
+            if (_item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]))
+                toast?.DoTheThing("Úspěšně zapůjčeno " + _howManyBorrow + "kusů pro " + CPNames[_borrowName]);
+            else
+                toast?.DoTheThing("Zapůjčení selhalo");
+            
+            
             NumBorrowed = _item.taken.ToString();
             NumFree = _item.free.ToString();
 
             SetProperty(ref _howManyBorrow, 0);
             SetProperty(ref _borrowName, 0);
             writeBorrowedBy();
+
+
         }
         public void OnReturn()
         {
             if (_returnNum < 1)
                 return;
-
-            _item.Return(_returnNum, CPIDs[CPNames[ _returnName]]);
+            var toast = DependencyService.Get<ToastInterface>();
+            if (_item.Return(_returnNum, CPIDs[CPNames[_returnName]]))
+                toast.DoTheThing("Úspěšně vráceno " + _returnName + " kusů od " + CPNames[_returnName]);
+            else
+                toast.DoTheThing("Vrácení selhalo");
             NumBorrowed = _item.taken.ToString();
             NumFree = _item.free.ToString();
 

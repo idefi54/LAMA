@@ -120,8 +120,14 @@ namespace LAMA.ViewModels
                 return;
             }
             var itemViewModel = (InventoryItemViewModel)obj;
-            
-            itemViewModel.Item.Borrow(1);
+
+            var toast = DependencyService.Get<ToastInterface>();
+            if (itemViewModel.Item.Borrow(1))
+                toast?.DoTheThing("Zapůjčeno " + itemViewModel.Item.name + ".");
+            else
+                toast?.DoTheThing("Půjčka selhala.");
+
+
         }
         private async void OnReturnItem(object obj)
         {
@@ -132,8 +138,12 @@ namespace LAMA.ViewModels
                 return;
             }
             var itemViewModel = (InventoryItemViewModel)obj;
-
-            itemViewModel.Item.Return(1);
+            var toast = DependencyService.Get<ToastInterface>();
+            if (itemViewModel.Item.Return(1))
+                toast?.DoTheThing("Vráceno " + itemViewModel.Name);
+            else
+                toast?.DoTheThing("Vrácení " + itemViewModel.Name + " selhalo.");
+                
         }
         private async void OnCreateItem()
         {
