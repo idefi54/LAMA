@@ -83,7 +83,7 @@ namespace LAMA.Views
                 // Create new activity -> redirect to NewActivtyPage
                 if (_graph.ActivityCreationMode)
                 {
-                    var time = _graph.ToTime(_lastLocation.X);
+                    var time = _graph.ToLocalTime(_lastLocation.X);
                     _touchActions.Remove(args.Id);
                     _draggedButton = null;
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
