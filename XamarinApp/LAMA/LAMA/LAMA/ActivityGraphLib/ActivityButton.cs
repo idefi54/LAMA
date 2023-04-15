@@ -121,7 +121,7 @@ namespace LAMA.ActivityGraphLib
             if (_editState == EditState.Left)
             {
                 long at = _activityGraph.ToLocalTime(x).ToUnixTimeMilliseconds();
-                at = at - (at % 60 * 1000 * 5); // Milliseconds round to 5 minutes
+                at = at - (at % (60 * 1000 * 5)); // Milliseconds round to 5 minutes
                 long duration = Activity.start - at + Activity.duration;
 
                 if (duration > minimalDuration)
@@ -135,7 +135,7 @@ namespace LAMA.ActivityGraphLib
             {
                 long at = _activityGraph.ToLocalTime(x).ToUnixTimeMilliseconds();
                 long duration = at - Activity.start;
-                duration = duration - (duration % 60 * 1000 * 5); // Milliseconds round to 5 minutes
+                duration = duration - (duration % (60 * 1000 * 5)); // Milliseconds round to 5 minutes
                 if (duration >= minimalDuration)
                     Activity.duration = duration;
             }
