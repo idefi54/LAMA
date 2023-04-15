@@ -119,10 +119,11 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         /// <param name="x">Xamarin horizontal location on screen.</param>
         /// <returns></returns>
-        public DateTime ToTime(float x)
+        public DateTime ToLocalTime(float x)
         {
             float minutes = ToPixels(x) / MinuteWidth / Zoom;
-            return TimeOffset.AddMinutes(minutes - (minutes % 5));
+            return TimeOffset.AddMinutes(minutes).ToLocalTime();
+            //return TimeOffset.AddMinutes(minutes - (minutes % 5));
         }
 
         /// <summary>
