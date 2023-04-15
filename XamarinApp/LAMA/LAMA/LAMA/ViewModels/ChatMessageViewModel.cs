@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using Xamarin.Forms;
 
@@ -28,12 +29,11 @@ namespace LAMA.ViewModels
         public ChatMessageViewModel(ChatMessage chatMessage)
         {
             this.chatMessage = chatMessage;
-            Debug.WriteLine(chatMessage.from == LocalStorage.clientName);
         }
 
         string TimeFormat(DateTimeOffset time)
         {
-            string result = $"{time.Hour}:{time.Minute}:{time.Second} / {time.Day}.{time.Month} / {time.Year}";
+            string result = time.LocalDateTime.ToString(new CultureInfo("cs-CZ"));
             return result;
         }
 

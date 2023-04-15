@@ -19,7 +19,6 @@ namespace LAMA.ViewModels
         //public Xamarin.Forms.Command AddMessageCommand { get; }
 
         public Xamarin.Forms.Command MessageSentCommand { get; }
-        public Xamarin.Forms.Command ReturnToChatChannelsCommand { get; }
         public string MessageText { get; set; }
         public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; set; }
 
@@ -31,12 +30,14 @@ namespace LAMA.ViewModels
 
         private int channelID;
 
+        private ChatPage page;
+
         private void SortMessagesInPlace(ObservableCollection<ChatMessageViewModel> collection)
         {
-            ObservableCollection<ChatMessageViewModel> temp;
-            temp = new ObservableCollection<ChatMessageViewModel>(collection.OrderByDescending(p => p.ChatMessage.sentAt));
-            collection.Clear();
-            foreach (ChatMessageViewModel j in temp) collection.Add(j);
+            List<ChatMessageViewModel> sorted;
+            sorted = new List<ChatMessageViewModel>(collection.OrderBy(p => p.ChatMessage.sentAt));
+            for (int i = 0; i < sorted.Count(); i++)
+                collection.Move(collection.IndexOf(sorted[i]), i);
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -44,6 +45,11 @@ namespace LAMA.ViewModels
             var handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void OnEntryComplete(object sender, EventArgs e)
+        {
+            OnMessageSent();
         }
 
         private void OnMessageSent()
@@ -58,8 +64,9 @@ namespace LAMA.ViewModels
             OnPropertyChanged("MessageText");
         }
 
-        public ChatViewModel(INavigation navigation, string channelName)
+        public ChatViewModel(INavigation navigation, string channelName, ChatPage page)
         {
+            this.page = page;
             SQLEvents.created += PropagateCreated;
             SQLEvents.dataChanged += PropagateChanged;
             SQLEvents.dataDeleted += PropagateDeleted;
@@ -68,7 +75,6 @@ namespace LAMA.ViewModels
 
             Navigation = navigation;
             MessageSentCommand = new Xamarin.Forms.Command(OnMessageSent);
-            ReturnToChatChannelsCommand = new Xamarin.Forms.Command(ReturnToChatChannels);
 
             ChatMessageListItems = new ObservableCollection<ChatMessageViewModel>();
 
@@ -108,11 +114,6 @@ namespace LAMA.ViewModels
             //AddMessageCommand = new Xamarin.Forms.Command(OnAddChatMessage);
         }
 
-        private async void ReturnToChatChannels()
-        {
-            await Navigation.PushAsync(new ChatChannels());
-        }
-
         private void PropagateCreated(Serializable created)
         {
             Debug.WriteLine("PropagateCreated");
@@ -130,6 +131,7 @@ namespace LAMA.ViewModels
             item = new ChatMessageViewModel(message);
             ChatMessageListItems.Add(item);
             SortMessagesInPlace(ChatMessageListItems);
+            page.ScrollToBottom();
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
