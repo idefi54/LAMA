@@ -3,6 +3,7 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -18,6 +19,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command GoToInventory { get; }
         public Xamarin.Forms.Command GoToLarpEvent { get; }
         public Xamarin.Forms.Command GoToPOI { get; }
+        public Xamarin.Forms.Command LogOut { get; }
 
         public OurNavigationMenuViewModel()
         {
@@ -31,6 +33,7 @@ namespace LAMA.ViewModels
             GoToInventory = new Xamarin.Forms.Command(OnGoToInventory);
             GoToLarpEvent = new Xamarin.Forms.Command(OnGoToLarpEvent);
             GoToPOI = new Xamarin.Forms.Command(OnGoToPOI);
+            LogOut = new Xamarin.Forms.Command(OnLogOut);
         }
 
         private async void OnGoToMap(object obj)
@@ -79,6 +82,18 @@ namespace LAMA.ViewModels
        private async void OnGoToPOI(object obj)
         {
             await App.Current.MainPage.Navigation.PushAsync(new POIListView());
+        }
+
+        private async void OnLogOut(object obj)
+        {
+            if (Device.RuntimePlatform == Device.WPF)
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("//ClientChooseServerPage");
+            }
         }
     }
 }

@@ -101,7 +101,7 @@ namespace LAMA.ViewModels
             }
             else
             {
-                await Shell.Current.GoToAsync($"//{nameof(ChatChannels)}");
+                await Shell.Current.GoToAsync($"//ChatChannels");
             }
         }
     }

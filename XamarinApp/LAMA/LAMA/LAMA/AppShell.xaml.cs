@@ -17,11 +17,11 @@ namespace LAMA
             Routing.RegisterRoute(nameof(DisplayActivityPage), typeof(DisplayActivityPage));
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
+        private async void OnLogoutClicked(object sender, EventArgs e)
         {
             if (Device.RuntimePlatform == Device.WPF)
             {
-                await App.Current.MainPage.Navigation.PushAsync(new LoginPage());
+                await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
             }
             else
             {
