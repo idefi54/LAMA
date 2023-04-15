@@ -1,6 +1,7 @@
 ﻿using LAMA.Communicator;
 using LAMA.Database;
 using LAMA.Models;
+using LAMA.Services;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -141,6 +142,8 @@ namespace LAMA.ViewModels
 
             LocalStorage.cpID = (int)DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0].ID;
 
+            IMessageService service = DependencyService.Get<IMessageService>();
+
             if (Device.RuntimePlatform == Device.WPF)
             {
                 await App.Current.MainPage.Navigation.PushAsync(new TestPage());
@@ -148,9 +151,12 @@ namespace LAMA.ViewModels
             }
             else
             {
+                await service.ShowAlertAsync("test1");
+
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(TestPage)}");
             }
+            await service.ShowAlertAsync("test2");
         }
     }
 }
