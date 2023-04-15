@@ -75,13 +75,10 @@ namespace LAMA.ViewModels
             {
                 Channels.Add(LarpEvent.ChatChannels[i]);
             }
-
-            Debug.WriteLine(Channels.Count);
         }
 
         private async void DisplayChannel(object obj)
         {
-            Debug.WriteLine("DisplayChannel");
             if (obj.GetType() != typeof(string))
             {
                 await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(string).Name
@@ -90,8 +87,7 @@ namespace LAMA.ViewModels
             }
 
             string channelName = (string)obj;
-            Debug.WriteLine(channelName);
-            await Navigation.PushAsync(new ChatTest(channelName));
+            await Navigation.PushAsync(new ChatPage(channelName));
         }
     }
 }

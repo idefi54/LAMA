@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              xmlns:extensions="clr-namespace:LAMA.Extensions"
-             x:Class="LAMA.Views.ChatTest"
-			 x:Name="ChatPage">
+             x:Class="LAMA.Views.ChatPage">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="Button">
@@ -16,13 +15,9 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Return To Chat Channels" Command="{Binding ReturnToChatChannelsCommand}"/>
-    </ContentPage.ToolbarItems>
-
     <ContentPage.Content>
         <StackLayout  Spacing="0">
-            <ScrollView>
+            <ScrollView x:Name="ScrollViewMessages">
                 <StackLayout x:Name="LarpActivityList" BindableLayout.ItemsSource="{Binding ChatMessageListItems}" Margin="5,5,5,0">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
