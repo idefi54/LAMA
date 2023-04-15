@@ -76,6 +76,9 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            if (_mapView == null)
+                return;
+
             var scrollView = Content as ScrollView;
             (scrollView.Children[0] as StackLayout).Children.Remove(_mapView);
             _mapView = null;

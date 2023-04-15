@@ -194,8 +194,8 @@ namespace LAMA.ViewModels
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
 
-				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
-				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration);
+				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
+				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration).ToLocalTime();
 
 				Preparations = larpActivity.preparationNeeded;
 				MapHandler.Instance.SetSelectionPin(larpActivity.place.first, larpActivity.place.second);

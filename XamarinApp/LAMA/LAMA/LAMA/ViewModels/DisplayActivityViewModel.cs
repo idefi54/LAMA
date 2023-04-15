@@ -137,10 +137,10 @@ namespace LAMA.ViewModels
 		private void UpdateDisplayedTime()
 		{
 
-			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start);
+			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start).ToLocalTime();
 			Start = startDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
 
-			DateTime endDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start + _activity.duration);
+			DateTime endDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start + _activity.duration).ToLocalTime();
 			End = endDateTime.ToString(CultureInfo.GetCultureInfo("cs-CZ"));
 
 			TimeSpan durationTimeSpan = endDateTime - startDateTime;

@@ -27,7 +27,6 @@ namespace LAMA.ActivityGraphLib
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.Start;
             _editState = EditState.Move;
-            activity.duration = 60;// TODO: DELETE When actual duration works
 
             // Clicking the button displays the activity
             Clicked += (object sender, EventArgs e) => Navigation.PushAsync(new DisplayActivityPage(activity));
@@ -44,13 +43,14 @@ namespace LAMA.ActivityGraphLib
 
             Activity.GraphY = Math.Max(0, Math.Min(1, Activity.GraphY));
             float y = (float)Activity.GraphY * (_activityGraph.Height - (float)Height);
-            
+
 
             //Activity.GraphY = Math.Max(0, Activity.GraphY);
             //Activity.GraphY = Math.Min(_activityGraph.Height - Height, Activity.GraphY);
+            long durationMinutes = Activity.duration / 1000 / 60;
             TranslationX = _activityGraph.FromPixels((float)span.TotalMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
             TranslationY = _activityGraph.FromPixels(y * _activityGraph.Zoom + _activityGraph.OffsetY);
-            WidthRequest = _activityGraph.FromPixels(Activity.duration * _activityGraph.MinuteWidth * _activityGraph.Zoom);
+            WidthRequest = _activityGraph.FromPixels(durationMinutes * _activityGraph.MinuteWidth * _activityGraph.Zoom);
 
             IsVisible = TranslationY >= - Height / 3;
             TextColor = Color.Black;
@@ -65,6 +65,8 @@ namespace LAMA.ActivityGraphLib
         /// <param name="canvas"></param>
         public void DrawBoders(SKCanvas canvas)
         {
+            return;
+
             var paint = new SKPaint();
             paint.Color = SKColors.Green.WithAlpha(125);
             float x = _activityGraph.ToPixels((float)TranslationX);
@@ -115,23 +117,25 @@ namespace LAMA.ActivityGraphLib
         /// <param name="y"></param>
         public void MoveEdit(float x, float y)
         {
-            const long minimalDuration = 10;
+            const long minimalDuration = 10 * 1000 * 60;
             if (_editState == EditState.Left)
             {
-                DateTime at = _activityGraph.ToTime(x);
-                long duration = (long)(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start) - at).TotalMinutes + Activity.duration;
+                long at = _activityGraph.ToLocalTime(x).ToUnixTimeMilliseconds();
+                at = at - (at % (60 * 1000 * 5)); // Milliseconds round to 5 minutes
+                long duration = Activity.start - at + Activity.duration;
 
                 if (duration > minimalDuration)
                 {
                     Activity.duration = duration;
-                    Activity.start = at.ToUnixTimeMilliseconds();
+                    Activity.start = at;
                 }
             }
 
             if (_editState == EditState.Right)
             {
-                DateTime at = _activityGraph.ToTime(x);
-                long duration = (long)(at - DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start)).TotalMinutes;
+                long at = _activityGraph.ToLocalTime(x).ToUnixTimeMilliseconds();
+                long duration = at - Activity.start;
+                duration = duration - (duration % (60 * 1000 * 5)); // Milliseconds round to 5 minutes
                 if (duration >= minimalDuration)
                     Activity.duration = duration;
             }
@@ -139,7 +143,16 @@ namespace LAMA.ActivityGraphLib
             if (_editState == EditState.Move)
             {
                 // X -> time
-                DateTime newTime = _activityGraph.ToTime(x - (float)Width / 2);
+                DateTime newTime = _activityGraph.ToLocalTime(x - (float)Width / 2);
+                newTime = new DateTime(
+                    newTime.Year,
+                    newTime.Month,
+                    newTime.Day,
+                    newTime.Hour,
+                    newTime.Minute - newTime.Minute % 5,
+                    0);
+
+
                 Activity.start = newTime.ToUnixTimeMilliseconds();
                 Activity.day = newTime.Day;
 
