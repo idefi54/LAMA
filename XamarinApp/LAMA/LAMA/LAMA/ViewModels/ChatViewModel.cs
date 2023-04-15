@@ -47,6 +47,11 @@ namespace LAMA.ViewModels
                 handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public void OnEntryComplete(object sender, EventArgs e)
+        {
+            OnMessageSent();
+        }
+
         private void OnMessageSent()
         {
             Debug.WriteLine("OnMessageSent");

@@ -14,11 +14,13 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChatPage : ContentPage
     {
+        private ChatViewModel chatViewModel;
         public ChatPage(string channelName)
         {
             InitializeComponent();
 
-            BindingContext = new ChatViewModel(Navigation, channelName, this);
+            chatViewModel = new ChatViewModel(Navigation, channelName, this);
+            BindingContext = chatViewModel;
         }
 
         public async void ScrollToBottom(bool animated = false)
@@ -33,5 +35,8 @@ namespace LAMA.Views
             ScrollToBottom();
         }
 
+        protected void OnEntryComplete(object sender, EventArgs e) {
+            chatViewModel.OnEntryComplete(sender, e);
+        }
     }
 }
