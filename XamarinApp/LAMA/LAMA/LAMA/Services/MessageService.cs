@@ -9,7 +9,8 @@ namespace LAMA.Services
     {
         Task ShowAlertAsync(string message, string title = "LAMA");
         Task<bool> ShowConfirmationAsync(string message, string title = "LAMA");
-        Task<int?> ShowSelectionAsync(string message, string[] options, string title = "LAMA");
+        Task<int?> ShowSelectionAsync(string message, string[] options);
+        Task<int?> ShowSelectionAsync(string message, List<string> options);
     }
 
     public class MessageService : IMessageService
@@ -25,11 +26,15 @@ namespace LAMA.Services
             await task;
             return task.Result;
         }
+        public async Task<int?> ShowSelectionAsync(string message, List<string> options)
+        {
+            return await ShowSelectionAsync(message, options.ToArray());
+        }
 
-        public async Task<int?> ShowSelectionAsync(string message, string[] options, string title = "LAMA")
+        public async Task<int?> ShowSelectionAsync(string message, string[] options)
         {
             string cancleString = "Zrušit";
-            Task<string> task = App.Current.MainPage.DisplayActionSheet(title, cancleString, null, options);
+            Task<string> task = App.Current.MainPage.DisplayActionSheet(message, cancleString, null, options);
             string result = await task;
             if(result == cancleString)
             {
