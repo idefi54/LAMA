@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Services;
 using LAMA.Singletons;
 using LAMA.Views;
 using System;
@@ -181,32 +182,7 @@ namespace LAMA.ViewModels
         void OnOrderByName()
         {
             nameDescended = !nameDescended;
-            order(nameDescended, new CompareByName());
-        }
-        
-        void order(bool ascending, IComparer<InventoryItemViewModel> comparer)
-        {
-            // just bubble sort because i wanna do it super simply and in place
-            // and i am too lazy to do merge sort in place
-            bool changed = true;
-            while (changed)
-            {
-                changed = false;
-                // one pass
-                for (int i = 0; i < ItemList.Count - 1; ++i)
-                {
-                    if ((ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) < 0) ||
-                        (!ascending && comparer.Compare(ItemList[i], ItemList[i + 1]) > 0))
-                    {
-                        //swap 
-                        var temp = ItemList[i];
-                        ItemList[i] = ItemList[i + 1];
-                        ItemList[i + 1] = temp;
-                        if (!changed)
-                            changed = true;
-                    }
-                }
-            }
+            SortHelper.BubbleSort(ItemList, new CompareByName(nameDescended));
         }
 
         public void OnShowDropdown()
@@ -216,9 +192,19 @@ namespace LAMA.ViewModels
 
         class CompareByName : IComparer<InventoryItemViewModel>
         {
+            int _ascendingCorrection;
+
+            public CompareByName(bool ascending = true)
+            {
+                if (ascending)
+                    _ascendingCorrection = 1;
+                else
+                    _ascendingCorrection = -1;
+            }
+
             public int Compare(InventoryItemViewModel x, InventoryItemViewModel y)
             {
-                return x.Name.CompareTo(y.Name);
+                return x.Name.CompareTo(y.Name) * _ascendingCorrection;
             }
         }
         

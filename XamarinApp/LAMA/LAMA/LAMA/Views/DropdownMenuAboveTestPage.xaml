@@ -35,7 +35,6 @@
 					<Label Text="{Binding String5}" FontSize="40" Padding="10,10,10,10"/>
 					<Button Text="TEST!" Command="{Binding TestCommand}" Padding="10,10,10,10"/>
 				</StackLayout>
-				<!--Dropdown content must be bellow, so it is rendered on top of the previous one. x:Name is relevant only for animation.-->
 				<!--This serves as a disabling of classical page content-->
 				<BoxView x:Name ="Fadeout"
 						 AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1"

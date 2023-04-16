@@ -11,13 +11,16 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class ActivityListViewModel
+    public class ActivityListViewModel : BaseViewModel
     {
 
         public Command TestChangeValues { get; }
         public Command TestRefresh { get; }
+        public Command SortCommand { get; }
+        public Command FilterCommand { get; }
         public Command AddActivityCommand { get; }
         public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        public TrulyObservableCollection<ActivityListItemViewModel> FilteredLarpActivityListItems { get; }
 
         public Command<object> LarpActivityTapped { get; private set; }
 
@@ -31,17 +34,31 @@ namespace LAMA.ViewModels
 
         public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
 
+        private bool _showSortDropdown;
+        public bool ShowSortDropdown { get { return _showSortDropdown; } set { SetProperty(ref _showSortDropdown, value); } }
+
+        private bool _showFilterDropdown;
+        public bool ShowFilterDropdown { get { return _showFilterDropdown; } set { SetProperty(ref _showFilterDropdown, value); } }
+
         //int maxId = 0;
+
+        public ActivitySorterViewModel ActivitySorter { get; }
+        public ActivityFilterViewModel ActivityFilter { get; }
 
         public ActivityListViewModel(INavigation navigation)
         {
             Navigation = navigation;
 
             LarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
+            FilteredLarpActivityListItems = new TrulyObservableCollection<ActivityListItemViewModel>();
+            ActivitySorter = new ActivitySorterViewModel(FilteredLarpActivityListItems);
+            ActivityFilter = new ActivityFilterViewModel(LarpActivityListItems, FilteredLarpActivityListItems, ActivitySorter.ApplySort);
 
             for (int i = 0; i < DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.Count; i++)
             {
-                LarpActivityListItems.Add(new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]));
+                var item = new ActivityListItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList[i]);
+                LarpActivityListItems.Add(item);
+                FilteredLarpActivityListItems.Add(item);
             }
 
             //foreach(ActivityListItemViewModel item in LarpActivityListItems)
@@ -94,6 +111,8 @@ namespace LAMA.ViewModels
             TestChangeValues = new Command(TestChangeLastActivityValues);
             TestRefresh = new Command(RefreshCollection);
 
+            SortCommand = new Command(ToggleSort);
+            FilterCommand = new Command(ToggleFilter);
 
 
             SQLEvents.created += PropagateCreated;
@@ -116,6 +135,8 @@ namespace LAMA.ViewModels
 
             item = new ActivityListItemViewModel(activity);
             LarpActivityListItems.Add(item);
+
+            ActivityFilter.ApplyFilter();
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
@@ -134,6 +155,8 @@ namespace LAMA.ViewModels
 
             item.UpdateActivity(activity);
             LarpActivityListItems.RefreshItem(LarpActivityListItems.IndexOf(item)); //this should hopefuly update the single line... but I still advise using INotifyPropertyChange
+
+            ActivityFilter.ApplyFilter();
         }
 
         private void PropagateDeleted(Serializable deleted)
@@ -149,9 +172,23 @@ namespace LAMA.ViewModels
             {
                 LarpActivityListItems.Remove(item);
             }
+
+            ActivityFilter.ApplyFilter();
         }
 
         #endregion
+
+        private void ToggleSort()
+		{
+            ShowSortDropdown = !ShowSortDropdown;
+            ShowFilterDropdown = false;
+		}
+
+        private void ToggleFilter()
+		{
+            ShowFilterDropdown = !ShowFilterDropdown;
+            ShowSortDropdown = false;
+		}
 
         private void TestChangeLastActivityValues(object obj)
 		{
@@ -218,6 +255,8 @@ namespace LAMA.ViewModels
 					}
 				}
                 DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.removeByID(activityViewModel.LarpActivity.getID());
+
+                ActivityFilter.ApplyFilter();
             }
         }
 
@@ -264,6 +303,8 @@ namespace LAMA.ViewModels
 
             LarpActivityListItems.Add(new ActivityListItemViewModel(activity));
             DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(activity);
+
+            ActivityFilter.ApplyFilter();
         }
     }
 }

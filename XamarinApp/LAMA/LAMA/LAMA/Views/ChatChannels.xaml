@@ -19,7 +19,6 @@
                                     <ColumnDefinition Width="auto" />
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding}" FontAttributes="Bold"/>
-                                <!--IsVisible="{Binding ShowDeleteButton}"/>-->
 
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer 
@@ -28,10 +27,6 @@
 										    CommandParameter="{Binding .}">
                                     </TapGestureRecognizer>
                                 </Grid.GestureRecognizers>
-                                <!--<SwipeGestureRecognizer Direction="Left" 
-															    Command="{Binding Path=BindingContext.ShowRemoveButton, Source={x:Reference Name=LarpActivityList}}"
-															    CommandParameter="{Binding .}"/>-->
-                                <!--</Grid.GestureRecognizers>-->
                             </Grid>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
