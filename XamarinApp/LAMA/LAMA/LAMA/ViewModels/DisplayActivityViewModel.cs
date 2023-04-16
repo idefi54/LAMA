@@ -160,7 +160,7 @@ namespace LAMA.ViewModels
 
 			foreach (LarpActivity.Status item in Enum.GetValues(typeof(LarpActivity.Status)))
 			{
-				if(item != LarpActivity.Status.inProgress)
+				if(item != LarpActivity.Status.inProgress && item != _activity.status)
 					options.Add(((int)item,item.ToFriendlyString()));
 			}
 
