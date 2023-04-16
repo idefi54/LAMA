@@ -25,8 +25,8 @@ namespace LAMA.ViewModels
 		Any = 0,
 		AwaitingPrerequisites = 1,
 		ReadyToLaunch = 2,
-		Launched = 3,
-		InProgress = 4,
+		Launched_InProgress = 3,
+		//InProgress = 4,
 		Completed = 5,
 	}
 
@@ -68,9 +68,9 @@ namespace LAMA.ViewModels
                     return "Čeká na splnění předpokladů";
                 case ActivitySearchStatus.ReadyToLaunch:
                     return "Připravena ke spuštění";
-                case ActivitySearchStatus.Launched:
-                    return "Spuštěna";
-                case ActivitySearchStatus.InProgress:
+                case ActivitySearchStatus.Launched_InProgress:
+                    //return "Spuštěna";
+                //case ActivitySearchStatus.InProgress:
                     return "Právě běží";
                 case ActivitySearchStatus.Completed:
                     return "Dokončena";
@@ -97,9 +97,8 @@ namespace LAMA.ViewModels
                 case LarpActivity.Status.readyToLaunch:
                     return ActivitySearchStatus.ReadyToLaunch;
                 case LarpActivity.Status.launched:
-                    return ActivitySearchStatus.Launched;
                 case LarpActivity.Status.inProgress:
-                    return ActivitySearchStatus.InProgress;
+                    return ActivitySearchStatus.Launched_InProgress;
                 case LarpActivity.Status.completed:
                     return ActivitySearchStatus.Completed;
             }
