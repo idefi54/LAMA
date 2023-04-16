@@ -447,27 +447,25 @@ namespace LAMA.Services
                 + "\n"
                 + $"Double click to show the activity.";
 
-            pin.Type = PinType.Icon;
-            pin.Icon = GetIcon("sword");
-
             switch (activity.status)
             {
                 case ActivityStatus.awaitingPrerequisites:
-                    pin.Icon = GetIcon("time_1"); break;
+                    PinSetIcon(pin, "time_1"); break;
 
                 case ActivityStatus.readyToLaunch:
-                    pin.Icon = GetIcon("mini_next"); break;
+                    PinSetIcon(pin, "mini_next"); break;
 
                 case ActivityStatus.launched:
-                    pin.Icon = GetIcon("profile_close_add"); break;
+                    PinSetIcon(pin, "profile_close_add"); break;
 
                 case ActivityStatus.inProgress:
-                    pin.Icon = GetIcon("sword"); break;
+                    PinSetIcon(pin, "sword"); break;
 
                 case ActivityStatus.completed:
-                    pin.Icon = GetIcon("accept_cr"); break;
+                    PinSetIcon(pin, "accept_cr"); break;
 
                 default:
+                    PinSetIcon(pin, "sword");
                     break;
             }
 
@@ -480,8 +478,7 @@ namespace LAMA.Services
         public void AddCP(CP cp, MapView view = null)
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
-            pin.Type = PinType.Icon;
-            pin.Icon = GetIcon("location_3_profile");
+            PinSetIcon(pin, "location_3_profile");
             pin.Scale = 0.2f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
@@ -496,7 +493,7 @@ namespace LAMA.Services
         {
             Pin pin = CreatePin(poi.Coordinates.first, poi.Coordinates.second, "POI", view);
             pin.Type = PinType.Icon;
-            pin.Icon = GetIcon("flag_2");
+            PinSetIcon(pin, "flag_2");
             pin.Scale = 0.5f;
             pin.Color = XColor.Beige;
             pin.Callout.Title = poi.Name;
@@ -519,8 +516,7 @@ namespace LAMA.Services
         public ulong AddAlert(double lon, double lat, string text, MapView view = null)
         {
             Pin p = CreatePin(lon, lat, "important");
-            p.Type = PinType.Icon;
-            p.Icon = GetIcon("message_2_exp-1");
+            PinSetIcon(p, "message_2_exp-1");
             p.Callout.Title = text;
             p.Color = XColor.Red;
             p.Callout.Color = XColor.Red;
@@ -759,16 +755,26 @@ namespace LAMA.Services
             p.Callout.Type = Mapsui.Rendering.Skia.CalloutType.Detail;
 
             p.Callout.TitleFontName = "Verdana";
-            p.Callout.TitleFontAttributes = Xamarin.Forms.FontAttributes.Bold;
+            p.Callout.TitleFontAttributes = FontAttributes.Bold;
             p.Callout.TitleFontSize *= 0.8;
 
             p.Callout.SubtitleFontName = "Verdana";
-            p.Callout.SubtitleFontAttributes = Xamarin.Forms.FontAttributes.Italic;
+            p.Callout.SubtitleFontAttributes = FontAttributes.Italic;
             p.Callout.SubtitleFontSize = p.Callout.TitleFontSize * 0.7f;
 
             //if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
             return p;
         }
+
+        private void PinSetIcon(Pin pin, string iconName)
+        {
+            pin.Type = PinType.Icon;
+            (int _, int height, byte[] icon) = GetIcon(iconName);
+
+            pin.Icon = icon;
+            pin.Anchor = new XPoint(0, -height / 4.0);
+        }
+
         private void LoadActivities(MapView view = null)
         {
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
@@ -798,9 +804,12 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 LoadRoad(rememberedList[i]);
         }
-        private byte[] GetIcon(string name)
+        private (int, int, byte[]) GetIcon(string name)
         {
-            return typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png").ToBytes();
+            var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png");
+            var image = System.Drawing.Bitmap.FromStream(stream);
+            stream.Position = 0;
+            return (image.Width, image.Height, stream.ToBytes());
         }
         #endregion
 
