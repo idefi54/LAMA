@@ -1,4 +1,5 @@
-﻿using LAMA.ViewModels;
+﻿using LAMA.Services;
+using LAMA.ViewModels;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,11 @@ namespace LAMA.Models
         public string Name { get { return name; } set { SetProperty(ref name, value); } }
         string description = String.Empty;
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
+
+        public bool Icon0Checked { get; set; }
+        public bool Icon1Checked { get; set; }
+        public bool Icon2Checked { get; set; }
+        public bool Icon3Checked { get; set; }
 
         public Command Save { get; set; }
         public Command Cancel { get; set; }
@@ -68,11 +74,13 @@ namespace LAMA.Models
             {
                 POI.Name = name;
                 POI.description = description;
+                POI.Icon = GetIcon();
             }
             else
             {
                 var list = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
-                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(0, 0), 0, name, description));
+                (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
+                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), GetIcon(), name, description));
             }
         }
         async void onCancel()
@@ -82,6 +90,15 @@ namespace LAMA.Models
         async void onEdit()
         {
             await navigation.PushAsync(new POIEditView(POI));
+        }
+
+        private int GetIcon()
+        {
+            if (Icon0Checked) return 0;
+            if (Icon1Checked) return 1;
+            if (Icon2Checked) return 2;
+            if (Icon3Checked) return 3;
+            return 0;
         }
     }
 }
