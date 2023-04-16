@@ -20,6 +20,16 @@ namespace LAMA.ViewModels
 		Unregistered = 2,
 	}
 
+	public enum ActivitySearchStatus
+    {
+		Any = 0,
+		AwaitingPrerequisites = 1,
+		ReadyToLaunch = 2,
+		Launched = 3,
+		InProgress = 4,
+		Completed = 5,
+	}
+
 	public static class ActivityFilterExtensions
 	{
 		public static string ToFriendlyString(this ActivitySearchType searchType)
@@ -48,7 +58,26 @@ namespace LAMA.ViewModels
 			}
 			return searchType.ToString();
 		}
-		public static ActivitySearchType ToSearchEnum(this LarpActivity.EventType type)
+		public static string ToFriendlyString(this ActivitySearchStatus searchStatus)
+		{
+            switch (searchStatus)
+            {
+                case ActivitySearchStatus.Any:
+					return "Jakákoliv";
+                case ActivitySearchStatus.AwaitingPrerequisites:
+                    return "Čeká na splnění předpokladů";
+                case ActivitySearchStatus.ReadyToLaunch:
+                    return "Připravena ke spuštění";
+                case ActivitySearchStatus.Launched:
+                    return "Spuštěna";
+                case ActivitySearchStatus.InProgress:
+                    return "Právě běží";
+                case ActivitySearchStatus.Completed:
+                    return "Dokončena";
+            }
+            return searchStatus.ToString();
+        }
+        public static ActivitySearchType ToSearchEnum(this LarpActivity.EventType type)
 		{
 			switch (type)
 			{
@@ -59,9 +88,26 @@ namespace LAMA.ViewModels
 			}
 			return ActivitySearchType.Any;
 		}
-	}
+		public static ActivitySearchStatus ToSearchEnum(this LarpActivity.Status status)
+		{
+            switch (status)
+            {
+                case LarpActivity.Status.awaitingPrerequisites:
+                    return ActivitySearchStatus.AwaitingPrerequisites;
+                case LarpActivity.Status.readyToLaunch:
+                    return ActivitySearchStatus.ReadyToLaunch;
+                case LarpActivity.Status.launched:
+                    return ActivitySearchStatus.Launched;
+                case LarpActivity.Status.inProgress:
+                    return ActivitySearchStatus.InProgress;
+                case LarpActivity.Status.completed:
+                    return ActivitySearchStatus.Completed;
+            }
+            return ActivitySearchStatus.Any;
+        }
+    }
 
-	public class ActivityFilterViewModel : BaseViewModel
+    public class ActivityFilterViewModel : BaseViewModel
 	{
 		private bool _isFiltered = false;
 		public bool IsFiltered { get { return _isFiltered; } set { SetProperty(ref _isFiltered, value); } }
@@ -85,6 +131,13 @@ namespace LAMA.ViewModels
 			set { SetProperty(ref _searchRegistration, (ActivitySearchRegistration)value); ApplyFilter(); }
 		}
 
+		private ActivitySearchStatus _searchStatus;
+		public int SearchStatusIndex
+        {
+			get { return (int)_searchStatus; }
+			set { SetProperty(ref _searchStatus, (ActivitySearchStatus)value); ApplyFilter(); }
+        }
+
 		#endregion SearchValues
 
 		#region XamarinValues
@@ -94,6 +147,9 @@ namespace LAMA.ViewModels
 
 		private List<string> _searchRegistrationList;
 		public List<string> SearchRegistrationList { get { return _searchRegistrationList; } set { SetProperty(ref _searchRegistrationList, value); } }
+
+		private List<string> _searchStatusList;
+		public List<string> SearchStatusList { get { return _searchStatusList; } set { SetProperty(ref _searchStatusList, value);} }
 
 		#endregion XamarinValues
 
@@ -123,6 +179,13 @@ namespace LAMA.ViewModels
 				SearchRegistrationList.Add(item.ToFriendlyString());
 			}
 			_searchRegistration = ActivitySearchRegistration.Any;
+
+			SearchStatusList = new List<string>();
+			foreach (ActivitySearchStatus item in Enum.GetValues(typeof(ActivitySearchStatus)))
+			{
+				SearchStatusList.Add(item.ToFriendlyString());
+			}
+			_searchStatus = ActivitySearchStatus.Any;
 		}
 
 		public void ApplyFilter()
@@ -150,6 +213,12 @@ namespace LAMA.ViewModels
 					}
 					if ((present && _searchRegistration == ActivitySearchRegistration.Unregistered) ||
 						(!present && _searchRegistration == ActivitySearchRegistration.Registered))
+						return false;
+				}
+
+				if (_searchStatus != ActivitySearchStatus.Any)
+				{
+					if (_searchStatus != activity.LarpActivity.status.ToSearchEnum())
 						return false;
 				}
 

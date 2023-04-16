@@ -19,8 +19,12 @@
 		<StackLayout>
 			<Frame x:Name="SortDropdownMenu"
 				   BackgroundColor="LightBlue"
-				   IsVisible="{Binding ShowSortDropdown}">
-				<Grid HeightRequest="150">
+				   IsVisible="{Binding ShowSortDropdown}"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
 					<Button Grid.Row="0" Grid.Column="0"
 							Text="{Binding ActivitySorter.SortNameString}"
 							Command="{Binding ActivitySorter.SortNameCommand}"/>
@@ -38,7 +42,13 @@
 			<Frame x:Name="FilterDropdownMenu"
 				   BackgroundColor="LightBlue"
 				   IsVisible="{Binding ShowFilterDropdown}">
-				<Grid HeightRequest="600">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
 					<Label Grid.Row="0" Grid.Column="0"
 						Text="Název"/>
 					<Entry Grid.Row="0" Grid.Column="1"
@@ -55,6 +65,12 @@
 					<Picker Grid.Row="2" Grid.Column="1"
 							ItemsSource="{Binding ActivityFilter.SearchRegistrationList}"
 							SelectedIndex="{Binding ActivityFilter.SearchRegistrationIndex}"/>
+					
+					<Label Grid.Row="3" Grid.Column="0"
+						Text="Status"/>
+					<Picker Grid.Row="3" Grid.Column="1"
+							ItemsSource="{Binding ActivityFilter.SearchStatusList}"
+							SelectedIndex="{Binding ActivityFilter.SearchStatusIndex}"/>
 				</Grid>
 			</Frame>
 			<StackLayout  Spacing="0">
