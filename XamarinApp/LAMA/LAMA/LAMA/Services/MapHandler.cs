@@ -778,10 +778,10 @@ namespace LAMA.Services
         private void PinSetIcon(Pin pin, string iconName)
         {
             pin.Type = PinType.Icon;
-            (int _, int height, byte[] icon) = GetIcon(iconName);
+            byte[] icon = GetIcon(iconName);
 
             pin.Icon = icon;
-            pin.Anchor = new XPoint(0, -height / 4.0);
+            pin.Anchor = new XPoint(0, -pin.Height / 4.0);
         }
 
         private void LoadActivities(MapView view = null)
@@ -813,12 +813,10 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 LoadRoad(rememberedList[i]);
         }
-        private (int, int, byte[]) GetIcon(string name)
+        private byte[] GetIcon(string name)
         {
             var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png");
-            var image = System.Drawing.Bitmap.FromStream(stream);
-            stream.Position = 0;
-            return (image.Width, image.Height, stream.ToBytes());
+            return stream.ToBytes();
         }
         #endregion
 

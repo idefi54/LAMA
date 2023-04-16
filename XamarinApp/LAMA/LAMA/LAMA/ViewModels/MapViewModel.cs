@@ -44,6 +44,10 @@ namespace LAMA.ViewModels
             SaveHome = new Command(HandleSaveHome);
             _getMapView = getMapView;
             _keyboard = DependencyService.Get<IKeyboardService>();
+
+            if (_keyboard == null)
+                return;
+
             _keyboard.OnKeyDown += OnKeyDown;
             _keyboard.OnKeyUp += OnKeyUp;
         }
