@@ -4,6 +4,7 @@ using LAMA.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace LAMA.ViewModels
@@ -19,6 +20,7 @@ namespace LAMA.ViewModels
 
         public string Detail => _larpActivity == null ? "" : TimeFormat(_larpActivity.start);
 
+        public string Participation => _larpActivity == null ? "?/?" : ParticipationFormat();
 
         private bool _showDeleteButton;
         public bool ShowDeleteButton { get { return _showDeleteButton; } set { SetProperty(ref _showDeleteButton, value, nameof(ShowDeleteButton)); } }
@@ -43,6 +45,8 @@ namespace LAMA.ViewModels
         string TimeFormat(long unixStart)
         {
 
+            DateTime startDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(unixStart);
+
             long nowSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             long resultSeconds = (unixStart/1000) - nowSeconds;
@@ -66,9 +70,16 @@ namespace LAMA.ViewModels
 
             //result += (resultSeconds % 60) + "s";
 
-            return result;
+            return $"{startDate.ToString("H:mm d/M/yyyy")} ({result})";
 
             //return hours + ":" + minutes;
+        }
+
+        private string ParticipationFormat()
+        {
+            int sumRoles = _larpActivity.roles.Sum((role) => role.second);
+            int sumRegistration = _larpActivity.registrationByRole.Count();
+            return $"{sumRegistration}/{sumRoles}";
         }
 
         internal void ResetDisplay()
