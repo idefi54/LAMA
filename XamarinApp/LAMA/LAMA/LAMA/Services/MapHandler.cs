@@ -227,6 +227,15 @@ namespace LAMA.Services
                 resolution = view.Map.Resolutions[view.Map.Resolutions.Count - 7];
             view.Navigator.ZoomTo(resolution);
         }
+
+        public static string PointOfInterestIcon(int iconID)
+        {
+            if (iconID == 0) return "location_1";
+            if (iconID == 1) return "connection_2";
+            if (iconID == 2) return "flag_2";
+            if (iconID == 3) return "tes_2";
+            return "location_1";
+        }
         #endregion
 
         #region GENERAL MAPVIEW HANDLING
@@ -289,6 +298,7 @@ namespace LAMA.Services
             _activityPins.Clear();
             _cpPins.Clear();
             _alertPins.Clear();
+            _pointOfInterestPins.Clear();
             _polyLines.Clear();
 
             LoadActivities();
@@ -492,9 +502,8 @@ namespace LAMA.Services
         public void AddPointOfInterest(PointOfInterest poi, MapView view = null)
         {
             Pin pin = CreatePin(poi.Coordinates.first, poi.Coordinates.second, "POI", view);
-            pin.Type = PinType.Icon;
-            PinSetIcon(pin, "flag_2");
-            pin.Scale = 0.5f;
+            PinSetIcon(pin, PointOfInterestIcon(poi.Icon));
+            pin.Scale = 0.8f;
             pin.Color = XColor.Beige;
             pin.Callout.Title = poi.Name;
 

@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:LAMA.Forms"
+             xmlns:extensions="clr-namespace:LAMA.Extensions"
              x:Class="LAMA.Views.POIEditView">
     
     <ContentPage.ToolbarItems>
@@ -22,6 +23,53 @@
             <Entry Text="{Binding Description}" FontSize="Medium" />
 
 
+            <Label Text="Ikona:"
+                   HorizontalOptions="Center"/>
+            <Grid HorizontalOptions="CenterAndExpand">
+                <RadioButton GroupName="Icons"
+                             Grid.Row="0"
+                             Grid.Column="0"
+                             HorizontalOptions="Center"
+                             IsChecked="{Binding Icon0Checked}"/>
+                <Image
+                    HorizontalOptions="Center"
+                    Grid.Row="1" Grid.Column="0"
+                    WidthRequest="20" HeightRequest="20"
+                    Source="{extensions:ImageResource 'LAMA.Resources.Icons.location_1.png'}"/>
+
+                <RadioButton GroupName="Icons"
+                             Grid.Row="0"
+                             Grid.Column="1"
+                             HorizontalOptions="Center"
+                             IsChecked="{Binding Icon1Checked}"/>
+                <Image
+                    HorizontalOptions="Center"
+                    Grid.Row="1" Grid.Column="1"
+                    WidthRequest="20" HeightRequest="20"
+                    Source="{extensions:ImageResource 'LAMA.Resources.Icons.connection_2.png'}"/>
+
+                <RadioButton GroupName="Icons"
+                             Grid.Row="0"
+                             Grid.Column="2"
+                             HorizontalOptions="Center"
+                             IsChecked="{Binding Icon2Checked}"/>
+                <Image
+                    HorizontalOptions="Center"
+                    Grid.Row="1" Grid.Column="2"
+                    WidthRequest="20" HeightRequest="20"
+                    Source="{extensions:ImageResource 'LAMA.Resources.Icons.flag_2.png'}"/>
+
+                <RadioButton GroupName="Icons"
+                             Grid.Row="0"
+                             Grid.Column="3"
+                             HorizontalOptions="Center"
+                             IsChecked="{Binding Icon3Checked}"/>
+                <Image
+                    HorizontalOptions="Center"
+                    Grid.Row="1" Grid.Column="3"
+                    WidthRequest="20" HeightRequest="20"
+                    Source="{extensions:ImageResource 'LAMA.Resources.Icons.tes_2.png'}"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
