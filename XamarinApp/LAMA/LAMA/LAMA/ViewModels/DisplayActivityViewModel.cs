@@ -24,6 +24,7 @@ namespace LAMA.ViewModels
 		private string _name;
 		private string _description;
 		private string _type;
+		private string _status;
 		private string _dayIndex;
 		private TrulyObservableCollection<RoleItemViewModel> _roles;
 		private TrulyObservableCollection<ItemItemViewModel> _items;
@@ -38,6 +39,7 @@ namespace LAMA.ViewModels
 		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
+		public string Status { get { return _status; } set { SetProperty(ref _status, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
 		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
 		public TrulyObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
@@ -70,6 +72,9 @@ namespace LAMA.ViewModels
 		public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
 
 
+		public string StatusCommandText => "Změnit stav";
+		public Command StatusCommand { get; }
+
 
 		LarpActivity _activity;
 
@@ -96,7 +101,8 @@ namespace LAMA.ViewModels
 
 			Name = _activity.name;
 			Description = _activity.description;
-			Type = _activity.eventType.ToString();
+			Type = _activity.eventType.ToFriendlyString();
+			Status = _activity.status.ToFriendlyString();
 
 			UpdateDisplayedTime();
 
@@ -132,9 +138,10 @@ namespace LAMA.ViewModels
 			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
 			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
+			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
 		}
 
-		private void UpdateDisplayedTime()
+        private void UpdateDisplayedTime()
 		{
 
 			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start).ToLocalTime();
@@ -145,6 +152,27 @@ namespace LAMA.ViewModels
 
 			TimeSpan durationTimeSpan = endDateTime - startDateTime;
 			Duration = (int)durationTimeSpan.TotalHours + "h " + durationTimeSpan.Minutes + "m";
+		}
+
+        private async void OnStatusAsync()
+        {
+			List<(int, string)> options = new List<(int, string)>();
+
+			foreach (LarpActivity.Status item in Enum.GetValues(typeof(LarpActivity.Status)))
+			{
+				if(item != LarpActivity.Status.inProgress)
+					options.Add(((int)item,item.ToFriendlyString()));
+			}
+
+			var stringOptions = options.Select(x => x.Item2).ToList();
+
+			int? result = await _messageService.ShowSelectionAsync("Změnit status na:", stringOptions);
+
+			if (result.HasValue)
+            {
+				_activity.status = (LarpActivity.Status)options[result.Value].Item1;
+				Status = _activity.status.ToFriendlyString();
+            }
 		}
 
 		private async void OnEdit()

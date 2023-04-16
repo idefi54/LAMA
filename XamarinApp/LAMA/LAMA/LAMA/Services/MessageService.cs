@@ -10,6 +10,7 @@ namespace LAMA.Services
         Task ShowAlertAsync(string message, string title = "LAMA");
         Task<bool> ShowConfirmationAsync(string message, string title = "LAMA");
         Task<int?> ShowSelectionAsync(string message, string[] options, string title = "LAMA");
+        Task<int?> ShowSelectionAsync(string message, List<string> options, string title = "LAMA");
     }
 
     public class MessageService : IMessageService
@@ -24,6 +25,10 @@ namespace LAMA.Services
             Task<bool> task = App.Current.MainPage.DisplayAlert(title, message, "Yes", "No");
             await task;
             return task.Result;
+        }
+        public async Task<int?> ShowSelectionAsync(string message, List<string> options, string title = "LAMA")
+        {
+            return await ShowSelectionAsync(message, options.ToArray(), title);
         }
 
         public async Task<int?> ShowSelectionAsync(string message, string[] options, string title = "LAMA")

@@ -1,4 +1,5 @@
-﻿using LAMA.Models;
+﻿using LAMA.Extensions;
+using LAMA.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +29,7 @@ namespace LAMA.ViewModels
 		Launched_InProgress = 3,
 		//InProgress = 4,
 		Completed = 5,
+		Cancelled = 6,
 	}
 
 	public static class ActivityFilterExtensions
@@ -65,16 +67,18 @@ namespace LAMA.ViewModels
                 case ActivitySearchStatus.Any:
 					return "Jakákoliv";
                 case ActivitySearchStatus.AwaitingPrerequisites:
-                    return "Čeká na splnění předpokladů";
+                    return LarpActivity.Status.awaitingPrerequisites.ToFriendlyString();
                 case ActivitySearchStatus.ReadyToLaunch:
-                    return "Připravena ke spuštění";
+                    return LarpActivity.Status.readyToLaunch.ToFriendlyString();
                 case ActivitySearchStatus.Launched_InProgress:
                     //return "Spuštěna";
                 //case ActivitySearchStatus.InProgress:
-                    return "Právě běží";
+                    return LarpActivity.Status.launched.ToFriendlyString();
                 case ActivitySearchStatus.Completed:
-                    return "Dokončena";
-            }
+                    return LarpActivity.Status.completed.ToFriendlyString();
+				case ActivitySearchStatus.Cancelled:
+					return LarpActivity.Status.cancelled.ToFriendlyString();
+			}
             return searchStatus.ToString();
         }
         public static ActivitySearchType ToSearchEnum(this LarpActivity.EventType type)
@@ -101,6 +105,8 @@ namespace LAMA.ViewModels
                     return ActivitySearchStatus.Launched_InProgress;
                 case LarpActivity.Status.completed:
                     return ActivitySearchStatus.Completed;
+                case LarpActivity.Status.cancelled:
+					return ActivitySearchStatus.Cancelled;
             }
             return ActivitySearchStatus.Any;
         }

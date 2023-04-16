@@ -12,6 +12,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}"/>
         <ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
+		<forms:BindableToolbarItem Text="Změnit stav" Command="{Binding StatusCommand}" IsVisible="{Binding CanChangeActivity}"/>
         <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
 	</ContentPage.ToolbarItems>
 	
@@ -35,6 +36,12 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 				<Label Text="{Binding Type}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+
+
+				<Label Text="Status aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Status}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
 
 
 				<Label Text="Časové rozmezí"
