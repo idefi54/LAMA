@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Content;
 using LAMA.Services;
 using Xamarin.Forms;
+using AndroidX.AppCompat.App;
 
 namespace LAMA.Droid
 {
@@ -18,6 +19,7 @@ namespace LAMA.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
             base.OnCreate(savedInstanceState);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);

@@ -37,6 +37,7 @@ namespace LAMA.Communicator
         private Thread server;
         private static ServerCommunicator THIS;
         private Timer timer;
+        CancellationTokenSource tokenLocationSending;
 
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
@@ -51,6 +52,32 @@ namespace LAMA.Communicator
         private ModelChangesManager modelChangesManager;
 
         private int maxClientID;
+
+        public void EndCommunication()
+        {
+            foreach (Socket clientSocket in clientSockets.Values)
+            {
+                if (clientSocket != null)
+                {
+                    //clientSocket.Disconnect(true);
+                    clientSocket.Dispose();
+                }
+            }
+            if (serverSocket != null)
+            {
+                //serverSocket.Disconnect(true);
+                serverSocket.Dispose();
+            }
+            if (timer != null) timer.Dispose();
+            if (server != null) server.Abort();
+            if (tokenLocationSending != null)
+            {
+                tokenLocationSending.Cancel();
+                tokenLocationSending.Dispose();
+            }
+            clientSockets = new Dictionary<int, Socket>();
+        }
+
         /// <summary>
         /// Start accepting clients and broadcasting messages to them
         /// </summary>
@@ -67,8 +94,16 @@ namespace LAMA.Communicator
                 ProcessBroadcast();
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
 
-            CancellationToken token = new CancellationToken();
-            await SendLocations(token);
+            tokenLocationSending = new CancellationTokenSource();
+            CancellationToken token = tokenLocationSending.Token;
+            try
+            {
+                await SendLocations(token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
 
         public async Task SendLocations(CancellationToken token)
@@ -79,6 +114,7 @@ namespace LAMA.Communicator
                 {
                     token.ThrowIfCancellationRequested();
                     await Task.Delay(30_000);
+                    token.ThrowIfCancellationRequested();
                     Device.BeginInvokeOnMainThread(() => modelChangesManager.SendCPLocations());
                 }
             }, token);
@@ -187,26 +223,33 @@ namespace LAMA.Communicator
         {
             THIS.logger.LogWrite("accepting");
             Debug.WriteLine("accepting");
-            Socket socket = serverSocket.EndAccept(AR);
             try
             {
-                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
-            }
-            catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
-            {
-                Device.BeginInvokeOnMainThread(new Action(() =>
+                Socket socket = serverSocket.EndAccept(AR);
+                try
                 {
-                    THIS.logger.LogWrite("Client socket exception");
-                    Debug.WriteLine("Client socket exception AcceptCallback");
-                }));
-                lock (ServerCommunicator.socketsLock)
+                    socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), socket);
+                }
+                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
-                    socket.Close();
-                    foreach (var item in clientSockets.Where(x => x.Value == socket).ToList())
+                    Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        clientSockets.Remove(item.Key);
+                        THIS.logger.LogWrite("Client socket exception");
+                        Debug.WriteLine("Client socket exception AcceptCallback");
+                    }));
+                    lock (ServerCommunicator.socketsLock)
+                    {
+                        socket.Close();
+                        foreach (var item in clientSockets.Where(x => x.Value == socket).ToList())
+                        {
+                            clientSockets.Remove(item.Key);
+                        }
                     }
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
             }
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
         }
@@ -489,6 +532,9 @@ namespace LAMA.Communicator
             //Server should have all permissions
             PermissionsManager.GiveAllPermissions();
             Debug.WriteLine("Initialization finished");
+
+            CommunicationInfo.Instance.Communicator = this;
+            CommunicationInfo.Instance.ServerName = name;
         }
 
         /// <summary>
