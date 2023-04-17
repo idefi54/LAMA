@@ -53,6 +53,7 @@ namespace LAMA.UWP
             {
                 Children =
                 {
+                    new OurNavigationMenu(),
                     controlRow,
                     dateRow,
                     timeRow,

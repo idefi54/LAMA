@@ -305,13 +305,6 @@ namespace LAMA.Services
             LoadCPs();
             LoadPointsOfIntrest();
             LoadRoads();
-
-            // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-            {
-                if (e.PropertyName == "MyLocationFollow")
-                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
-            };
         }
 
         /// <summary>

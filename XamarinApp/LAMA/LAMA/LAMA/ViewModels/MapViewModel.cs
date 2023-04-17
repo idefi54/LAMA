@@ -71,15 +71,6 @@ namespace LAMA.ViewModels
             MapHandler.Instance.CurrentLocation = loc;
             await MapHandler.Instance.UpdateLocation(_getMapView(), false);
             MapHandler.Instance.SetLocationVisible(_getMapView(), MapHandler.Instance.CurrentLocation != null);
-            MapHandler.CenterOn(_getMapView(), MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
-            MapHandler.Zoom(_getMapView());
-
-
-            // TODO: How to call alert from viewmodel?
-            //if (Device.RuntimePlatform != Device.WPF)
-            //{
-            //    await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
-            //}
         }
 
         private void OnKeyDown(string key)
