@@ -695,6 +695,7 @@ namespace LAMA.Services
 
             road.ID = id;
             road.Thickness = polyline.StrokeWidth;
+            road.Color.Clear();
             road.Color.Add(c.R);
             road.Color.Add(c.G);
             road.Color.Add(c.B);
