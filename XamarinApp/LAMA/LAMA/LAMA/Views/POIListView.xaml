@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.POIListView"
-             xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             xmlns:common="clr-namespace:LAMA.Views">
 
 
     <ContentPage.ToolbarItems>
@@ -11,43 +12,45 @@
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout Padding="30,15,30,15">
+        <StackLayout>
+            <common:OurNavigationMenu></common:OurNavigationMenu>
+            <ScrollView>
+                <StackLayout Padding="30,15,30,15">
+                    <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding PointsOfInterest}" Margin="5,5,5,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
 
-                <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding PointsOfInterest}" Margin="5,5,5,0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
+                                <Grid Padding="5" Margin="5" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="MISSING ICON" FontSize="Small" />
 
-                            <Grid Padding="5" Margin="5" >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
-                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="MISSING ICON" FontSize="Small" />
+                                    <Grid.GestureRecognizers>
 
-                                <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer 
+    										    NumberOfTapsRequired="2"
+    										    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=OpenDetails}"		
+    										    CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
 
-                                    <TapGestureRecognizer 
-    										NumberOfTapsRequired="2"
-    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=OpenDetails}"		
-    										CommandParameter="{Binding .}">
-                                    </TapGestureRecognizer>
+                                    </Grid.GestureRecognizers>
+                                </Grid>
 
-                                </Grid.GestureRecognizers>
-                            </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
 
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
                 </StackLayout>
-                
-            </StackLayout>
-        </ScrollView>
+            </ScrollView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -4,28 +4,31 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
              xmlns:colors="clr-namespace:LAMA.Colors"
              x:Class="LAMA.Views.EncyclopedyCategoryView"
-             xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             xmlns:common="clr-namespace:LAMA.Views">
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Přidat Kategorii" Command="{Binding AddCategoryCommand}" IsVisible="{Binding CanChangeEncyclopedy}"/>
         <forms:BindableToolbarItem Text="Přidat Stránku" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanChangeEncyclopedy}"/>
         <forms:BindableToolbarItem Text="Upravit" Command="{Binding Edit}" IsVisible="{Binding CanChangeEncyclopedy}"/>
     </ContentPage.ToolbarItems>
-    
 
 
-        <ContentPage.Content>
-        <ScrollView>
-            <StackLayout  Padding="30,15,30,15" >
-                <Label Text="{Binding Name}"/>
-                <Label Text="{Binding Description}"/>
 
-                <Label Text="Kategorie
+    <ContentPage.Content>
+        <StackLayout>
+            <common:OurNavigationMenu></common:OurNavigationMenu>
+            <ScrollView>
+                <StackLayout  Padding="30,15,30,15" >
+                    <Label Text="{Binding Name}"/>
+                    <Label Text="{Binding Description}"/>
+
+                    <Label Text="Kategorie
                        "/>
-                <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding Categories}" Margin="5,5,5,0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            
+                    <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding Categories}" Margin="5,5,5,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+
                                 <Grid Padding="5" Margin="5" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -49,17 +52,17 @@
 
                                     </Grid.GestureRecognizers>
                                 </Grid>
-                            
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
 
-                <Label Text="Stránky
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <Label Text="Stránky
                        "/>
                     <StackLayout x:Name="RecordList" BindableLayout.ItemsSource="{Binding Records}" Margin="5,5,5,0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+
                                 <Grid Padding="5" Margin="5" >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -84,12 +87,13 @@
 
                                     </Grid.GestureRecognizers>
                                 </Grid>
-                            
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
                 </StackLayout>
-                
-            </StackLayout>
-        </ScrollView>
+            </ScrollView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
