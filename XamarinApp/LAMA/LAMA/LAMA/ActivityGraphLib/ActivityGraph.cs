@@ -165,7 +165,32 @@ namespace LAMA.ActivityGraphLib
             TimeOffset = DateTime.Now;
             ReloadActivities();
             _canvasView.InvalidateSurface();
+
+            SQLEvents.created += SQLEvents_created;
+            SQLEvents.dataChanged += SQLEvents_dataChanged;
+            SQLEvents.dataDeleted += SQLEvents_dataDeleted;
         }
+
+        private void SQLEvents_dataDeleted(Serializable deleted)
+        {
+            if (deleted.GetType() == typeof(LarpActivity))
+                ReloadActivities();
+        }
+
+        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed.GetType() == typeof(LarpActivity))
+                ReloadActivities();
+        }
+
+        private void SQLEvents_created(Serializable created)
+        {
+            if (created.GetType() == typeof(LarpActivity))
+                ReloadActivities();
+        }
+
+
+
 
         /// <summary>
         /// Updates graph size and font sizes.
