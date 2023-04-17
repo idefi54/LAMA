@@ -33,7 +33,7 @@
                     
                     <Button
                     x:Name="SetHomeLocationButton"
-                    Text="Change Home Location"
+                    Text="Zadejte domovskou lokaci"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     Command="{Binding SaveHome}"/>
