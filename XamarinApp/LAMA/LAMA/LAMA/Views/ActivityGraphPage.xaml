@@ -3,5 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:tt="clr-namespace:TouchTracking.Forms;assembly=TouchTracking.Forms"
+             xmlns:common="clr-namespace:LAMA.Views"
              x:Class="LAMA.Views.ActivityGraphPage">
+    <ContentPage.Content>
+        <common:OurNavigationMenu>
+        </common:OurNavigationMenu>
+    </ContentPage.Content>
 </ContentPage>
