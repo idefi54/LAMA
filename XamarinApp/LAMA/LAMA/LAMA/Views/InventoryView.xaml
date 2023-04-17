@@ -63,6 +63,15 @@
 										    Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
 										    CommandParameter="{Binding .}"/>
 
+                                    <OnPlatform x:TypeArguments="View">
+                                        <On Platform="WPF">
+                                            <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+												Command="{Binding Path=BindingContext.OpenDetailCommand, Source={x:Reference Name=ItemList}}"
+												CommandParameter="{Binding .}"/>
+                                        </On>
+                                    </OnPlatform>
+
+
                                     <Grid.GestureRecognizers>
 
                                         <TapGestureRecognizer 
