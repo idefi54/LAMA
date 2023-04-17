@@ -112,8 +112,8 @@ namespace LAMA.Views
 
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
-                await DisplayAlert("Location not available",
-                    "Please, turn on your location or set your home location.", "OK");
+                await DisplayAlert("Lokace není přístupná",
+                    "Prosíme, zapnite si lokaci anebo zadejte domovskou lokaci.", "OK");
             }
 
             // Handle the fucking map
@@ -141,7 +141,7 @@ namespace LAMA.Views
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
                 MapHandler.Zoom(_mapView);
                 SetHomeLocationButton.BackgroundColor = Color.Gray;
-                SetHomeLocationButton.Text = "Change Home Location";
+                SetHomeLocationButton.Text = "Zadejte domovskou lokaci";
             }
             SetHomeLocationButton.Clicked += SetHomeClicked;
 
@@ -164,7 +164,7 @@ namespace LAMA.Views
         private void SetHomeClicked(object sender, EventArgs e)
         {
             SetHomeLocationButton.BackgroundColor = Color.Gray;
-            SetHomeLocationButton.Text = "Change Home Location";
+            SetHomeLocationButton.Text = "Změnit Domovskou lokaci";
         }
 
         private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
