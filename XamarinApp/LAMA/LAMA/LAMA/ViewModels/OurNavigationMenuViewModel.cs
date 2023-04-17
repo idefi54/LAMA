@@ -1,8 +1,11 @@
-﻿using LAMA.Communicator;
+﻿using LAMA.Colors;
+using LAMA.Communicator;
+using LAMA.Singletons;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -18,6 +21,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command GoToInventory { get; }
         public Xamarin.Forms.Command GoToLarpEvent { get; }
         public Xamarin.Forms.Command GoToPOI { get; }
+        public Xamarin.Forms.Command LogOut { get; }
 
         public OurNavigationMenuViewModel()
         {
@@ -31,54 +35,125 @@ namespace LAMA.ViewModels
             GoToInventory = new Xamarin.Forms.Command(OnGoToInventory);
             GoToLarpEvent = new Xamarin.Forms.Command(OnGoToLarpEvent);
             GoToPOI = new Xamarin.Forms.Command(OnGoToPOI);
+            LogOut = new Xamarin.Forms.Command(OnLogOut);
         }
 
-        private async void OnGoToMap(object obj)
+        private void OnGoToMap(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new MapPage());
+            App.Current.MainPage = new NavigationPage(new MapPage())
+            {
+                    BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                    BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new MapPage());
         }
 
-        private async void OnGoToActivities(object obj)
+        private void OnGoToActivities(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new ActivityListPage());
+            App.Current.MainPage = new NavigationPage(new ActivityListPage())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new ActivityListPage());
         }
 
-        private async void OnGoToTestPage(object obj)
+        //Remove later (after testing is done
+        private void OnGoToTestPage(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new TestPage());
+            App.Current.MainPage = new NavigationPage(new TestPage())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new TestPage());
         }
 
-        private async void OnGoToChat(object obj)
+        private void OnGoToChat(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new ChatChannels());
+            App.Current.MainPage = new NavigationPage(new ChatChannels())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new ChatChannels());
         }
 
-        private async void OnGoToActivityGraph(object obj)
+        private void OnGoToActivityGraph(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new ActivityGraphPage());
+            App.Current.MainPage = new NavigationPage(new ActivityGraphPage())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new ActivityGraphPage());
         }
 
-        private async void OnGoToEncyclopedy(object obj)
+        private void OnGoToEncyclopedy(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new EncyclopedyCategoryView(null));
+            App.Current.MainPage = new NavigationPage(new EncyclopedyCategoryView(null))
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new EncyclopedyCategoryView(null));
         }
 
-        private async void OnGoToCP(object obj)
+        private void OnGoToCP(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new CPListView());
+            App.Current.MainPage = new NavigationPage(new CPListView())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new CPListView());
         }
-        private async void OnGoToInventory(object obj)
+        private void OnGoToInventory(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new InventoryView());
+            App.Current.MainPage = new NavigationPage(new InventoryView())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new InventoryView());
         }
         private async void OnGoToLarpEvent(object obj)
         {
             throw new Exception("not implemented, it's in another branch");
             //await App.Current.MainPage.Navigation.PushAsync(new LarpEventView());
         }
-       private async void OnGoToPOI(object obj)
+        private void OnGoToPOI(object obj)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new POIListView());
+            App.Current.MainPage = new NavigationPage(new POIListView())
+            {
+                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                BarBackgroundColor = ColorPalette.PrimaryColor
+            };
+            //await App.Current.MainPage.Navigation.PushAsync(new POIListView());
+        }
+
+        private async void OnLogOut(object obj)
+        {
+            bool result = await Application.Current.MainPage.DisplayAlert("Odhlášení", "Opravdu se chcete odhlásit?", "Ano", "Ne");
+            if (result)
+            {
+                CommunicationInfo.Instance.Communicator = null;
+                CommunicationInfo.Instance.ServerName = "";
+                if (Device.RuntimePlatform == Device.WPF)
+                {
+
+                    App.Current.MainPage = new NavigationPage(new ChooseClientServerPage())
+                    {
+                        BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                        BarBackgroundColor = ColorPalette.PrimaryColor
+                    };
+                    //await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//ClientChooseServerPage");
+                }
+            }
         }
     }
 }

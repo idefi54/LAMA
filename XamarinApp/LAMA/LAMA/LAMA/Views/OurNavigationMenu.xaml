@@ -18,14 +18,14 @@
     <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Padding="40, 10" Spacing="10">
         <Button Text="Map" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToMap}"></Button>
         <Button Text="Seznam Aktivit" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToActivities}"></Button>
-        <Button Text="Test Page" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToTestPage}"></Button>
         <Button Text="Chat" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToChat}"></Button>
         <Button Text="Activity Graph" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToActivityGraph}"></Button>
         <Button Text="Encyklopedie" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToEncyclopedy}"></Button>
 
         <Button Text="CP" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToCP}"></Button>
         <Button Text="Inventář" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToInventory}"></Button>
-        <Button Text="Event" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToLarpEvent}"></Button>
+        <!--<Button Text="Event" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToLarpEvent}"></Button>-->
         <Button Text="POI" Margin="0" Padding="5" CornerRadius="5" Command="{Binding GoToPOI}"></Button>
+        <Button Text="LogOut" Margin="0" Padding="5" CornerRadius="5" Command="{Binding LogOut}" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}"></Button>
     </StackLayout>
 </StackLayout>

@@ -1,4 +1,5 @@
 ﻿using LAMA.Communicator;
+using LAMA.Singletons;
 using LAMA.ViewModels;
 using LAMA.Views;
 using System;
@@ -17,15 +18,21 @@ namespace LAMA
             Routing.RegisterRoute(nameof(DisplayActivityPage), typeof(DisplayActivityPage));
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
+        private async void OnLogoutClicked(object sender, EventArgs e)
         {
-            if (Device.RuntimePlatform == Device.WPF)
+            bool result = await DisplayAlert("Odhlášení", "Opravdu se chcete odhlásit?", "Ano", "Ne");
+            if (result)
             {
-                await App.Current.MainPage.Navigation.PushAsync(new LoginPage());
-            }
-            else
-            {
-                await Shell.Current.GoToAsync("//ClientChooseServerPage");
+                CommunicationInfo.Instance.Communicator = null;
+                CommunicationInfo.Instance.ServerName = "";
+                if (Device.RuntimePlatform == Device.WPF)
+                {
+                    await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//ClientChooseServerPage");
+                }
             }
         }
     }

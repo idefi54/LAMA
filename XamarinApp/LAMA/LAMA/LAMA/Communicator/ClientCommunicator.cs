@@ -72,6 +72,17 @@ namespace LAMA.Communicator
 
         public string clientRefusedMessage = "";
 
+        public void EndCommunication()
+        {
+            if (s != null)
+            {
+                //s.Disconnect(true);
+                s.Dispose();
+            }
+            connectionTimer.Dispose();
+            broadcastTimer.Dispose();
+        }
+
         public void KillConnectionTimer()
         {
             if (connectionTimer != null)
@@ -544,6 +555,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password)
         {
+            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
@@ -589,6 +601,7 @@ namespace LAMA.Communicator
             //Managed to connect to the central server database and the LARP server exists
             else
             {
+                CommunicationInfo.Instance.ServerName = serverName;
                 logger.LogWrite("No exceptions");
                 Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu123456789qwertzuiop");
                 string[] array = responseString.Split(',');
@@ -644,6 +657,7 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
+            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
@@ -689,6 +703,7 @@ namespace LAMA.Communicator
             //Managed to connect to the central server database and LARP server exists
             else
             {
+                CommunicationInfo.Instance.ServerName = serverName;
                 logger.LogWrite("No exceptions");
                 string[] array = responseString.Split(',');
                 //Get server IP address (check if it is valid)

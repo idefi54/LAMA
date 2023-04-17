@@ -10,5 +10,7 @@ namespace LAMA.Communicator
         DebugLogger Logger { get; }
         Compression CompressionManager { get; set; }
         void SendCommand(Command command);
+
+        void EndCommunication();
     }
 }

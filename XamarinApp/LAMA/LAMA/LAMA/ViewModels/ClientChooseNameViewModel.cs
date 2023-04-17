@@ -1,4 +1,5 @@
-﻿using LAMA.Communicator;
+﻿using LAMA.Colors;
+using LAMA.Communicator;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -95,13 +96,13 @@ namespace LAMA.ViewModels
             {
                 App.Current.MainPage = new NavigationPage(new MapPage())
                 {
-                    BarBackground = new SolidColorBrush(new Color((double)33 / 255, (double)144 / 255, (double)243 / 255)),
-                    BarBackgroundColor = new Color(33, 144, 243)
+                    BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                    BarBackgroundColor = ColorPalette.PrimaryColor
                 };
             }
             else
             {
-                await Shell.Current.GoToAsync($"//{nameof(ChatChannels)}");
+                await Shell.Current.GoToAsync($"//ChatChannels");
             }
         }
     }

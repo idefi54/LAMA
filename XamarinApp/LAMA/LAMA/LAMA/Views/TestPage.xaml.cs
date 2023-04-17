@@ -52,7 +52,7 @@ namespace LAMA.Views
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             var cpList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
-                            cpList[LocalStorage.cpID].location = new Pair<double, double>(message.Longitude, message.Latitude);
+                            cpList.getByID(LocalStorage.cpID).location = new Pair<double, double>(message.Longitude, message.Latitude);
 
                         });
                     });
