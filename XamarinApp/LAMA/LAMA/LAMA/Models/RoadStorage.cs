@@ -1,4 +1,5 @@
 ﻿using LAMA.Database;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,7 @@ namespace LAMA.Models
 {
     public class RoadStorage:StorageInterface
     {
+        [PrimaryKey]
         public long ID { get; set; }
         public string Coordinates { get; set; }
         public string Color { get; set; }
