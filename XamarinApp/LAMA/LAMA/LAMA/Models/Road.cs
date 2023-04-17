@@ -18,7 +18,7 @@ namespace LAMA.Models
         {
             updateValue(1, coordinates.ToString());
         }
-        EventList<double> color = new EventList<double> { 1.0, 1.0, 1.0, 1.0};
+        EventList<double> color = new EventList<double> { 1.0, 0, 0, 1.0};
         public EventList<double> Color { get { return color; } }
         void onColorUpdated()
         {
