@@ -4,7 +4,8 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.CPListView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
-             xmlns:colors="clr-namespace:LAMA.Colors">
+             xmlns:colors="clr-namespace:LAMA.Colors"
+             xmlns:common="clr-namespace:LAMA.Views">
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Řadit a filtrovat" Command="{Binding ShowOrderAndFilter}"/>
@@ -14,7 +15,7 @@
 
     <ContentPage.Content>
         <StackLayout>
-            
+            <common:OurNavigationMenu></common:OurNavigationMenu>
             <ListView x:Name="CPList" ItemsSource="{Binding CPList}" SelectionMode="None" Margin="5,5,5,0">
                 <ListView.ItemTemplate>
                     <DataTemplate>
