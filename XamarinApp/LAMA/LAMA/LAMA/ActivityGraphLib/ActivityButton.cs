@@ -193,6 +193,8 @@ namespace LAMA.ActivityGraphLib
                     return Color.PeachPuff;
                 case LarpActivity.Status.completed:
                     return Color.Gray;
+                case LarpActivity.Status.cancelled:
+                    return Color.Red;
                 default:
                     return Color.White;
             }
