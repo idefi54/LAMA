@@ -23,7 +23,24 @@ namespace LAMA.Views
         private float _baseDistance;
         private float _baseZoom;
 
-        public ActivityGraphPage(LarpActivity activity = null)
+        public ActivityGraphPage()
+        {
+            // Regular setup
+            InitializeComponent();
+            _touchActions = new Dictionary<long, TouchActionEventArgs>();
+
+            // Create platform specific GUI
+            var gui = DependencyService.Get<IActivityGraphGUI>();
+            (Content, _graph) = gui.CreateGUI(Navigation);
+
+            // Setup Touch effect - this is a nuget package
+            var touchEffect = new TouchEffect();
+            touchEffect.Capture = true;
+            touchEffect.TouchAction += OnTouchEffectAction;
+            Content.Effects.Add(touchEffect);
+        }
+
+        public ActivityGraphPage(LarpActivity activity)
         {
             // Regular setup
             InitializeComponent();
