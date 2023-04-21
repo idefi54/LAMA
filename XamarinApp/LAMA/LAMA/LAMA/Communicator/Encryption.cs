@@ -386,6 +386,7 @@ namespace LAMA.Communicator
                 offset += offsetChange;
 
             }
+            Debug.WriteLine(messages.Count);
             string result = String.Join("", messages);
             return result;
         }

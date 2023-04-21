@@ -185,7 +185,7 @@ namespace LAMA.Communicator
                 BitArray bits = new BitArray(byteBlock);
                 while (j < bits.Length)
                 {
-                    if (carryoverBits.Count > 0)
+                    if (carryoverBits.Count > 0 || current.Symbol == specialCharacter)
                     {
                         BitArray firstByte = new BitArray(8);
                         if (carryoverBits.Count >= 8)

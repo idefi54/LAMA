@@ -374,16 +374,16 @@ namespace LAMA.Communicator
         {
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
+
             /*
             Debug.WriteLine("Compression testing");
-            byte[] compressed = CompressionManager.Encode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}");
+            byte[] compressed = CompressionManager.Encode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬");
             Debug.WriteLine($"compressed length {compressed.Length}");
             string decompressed = CompressionManager.Decode(compressed);
             Debug.WriteLine(decompressed);
-            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}", CompressionManager);
+            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬{Separators.messageSeparator}", CompressionManager);
             string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
             Debug.WriteLine("Uncompressed");
-            Debug.WriteLine(Convert.ToBase64String(encrypted));
             Debug.WriteLine(decrypted);
             */
 
