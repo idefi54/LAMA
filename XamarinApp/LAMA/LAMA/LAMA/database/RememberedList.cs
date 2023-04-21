@@ -27,10 +27,8 @@ namespace LAMA
         public RememberedList(OurSQL<T, Storage> sql)
         {
 
-            Debug.WriteLine("Interval constructor called");
             this.sql = sql;
             typeID = new T().getTypeID();
-            Debug.WriteLine("Before load data");
             loadData();
         }
 

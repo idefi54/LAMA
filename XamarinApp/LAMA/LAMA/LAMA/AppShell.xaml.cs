@@ -13,7 +13,6 @@ namespace LAMA
     {
         public AppShell()
         {
-            Debug.WriteLine("App Shell");
             InitializeComponent();
             Routing.RegisterRoute(nameof(DisplayActivityPage), typeof(DisplayActivityPage));
         }

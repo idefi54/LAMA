@@ -114,7 +114,6 @@ namespace LAMA.Communicator
                                 commandsToBroadcast.Enqueue(currentCommand);
                                 break;
                             }
-                            logger.LogWrite($"Sending: {currentCommand.command}");
                             Debug.WriteLine($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode(CompressionManager);
                             Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
@@ -122,7 +121,6 @@ namespace LAMA.Communicator
                             {
                                 s.Send(data);
                                 commandsToBroadcast.Dequeue();
-                                logger.LogWrite($"Finished Sending: {currentCommand.command}");
                             }
                             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                             {
@@ -152,7 +150,6 @@ namespace LAMA.Communicator
             int savedQueueLength = Int32.Parse(objectsCache.getByKey("CommandQueueLength").command);
             string key = "CommandQueue" + savedQueueLength;
             objectsCache.getByKey("CommandQueueLength").command = (savedQueueLength + 1).ToString();
-            logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key} | {command.receiverID}");
             objectsCache.add(new Command(command.command, command.time, key, command.receiverID));
             lock (commandsLock)
             {
@@ -175,13 +172,11 @@ namespace LAMA.Communicator
             {
                 try
                 {
-                    Debug.WriteLine("Before received data");
                     received = current.EndReceive(AR);
                     if (received == 0)
                     {
                         throw new SocketException();
                     }
-                    Debug.WriteLine("Finished Receiving");
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
@@ -192,7 +187,6 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"Encoded message: {System.Convert.ToBase64String(data)}");
             Debug.WriteLine($"Message string received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
             string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
 
@@ -200,7 +194,6 @@ namespace LAMA.Communicator
             {
                 string message = messages[i];
                 message = message.Trim('\0');
-                THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(Separators.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
@@ -302,7 +295,6 @@ namespace LAMA.Communicator
                 try
                 {
                     s.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), s);
-                    Debug.WriteLine("After begin receive");
                 }
                 catch (Exception ex) when(ex is SocketException || ex is ObjectDisposedException)
                 {

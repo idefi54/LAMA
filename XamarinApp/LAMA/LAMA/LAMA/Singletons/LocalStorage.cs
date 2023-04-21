@@ -21,13 +21,10 @@ namespace LAMA
                 {
                     
                     string name =  new LocalStorage().GetType().Name;
-                    Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
-                    Debug.WriteLine("After GetTableInfoAsync");
                     if (a.Result.Count == 0)
                     {
-                        Debug.WriteLine("a.Result.Count != 0");
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
                     }
 
