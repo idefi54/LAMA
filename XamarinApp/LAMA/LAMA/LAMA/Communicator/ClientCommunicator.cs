@@ -260,7 +260,6 @@ namespace LAMA.Communicator
             LocalStorage.clientID = clientId;
             LocalStorage.cpID = cpId;
             Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
-            RequestUpdate();
         }
         
         /// <summary>
@@ -476,6 +475,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void Connected()
         {
+            RequestUpdate();
             logger.LogWrite("connected set true");
             _connected = true;
             THIS.wasUpdated = true;

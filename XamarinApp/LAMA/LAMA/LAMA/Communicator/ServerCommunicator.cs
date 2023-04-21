@@ -621,7 +621,8 @@ namespace LAMA.Communicator
             {
                 //Add password testing
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password))
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
                     string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
@@ -677,6 +678,7 @@ namespace LAMA.Communicator
                     clientName, clientName, new EventList<string> {}, "", "", "", "");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
+                cp.password = Encryption.EncryptPassword(password);
             }
             string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
             lock (ServerCommunicator.socketsLock)
