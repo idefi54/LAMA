@@ -149,7 +149,7 @@ namespace LAMA
         public string _clientName { get; set; }
         public int _clientID { get; set; }
         public int _cpID { get; set; } = -1;
-        public int _maxClientID { get; set; } = -1;
+        public int _maxClientID { get; set; } = 0;
         public long _lastUpdateTime { get; set; } = 0;
 
     }

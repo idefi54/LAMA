@@ -51,8 +51,6 @@ namespace LAMA.Communicator
 
         private ModelChangesManager modelChangesManager;
 
-        private int maxClientID;
-
         public void EndCommunication()
         {
             foreach (Socket clientSocket in clientSockets.Values)
@@ -176,7 +174,7 @@ namespace LAMA.Communicator
                             }
                         }
                         //Send message only to one client
-                        else
+                        else if (clientSockets.ContainsKey(currentCommand.receiverID))
                         {
                             Socket client = clientSockets[currentCommand.receiverID];
                             if (client.Connected)
@@ -615,8 +613,8 @@ namespace LAMA.Communicator
         {
             if (clientID == -1)
             {
-                maxClientID += 1;
-                clientID = maxClientID;
+                LocalStorage.MaxClientID += 1;
+                clientID = LocalStorage.MaxClientID;
             }
             long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
@@ -655,8 +653,8 @@ namespace LAMA.Communicator
             Debug.WriteLine("GiveNewClientID");
             if (clientID == -1)
             {
-                maxClientID += 1;
-                clientID = maxClientID;
+                LocalStorage.MaxClientID += 1;
+                clientID = LocalStorage.MaxClientID;
             }
             long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)

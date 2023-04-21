@@ -79,8 +79,8 @@ namespace LAMA.Communicator
                 //s.Disconnect(true);
                 s.Dispose();
             }
-            connectionTimer.Dispose();
-            broadcastTimer.Dispose();
+            if (connectionTimer != null) connectionTimer.Dispose();
+            if (broadcastTimer != null) broadcastTimer.Dispose();
         }
 
         public void KillConnectionTimer()
