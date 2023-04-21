@@ -386,8 +386,6 @@ namespace LAMA.Communicator
                 Debug.WriteLine(serializedObject);
                 string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
-                Debug.WriteLine(attributtes);
-                Debug.WriteLine(attributtes.Length);
                 activity.buildFromStrings(attributtes);
                 string objectID = objectType + Separators.messagePartSeparator.ToString() + activity.getID();
 
@@ -484,8 +482,6 @@ namespace LAMA.Communicator
                         cm.InvokeIGotUpdated(cm.getAttributeNames().IndexOf("sentAt"));
                         cm.receivedByServer = true;
                         cm.InvokeIGotUpdated(cm.getAttributeNames().IndexOf("receivedByServer"));
-                        Debug.WriteLine($"{cm.getAttributeNames().IndexOf("receivedByServer")}");
-                        Debug.WriteLine($"Received by server: {cm.receivedByServer}");
                     }
                     for (int i = 0; i < attributtes.Length; i++)
                     {

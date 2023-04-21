@@ -21,13 +21,10 @@ namespace LAMA
                 {
                     
                     string name =  new LocalStorage().GetType().Name;
-                    Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
-                    Debug.WriteLine("After GetTableInfoAsync");
                     if (a.Result.Count == 0)
                     {
-                        Debug.WriteLine("a.Result.Count != 0");
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
                     }
 
@@ -152,7 +149,7 @@ namespace LAMA
         public string _clientName { get; set; }
         public int _clientID { get; set; }
         public int _cpID { get; set; } = -1;
-        public int _maxClientID { get; set; } = -1;
+        public int _maxClientID { get; set; } = 0;
         public long _lastUpdateTime { get; set; } = 0;
 
     }

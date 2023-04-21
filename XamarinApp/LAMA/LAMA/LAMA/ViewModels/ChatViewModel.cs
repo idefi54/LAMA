@@ -54,12 +54,10 @@ namespace LAMA.ViewModels
 
         private void OnMessageSent()
         {
-            Debug.WriteLine("OnMessageSent");
             if (MessageText != "")
             {
                 ChatLogic.Instance.SendMessage(channelID, MessageText);
             }
-            Debug.WriteLine(MessageText);
             MessageText = "";
             OnPropertyChanged("MessageText");
         }
@@ -116,8 +114,6 @@ namespace LAMA.ViewModels
 
         private void PropagateCreated(Serializable created)
         {
-            Debug.WriteLine("PropagateCreated");
-            Debug.WriteLine(created.GetType().FullName);
             if (created == null || created.GetType() != typeof(ChatMessage))
                 return;
 
@@ -140,7 +136,6 @@ namespace LAMA.ViewModels
                 return;
 
             ChatMessage message = (ChatMessage)changed;
-            Debug.WriteLine($"Message {message.message}, Received by server {message.receivedByServer}");
 
             ChatMessageViewModel item = ChatMessageListItems.Where(x => x.ChatMessage.ID == message.ID).FirstOrDefault();
 
@@ -153,7 +148,7 @@ namespace LAMA.ViewModels
 
         private void PropagateDeleted(Serializable deleted)
         {
-            if (deleted == null || deleted.GetType() != typeof(LarpActivity))
+            if (deleted == null || deleted.GetType() != typeof(ChatMessage))
                 return;
 
             ChatMessage message = (ChatMessage)deleted;

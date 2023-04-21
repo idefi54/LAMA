@@ -17,17 +17,13 @@ namespace LAMA.ViewModels
 
         public ClientLoginTypeViewModel(ClientCommunicator communicator)
         {
-            Debug.WriteLine("ClientLoginTypeViewModel");
-            Debug.WriteLine(communicator);
             NewClientCommand = new Xamarin.Forms.Command(OnNewClient);
             ExistingClientCommand = new Xamarin.Forms.Command(OnExistingClient);
-            Debug.WriteLine("Commands");
             clientCommunicator = communicator;
         }
 
         private async void OnNewClient(object obj)
         {
-            Debug.WriteLine("OnNewClient");
             if (Device.RuntimePlatform == Device.WPF)
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new ClientChooseNamePage(clientCommunicator, true));

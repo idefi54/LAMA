@@ -156,7 +156,6 @@ namespace LAMA.Singletons
         }
         static void saveChatChannels()
         {
-            Debug.WriteLine("Saving chat channels");
             StringBuilder output = new StringBuilder();
             foreach (var channel in _chatChannels)
             {
@@ -170,7 +169,6 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
-            Debug.WriteLine(output);
             SQLEvents.invokeChanged(Instance, 2);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
@@ -217,7 +215,6 @@ namespace LAMA.Singletons
                     break;
                 case 2:
                     chatChannels = value;
-                    Debug.WriteLine("Changing Chat Channels");
                     List<string> channels = Helpers.readStringField(chatChannels);
                     for (int j = 0; j < channels.Count; ++j)
                     {

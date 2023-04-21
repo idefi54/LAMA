@@ -73,7 +73,6 @@ namespace LAMA.ViewModels
 
         private async void OnLoginClicked(object obj)
         {
-            Debug.WriteLine("OnLoginClicked");
             string password = ClientPassword;
             string serverName = ClientServerName;
             TryingToConnect = true;

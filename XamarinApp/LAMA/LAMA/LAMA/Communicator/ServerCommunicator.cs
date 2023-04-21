@@ -51,8 +51,6 @@ namespace LAMA.Communicator
 
         private ModelChangesManager modelChangesManager;
 
-        private int maxClientID;
-
         public void EndCommunication()
         {
             foreach (Socket clientSocket in clientSockets.Values)
@@ -83,10 +81,8 @@ namespace LAMA.Communicator
         /// </summary>
         private async void StartServer()
         {
-            logger.LogWrite("Starting Server");
             Debug.WriteLine("Starting Server");
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            logger.LogWrite("BeginAccept");
             Debug.WriteLine("BeginAccept");
 
             timer = new System.Threading.Timer((e) =>
@@ -178,7 +174,7 @@ namespace LAMA.Communicator
                             }
                         }
                         //Send message only to one client
-                        else
+                        else if (clientSockets.ContainsKey(currentCommand.receiverID))
                         {
                             Socket client = clientSockets[currentCommand.receiverID];
                             if (client.Connected)
@@ -287,16 +283,14 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"Message Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
+            Debug.WriteLine($"Message String Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
             string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
-            Debug.WriteLine($"Messages.Length: {messages.Length}");
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(Separators.messagePartSeparator);
-                Debug.WriteLine($"Message Parts: {messageParts.Length}");
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -380,23 +374,25 @@ namespace LAMA.Communicator
         {
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
+
+            /*
             Debug.WriteLine("Compression testing");
-            byte[] compressed = CompressionManager.Encode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}");
+            byte[] compressed = CompressionManager.Encode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬");
             Debug.WriteLine($"compressed length {compressed.Length}");
             string decompressed = CompressionManager.Decode(compressed);
             Debug.WriteLine(decompressed);
-            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"Testovací ;:> český string žščřť, 123456789 {Separators.messagePartSeparator}, {Separators.messageSeparator}", CompressionManager);
+            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬{Separators.messageSeparator}", CompressionManager);
             string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
             Debug.WriteLine("Uncompressed");
-            Debug.WriteLine(Convert.ToBase64String(encrypted));
             Debug.WriteLine(decrypted);
+            */
+
             //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
             //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
             //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
-            Debug.WriteLine("Compression testing end");
+            //Debug.WriteLine("Compression testing end");
             if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
-            Debug.WriteLine("After LarpEvent.Name test");
             LarpEvent.Name = name;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -588,8 +584,6 @@ namespace LAMA.Communicator
         {
             long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             Command command = new Command(commandText, time, objectID);
-            logger.LogWrite($"Sending Command: {commandText} | {time} | {objectID}");
-            Debug.WriteLine($"Sending Command: {commandText} | {time} | {objectID}");
             lock (ServerCommunicator.commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -602,8 +596,6 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void SendCommand(Command command)
         {
-            logger.LogWrite($"Sending Command: {command.command} | {command.time} | {command.key}");
-            Debug.WriteLine($"Sending Command: {command.command} | {command.time} | {command.key}");
             lock (ServerCommunicator.commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -621,15 +613,16 @@ namespace LAMA.Communicator
         {
             if (clientID == -1)
             {
-                maxClientID += 1;
-                clientID = maxClientID;
+                LocalStorage.MaxClientID += 1;
+                clientID = LocalStorage.MaxClientID;
             }
             long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
                 //Add password testing
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password))
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
                     string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
@@ -661,8 +654,8 @@ namespace LAMA.Communicator
             Debug.WriteLine("GiveNewClientID");
             if (clientID == -1)
             {
-                maxClientID += 1;
-                clientID = maxClientID;
+                LocalStorage.MaxClientID += 1;
+                clientID = LocalStorage.MaxClientID;
             }
             long cpID = -1;
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
@@ -685,6 +678,7 @@ namespace LAMA.Communicator
                     clientName, clientName, new EventList<string> {}, "", "", "", "");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
+                cp.password = Encryption.EncryptPassword(password);
             }
             string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
             lock (ServerCommunicator.socketsLock)

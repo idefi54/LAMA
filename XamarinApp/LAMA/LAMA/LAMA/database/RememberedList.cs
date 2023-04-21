@@ -27,10 +27,8 @@ namespace LAMA
         public RememberedList(OurSQL<T, Storage> sql)
         {
 
-            Debug.WriteLine("Interval constructor called");
             this.sql = sql;
             typeID = new T().getTypeID();
-            Debug.WriteLine("Before load data");
             loadData();
         }
 
@@ -46,7 +44,7 @@ namespace LAMA
                 IDToIndex.Add(a.getID(), i);
                 ++i;
                 if(a.getID() / IDOffset == LocalStorage.clientID && maxID< a.getID())
-                    maxID = a.getID();
+                    maxID = a.getID() - LocalStorage.clientID * IDOffset;
                 a.addedInto(this);
             }
         }
@@ -80,8 +78,8 @@ namespace LAMA
 
             cache.Add(data);
             IDToIndex.Add(data.getID(), cache.Count - 1);
-            if (data.getID() > maxID && data.getID() / IDOffset == LocalStorage.clientID)
-                maxID = data.getID();
+            if (data.getID() > (maxID + LocalStorage.clientID * IDOffset) && data.getID() / IDOffset == LocalStorage.clientID)
+                maxID = data.getID() - LocalStorage.clientID * IDOffset;
 
             sql.addData(data, invokeEvent);
             data.addedInto(this);

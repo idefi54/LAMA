@@ -38,7 +38,7 @@ namespace LAMA
         {
             bool negative = false;
 
-            while (!char.IsDigit(input[offset]) && offset < input.Length)
+            while (offset < input.Length && !char.IsDigit(input[offset]))
             {
                 if (input[offset] == '-')
                     negative = true;
