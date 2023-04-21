@@ -18,7 +18,6 @@ namespace LAMA.Views
     public partial class ActivityGraphPage : ContentPage
     {
         private ActivityGraph _graph;
-        private ActivityButton _draggedButton;
         private Dictionary<long, TouchActionEventArgs> _touchActions;
         private TouchTrackingPoint _lastLocation;
         private float _baseDistance;
@@ -60,8 +59,13 @@ namespace LAMA.Views
                 // Clicking a button
                 if (_touchActions.Count == 1)
                 {
-                    _draggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
-                    _draggedButton?.ClickEdit(args.Location.X, args.Location.Y);
+                    _graph.DraggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
+
+                    if (_graph.DraggedButton != null)
+                    {
+                        _graph.DraggedButton.ClickEdit(args.Location.X, args.Location.Y);
+                        _graph.SwitchEditMode(true);
+                    }
                 }
 
                 // Save for computing change in location
@@ -85,7 +89,7 @@ namespace LAMA.Views
                 {
                     var time = _graph.ToLocalTime(_lastLocation.X);
                     _touchActions.Remove(args.Id);
-                    _draggedButton = null;
+                    _graph.DraggedButton = null;
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
@@ -100,15 +104,16 @@ namespace LAMA.Views
             }
 
             // Moving button
-            if (args.Type == TouchActionType.Moved && _draggedButton != null)
+            if (args.Type == TouchActionType.Moved && _graph.DraggedButton != null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
-                _draggedButton.MoveEdit(args.Location.X, args.Location.Y);
+
+                //_draggedButton.MoveEdit(args.Location.X, args.Location.Y);
             }
 
             // Control graph view
-            if (args.Type == TouchActionType.Moved && _draggedButton == null)
+            if (args.Type == TouchActionType.Moved && _graph.DraggedButton == null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
@@ -138,8 +143,12 @@ namespace LAMA.Views
             // Release
             if (args.Type == TouchActionType.Released)
             {
-                _draggedButton?.ReleaseEdit();
-                _draggedButton = null;
+                if (_graph.DraggedButton != null)
+                {
+                    _graph.DraggedButton.ReleaseEdit(args.Location.X, args.Location.Y);
+                    _graph.DraggedButton = null;
+                }
+
                 _touchActions.Remove(args.Id);
             }
 

@@ -5,6 +5,7 @@ using LAMA.Views;
 using SkiaSharp;
 using System;
 using Xamarin.Forms;
+using System.Diagnostics;
 
 namespace LAMA.ActivityGraphLib
 {
@@ -16,8 +17,11 @@ namespace LAMA.ActivityGraphLib
     {
         private ActivityGraph _activityGraph;
         private float _sideWidth = 10;
+        private float _xamSideWidth => _activityGraph.FromPixels(_sideWidth);
         public LarpActivity Activity { get; private set; }
-        enum EditState { Left, Right, Move }
+        public Rectangle ExtendedHitbox => new Rectangle(TranslationX - _xamSideWidth, TranslationY, Width + _xamSideWidth*2, Height);
+       
+        enum EditState { None, Left, Right, Move }
         private EditState _editState;
         public ActivityButton(LarpActivity activity, ActivityGraph activityGraph)
         {
@@ -26,10 +30,29 @@ namespace LAMA.ActivityGraphLib
             Text = activity.name;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.Start;
-            _editState = EditState.Move;
+            _editState = EditState.None;
 
             // Clicking the button displays the activity
             Clicked += (object sender, EventArgs e) => Navigation.PushAsync(new DisplayActivityPage(activity));
+
+            SQLEvents.dataChanged += SQLEvents_dataChanged;
+            SQLEvents.dataDeleted += SQLEvents_dataDeleted;
+        }
+
+        private void SQLEvents_dataDeleted(Serializable deleted)
+        {
+            if (deleted != Activity)
+                return;
+
+            _activityGraph.RemoveActivity(this);
+        }
+
+        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed != Activity)
+                return;
+
+            Update();
         }
 
         /// <summary>
@@ -40,8 +63,8 @@ namespace LAMA.ActivityGraphLib
             var start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(Activity.start).ToLocalTime();
             var span = start - _activityGraph.TimeOffset;
 
-
-            Activity.GraphY = Math.Max(0, Math.Min(1, Activity.GraphY));
+            double newGraphY = Math.Max(0, Math.Min(1, Activity.GraphY));
+            if (newGraphY != Activity.GraphY) Activity.GraphY = newGraphY;
             float y = (float)Activity.GraphY * (_activityGraph.Height - (float)Height);
 
 
@@ -60,28 +83,76 @@ namespace LAMA.ActivityGraphLib
         }
 
         /// <summary>
-        /// Draws indicators for resizing activity.
+        /// Draws indicators for resizing and moving an activity.
         /// </summary>
         /// <param name="canvas"></param>
-        public void DrawBoders(SKCanvas canvas)
+        public void DrawIndicators(SKCanvas canvas, float mouseX, float mouseY)
         {
-            return;
-
             var paint = new SKPaint();
-            paint.Color = SKColors.Green.WithAlpha(125);
             float x = _activityGraph.ToPixels((float)TranslationX);
             float y = _activityGraph.ToPixels((float)TranslationY);
             float w = _activityGraph.ToPixels((float)Width);
             float h = _activityGraph.ToPixels((float)Height);
 
-            var lRect = new SKRect(x, y, x + _sideWidth, y + h);
-            var rRect = new SKRect(x + w - _sideWidth, y, x + w, y + h);
+            // Draw Left
+            //=======================
+            {
+                float lx = x;
+                paint.Color = SKColors.Green;
+                if (_editState == EditState.Left)
+                {
+                    lx = mouseX + _sideWidth / 2;
+                    paint.Color = SKColors.Orange;
+                    paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_activityGraph.OffsetY);
+                    canvas.DrawLine(lx, y, lx, 0, paint);
+                    paint.PathEffect = null;
+                }
 
-            paint.Color = (_editState == EditState.Left) ? SKColors.Red : SKColors.Green;
-            canvas.DrawRect(lRect, paint);
+                var lRect = new SKRect(lx - _sideWidth, y, lx, y + h);
+                canvas.DrawRect(lRect, paint);
+            }
 
-            paint.Color = (_editState == EditState.Right) ? SKColors.Red : SKColors.Green;
-            canvas.DrawRect(rRect, paint);
+            // Draw Right
+            //=======================
+            {
+                float rx = x + w;
+                paint.Color = SKColors.Green;
+                if (_editState == EditState.Right)
+                {
+                    rx = mouseX - _sideWidth / 2;
+                    paint.Color = SKColors.Orange;
+                    paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_activityGraph.OffsetY);
+                    canvas.DrawLine(rx, y, rx, 0, paint);
+                    paint.PathEffect = null;
+                }
+
+                var rRect = new SKRect(rx, y, rx + _sideWidth, y + h);
+                canvas.DrawRect(rRect, paint);
+            }
+
+            // Draw Move
+            //=======================
+            if (_editState == EditState.Move)
+            {
+                float mX = mouseX - w / 2;
+                float mY = mouseY - h / 2;
+                paint.Color = SKColors.Orange.WithAlpha(125);
+                canvas.DrawRect(mX, mY, w, h, paint);
+                paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_activityGraph.OffsetY);
+                canvas.DrawLine(mX, mY, mX, 0, paint);
+                canvas.DrawLine(mX + w, mY, mX + w, 0, paint);
+            }
+
+            // Debug
+            //========================
+            var r = new SKRect(
+                _activityGraph.ToPixels((float)ExtendedHitbox.Left) - 1,
+                _activityGraph.ToPixels((float)ExtendedHitbox.Top) - 1,
+                _activityGraph.ToPixels((float)ExtendedHitbox.Right) + 1,
+                _activityGraph.ToPixels((float)ExtendedHitbox.Bottom) + 1);
+
+            canvas.DrawRect(r, paint);
+
         }
 
         /// <summary>
@@ -94,30 +165,24 @@ namespace LAMA.ActivityGraphLib
             float xRel = x - (float)TranslationX;
             float yRel = y - (float)TranslationY - _activityGraph.XamOffset;
 
-            if (yRel < 0 || yRel > Height || xRel < 0 || yRel > Width)
+            float xamSideWidth = _activityGraph.FromPixels(_sideWidth);
+            _editState = EditState.Move;
+            if (yRel < 0 || yRel > Height || xRel < -xamSideWidth || xRel > Width + xamSideWidth)
                 return;
 
-            float sideWidthXam = _activityGraph.FromPixels(_sideWidth);
-            if (xRel < sideWidthXam) _editState = EditState.Left;
-            if (xRel > Width - sideWidthXam) _editState = EditState.Right;
+            if (xRel < 0) _editState = EditState.Left;
+            if (xRel > Width) _editState = EditState.Right;
         }
 
         /// <summary>
-        /// Release button in edit mode.
-        /// </summary>
-        public void ReleaseEdit()
-        {
-            _editState = EditState.Move;
-        }
-
-        /// <summary>
-        /// Edits the activity according to mouse move and button state.
+        /// Edits the activity according to mouse position and ActivityButton state.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void MoveEdit(float x, float y)
+        public void ReleaseEdit(float x, float y)
         {
             const long minimalDuration = 10 * 1000 * 60;
+
             if (_editState == EditState.Left)
             {
                 long at = _activityGraph.ToLocalTime(x).ToUnixTimeMilliseconds();
@@ -160,6 +225,8 @@ namespace LAMA.ActivityGraphLib
                 y = _activityGraph.ToPixels((y - (float)Height / 2 - _activityGraph.XamOffset) / _activityGraph.Zoom);
                 Activity.GraphY = (y  - _activityGraph.OffsetY / _activityGraph.Zoom) / (_activityGraph.Height - (float)Height);
             }
+
+            _editState = EditState.None;
         }
 
         /// <summary>

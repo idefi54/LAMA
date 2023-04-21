@@ -71,6 +71,9 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public bool ActivityCreationMode { get; private set; } = false;
 
+        public ActivityButton DraggedButton { get; set; } = null;
+
+
         /// <summary>
         /// Larger value zooms in the graph.
         /// </summary>
@@ -167,26 +170,14 @@ namespace LAMA.ActivityGraphLib
             _canvasView.InvalidateSurface();
 
             SQLEvents.created += SQLEvents_created;
-            SQLEvents.dataChanged += SQLEvents_dataChanged;
-            SQLEvents.dataDeleted += SQLEvents_dataDeleted;
-        }
-
-        private void SQLEvents_dataDeleted(Serializable deleted)
-        {
-            if (deleted.GetType() == typeof(LarpActivity))
-                ReloadActivities();
-        }
-
-        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
-        {
-            if (changed.GetType() == typeof(LarpActivity))
-                ReloadActivities();
         }
 
         private void SQLEvents_created(Serializable created)
         {
-            if (created.GetType() == typeof(LarpActivity))
-                ReloadActivities();
+            LarpActivity activity = created as LarpActivity;
+            if (activity == null) return;
+
+            AddActivity(activity);
         }
 
 
@@ -247,7 +238,7 @@ namespace LAMA.ActivityGraphLib
             foreach (ActivityButton button in ActivityButtons())
             {
                 button.Update();
-                if (_editMode) button.DrawBoders(canvas);
+                if (_editMode) button.DrawIndicators(canvas, _mouseX, _mouseY);
             }
 
             SKPaint paint = new SKPaint();
@@ -411,7 +402,7 @@ namespace LAMA.ActivityGraphLib
         {
             foreach (ActivityButton button in ActivityButtons())
             {
-                if (button.Bounds.Offset(button.TranslationX, button.TranslationY + _canvasLayout.Y).Contains(x, y))
+                if (button.ExtendedHitbox.Offset(0, XamOffset).Contains(x, y))
                     return button;
             }
 
@@ -428,6 +419,11 @@ namespace LAMA.ActivityGraphLib
             var button = new ActivityButton(activity, this);
             _canvasLayout.Children.Add(button);
             return button;
+        }
+
+        public void RemoveActivity(ActivityButton button)
+        {
+            _canvasLayout.Children.Remove(button);
         }
 
         /// <summary>
