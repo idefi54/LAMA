@@ -35,7 +35,7 @@ namespace LAMA.Services
         private Dictionary<ulong, Pin> _alertPins;
         private Dictionary<long, Pin> _cpPins;
         private Dictionary<long, Pin> _pointOfInterestPins;
-        private Dictionary<long, Polyline> _polyLines;
+        private Dictionary<long, Polyline> _roadPolyLines;
         private Stack<Polyline> _polylineBuffer;
         private List<Pin> _pins;
 
@@ -114,7 +114,7 @@ namespace LAMA.Services
             _alertPins = new Dictionary<ulong, Pin>();
             _cpPins = new Dictionary<long, Pin>();
             _pointOfInterestPins = new Dictionary<long, Pin>();
-            _polyLines = new Dictionary<long, Polyline>();
+            _roadPolyLines = new Dictionary<long, Polyline>();
             _polylineBuffer = new Stack<Polyline>();
             _polylinePin = new Pin();
             _selectionPin = new Pin();
@@ -286,7 +286,7 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
-            foreach (long id in _polyLines.Keys)
+            foreach (long id in _roadPolyLines.Keys)
                 SavePolyline(id);
 
             _activeMapView = null;
@@ -312,7 +312,7 @@ namespace LAMA.Services
             _cpPins.Clear();
             _alertPins.Clear();
             _pointOfInterestPins.Clear();
-            _polyLines.Clear();
+            _roadPolyLines.Clear();
 
             LoadActivities();
             LoadCPs();
@@ -361,7 +361,7 @@ namespace LAMA.Services
 
             if (IsFilteredIn(EntityType.Polylines))
             {
-                foreach (Polyline polyline in _polyLines.Values)
+                foreach (Polyline polyline in _roadPolyLines.Values)
                     view.Drawables.Add(polyline);
 
                 foreach (Polyline polyline in _polylineBuffer)
@@ -549,7 +549,7 @@ namespace LAMA.Services
             foreach (var coords in road.Coordinates)
                 polyline.Positions.Add(new Position(coords.second, coords.first));
 
-            _polyLines.Add(road.ID, polyline);
+            _roadPolyLines.Add(road.ID, polyline);
             view?.Drawables.Add(polyline);
         }
 
@@ -586,8 +586,11 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemoveRoad(long id, MapView view = null)
         {
-            view?.Drawables.Remove(_polyLines[id]);
-            _polyLines.Remove(id);
+            if (!_roadPolyLines.ContainsKey(id))
+                return;
+
+            view?.Drawables.Remove(_roadPolyLines[id]);
+            _roadPolyLines.Remove(id);
         }
 
         /// <summary>
@@ -598,6 +601,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemoveActivity(long activityID, MapView view = null)
         {
+            if (!_activityPins.ContainsKey(activityID))
+                return;
+
             view?.Pins.Remove(_activityPins[activityID]);
             _activityPins.Remove(activityID);
         }
@@ -606,12 +612,15 @@ namespace LAMA.Services
         /// Removes the Alert from the internal data.
         /// Also removes it from a MapView if specified.
         /// </summary>
-        /// <param name="noficationID"></param>
+        /// <param name="alertID"></param>
         /// <param name="view"></param>
-        public void RemoveAlert(ulong noficationID, MapView view = null)
+        public void RemoveAlert(ulong alertID, MapView view = null)
         {
-            view?.Pins.Remove(_alertPins[noficationID]);
-            _alertPins.Remove(noficationID);
+            if (!_alertPins.ContainsKey(alertID))
+                return;
+
+            view?.Pins.Remove(_alertPins[alertID]);
+            _alertPins.Remove(alertID);
         }
 
         /// <summary>
@@ -622,6 +631,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemovePointOfInterest(long poiID, MapView view = null)
         {
+            if (!_pointOfInterestPins.ContainsKey(poiID))
+                return;
+
             view?.Pins.Remove(_pointOfInterestPins[poiID]);
             _pointOfInterestPins.Remove(poiID);
         }
@@ -634,6 +646,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemoveCP(long cpID, MapView view = null)
         {
+            if (!_cpPins.ContainsKey(cpID))
+                return;
+
             view?.Pins.Remove(_cpPins[cpID]);
             _cpPins.Remove(cpID);
         }
@@ -646,6 +661,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemovePin(Pin pin, MapView view = null)
         {
+            if (!_pins.Contains(pin))
+                return;
+
             _pins.Remove(pin);
             view?.Pins.Remove(pin);
         }
@@ -728,7 +746,7 @@ namespace LAMA.Services
         public long AddPolyline(Polyline polyline, MapView view = null)
         {
             long id = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.nextID();
-            _polyLines.Add(id, polyline);
+            _roadPolyLines.Add(id, polyline);
             view?.Drawables.Add(polyline);
             return id;
         }
@@ -748,7 +766,7 @@ namespace LAMA.Services
         private void SavePolyline(long id)
         {
             var road = new Road();
-            var polyline = _polyLines[id];
+            var polyline = _roadPolyLines[id];
             var c = polyline.StrokeColor;
 
             road.ID = id;
@@ -936,7 +954,7 @@ namespace LAMA.Services
             }
 
 
-            foreach (var polyline in _polyLines.Values)
+            foreach (var polyline in _roadPolyLines.Values)
             {
                 for (int i = 0; i < polyline.Positions.Count; i++)
                 {
