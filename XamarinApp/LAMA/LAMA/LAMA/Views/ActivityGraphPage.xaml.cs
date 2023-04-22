@@ -67,6 +67,9 @@ namespace LAMA.Views
 
         public void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
+            float px = _graph.ToPixels(args.Location.X);
+            float py = _graph.ToPixels(args.Location.Y - _graph.XamOffset);
+
             // New Press
             if (args.Type == TouchActionType.Pressed)
             {
@@ -76,12 +79,17 @@ namespace LAMA.Views
                 // Clicking a button
                 if (_touchActions.Count == 1)
                 {
-                    _graph.DraggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
+                    var button = _graph.GetButtonAt(px, py);
 
-                    if (_graph.DraggedButton != null)
+                    if (!_graph.EditMode && button != null)
                     {
-                        _graph.DraggedButton.ClickEdit(args.Location.X, args.Location.Y);
-                        _graph.SwitchEditMode(true);
+                        _touchActions.Clear();
+                        button.Click();
+                    }
+                    else if (button != null)
+                    {
+                        button.ClickEdit(px, py);
+                        _graph.DraggedButton = button;
                     }
                 }
 
@@ -104,9 +112,10 @@ namespace LAMA.Views
                 // Create new activity -> redirect to NewActivtyPage
                 if (_graph.ActivityCreationMode)
                 {
-                    var time = _graph.ToLocalTime(_lastLocation.X);
+                    var time = _graph.ToLocalTime(px);
                     _touchActions.Remove(args.Id);
                     _graph.DraggedButton = null;
+
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
@@ -125,8 +134,6 @@ namespace LAMA.Views
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
-
-                //_draggedButton.MoveEdit(args.Location.X, args.Location.Y);
             }
 
             // Control graph view
@@ -138,8 +145,8 @@ namespace LAMA.Views
                 // Scroll graph
                 if (_touchActions.Count == 1)
                 {
-                    float diffX = args.Location.X - _lastLocation.X;
-                    float diffY = args.Location.Y - _lastLocation.Y;
+                    float diffX = _graph.ToPixels(args.Location.X - _lastLocation.X);
+                    float diffY = _graph.ToPixels(args.Location.Y - _lastLocation.Y);
                     _lastLocation = args.Location;
                     _graph.Move(diffX, diffY);
                 }
@@ -162,7 +169,7 @@ namespace LAMA.Views
             {
                 if (_graph.DraggedButton != null)
                 {
-                    _graph.DraggedButton.ReleaseEdit(args.Location.X, args.Location.Y);
+                    _graph.DraggedButton.ReleaseEdit(px, py);
                     _graph.DraggedButton = null;
                 }
 
