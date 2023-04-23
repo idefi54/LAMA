@@ -25,6 +25,7 @@ namespace LAMA.ViewModels
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
         public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
+        public bool CanCreate { get { return CanChangeEncyclopedy && category == null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
 
@@ -154,7 +155,8 @@ namespace LAMA.ViewModels
                 }
             }
 
-            category.IGotUpdated += onUpdated;
+            if(category != null)
+                category.IGotUpdated += onUpdated;
 
         }
 
@@ -243,9 +245,6 @@ namespace LAMA.ViewModels
         {
             category.Name = name;
             category.Description = description;
-            category.ChildCategories.Clear();
-            category.Records.Clear();
-           
 
             await Navigation.PopAsync();
         }
