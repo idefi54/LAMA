@@ -45,6 +45,7 @@ namespace LAMA.ActivityGraphLib
                 return;
 
             _graph.RemoveActivity(this);
+            _graph.InvalidateSurface();
         }
 
         private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
@@ -53,6 +54,7 @@ namespace LAMA.ActivityGraphLib
                 return;
 
             Update();
+            _graph.InvalidateSurface();
         }
 
         /// <summary>

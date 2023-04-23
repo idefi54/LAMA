@@ -198,6 +198,7 @@ namespace LAMA.ActivityGraphLib
             if (activity == null) return;
 
             AddActivity(activity);
+            InvalidateSurface();
         }
 
         /// <summary>
