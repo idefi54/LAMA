@@ -45,9 +45,17 @@ namespace LAMA
 
         public static SQLiteAsyncConnection connection { get { return _connection; } }
         private static SQLiteAsyncConnection _connection = null;
-        public static SQLiteAsyncConnection makeConnection()
+
+        
+
+        public static SQLiteAsyncConnection makeConnection(string newName = null)
         {
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (newName != null && newName != string.Empty)
+                databaseName = newName;
+            
+            Console.WriteLine("making database with name " + databaseName);
+
             string path = Path.Combine(directory, databaseName);
 
 
@@ -83,6 +91,20 @@ namespace LAMA
                 LarpEvent.Instance.DeleteData();
                 _connection = null;
                 File.Delete(path);
+
+                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList = null;
+                DatabaseHolder<CP, CPStorage>.Instance.rememberedList = null;
+                DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList = null;
+                DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList = null;
+                DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList = null;
+                DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList = null;
+                DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList = null;
+                DatabaseHolder<Road, RoadStorage>.Instance.rememberedList = null;
+                LocalStorage.reset();
+                LarpEvent.reset();
+
+
+
                 makeConnection();
             }
 
@@ -98,11 +120,11 @@ namespace LAMA
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQL()
+        public OurSQL(string databaseName = null)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection();
+                SQLConnectionWrapper.makeConnection(databaseName);
             connection = SQLConnectionWrapper.connection;
 
             string name = new Storage().GetType().Name;
@@ -208,11 +230,11 @@ namespace LAMA
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQLDictionary()
+        public OurSQLDictionary(string databaseName = null)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection();
+                SQLConnectionWrapper.makeConnection(databaseName);
             connection = SQLConnectionWrapper.connection;
 
 

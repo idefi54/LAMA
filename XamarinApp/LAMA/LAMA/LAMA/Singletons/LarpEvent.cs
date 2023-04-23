@@ -13,6 +13,11 @@ namespace LAMA.Singletons
         public static event DataChangedDelegate DataChanged;
 
         static LarpEvent instance = null;
+
+        public static void reset()
+        {
+            instance = null;
+        }
         public static LarpEvent Instance
         {
             get
@@ -114,6 +119,64 @@ namespace LAMA.Singletons
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
         }
+
+        public static double minX 
+        { 
+            get { return Instance._minX; } 
+            set 
+            { 
+                Instance._minX = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            } 
+        }
+        public static double minY 
+        {
+            get { return Instance._minY; }
+            set 
+            { 
+                Instance._minY = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+        public static double maxX
+        {
+            get { return Instance._maxX; }
+            set
+            {
+                Instance._maxX = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+        public static double maxY
+        {
+            get { return Instance._maxY; }
+            set
+            {
+                Instance._maxY = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+        public static double minZoom 
+        {
+            get { return Instance._minZoom; }
+            set
+            {
+                Instance._minZoom = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+        public static double maxZoom 
+        {
+            get { return Instance._maxZoom; }
+            set
+            {
+                Instance._maxZoom = value;
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+            }
+        }
+
+
+
     
         public void init()
         {
@@ -179,6 +242,17 @@ namespace LAMA.Singletons
         public string days { get; set; }
         public string chatChannels { get; set; }
         public long lastClientID { get; set; }
+
+        public double _minX;
+        public double _minY;
+        public double _maxX;
+        public double _maxY;
+        public double _minZoom;
+        public double _maxZoom;
+
+
+
+
 
 
         static string[] atributes = { "name", "days", "chatChannels", "lastClientID" };
