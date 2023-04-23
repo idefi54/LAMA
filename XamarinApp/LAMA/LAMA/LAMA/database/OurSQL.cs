@@ -87,7 +87,7 @@ namespace LAMA
 
                 if (_connection != null)
                     _connection.CloseAsync().Wait();
-
+                
                 LarpEvent.Instance.DeleteData();
                 _connection = null;
                 File.Delete(path);
