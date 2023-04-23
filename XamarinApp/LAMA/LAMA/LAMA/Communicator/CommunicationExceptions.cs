@@ -4,6 +4,10 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    public class WrongNgrokAddressFormatException : Exception
+    {
+        public WrongNgrokAddressFormatException() { }
+    }
     public class PasswordTooShortException : Exception
     {
         public PasswordTooShortException() { }

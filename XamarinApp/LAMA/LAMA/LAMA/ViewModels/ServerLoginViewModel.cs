@@ -88,12 +88,17 @@ namespace LAMA.ViewModels
             }
             catch (PasswordTooShortException)
             {
-                await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí mít minimálně 5 znaků", "OK");
+                await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí mít minimálně 5 znaků.", "OK");
                 return;
             }
             catch (CantConnectToCentralServerException)
             {
-                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení, nebo", "OK");
+                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
+                return;
+            }
+            catch (WrongNgrokAddressFormatException)
+            {
+                await App.Current.MainPage.DisplayAlert("Ngrok Adresa", "Uvedená ngrok adresa není ve správném formátu - příklad validní ngrok adresy: tcp://2.tcp.eu.ngrok.io:19912", "OK");
                 return;
             }
             catch (WrongCredentialsException)

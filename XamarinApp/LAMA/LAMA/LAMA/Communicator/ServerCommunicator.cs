@@ -518,6 +518,12 @@ namespace LAMA.Communicator
             Debug.WriteLine("Initialization finished");
         }
 
+        private bool checkNgrokAddressFormat(string address)
+        {
+            Regex regex = new Regex("tcp://.*\\.tcp\\..*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
+            return regex.IsMatch(address);
+        }
+
         /// <summary>
         /// Create new ServerCommunicator - used to communicate with the clients
         /// </summary>
@@ -555,8 +561,10 @@ namespace LAMA.Communicator
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
         /// <exception cref="PasswordTooShortException">The password is too short</exception>
+        /// <exception cref="WrongNgrokAddressFormatException">The ngrok endpoint supplied isn't in a correct format</exception>
         public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
+            if (!checkNgrokAddressFormat(ngrokAddress)) throw new WrongNgrokAddressFormatException();
             if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
