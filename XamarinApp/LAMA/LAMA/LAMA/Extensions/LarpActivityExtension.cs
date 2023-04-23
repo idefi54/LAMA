@@ -31,6 +31,19 @@ namespace LAMA.Extensions
             }
         }
 
+        public static SKColor GetCalculatedGraphColor(this LarpActivity activity)
+		{
+            Color color = activity.GetColor();
+
+            SKColor skcolor = new SKColor(
+                (byte)(byte.MaxValue * color.R),
+                (byte)(byte.MaxValue * color.G),
+                (byte)(byte.MaxValue * color.B),
+                (byte)(byte.MaxValue * color.A));
+
+            return skcolor;
+		}
+
         public static Color GetColor(this LarpActivity activity)
         {
             switch (activity.status)
