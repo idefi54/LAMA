@@ -70,8 +70,12 @@ namespace LAMA.Communicator
             if (server != null) server.Abort();
             if (tokenLocationSending != null)
             {
-                tokenLocationSending.Cancel();
-                tokenLocationSending.Dispose();
+                try
+                {
+                    tokenLocationSending.Cancel();
+                    tokenLocationSending.Dispose();
+                }
+                catch (ObjectDisposedException) { }
             }
             clientSockets = new Dictionary<int, Socket>();
         }
@@ -372,6 +376,7 @@ namespace LAMA.Communicator
         /// <exception cref="WrongCredentialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
+            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             logger = new DebugLogger(false);

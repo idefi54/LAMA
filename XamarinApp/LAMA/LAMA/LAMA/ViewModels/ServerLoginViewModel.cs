@@ -1,5 +1,6 @@
 ﻿using LAMA.Colors;
 using LAMA.Communicator;
+using LAMA.Singletons;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,7 @@ namespace LAMA.ViewModels
             //password - libovolné, klienti ho pak musí opakovat (u existujícího serveru [jméno] to pak při správném hesle edituje hodnoty)
             try
             {
+                if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, ngrokEndpoint, password, personalPassword, nick, isNewServer);
                 //new ServerCommunicator(name, IP, port, password);

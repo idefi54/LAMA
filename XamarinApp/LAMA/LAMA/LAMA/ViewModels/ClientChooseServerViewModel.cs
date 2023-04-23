@@ -1,5 +1,6 @@
 ﻿using LAMA.Colors;
 using LAMA.Communicator;
+using LAMA.Singletons;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -83,6 +84,7 @@ namespace LAMA.ViewModels
             //možnost vybrat
             try
             {
+                if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 //serverName - jméno toho serveru (identifikátor)
                 //heslo serveru
                 //clentName
