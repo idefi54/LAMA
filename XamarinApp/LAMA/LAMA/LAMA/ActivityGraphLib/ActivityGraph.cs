@@ -213,18 +213,13 @@ namespace LAMA.ActivityGraphLib
             if (TimeLabels == null)
                 return;
 
-            if (_width < 1000)
-            {
-                //_dateLabel.FontSize = 8;
-                foreach (var label in TimeLabels)
-                    label.FontSize = 8;
+            // Tested at these values
+            float baseSize = 15;
+            float baseWidth = 1520;
 
-            } else
-            {
-                //_dateLabel.FontSize = 14;
-                foreach (var label in TimeLabels)
-                    label.FontSize = 14;
-            }
+            // Adjust to arbitrary width
+            foreach (var label in TimeLabels)
+                label.FontSize = baseSize * Zoom * _canvasView.Width / baseWidth;
         }
 
         /// <summary>
