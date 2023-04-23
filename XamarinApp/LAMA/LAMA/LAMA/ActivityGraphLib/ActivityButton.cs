@@ -6,6 +6,7 @@ using SkiaSharp;
 using System;
 using Xamarin.Forms;
 using System.Diagnostics;
+using LAMA.Colors;
 
 namespace LAMA.ActivityGraphLib
 {
@@ -88,7 +89,7 @@ namespace LAMA.ActivityGraphLib
             // Draw the button
             //=======================
             var paint = new SKPaint();
-            paint.Color = GetColor(Activity.status);
+            paint.Color = Activity.GetGraphColor();
             if (editing) paint.Color = paint.Color.WithAlpha(125);
             canvas.DrawRect(X, Y, Width, Height * _graph.Zoom, paint);
 
@@ -309,27 +310,6 @@ namespace LAMA.ActivityGraphLib
                 return 0;
 
             return 0;
-        }
-
-        private SKColor GetColor(LarpActivity.Status status)
-        {
-            switch (status)
-            {
-                case LarpActivity.Status.awaitingPrerequisites:
-                    return SKColors.White;
-                case LarpActivity.Status.readyToLaunch:
-                    return SKColors.LightBlue;
-                case LarpActivity.Status.launched:
-                    return SKColors.LightGreen;
-                case LarpActivity.Status.inProgress:
-                    return SKColors.PeachPuff;
-                case LarpActivity.Status.completed:
-                    return SKColors.Gray;
-                case LarpActivity.Status.cancelled:
-                    return SKColors.Red;
-                default:
-                    return SKColors.White;
-            }
         }
     }
 

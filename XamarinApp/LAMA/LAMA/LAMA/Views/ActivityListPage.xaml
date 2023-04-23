@@ -83,7 +83,7 @@
 					<ListView.ItemTemplate>
 						<DataTemplate>
 							<ViewCell>
-								<Grid Padding="5" Margin="5" >
+								<Grid Padding="5" Margin="5" BackgroundColor="{Binding Color}">
 									<Grid.RowDefinitions>
 										<RowDefinition Height="auto" />
 										<RowDefinition Height="auto" />

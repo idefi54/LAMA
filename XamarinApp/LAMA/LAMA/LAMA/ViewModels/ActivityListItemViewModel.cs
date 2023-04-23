@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -24,6 +25,8 @@ namespace LAMA.ViewModels
 
         private bool _showDeleteButton;
         public bool ShowDeleteButton { get { return _showDeleteButton; } set { SetProperty(ref _showDeleteButton, value, nameof(ShowDeleteButton)); } }
+
+        public Color Color => _larpActivity.GetColor(0.2f);
 
         public void SetName(string name)
 		{
