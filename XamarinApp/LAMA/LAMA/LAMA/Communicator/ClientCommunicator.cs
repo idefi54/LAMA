@@ -547,21 +547,11 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password)
         {
-            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
-            if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
-            LarpEvent.Name = serverName;
             logger = new DebugLogger(false);
             _connected = false;
 
-            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
-            if (objectsCache.getByKey("CommandQueueLength") == null)
-            {
-                objectsCache.add(new Command("0", "CommandQueueLength"));
-            }
-            LoadCommandQueue();
 
             //Try to connect to the central server to get information about the LARP server
             HttpClient client = new HttpClient();
@@ -593,7 +583,19 @@ namespace LAMA.Communicator
             //Managed to connect to the central server database and the LARP server exists
             else
             {
+                CommunicationInfo.Instance.Communicator = this;
                 CommunicationInfo.Instance.ServerName = serverName;
+                CommunicationInfo.Instance.IsServer = false;
+
+                if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
+                LarpEvent.Name = serverName;
+                attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+                objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+                if (objectsCache.getByKey("CommandQueueLength") == null)
+                {
+                    objectsCache.add(new Command("0", "CommandQueueLength"));
+                }
+                LoadCommandQueue();
                 logger.LogWrite("No exceptions");
                 Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu123456789qwertzuiop");
                 string[] array = responseString.Split(',');
@@ -649,29 +651,20 @@ namespace LAMA.Communicator
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
         public ClientCommunicator(string serverName, string password, string clientName)
         {
-            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
-            if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
             Debug.WriteLine("client communicator");
-            LarpEvent.Name = serverName;
             logger = new DebugLogger(false);
             _connected = false;
 
-            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
-            if (objectsCache.getByKey("CommandQueueLength") == null)
-            {
-                objectsCache.add(new Command("0", "CommandQueueLength"));
-            }
-            LoadCommandQueue();
 
-            //Try to connect to the central server to find information about the LARP server
+            //Try to connect to the central server to get information about the LARP server
             HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
             {
                 { "name", "\"" + serverName + "\"" },
                 { "password", "\"" + Encryption.EncryptPassword(password) + "\"" }
             };
+
             var content = new FormUrlEncodedContent(values);
             var responseString = "";
             try
@@ -683,22 +676,34 @@ namespace LAMA.Communicator
             {
                 throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
             }
-
             if (responseString == "Connection")
             {
                 throw new CantConnectToDatabaseException("Nepodařilo se připojit k databázi.");
             }
             else if (responseString == "credintials")
             {
-                throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
+                throw new WrongCreadintialsException("Špatné heslo nebo neexistující server.");
             }
-            //Managed to connect to the central server database and LARP server exists
+            //Managed to connect to the central server database and the LARP server exists
             else
             {
+                CommunicationInfo.Instance.Communicator = this;
                 CommunicationInfo.Instance.ServerName = serverName;
+                CommunicationInfo.Instance.IsServer = false;
+
+                if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
+                LarpEvent.Name = serverName;
+                attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+                objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+                if (objectsCache.getByKey("CommandQueueLength") == null)
+                {
+                    objectsCache.add(new Command("0", "CommandQueueLength"));
+                }
+                LoadCommandQueue();
                 logger.LogWrite("No exceptions");
+                Encryption.SetAESKey(password + serverName + "abcdefghijklmnopqrstu123456789qwertzuiop");
                 string[] array = responseString.Split(',');
-                //Get server IP address (check if it is valid)
+                //Get server IP (check if it is valid)
                 if (IPAddress.TryParse(array[0].Trim('"'), out _IP))
                 {
                     if (_IP.AddressFamily == AddressFamily.InterNetworkV6)

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace LAMA.Communicator
 {
     public class ServerCommunicator : Communicator
-    {       
+    {
         public DebugLogger logger;
         public DebugLogger Logger
         {
@@ -374,28 +374,7 @@ namespace LAMA.Communicator
         {
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
-
-            /*
-            Debug.WriteLine("Compression testing");
-            byte[] compressed = CompressionManager.Encode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬");
-            Debug.WriteLine($"compressed length {compressed.Length}");
-            string decompressed = CompressionManager.Decode(compressed);
-            Debug.WriteLine(decompressed);
-            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬{Separators.messageSeparator}", CompressionManager);
-            string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
-            Debug.WriteLine("Uncompressed");
-            Debug.WriteLine(decrypted);
-            */
-
-            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
-            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
-            //Debug.WriteLine("Compression testing end");
-            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
-            LarpEvent.Name = name;
-            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
             Debug.WriteLine("Created client, loaded dictionaries");
@@ -480,14 +459,18 @@ namespace LAMA.Communicator
                     throw new WrongCreadintialsException("password.");
                 }
             }
-            Debug.WriteLine("No exceptions");
-            //Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
-            //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
-            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
-            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
 
-            //maxClientID = 0;
+            Debug.WriteLine("No exceptions");
+
+            CommunicationInfo.Instance.Communicator = this;
+            CommunicationInfo.Instance.ServerName = name;
+            CommunicationInfo.Instance.IsServer = true;
+
+            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
+            LarpEvent.Name = name;
+            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+
             IPAddress ipAddress;
             IPAddress.TryParse(IP, out ipAddress);
             if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
@@ -528,9 +511,6 @@ namespace LAMA.Communicator
             //Server should have all permissions
             PermissionsManager.GiveAllPermissions();
             Debug.WriteLine("Initialization finished");
-
-            CommunicationInfo.Instance.Communicator = this;
-            CommunicationInfo.Instance.ServerName = name;
         }
 
         /// <summary>
@@ -674,8 +654,8 @@ namespace LAMA.Communicator
             }
             if (cpID == -1)
             {
-                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
-                    clientName, clientName, new EventList<string> {}, "", "", "", "");
+                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(),
+                    clientName, clientName, new EventList<string> { }, "", "", "", "");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
                 cp.password = Encryption.EncryptPassword(password);
