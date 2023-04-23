@@ -312,14 +312,14 @@ namespace LAMA.Communicator
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                     }));
                 }
-                if (messageParts[1] == "GiveID")
+                if (messageParts[1] == "RequestID")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.GiveNewClientID(current, messageParts[2], messageParts[3], Int32.Parse(messageParts[4]));
                     }));
                 }
-                if (messageParts[1] == "GiveIDExisting")
+                if (messageParts[1] == "RequestIDExisting")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -369,7 +369,7 @@ namespace LAMA.Communicator
         /// <exception cref="NotAnIPAddressException"></exception>
         /// <exception cref="CantConnectToCentralServerException"></exception>
         /// <exception cref="CantConnectToDatabaseException"></exception>
-        /// <exception cref="WrongCreadintialsException"></exception>
+        /// <exception cref="WrongCredentialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
             CompressionManager = new Compression();
@@ -427,7 +427,7 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "serverExists")
                 {
-                    throw new WrongCreadintialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
+                    throw new WrongCredentialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
                 }
             }
             else
@@ -452,11 +452,11 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "credintials")
                 {
-                    throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
+                    throw new WrongCredentialsException("Špatné heslo, nebo neexistující server.");
                 }
                 else if (responseString == "password")
                 {
-                    throw new WrongCreadintialsException("password.");
+                    throw new WrongCredentialsException("password.");
                 }
             }
 
@@ -525,11 +525,13 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
         public ServerCommunicator(string name, string IP, int port, string password, string adminPassword, string nick, bool newServer)
         {
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
         }
 
@@ -544,11 +546,13 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
         public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
             Debug.WriteLine(addresses[0]);

@@ -84,6 +84,28 @@ namespace LAMA.ViewModels
                 Console.WriteLine("Communicator launched");
 
             }
+            catch (PasswordTooShortException)
+            {
+                await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí mít minimálně 5 znaků", "OK");
+                return;
+            }
+            catch (CantConnectToCentralServerException)
+            {
+                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení, nebo", "OK");
+                return;
+            }
+            catch (WrongCredentialsException)
+            {
+                if (isNewServer)
+                {
+                    await App.Current.MainPage.DisplayAlert("Jméno Serveru", "Server s tímto jménem už existuje. Zvolte jiné jméno, nebo se přihlašte jako existující server.", "OK");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Server s tímto jménem buď neexistuje, nebo jste zadali špatné heslo.", "OK");
+                }
+                return;
+            }
             catch (Exception e)
             {
                 ErrorLabel = e.ToString();

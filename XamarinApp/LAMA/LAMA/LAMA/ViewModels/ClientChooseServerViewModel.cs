@@ -88,7 +88,8 @@ namespace LAMA.ViewModels
                 //clentName
                 ClientCommunicator communicator = new ClientCommunicator(serverName, password);
                 float timer = 0.0f;
-                while (true) {
+                while (true)
+                {
                     await Task.Delay(500);
                     if (ClientCommunicator.s.Connected)
                     {
@@ -119,6 +120,42 @@ namespace LAMA.ViewModels
                     //await Shell.Current.GoToAsync($"{nameof(ClientLoginTypePage)}?communicator={communicator}");
                     //await Shell.Current.GoToAsync($"//{nameof(ClientLoginTypePage)}");
                 }
+            }
+            catch (CantConnectToCentralServerException)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Nepodařilo se připojit k seznamu existujících serverů. Zkontrolujte své připojení a pokuste se přihlásit znovu.", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
+            }
+            catch (CantConnectToDatabaseException)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Nepodařilo se připojit k databázi existujících serverů. Zkuste opakovat zadání později.", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
+            }
+            catch (WrongCredentialsException)
+            {
+                await App.Current.MainPage.DisplayAlert("Chybné Přihlašovací Údaje", "Server neexistuje, nebo jste zadali špatné heslo.", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
+            }
+            catch (ServerConnectionRefusedException)
+            {
+                await App.Current.MainPage.DisplayAlert("Server Odmítl Připojení", "Server odmítl připojení, zkuste se znovu přihlásit později.", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
             }
             catch (Exception e)
             {
