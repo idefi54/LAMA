@@ -10,6 +10,11 @@ namespace LAMA
     public class LocalStorage
     {
 
+        public static void reset()
+        {
+            instance = null;
+        }
+
         static LocalStorage instance = null;
         static LocalStorage Instance { get
             {
