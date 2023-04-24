@@ -286,8 +286,8 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
-            foreach (long id in _roadPolyLines.Keys)
-                SavePolyline(id);
+            //foreach (long id in _roadPolyLines.Keys)
+            //    SavePolyline(id);
 
             _activeMapView = null;
         }
@@ -757,19 +757,19 @@ namespace LAMA.Services
         public void PolylineFlush()
         {
             foreach (var polyline in _polylineBuffer)
-                AddPolyline(polyline);
+                SavePolyline(polyline);
         }
 
         public void PolylineDeletion() { _polylineDeletion = true; }
         public void PolylineStopDeletion() { _polylineDeletion = false; }
 
-        private void SavePolyline(long id)
+        private void SavePolyline(Polyline polyline)
         {
             var road = new Road();
-            var polyline = _roadPolyLines[id];
             var c = polyline.StrokeColor;
+            var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
 
-            road.ID = id;
+            road.ID = rememberedList.nextID();
             road.Thickness = polyline.StrokeWidth;
             road.Color.Clear();
             road.Color.Add(c.R);
@@ -780,7 +780,7 @@ namespace LAMA.Services
             foreach (var pos in polyline.Positions)
                 road.Coordinates.Add(new Pair<double, double>(pos.Longitude, pos.Latitude));
 
-            DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.add(road);
+            rememberedList.add(road);
         }
         private long LoadRoad(Road road)
         {
@@ -953,23 +953,32 @@ namespace LAMA.Services
                 toRemove.Clear();
             }
 
-
-            foreach (var polyline in _roadPolyLines.Values)
+            Func<(int, int)?> getRemoveIndex = () =>
             {
-                for (int i = 0; i < polyline.Positions.Count; i++)
+                foreach (var kvp in _roadPolyLines)
                 {
-                    var position = polyline.Positions[i];
-                    MPoint point2 = position.ToMapsui();
+                    int id = (int)kvp.Key;
+                    Polyline polyline = kvp.Value;
 
-                    if (point1.Distance(point2) / resolution < deletionDistance)
-                        toRemove.Add(position);
+                    for (int i = 0; i < polyline.Positions.Count; i++)
+                    {
+                        var position = polyline.Positions[i];
+                        MPoint point2 = position.ToMapsui();
+
+                        if (point1.Distance(point2) / resolution < deletionDistance)
+                            return (id, i);
+                    }
                 }
 
-                foreach (var position in toRemove)
-                    polyline.Positions.Remove(position);
+                return null;
+            };
 
-                toRemove.Clear();
-            }
+            (int, int)? roadToRemove = getRemoveIndex();
+            if (roadToRemove == null) return;
+
+            (int rID, int rIndex) = roadToRemove.Value;
+            var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
+            rememberedList.getByID(rID).Coordinates.RemoveAt(rIndex);
 
         }
 
