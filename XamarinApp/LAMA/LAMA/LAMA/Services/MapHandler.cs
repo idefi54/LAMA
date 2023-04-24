@@ -901,7 +901,7 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            foreach (int id in _activityPins.Keys)
+            foreach (long id in _activityPins.Keys)
                 if (_activityPins[id] == e.Pin)
                 {
                     OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
