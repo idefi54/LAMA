@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
@@ -18,5 +19,25 @@ namespace LAMA.Colors
 
         public static Color MyMessageColor = Color.LightSkyBlue;
         public static Color OtherMessageColor = Color.LightGray;
+
+
+        
+        public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.White;
+        public static SKColor ActivityGraphReadyToLaunch = SKColors.LightBlue;
+        public static SKColor ActivityGraphLaunched = SKColors.LightGreen;
+        public static SKColor ActivityGraphInProgress = SKColors.PeachPuff;
+        public static SKColor ActivityGraphCompleted = SKColors.Gray;
+        public static SKColor ActivityGraphCancelled = SKColors.Red;
+        public static SKColor ActivityGraphDefault = SKColors.White;
+
+
+        public static Color ActivityAwaitingPrerequisites = Color.White;
+        public static Color ActivityReadyToLaunch = Color.LightBlue;
+        public static Color ActivityLaunched = Color.LightGreen;
+        public static Color ActivityInProgress = Color.PeachPuff;
+        public static Color ActivityCompleted = Color.Gray;
+        public static Color ActivityCancelled = Color.Red;
+        public static Color ActivityDefault = Color.White;
+
     }
 }
