@@ -48,8 +48,7 @@ namespace LAMA.ViewModels
         string TimeFormat(long unixStart)
         {
 
-            DateTime startDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(unixStart);
-            DateTime now = DateTime.Now;
+            DateTime startDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(unixStart).ToLocalTime();
 
             TimeSpan difference = startDate - DateTime.Now;
 
