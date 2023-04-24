@@ -30,14 +30,14 @@ namespace LAMA.ViewModels
         public LarpEventViewModel(INavigation navigation)
         {
             this.navigation = navigation;
-
+            
             Name = LarpEvent.Name;
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < LarpEvent.ChatChannels.Count; ++i)
             {
                 if(i !=0)
                     builder.Append(Environment.NewLine);
-                builder.Append(ChatChannels[i]);
+                builder.Append(LarpEvent.ChatChannels[i]);
             }
             SaveCommand = new Command(OnSave);
             AddChannelCommand = new Command(OnAddChannel);

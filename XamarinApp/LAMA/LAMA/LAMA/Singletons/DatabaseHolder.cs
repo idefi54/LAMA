@@ -35,6 +35,11 @@ namespace LAMA
 
     internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.DictionaryStorageInterface, new()
     {
+        public static void reset()
+        {
+            _instance = null;
+        }
+
         // Singleton
         private static DatabaseHolderStringDictionary<T, Storage> _instance;
         public static DatabaseHolderStringDictionary<T, Storage> Instance
