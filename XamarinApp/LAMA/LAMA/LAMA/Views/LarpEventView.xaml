@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.LarpEventView">
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}" IsVisible="{Binding CanChangeLarpEvent}"/>
+        
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="15" >
+
+                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" IsVisible="{Binding CanChangeLarpEvent}"/>
+                <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" IsVisible="{Binding CanNotChangeLarpEvent}"/>
+
+
+                <Label Text="{Binding ChatChannels}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Entry Text="{Binding NewChannel}" Placeholder="Jméno nového kanálu"
+                       FontSize="Medium" IsVisible="{Binding CanChangeLarpEvent}"/>
+                <Button Text="Přidat" Command="{Binding AddChannelCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
+
+                <Label Text="{Binding StartDay}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Button Text="Nastavit začátek" Command="{Binding SetStartDay}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
+                
+                <Label Text="{Binding EndDay}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Button Text="Nastavit konec" Command="{Binding SetEndDay}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeLarpEvent}"></Button>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

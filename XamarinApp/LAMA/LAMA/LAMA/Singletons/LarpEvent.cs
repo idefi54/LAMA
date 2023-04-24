@@ -74,16 +74,23 @@ namespace LAMA.Singletons
             instance = null;
         }
 
-        static EventList<DateTimeOffset> _Days = null;
-        public static EventList<DateTimeOffset> Days
+        
+        /// <summary>
+        /// remember start and end day
+        /// </summary>
+        public static Pair<DateTimeOffset, DateTimeOffset> Days
         {
             get
             {
-                if(_Days == null)
-                {
-                    Instance.insurance = Instance.getTypeID();
-                }
-                return _Days;
+
+                var times =  Helpers.readIntPair(Instance.days);
+                return new Pair<DateTimeOffset, DateTimeOffset>(DateTimeOffset.FromUnixTimeMilliseconds(times.first), DateTimeOffset.FromUnixTimeMilliseconds(times.second));
+            }
+
+            set 
+            {
+                Instance.days = value.ToString();
+                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
         }
 
@@ -182,13 +189,7 @@ namespace LAMA.Singletons
         {
             List<long> temp = Helpers.readLongField(days);
 
-            _Days = new EventList<DateTimeOffset>();
-            for (int i = 0; i < temp.Count; ++i) 
-            {
-                _Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
-            }
-
-            _Days.dataChanged += saveDays;
+            
             _chatChannels = new EventList<string>();
 
             List<string> channels = Helpers.readStringField(chatChannels);
@@ -200,23 +201,7 @@ namespace LAMA.Singletons
             _chatChannels.dataChanged += saveChatChannels;
 
         }
-        static void saveDays()
-        {
-            StringBuilder output = new StringBuilder();
-            foreach (var day in Days)
-            {
-                if (output.Length > 0)
-                {
-                    output.Append(Helpers.separator + day.ToUnixTimeMilliseconds());
-                }
-                else
-                {
-                    output.Append(day.ToUnixTimeMilliseconds());
-                }
-            }
-            Instance.days = output.ToString();
-            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-        }
+        
         static void saveChatChannels()
         {
             StringBuilder output = new StringBuilder();

@@ -170,6 +170,17 @@ namespace LAMA
             }
             return output;
         }
+        public static Pair<int,int> readIntPair(string input)
+        {
+            if (input == null)
+                return new Pair<int, int>(0, 0);
+            int i = 0;
+            skipNonDigits(input, ref i);
+            int first = readInt(input, ref i);
+            skipNonDigits(input, ref i);
+            int second = readInt(input, ref i);
+            return new Pair<int, int>(first, second);
+        }
 
         public static EventList<Pair<long, long>> readLongPairField(string input)
         {
