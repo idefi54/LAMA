@@ -116,15 +116,20 @@ namespace LAMA.Views
                     _touchActions.Remove(args.Id);
                     _graph.DraggedButton = null;
 
+                    var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+                    var activity = new LarpActivity();
+                    activity.GraphY = 20;
+                    activity.start = time.ToUnixTimeMilliseconds();
+                    activity.day = time.Day;
+
+
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
-                        activityDTO.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
-                        activityDTO.start = time.ToUnixTimeMilliseconds();
-                        activityDTO.day = time.Day;
+                        activityDTO.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
                         LarpActivity newActivity = activityDTO.CreateLarpActivity();
                         DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(newActivity);
-                    }
+                    }, activity
                     ));
                 }
             }

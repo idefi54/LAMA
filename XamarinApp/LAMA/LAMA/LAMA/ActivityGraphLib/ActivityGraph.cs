@@ -370,7 +370,7 @@ namespace LAMA.ActivityGraphLib
             for (int i = 0; i < rememberedList.Count; i++)
             {
                 LarpActivity activity = rememberedList[i];
-                DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+                DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
 
                 if ((start - TimeOffset).Duration() < maxDifference)
                     ActivityButtons.Add(new ActivityButton(activity, this, _navigation));

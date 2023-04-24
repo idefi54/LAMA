@@ -933,6 +933,9 @@ namespace LAMA.Services
             float deletionDistance = 10;
             List<Position> toRemove = new List<Position>();
 
+            if (view == null) view = _activeMapView;
+            if (view == null) return;
+
             MPoint point1 = SphericalMercator.FromLonLat(pos.Longitude, pos.Latitude);
             double resolution = view.GetMapInfo(point1).Resolution;
 
@@ -978,8 +981,12 @@ namespace LAMA.Services
 
             (int rID, int rIndex) = roadToRemove.Value;
             var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
-            rememberedList.getByID(rID).Coordinates.RemoveAt(rIndex);
+            var road = rememberedList.getByID(rID);
 
+            if (road.Coordinates.Count > 2)
+                rememberedList.getByID(rID).Coordinates.RemoveAt(rIndex);
+            else
+                rememberedList.removeByID(rID);
         }
 
         private void HandleMapClickedSelection(object sender, MapClickedEventArgs e)
