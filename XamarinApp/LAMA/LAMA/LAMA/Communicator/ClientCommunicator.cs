@@ -256,10 +256,11 @@ namespace LAMA.Communicator
         /// <param name="cpId"></param>
         private void ReceiveID(int clientId, int cpId)
         {
-            loggedIn = true;
+            RequestUpdate();
             LocalStorage.clientID = clientId;
             LocalStorage.cpID = cpId;
             Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
+            loggedIn = true;
         }
         
         /// <summary>
@@ -268,7 +269,7 @@ namespace LAMA.Communicator
         /// <param name="clientId"></param>
         private void ClientRefused(int clientId, string message)
         {
-            loggedIn = true;
+            loggedIn = false;
             LocalStorage.clientID = clientId;
             clientRefusedMessage = message;
         }
@@ -475,6 +476,8 @@ namespace LAMA.Communicator
         /// </summary>
         private void Connected()
         {
+            Debug.WriteLine("Connected");
+            if (LocalStorage.clientID != -1 )
             RequestUpdate();
             logger.LogWrite("connected set true");
             _connected = true;
