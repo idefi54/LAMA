@@ -90,6 +90,7 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                return;
             }
             catch (ClientRefusedException)
             {
@@ -103,6 +104,7 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                return;
             }
             catch (TimeoutException)
             {
@@ -110,6 +112,7 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                return;
             }
             catch (Exception e)
             {
