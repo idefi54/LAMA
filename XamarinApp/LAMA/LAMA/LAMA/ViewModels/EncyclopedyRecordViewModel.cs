@@ -35,6 +35,7 @@ namespace LAMA.ViewModels
                 _Name = record.Name;
                 _Text = record.FullText;
                 _TLDR = record.TLDR;
+                record.IGotUpdated += onUpdated;
             }
             AddRecordCommand = new Command(onCreate);
             Edit = new Command(onEdit);
@@ -42,7 +43,8 @@ namespace LAMA.ViewModels
             Create = new Command(onCreateSave);
             Save = new Command(onSave);
 
-            record.IGotUpdated += onUpdated;
+
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
