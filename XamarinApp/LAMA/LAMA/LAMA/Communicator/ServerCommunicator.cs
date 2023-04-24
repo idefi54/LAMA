@@ -70,8 +70,12 @@ namespace LAMA.Communicator
             if (server != null) server.Abort();
             if (tokenLocationSending != null)
             {
-                tokenLocationSending.Cancel();
-                tokenLocationSending.Dispose();
+                try
+                {
+                    tokenLocationSending.Cancel();
+                    tokenLocationSending.Dispose();
+                }
+                catch (ObjectDisposedException) { }
             }
             clientSockets = new Dictionary<int, Socket>();
         }
@@ -312,14 +316,14 @@ namespace LAMA.Communicator
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                     }));
                 }
-                if (messageParts[1] == "GiveID")
+                if (messageParts[1] == "RequestID")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.GiveNewClientID(current, messageParts[2], messageParts[3], Int32.Parse(messageParts[4]));
                     }));
                 }
-                if (messageParts[1] == "GiveIDExisting")
+                if (messageParts[1] == "RequestIDExisting")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -369,9 +373,10 @@ namespace LAMA.Communicator
         /// <exception cref="NotAnIPAddressException"></exception>
         /// <exception cref="CantConnectToCentralServerException"></exception>
         /// <exception cref="CantConnectToDatabaseException"></exception>
-        /// <exception cref="WrongCreadintialsException"></exception>
+        /// <exception cref="WrongCredentialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
+            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             logger = new DebugLogger(false);
@@ -427,7 +432,7 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "serverExists")
                 {
-                    throw new WrongCreadintialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
+                    throw new WrongCredentialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
                 }
             }
             else
@@ -452,11 +457,11 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "credintials")
                 {
-                    throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
+                    throw new WrongCredentialsException("Špatné heslo, nebo neexistující server.");
                 }
                 else if (responseString == "password")
                 {
-                    throw new WrongCreadintialsException("password.");
+                    throw new WrongCredentialsException("password.");
                 }
             }
 
@@ -513,6 +518,12 @@ namespace LAMA.Communicator
             Debug.WriteLine("Initialization finished");
         }
 
+        private bool checkNgrokAddressFormat(string address)
+        {
+            Regex regex = new Regex("tcp://.*\\.tcp\\..*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
+            return regex.IsMatch(address);
+        }
+
         /// <summary>
         /// Create new ServerCommunicator - used to communicate with the clients
         /// </summary>
@@ -525,11 +536,13 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
         public ServerCommunicator(string name, string IP, int port, string password, string adminPassword, string nick, bool newServer)
         {
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
         }
 
@@ -544,11 +557,15 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
+        /// <exception cref="WrongNgrokAddressFormatException">The ngrok endpoint supplied isn't in a correct format</exception>
         public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
+            if (!checkNgrokAddressFormat(ngrokAddress)) throw new WrongNgrokAddressFormatException();
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
             Debug.WriteLine(addresses[0]);

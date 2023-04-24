@@ -1,5 +1,6 @@
 ﻿using LAMA.Colors;
 using LAMA.Communicator;
+using LAMA.Singletons;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -78,11 +79,39 @@ namespace LAMA.ViewModels
             //password - libovolné, klienti ho pak musí opakovat (u existujícího serveru [jméno] to pak při správném hesle edituje hodnoty)
             try
             {
+                if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, ngrokEndpoint, password, personalPassword, nick, isNewServer);
                 //new ServerCommunicator(name, IP, port, password);
                 Console.WriteLine("Communicator launched");
 
+            }
+            catch (PasswordTooShortException)
+            {
+                await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí mít minimálně 5 znaků.", "OK");
+                return;
+            }
+            catch (CantConnectToCentralServerException)
+            {
+                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
+                return;
+            }
+            catch (WrongNgrokAddressFormatException)
+            {
+                await App.Current.MainPage.DisplayAlert("Ngrok Adresa", "Uvedená ngrok adresa není ve správném formátu - příklad validní ngrok adresy: tcp://2.tcp.eu.ngrok.io:19912", "OK");
+                return;
+            }
+            catch (WrongCredentialsException)
+            {
+                if (isNewServer)
+                {
+                    await App.Current.MainPage.DisplayAlert("Jméno Serveru", "Server s tímto jménem už existuje. Zvolte jiné jméno, nebo se přihlašte jako existující server.", "OK");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Server s tímto jménem buď neexistuje, nebo jste zadali špatné heslo.", "OK");
+                }
+                return;
             }
             catch (Exception e)
             {

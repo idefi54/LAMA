@@ -403,13 +403,13 @@ namespace LAMA.Communicator
             if (isNew)
             {
                 SendCommand(new Command(
-                    $"GiveID{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    $"RequestID{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             else
             {
                 SendCommand(new Command(
-                    $"GiveIDExisting{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    $"RequestIDExisting{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             if (broadcastTimer == null)
@@ -541,7 +541,7 @@ namespace LAMA.Communicator
         /// </summary>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used</exception>
         /// <exception cref="NonExistentServerException">Server with this name doesn't exist</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
@@ -578,7 +578,7 @@ namespace LAMA.Communicator
             }
             else if (responseString == "credintials")
             {
-                throw new WrongCreadintialsException("Špatné heslo nebo neexistující server.");
+                throw new WrongCredentialsException("Špatné heslo nebo neexistující server.");
             }
             //Managed to connect to the central server database and the LARP server exists
             else
@@ -645,7 +645,7 @@ namespace LAMA.Communicator
         /// </summary>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used</exception>
         /// <exception cref="NonExistentServerException">Server with this name doesn't exist</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="ServerConnectionRefusedException">The server refused your connection</exception>
@@ -682,7 +682,7 @@ namespace LAMA.Communicator
             }
             else if (responseString == "credintials")
             {
-                throw new WrongCreadintialsException("Špatné heslo nebo neexistující server.");
+                throw new WrongCredentialsException("Špatné heslo, nebo neexistující server.");
             }
             //Managed to connect to the central server database and the LARP server exists
             else

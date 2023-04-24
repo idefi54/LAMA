@@ -53,10 +53,12 @@ namespace LAMA.ViewModels
             string clientName = ClientName;
             CreatingCP = true;
             LoginEnabled = false;
-
-            //možnost vybrat
             try
             {
+                if (password.Length < 5)
+                {
+                    throw new PasswordTooShortException();
+                }
                 //client Name - přezdívka klienta
                 //password - heslo klienta
                 communicator.LoginAsCP(clientName, password, isNew);
@@ -77,10 +79,37 @@ namespace LAMA.ViewModels
                         timer += 0.5f;
                         if (timer > 5.0f)
                         {
-                            throw new Exception("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
+                            throw new TimeoutException("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
                         }
                     }
                 }
+            }
+            catch (PasswordTooShortException)
+            {
+                await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí obsahovat alespoň 5 znaků", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+            }
+            catch (ClientRefusedException)
+            {
+                if (isNew) {
+                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem už existuje, zvolte prosím jiné jméno", "OK");
+                } 
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem neexistuje, nebo jste zadal/a špatné heslo", "OK");
+                }
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+            }
+            catch (TimeoutException)
+            {
+                await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "Server nezareagoval na přihlášení, zkontrolujte připojení nebo opakujte přihlášení později.", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
             }
             catch (Exception e)
             {
