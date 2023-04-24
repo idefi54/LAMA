@@ -26,6 +26,11 @@ namespace LAMA
         }
 
         public RememberedList<T, Storage> rememberedList;
+
+        public static void reset()
+        {
+            _instance = null;
+        }
     }
 
     internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.DictionaryStorageInterface, new()

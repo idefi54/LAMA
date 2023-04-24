@@ -92,14 +92,14 @@ namespace LAMA
                 _connection = null;
                 File.Delete(path);
 
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList = null;
-                DatabaseHolder<CP, CPStorage>.Instance.rememberedList = null;
-                DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList = null;
-                DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList = null;
-                DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList = null;
-                DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList = null;
-                DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList = null;
-                DatabaseHolder<Road, RoadStorage>.Instance.rememberedList = null;
+                DatabaseHolder<ChatMessage, ChatMessageStorage>.reset();
+                DatabaseHolder<CP, CPStorage>.reset();
+                DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.reset();
+                DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.reset();
+                DatabaseHolder<InventoryItem, InventoryItemStorage>.reset();
+                DatabaseHolder<LarpActivity, LarpActivityStorage>.reset();
+                DatabaseHolder<PointOfInterest, PointOfInterestStorage>.reset();
+                DatabaseHolder<Road, RoadStorage>.reset();
                 LocalStorage.reset();
                 LarpEvent.reset();
 
