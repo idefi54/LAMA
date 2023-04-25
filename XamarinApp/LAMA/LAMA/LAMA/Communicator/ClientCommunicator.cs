@@ -234,6 +234,13 @@ namespace LAMA.Communicator
                         THIS.ClientRefused(Int32.Parse(messageParts[2]), messageParts[3]);
                     }));
                 }
+                if (messageParts[1] == "UpdateFinished")
+                {
+                    Device.BeginInvokeOnMainThread(new Action(() =>
+                    {
+                        THIS.UpdateFinished();
+                    }));
+                }
             }
             try
             {
@@ -256,10 +263,14 @@ namespace LAMA.Communicator
         /// <param name="cpId"></param>
         private void ReceiveID(int clientId, int cpId)
         {
-            RequestUpdate();
             LocalStorage.clientID = clientId;
             LocalStorage.cpID = cpId;
+            RequestUpdate();
             Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
+        }
+
+        private void UpdateFinished()
+        {
             loggedIn = true;
         }
         
@@ -478,8 +489,6 @@ namespace LAMA.Communicator
         {
             Debug.WriteLine("Connected");
             if (LocalStorage.clientID != -1 )
-            RequestUpdate();
-            logger.LogWrite("connected set true");
             _connected = true;
             THIS.wasUpdated = true;
         }

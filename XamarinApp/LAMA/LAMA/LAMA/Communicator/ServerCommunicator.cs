@@ -775,6 +775,7 @@ namespace LAMA.Communicator
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
+            SendCommand(new Command("UpdateFinished", "update"));
         }
     }
 }
