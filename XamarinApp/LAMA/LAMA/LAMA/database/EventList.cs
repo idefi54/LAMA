@@ -36,7 +36,7 @@ namespace LAMA
                 if (what.Equals(this[i])) 
                 {
                     RemoveAt(i);
-                    dataChanged.Invoke();
+                    dataChanged?.Invoke();
                     return;
                 }
             }
@@ -57,7 +57,7 @@ namespace LAMA
                 for (int i = 0; i < Count; ++i) 
                 {
                     if(!first)
-                        output.Append(Helpers.separator + " ");
+                        output.Append(Helpers.separator);
 
                     if(first)
                         first = false;
@@ -84,7 +84,7 @@ namespace LAMA
         public new void Clear()
         {
             base.Clear();
-            dataChanged.Invoke();
+            dataChanged?.Invoke();
         }
 
         public void Update (EventList<T> otherOne)
@@ -102,7 +102,7 @@ namespace LAMA
                 else
                     base.Add(otherOne[i]);
             }
-            dataChanged.Invoke();
+            dataChanged?.Invoke();
         }
     }
 }

@@ -16,12 +16,10 @@ namespace LAMA.ViewModels
         public string EndDay { get { return _endDay; } set { SetProperty(ref _endDay, value); } }
 
         public string Name { get; set; }
-        public string ChatChannels { get; set; }
         public string NewChannel { get; set; }
         public bool CanChangeLarpEvent { get { return LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.ManageEvent); } }
         public bool CanNotChangeLarpEvent { get { return !CanChangeLarpEvent; } }
         public Command SaveCommand { get; set; }
-        public Command AddChannelCommand { get; set; }
 
         public Command SetStartDay { get; set; }
         public Command SetEndDay { get; set; }
@@ -30,17 +28,16 @@ namespace LAMA.ViewModels
         public LarpEventViewModel(INavigation navigation)
         {
             this.navigation = navigation;
-
+            
             Name = LarpEvent.Name;
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < LarpEvent.ChatChannels.Count; ++i)
             {
                 if(i !=0)
                     builder.Append(Environment.NewLine);
-                builder.Append(ChatChannels[i]);
+                builder.Append(LarpEvent.ChatChannels[i]);
             }
             SaveCommand = new Command(OnSave);
-            AddChannelCommand = new Command(OnAddChannel);
             SetStartDay = new Command(OnSetStartDay);
             SetEndDay = new Command(OnSetEndDay);
 
@@ -51,11 +48,6 @@ namespace LAMA.ViewModels
         void OnSave()
         {
             LarpEvent.Name = Name;
-        }
-        void OnAddChannel()
-        {
-            LarpEvent.ChatChannels.Add(NewChannel);
-            NewChannel = string.Empty;
         }
 
         async void OnSetStartDay()

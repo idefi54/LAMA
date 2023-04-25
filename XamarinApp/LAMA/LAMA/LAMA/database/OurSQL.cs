@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using LAMA.Models;
 using LAMA.Singletons;
+using LAMA.Communicator;
 
 namespace LAMA
 {
@@ -102,7 +103,10 @@ namespace LAMA
                 DatabaseHolder<Road, RoadStorage>.reset();
                 LocalStorage.reset();
                 LarpEvent.reset();
-
+                DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.reset();
+                DatabaseHolderStringDictionary<Command, CommandStorage>.reset();
+                //timevalie
+                //command
 
 
                 makeConnection();
