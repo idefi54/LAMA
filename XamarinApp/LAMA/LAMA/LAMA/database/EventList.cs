@@ -24,6 +24,14 @@ namespace LAMA
             base.Add(what);
             dataChanged?.Invoke();
         }
+
+        public new void RemoveAll(Predicate<T> predicate)
+        {
+            int lengthStart = Count;
+            base.RemoveAll(predicate);
+            if (lengthStart > Count) dataChanged?.Invoke();
+        }
+
         public new void RemoveAt(int where)
         {
             base.RemoveAt(where);

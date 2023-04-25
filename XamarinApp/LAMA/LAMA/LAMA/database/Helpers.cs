@@ -289,7 +289,7 @@ namespace LAMA
             for (int i = 0; i < input.Count; ++i)
             {
                 if (i != 0)
-                    output.Append(separator + " ");
+                    output.Append(separator);
                 output.Append((int)(object)input[i]);
             }
             return output.ToString();
