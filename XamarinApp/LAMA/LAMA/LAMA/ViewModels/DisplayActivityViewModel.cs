@@ -93,11 +93,27 @@ namespace LAMA.ViewModels
 			_messageService = DependencyService.Get<Services.IMessageService>();
 			Navigation = navigation;
 
-
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 
-            _activity = activity;
-            ActivityName = _activity.name;
+			Initialize(activity);
+
+			isRegistered = IsRegistered();
+
+			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
+			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
+			EditCommand = new Xamarin.Forms.Command(OnEdit);
+			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
+
+			SQLEvents.dataChanged += PropagateChanged;
+			SQLEvents.dataDeleted += PropagateDeleted;
+		}
+
+		private void Initialize(LarpActivity activity)
+		{
+			Dependencies.Clear();
+
+			_activity = activity;
+			ActivityName = _activity.name;
 
 			Name = _activity.name;
 			Description = _activity.description;
@@ -110,7 +126,7 @@ namespace LAMA.ViewModels
 			Preparations = _activity.preparationNeeded;
 			Location = _activity.place.ToString();
 
-			foreach(var id in _activity.prerequisiteIDs)
+			foreach (var id in _activity.prerequisiteIDs)
 			{
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
@@ -125,23 +141,38 @@ namespace LAMA.ViewModels
 			}
 
 			_items = new TrulyObservableCollection<ItemItemViewModel>();
-			foreach(var item in _activity.requiredItems)
-            {
+			foreach (var item in _activity.requiredItems)
+			{
 				InventoryItem invItem = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
 				_items.Add(new ItemItemViewModel(invItem, item.second));
-            }
-			
-
-
-			isRegistered = IsRegistered();
-
-			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
-			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
-			EditCommand = new Xamarin.Forms.Command(OnEdit);
-			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
+			}
 		}
 
-        private void UpdateDisplayedTime()
+		#region Database Propagate Events
+
+		private void PropagateChanged(Serializable changed, int changedAttributeIndex)
+		{
+			if (changed == null || changed.GetType() != typeof(LarpActivity) || ((LarpActivity)changed).getID() != _activity.getID())
+				return;
+
+			LarpActivity activity = (LarpActivity)changed;
+
+			Initialize(activity);
+		}
+
+		private void PropagateDeleted(Serializable deleted)
+		{
+			if (deleted == null || deleted.GetType() != typeof(LarpActivity) || ((LarpActivity)deleted).getID() != _activity.getID())
+				return;
+
+			_messageService.ShowAlertAsync("Právě zobrazovaná aktivita byla smazána. Budete vráceni zpět do předchozí obrazovky.", "Activita byla smazána");
+			Navigation.PopAsync();
+		}
+
+		#endregion
+
+
+		private void UpdateDisplayedTime()
 		{
 
 			DateTime startDateTime = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(_activity.start).ToLocalTime();
