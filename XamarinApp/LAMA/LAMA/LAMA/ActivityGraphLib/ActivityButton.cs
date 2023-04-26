@@ -92,6 +92,7 @@ namespace LAMA.ActivityGraphLib
             using (var paint = new SKPaint())
             {
                 // Fill
+                paint.IsAntialias = true;
                 paint.Color = Activity.GetGraphColor();
                 paint.Style = SKPaintStyle.Fill;
                 if (editing) paint.Color = paint.Color.WithAlpha(125);
@@ -108,10 +109,6 @@ namespace LAMA.ActivityGraphLib
             // Text on the button
             using (var paint = new SKPaint())
             {
-                paint.Style = SKPaintStyle.StrokeAndFill;
-                paint.TextSize = Height * _graph.Zoom * 0.4f;
-                paint.IsAntialias = true;
-
                 // Commented out breaking the text.
                 //int count = (int)textPaint.BreakText(Activity.name, Width, out float textWidth);
                 //var text = Activity.name.Substring(0, count);
@@ -123,16 +120,19 @@ namespace LAMA.ActivityGraphLib
                 float tx = X + Width / 2 - textWidth / 2;
                 float ty = Y + Height * _graph.Zoom * 0.6f;
 
-                // Outline
-                paint.StrokeWidth = 2f * _graph.Zoom;
+                // Normal
+                paint.TextSize = Height * _graph.Zoom * 0.4f;
+                paint.IsAntialias = true;
                 paint.FakeBoldText = true;
-                paint.Color = SKColors.Black.WithAlpha(200);
+                paint.Color = SKColors.Black;
+                paint.Style = SKPaintStyle.Stroke;
+                paint.StrokeWidth = 3f;// * _graph.Zoom;
                 canvas.DrawText(text, tx, ty, paint);
 
                 // Normal
+                //paint.FakeBoldText = false;
                 paint.Color = SKColors.White;
-                paint.StrokeWidth = 0.1f * _graph.Zoom;
-                paint.FakeBoldText = false;
+                paint.Style = SKPaintStyle.Fill;
                 canvas.DrawText(text, tx, ty, paint);
             }
 
@@ -144,6 +144,8 @@ namespace LAMA.ActivityGraphLib
             using (var paint = new SKPaint())
             {
                 float lx = X;
+
+                paint.IsAntialias = true;
                 paint.Color = SKColors.Green;
                 if (_editState == EditState.Left)
                 {
@@ -163,6 +165,7 @@ namespace LAMA.ActivityGraphLib
             using (var paint = new SKPaint())
             {
                 float rx = X + Width;
+                paint.IsAntialias = true;
                 paint.Color = SKColors.Green;
                 if (_editState == EditState.Right)
                 {
@@ -184,6 +187,8 @@ namespace LAMA.ActivityGraphLib
                 {
                     float mX = mouseX - Width / 2;
                     float mY = mouseY - Height / 2;
+
+                    paint.IsAntialias = true;
                     paint.Color = SKColors.Orange.WithAlpha(125);
                     canvas.DrawRect(mX, mY, Width, Height * _graph.Zoom, paint);
                     paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_graph.OffsetY);
