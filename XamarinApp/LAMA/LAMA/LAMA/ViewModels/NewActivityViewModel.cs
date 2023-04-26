@@ -445,8 +445,8 @@ namespace LAMA.ViewModels
 
 			int tmp_day = 0;
 
-			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0, 0, DateTimeKind.Utc);
-			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0, 0, DateTimeKind.Utc);
+			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0, 0, DateTimeKind.Local);
+			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0, 0, DateTimeKind.Local);
 
 
 			long start = finalStart.ToUnixTimeMilliseconds();
@@ -467,6 +467,10 @@ namespace LAMA.ViewModels
 				items, 
 				roles, 
 				registered);
+
+			// GraphY is not on the page, so needs to be transfered like this.
+			if (this.larpActivity != null)
+				larpActivity.GraphY = this.larpActivity.GraphY;
 
 			var activityDto = new LarpActivityDTO(larpActivity);
 			_createNewActivity(activityDto);

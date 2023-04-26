@@ -23,6 +23,7 @@ using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 using System.Reflection;
 using System.IO;
+using LAMA.Singletons;
 
 namespace LAMA.Services
 {
@@ -60,6 +61,13 @@ namespace LAMA.Services
         private bool _polylineAddition;
         private bool _polylineDeletion;
         private MapView _activeMapView;
+        private Polyline _limitsVisual;
+        private bool _isGlobalPanLimits =>
+            !double.IsInfinity(LarpEvent.minX) 
+            && !double.IsInfinity(LarpEvent.maxX)
+            && !double.IsInfinity(LarpEvent.minY)
+            && !double.IsInfinity(LarpEvent.maxY);
+        private bool _isGlobalZoomLimits => LarpEvent.maxZoom != -1 && LarpEvent.minZoom != -1;
         #endregion
 
         /// <summary>
@@ -117,10 +125,16 @@ namespace LAMA.Services
             _roadPolyLines = new Dictionary<long, Polyline>();
             _polylineBuffer = new Stack<Polyline>();
             _polylinePin = new Pin();
+
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
             _selectionPinVisible = false;
+
+            _limitsVisual = new Polyline();
+            _limitsVisual.StrokeColor = XColor.Red;
+            _limitsVisual.StrokeWidth = 2;
+
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
@@ -214,11 +228,17 @@ namespace LAMA.Services
         // Static methods do not need map data, they just work with given mapView.
         public static void SetZoomLimits(MapView view, double min, double max)
         {
+            if (min <= 0)
+            {
+                int last = view.Map.Resolutions.Count - 1;
+                min = view.Map.Resolutions[last];
+            }
+
             view.Map.Limiter.ZoomLimits = new Mapsui.UI.MinMax(min, max);
         }
-        public static void SetPanLimits(MapView view, double minLon, double minLat, double maxLon, double maxLat)
+        public static void SetPanLimits(MapView view, double minX, double minY, double maxX, double maxY)
         {
-            view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
+            view.Map.Limiter.PanLimits = new BoundingBox(minX, minY, maxX, maxY);
         }
         public static void CenterOn(MapView view, double longitude, double latitude)
         {
@@ -245,6 +265,19 @@ namespace LAMA.Services
             if (iconID == 2) return "flag_2";
             if (iconID == 3) return "tes_2";
             return "location_1";
+        }
+
+        public static void SetGlobalBoundsFromView(MapView view)
+        {
+            BoundingBox bounds = view.Viewport.Extent;
+            var zoom = view.Viewport.Resolution;
+
+            LarpEvent.minX = bounds.MinX;
+            LarpEvent.maxX = bounds.MaxX;
+            LarpEvent.minY = bounds.MinY;
+            LarpEvent.maxY = bounds.MaxY;
+            LarpEvent.minZoom = 0;
+            LarpEvent.maxZoom = zoom;
         }
         #endregion
 
@@ -302,11 +335,22 @@ namespace LAMA.Services
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
+            
+            bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
+            if (isClient && _isGlobalPanLimits)
+                SetPanLimits(view, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
+
+            if (isClient && _isGlobalZoomLimits)
+            {
+                SetZoomLimits(view, LarpEvent.minZoom, LarpEvent.maxZoom);
+                Zoom(view, LarpEvent.maxZoom);
+            }
 
             if (CurrentLocation != null)
                 view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
 
             view.Pins.Clear();
+            view.Drawables.Clear();
 
             _activityPins.Clear();
             _cpPins.Clear();
@@ -367,6 +411,20 @@ namespace LAMA.Services
                 foreach (Polyline polyline in _polylineBuffer)
                     view.Drawables.Add(polyline);
             }
+
+            if (_isGlobalPanLimits)
+            {
+                MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
+                MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
+                _limitsVisual.Positions.Clear();
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                view.Drawables.Add(_limitsVisual);
+            }
+
 
             view.Pins.Add(_selectionPin);
             _selectionPin.IsVisible = _selectionPinVisible;
@@ -499,7 +557,7 @@ namespace LAMA.Services
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
             PinSetIcon(pin, "location_3_profile");
-            pin.Scale = 0.2f;
+            pin.Scale = 0.8f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
 
@@ -1028,6 +1086,28 @@ namespace LAMA.Services
 
         private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
         {
+            if (changed is LarpEvent)
+            {
+                bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
+                if (isClient && _isGlobalPanLimits)
+                    SetPanLimits(_activeMapView, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
+
+                if (isClient && _isGlobalZoomLimits)
+                {
+                    SetZoomLimits(_activeMapView, LarpEvent.minZoom, LarpEvent.maxZoom);
+                    Zoom(_activeMapView, LarpEvent.maxZoom);
+                }
+
+                MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
+                MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
+                _limitsVisual.Positions.Clear();
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+            }
+
             if (changed is LarpActivity activity)
             {
                 RemoveActivity(activity.ID, _activeMapView);

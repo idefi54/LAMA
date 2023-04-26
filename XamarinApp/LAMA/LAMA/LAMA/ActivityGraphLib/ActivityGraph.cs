@@ -334,10 +334,18 @@ namespace LAMA.ActivityGraphLib
             canvas.DrawLine(0, offset, 10, offset, paint);
             canvas.DrawLine(0, offset + _height - 200, 10, offset + _height - 200, paint);
 
+            // Indicator for adding activities
             paint.Color = SKColors.Green;
             if (ActivityCreationMode)
-                canvas.DrawRect(_mouseX - 50, _mouseY - 25, 100, 50, paint);
-            
+            {
+                float hour = MinuteWidth * 60 * Zoom;
+                float left = _mouseX - hour / 2;
+                float top = _mouseY - ActivityButton.DEFAULT_HEIGHT / 2;
+                float width = hour;
+                float height = ActivityButton.DEFAULT_HEIGHT * Zoom;
+                canvas.DrawRect(left, top, width, height, paint);
+            }
+
             // Buttons
             DrawConnections(canvas);
             foreach (ActivityButton button in ActivityButtons)
@@ -375,6 +383,18 @@ namespace LAMA.ActivityGraphLib
                 if ((start - TimeOffset).Duration() < maxDifference)
                     ActivityButtons.Add(new ActivityButton(activity, this, _navigation));
             }
+        }
+
+        /// <summary>
+        /// Calculates GraphY for the LarpActivity from position on the graph.
+        /// </summary>
+        /// <param name="y">Pixel coordinates.</param>
+        /// <param name="height">Pixel coordinates.</param>
+        /// <returns></returns>
+        public float CalculateGraphY(float y, float height = ActivityButton.DEFAULT_HEIGHT)
+        {
+            y = (y - height / 2) / Zoom;
+            return (y - OffsetY / Zoom) / (Height - height);
         }
 
         /// <summary>

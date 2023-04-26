@@ -116,10 +116,12 @@ namespace LAMA.Views
                     _touchActions.Remove(args.Id);
                     _graph.DraggedButton = null;
 
+                    long hourMilliseconds = 60 * 60 * 1000;
                     var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
                     var activity = new LarpActivity();
-                    activity.GraphY = 20;
-                    activity.start = time.ToUnixTimeMilliseconds();
+                    activity.GraphY = _graph.CalculateGraphY(py);
+                    activity.start = time.ToUnixTimeMilliseconds() - hourMilliseconds / 2;
+                    activity.duration = hourMilliseconds;
                     activity.day = time.Day;
 
 

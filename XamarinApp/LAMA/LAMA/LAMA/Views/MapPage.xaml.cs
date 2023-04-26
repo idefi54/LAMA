@@ -92,6 +92,7 @@ namespace LAMA.Views
             bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
             EditLabel.IsVisible = canEdit;
             EditSwitch.IsVisible = canEdit;
+            SetGlobalBoundsButton.IsVisible = canEdit;
 
             // Add activity indicator
             var activityIndicator = new ActivityIndicator
