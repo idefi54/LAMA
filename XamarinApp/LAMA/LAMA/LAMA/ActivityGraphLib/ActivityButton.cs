@@ -92,8 +92,8 @@ namespace LAMA.ActivityGraphLib
             var paint = new SKPaint();
             paint.Color = Activity.GetGraphColor();
             if (editing) paint.Color = paint.Color.WithAlpha(125);
-            canvas.DrawRect(X, Y, Width, Height * _graph.Zoom, paint);
-
+            int radius = GetCornerRadius(Activity.eventType);
+            canvas.DrawRoundRect(X, Y, Width, Height * _graph.Zoom, radius, radius, paint);
 
             // Text on the button
             using (var textPaint = new SKPaint())
