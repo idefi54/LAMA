@@ -78,7 +78,7 @@ namespace LAMA.Communicator
             }
 
             BitArray bits = new BitArray(encodedSource.ToArray());
-            Debug.WriteLine("[{0}]", string.Join(", ", bits));
+            //Debug.WriteLine("[{0}]", string.Join(", ", bits));
             byte[] result = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(result, 0);
             return result;
@@ -185,7 +185,7 @@ namespace LAMA.Communicator
                 BitArray bits = new BitArray(byteBlock);
                 while (j < bits.Length)
                 {
-                    if (carryoverBits.Count > 0)
+                    if (carryoverBits.Count > 0 || current.Symbol == specialCharacter)
                     {
                         BitArray firstByte = new BitArray(8);
                         if (carryoverBits.Count >= 8)

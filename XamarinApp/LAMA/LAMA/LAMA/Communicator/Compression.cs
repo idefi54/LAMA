@@ -14,6 +14,7 @@ namespace LAMA.Communicator
             frequencies.Add(Separators.messageSeparator, 500);
             frequencies.Add(Separators.messagePartSeparator, 1000);
             frequencies.Add(Separators.attributesSeparator, 1000);
+            frequencies.Add(Helpers.separator, 1000);
 
             frequencies.Add(' ', 1000);
             frequencies.Add(',', 100);

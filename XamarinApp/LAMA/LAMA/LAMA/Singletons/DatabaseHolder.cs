@@ -13,8 +13,6 @@ namespace LAMA
                 if (_instance == null)
                 {
                     _instance = new DatabaseHolder<T, Storage>();
-                    Debug.WriteLine("setting instance");
-                    Debug.WriteLine(_instance);
                 }
                 return _instance;
             }
@@ -23,18 +21,25 @@ namespace LAMA
         // Object Specific
         private DatabaseHolder()
         {
-            Debug.WriteLine("Database Holder");
             var sql = new OurSQL<T, Storage>();
-            Debug.WriteLine("OurSQL finished");
             rememberedList = new RememberedList<T, Storage>(sql);
-            Debug.WriteLine("Remembered list initialized");
         }
 
         public RememberedList<T, Storage> rememberedList;
+
+        public static void reset()
+        {
+            _instance = null;
+        }
     }
 
     internal class DatabaseHolderStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage : Database.DictionaryStorageInterface, new()
     {
+        public static void reset()
+        {
+            _instance = null;
+        }
+
         // Singleton
         private static DatabaseHolderStringDictionary<T, Storage> _instance;
         public static DatabaseHolderStringDictionary<T, Storage> Instance

@@ -49,11 +49,11 @@ namespace LAMA.ViewModels
 
 		#region Time
 
-		private DateTime _startTime;
-		public DateTime StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
+		private TimeSpan _startTime;
+		public TimeSpan StartTime { get { return _startTime; } set { SetProperty(ref _startTime, value); } }
 
-		private DateTime _endTime;
-		public DateTime EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
+		private TimeSpan _endTime;
+		public TimeSpan EndTime { get { return _endTime; } set { SetProperty(ref _endTime, value); } }
 
 		private DateTime _startDate;
 		public DateTime StartDate
@@ -99,7 +99,7 @@ namespace LAMA.ViewModels
 			get { return _startTimeStringHourSelected; }
 			set 
 			{
-				StartTime = new DateTime(2000, 1, 1, value, StartTime.Minute, 0);
+				StartTime = new TimeSpan(value, StartTime.Minutes,0);
 				SetProperty(ref _startTimeStringHourSelected, value);
 			}
 		}
@@ -110,7 +110,7 @@ namespace LAMA.ViewModels
 			get { return _startTimeStringMinuteSelected; }
 			set
 			{
-				StartTime = new DateTime(2000, 1, 1, StartTime.Hour, value, 0);
+				StartTime = new TimeSpan(StartTime.Hours, value, 0);
 				SetProperty(ref _startTimeStringMinuteSelected, value); 
 			}
 		}
@@ -122,7 +122,7 @@ namespace LAMA.ViewModels
 			get { return _endTimeStringHourSelected; }
 			set
 			{
-				EndTime = new DateTime(2000, 1, 1, value, EndTime.Minute, 0);
+				EndTime = new TimeSpan(value, EndTime.Minutes, 0);
 				SetProperty(ref _endTimeStringHourSelected, value);
 			}
 		}
@@ -133,7 +133,7 @@ namespace LAMA.ViewModels
 			get { return _endTimeStringMinuteSelected; }
 			set
 			{
-				EndTime = new DateTime(2000, 1, 1, EndTime.Hour, value, 0);
+				EndTime = new TimeSpan(EndTime.Hours, value, 0);
 				SetProperty(ref _endTimeStringMinuteSelected, value);
 			}
 		}
@@ -230,14 +230,14 @@ namespace LAMA.ViewModels
 				Preparations = "";
 			}
 
-			StartTime = StartDate;
-			EndTime = EndDate;
+			StartTime = new TimeSpan(StartDate.Hour, StartDate.Minute, 0);
+			EndTime = new TimeSpan(EndDate.Hour, EndDate.Minute, 0);
 
-			StartTimeStringHourSelected = StartTime.Hour;
-			StartTimeStringMinuteSelected = StartTime.Minute - StartTime.Minute%5;
+			StartTimeStringHourSelected = StartTime.Hours;
+			StartTimeStringMinuteSelected = StartTime.Minutes - StartTime.Minutes%5;
 
-			EndTimeStringHourSelected = EndTime.Hour;
-			EndTimeStringMinuteSelected = EndTime.Minute - EndTime.Minute%5;
+			EndTimeStringHourSelected = EndTime.Hours;
+			EndTimeStringMinuteSelected = EndTime.Minutes - EndTime.Minutes%5;
 
 			_navigation = navigation;
 			_createNewActivity = createNewActivity;
@@ -341,8 +341,8 @@ namespace LAMA.ViewModels
 				messageBuilder.AppendLine("Nemohou být dvě role se stejným názvem.");
             }
 
-			DateTime start = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0);
-			DateTime end = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0);
+			DateTime start = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0);
+			DateTime end = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0);
 
 			if(start >= end)
 			{
@@ -445,8 +445,8 @@ namespace LAMA.ViewModels
 
 			int tmp_day = 0;
 
-			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, 0, 0, DateTimeKind.Utc);
-			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, 0, 0, DateTimeKind.Utc);
+			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0, 0, DateTimeKind.Local);
+			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0, 0, DateTimeKind.Local);
 
 
 			long start = finalStart.ToUnixTimeMilliseconds();
@@ -467,6 +467,10 @@ namespace LAMA.ViewModels
 				items, 
 				roles, 
 				registered);
+
+			// GraphY is not on the page, so needs to be transfered like this.
+			if (this.larpActivity != null)
+				larpActivity.GraphY = this.larpActivity.GraphY;
 
 			var activityDto = new LarpActivityDTO(larpActivity);
 			_createNewActivity(activityDto);

@@ -22,14 +22,12 @@ namespace LAMA.Views
 
         public static void InitPage(ClientCommunicator communicator, bool newClient)
         {
-            Debug.WriteLine("InitPageChooseName");
             ClientChooseNamePage.communicator = communicator;
             ClientChooseNamePage.newClient = newClient;
         }
 
         public ClientChooseNamePage()
         {
-            Debug.WriteLine("ClientChooseNamePage");
             InitializeComponent();
             this.BindingContext = new ClientChooseNameViewModel(communicator, newClient);
         }

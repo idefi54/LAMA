@@ -18,13 +18,29 @@ namespace LAMA.Views
     public partial class ActivityGraphPage : ContentPage
     {
         private ActivityGraph _graph;
-        private ActivityButton _draggedButton;
         private Dictionary<long, TouchActionEventArgs> _touchActions;
         private TouchTrackingPoint _lastLocation;
         private float _baseDistance;
         private float _baseZoom;
 
-        public ActivityGraphPage(LarpActivity activity = null)
+        public ActivityGraphPage()
+        {
+            // Regular setup
+            InitializeComponent();
+            _touchActions = new Dictionary<long, TouchActionEventArgs>();
+
+            // Create platform specific GUI
+            var gui = DependencyService.Get<IActivityGraphGUI>();
+            (Content, _graph) = gui.CreateGUI(Navigation);
+
+            // Setup Touch effect - this is a nuget package
+            var touchEffect = new TouchEffect();
+            touchEffect.Capture = true;
+            touchEffect.TouchAction += OnTouchEffectAction;
+            Content.Effects.Add(touchEffect);
+        }
+
+        public ActivityGraphPage(LarpActivity activity)
         {
             // Regular setup
             InitializeComponent();
@@ -51,6 +67,9 @@ namespace LAMA.Views
 
         public void OnTouchEffectAction(object sender, TouchActionEventArgs args)
         {
+            float px = _graph.ToPixels(args.Location.X);
+            float py = _graph.ToPixels(args.Location.Y - _graph.XamOffset);
+
             // New Press
             if (args.Type == TouchActionType.Pressed)
             {
@@ -60,8 +79,18 @@ namespace LAMA.Views
                 // Clicking a button
                 if (_touchActions.Count == 1)
                 {
-                    _draggedButton = _graph.GetButtonAt(args.Location.X, args.Location.Y);
-                    _draggedButton?.ClickEdit(args.Location.X, args.Location.Y);
+                    var button = _graph.GetButtonAt(px, py);
+
+                    if (!_graph.EditMode && button != null)
+                    {
+                        _touchActions.Clear();
+                        button.Click();
+                    }
+                    else if (button != null)
+                    {
+                        button.ClickEdit(px, py);
+                        _graph.DraggedButton = button;
+                    }
                 }
 
                 // Save for computing change in location
@@ -83,32 +112,39 @@ namespace LAMA.Views
                 // Create new activity -> redirect to NewActivtyPage
                 if (_graph.ActivityCreationMode)
                 {
-                    var time = _graph.ToLocalTime(_lastLocation.X);
+                    var time = _graph.ToLocalTime(px);
                     _touchActions.Remove(args.Id);
-                    _draggedButton = null;
+                    _graph.DraggedButton = null;
+
+                    long hourMilliseconds = 60 * 60 * 1000;
+                    var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+                    var activity = new LarpActivity();
+                    activity.GraphY = _graph.CalculateGraphY(py);
+                    activity.start = time.ToUnixTimeMilliseconds() - hourMilliseconds / 2;
+                    activity.duration = hourMilliseconds;
+                    activity.day = time.Day;
+
+
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
-                        activityDTO.ID = (int)DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
-                        activityDTO.start = time.ToUnixTimeMilliseconds();
-                        activityDTO.day = time.Day;
+                        activityDTO.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
                         LarpActivity newActivity = activityDTO.CreateLarpActivity();
                         DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.add(newActivity);
-                    }
+                    }, activity
                     ));
                 }
             }
 
             // Moving button
-            if (args.Type == TouchActionType.Moved && _draggedButton != null)
+            if (args.Type == TouchActionType.Moved && _graph.DraggedButton != null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
-                _draggedButton.MoveEdit(args.Location.X, args.Location.Y);
             }
 
             // Control graph view
-            if (args.Type == TouchActionType.Moved && _draggedButton == null)
+            if (args.Type == TouchActionType.Moved && _graph.DraggedButton == null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
@@ -116,8 +152,8 @@ namespace LAMA.Views
                 // Scroll graph
                 if (_touchActions.Count == 1)
                 {
-                    float diffX = args.Location.X - _lastLocation.X;
-                    float diffY = args.Location.Y - _lastLocation.Y;
+                    float diffX = _graph.ToPixels(args.Location.X - _lastLocation.X);
+                    float diffY = _graph.ToPixels(args.Location.Y - _lastLocation.Y);
                     _lastLocation = args.Location;
                     _graph.Move(diffX, diffY);
                 }
@@ -138,8 +174,12 @@ namespace LAMA.Views
             // Release
             if (args.Type == TouchActionType.Released)
             {
-                _draggedButton?.ReleaseEdit();
-                _draggedButton = null;
+                if (_graph.DraggedButton != null)
+                {
+                    _graph.DraggedButton.ReleaseEdit(px, py);
+                    _graph.DraggedButton = null;
+                }
+
                 _touchActions.Remove(args.Id);
             }
 

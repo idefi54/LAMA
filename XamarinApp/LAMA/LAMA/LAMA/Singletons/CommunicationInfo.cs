@@ -35,5 +35,6 @@ namespace LAMA.Singletons
             }
         }
         public string ServerName;
+        public bool IsServer;
     }
 }

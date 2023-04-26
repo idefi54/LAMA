@@ -23,6 +23,7 @@ using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 using System.Reflection;
 using System.IO;
+using LAMA.Singletons;
 
 namespace LAMA.Services
 {
@@ -35,7 +36,7 @@ namespace LAMA.Services
         private Dictionary<ulong, Pin> _alertPins;
         private Dictionary<long, Pin> _cpPins;
         private Dictionary<long, Pin> _pointOfInterestPins;
-        private Dictionary<long, Polyline> _polyLines;
+        private Dictionary<long, Polyline> _roadPolyLines;
         private Stack<Polyline> _polylineBuffer;
         private List<Pin> _pins;
 
@@ -59,8 +60,20 @@ namespace LAMA.Services
         private EntityType _filter = EntityType.Nothing;
         private bool _polylineAddition;
         private bool _polylineDeletion;
+        private MapView _activeMapView;
+        private Polyline _limitsVisual;
+        private bool _isGlobalPanLimits =>
+            !double.IsInfinity(LarpEvent.minX) 
+            && !double.IsInfinity(LarpEvent.maxX)
+            && !double.IsInfinity(LarpEvent.minY)
+            && !double.IsInfinity(LarpEvent.maxY);
+        private bool _isGlobalZoomLimits => LarpEvent.maxZoom != -1 && LarpEvent.minZoom != -1;
         #endregion
 
+        /// <summary>
+        /// Use GPU for drawing all mapviews?
+        /// WPF has a bug, where this has to be disabled.
+        /// </summary>
         public static bool UseGPU
         {
             get => MapControl.UseGPU;
@@ -109,20 +122,31 @@ namespace LAMA.Services
             _alertPins = new Dictionary<ulong, Pin>();
             _cpPins = new Dictionary<long, Pin>();
             _pointOfInterestPins = new Dictionary<long, Pin>();
-            _polyLines = new Dictionary<long, Polyline>();
+            _roadPolyLines = new Dictionary<long, Polyline>();
             _polylineBuffer = new Stack<Polyline>();
             _polylinePin = new Pin();
+
             _selectionPin = new Pin();
             _selectionPin.Label = "temp";
             _selectionPin.Color = _highlightColor;
             _selectionPinVisible = false;
+
+            _limitsVisual = new Polyline();
+            _limitsVisual.StrokeColor = XColor.Red;
+            _limitsVisual.StrokeWidth = 2;
+
             _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
             _time = 0;
             _prevTime = 0;
             _currentLocation = null;
+
+            SQLEvents.created += SQLEvents_created;
+            SQLEvents.dataDeleted += SQLEvents_dataDeleted;
+            SQLEvents.dataChanged += SQLEvents_dataChanged;
         }
+
 
         #region FILTER
         /// <summary>
@@ -204,11 +228,17 @@ namespace LAMA.Services
         // Static methods do not need map data, they just work with given mapView.
         public static void SetZoomLimits(MapView view, double min, double max)
         {
+            if (min <= 0)
+            {
+                int last = view.Map.Resolutions.Count - 1;
+                min = view.Map.Resolutions[last];
+            }
+
             view.Map.Limiter.ZoomLimits = new Mapsui.UI.MinMax(min, max);
         }
-        public static void SetPanLimits(MapView view, double minLon, double minLat, double maxLon, double maxLat)
+        public static void SetPanLimits(MapView view, double minX, double minY, double maxX, double maxY)
         {
-            view.Map.Limiter.PanLimits = new BoundingBox(minLon, minLat, maxLon, maxLat);
+            view.Map.Limiter.PanLimits = new BoundingBox(minX, minY, maxX, maxY);
         }
         public static void CenterOn(MapView view, double longitude, double latitude)
         {
@@ -235,6 +265,19 @@ namespace LAMA.Services
             if (iconID == 2) return "flag_2";
             if (iconID == 3) return "tes_2";
             return "location_1";
+        }
+
+        public static void SetGlobalBoundsFromView(MapView view)
+        {
+            BoundingBox bounds = view.Viewport.Extent;
+            var zoom = view.Viewport.Resolution;
+
+            LarpEvent.minX = bounds.MinX;
+            LarpEvent.maxX = bounds.MaxX;
+            LarpEvent.minY = bounds.MinY;
+            LarpEvent.maxY = bounds.MaxY;
+            LarpEvent.minZoom = 0;
+            LarpEvent.maxZoom = zoom;
         }
         #endregion
 
@@ -263,6 +306,7 @@ namespace LAMA.Services
 
             ReloadMapView(view);
             RefreshMapView(view);
+            _activeMapView = view;
         }
 
         /// <summary>
@@ -275,8 +319,10 @@ namespace LAMA.Services
             _polylinePin.IsVisible = false;
             // TODO - save things
             PolylineFlush();
-            foreach (long id in _polyLines.Keys)
-                SavePolyline(id);
+            //foreach (long id in _roadPolyLines.Keys)
+            //    SavePolyline(id);
+
+            _activeMapView = null;
         }
 
         /// <summary>
@@ -289,29 +335,33 @@ namespace LAMA.Services
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
+            
+            bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
+            if (isClient && _isGlobalPanLimits)
+                SetPanLimits(view, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
+
+            if (isClient && _isGlobalZoomLimits)
+            {
+                SetZoomLimits(view, LarpEvent.minZoom, LarpEvent.maxZoom);
+                Zoom(view, LarpEvent.maxZoom);
+            }
 
             if (CurrentLocation != null)
                 view.MyLocationLayer.UpdateMyLocation(new Position(CurrentLocation.Latitude, CurrentLocation.Longitude));
 
             view.Pins.Clear();
+            view.Drawables.Clear();
 
             _activityPins.Clear();
             _cpPins.Clear();
             _alertPins.Clear();
             _pointOfInterestPins.Clear();
-            _polyLines.Clear();
+            _roadPolyLines.Clear();
 
             LoadActivities();
             LoadCPs();
             LoadPointsOfIntrest();
             LoadRoads();
-
-            // Zoom in when clicked home button
-            view.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-            {
-                if (e.PropertyName == "MyLocationFollow")
-                    Zoom(view, view.Map.Resolutions[view.Map.Resolutions.Count - 7]);
-            };
         }
 
         /// <summary>
@@ -355,12 +405,26 @@ namespace LAMA.Services
 
             if (IsFilteredIn(EntityType.Polylines))
             {
-                foreach (Polyline polyline in _polyLines.Values)
+                foreach (Polyline polyline in _roadPolyLines.Values)
                     view.Drawables.Add(polyline);
 
                 foreach (Polyline polyline in _polylineBuffer)
                     view.Drawables.Add(polyline);
             }
+
+            if (_isGlobalPanLimits)
+            {
+                MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
+                MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
+                _limitsVisual.Positions.Clear();
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                view.Drawables.Add(_limitsVisual);
+            }
+
 
             view.Pins.Add(_selectionPin);
             _selectionPin.IsVisible = _selectionPinVisible;
@@ -387,7 +451,6 @@ namespace LAMA.Services
             view.MyLocationLayer.UpdateMyLocation(new Position(location.Latitude, location.Longitude), false);
             CurrentLocation = location;
         }
-
 
         /// <summary>
         /// Enables or disables the icon showing our location from the gps.
@@ -425,7 +488,6 @@ namespace LAMA.Services
         /// <summary>
         /// Adds a general pin to the internal data.
         /// Also adds the pin to a MapView if specfied.
-        /// 
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
@@ -442,7 +504,7 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Adds the event to internal data.
+        /// Adds the Activity to the internal data.
         /// Also adds a pin to a MapView if specified.
         /// </summary>
         /// <param name="activity"></param>
@@ -485,11 +547,17 @@ namespace LAMA.Services
                 view.Pins.Add(pin);
         }
 
+        /// <summary>
+        /// Adds the CP to the internal data.
+        /// Also adds a pin to a MapView if specified.
+        /// </summary>
+        /// <param name="cp"></param>
+        /// <param name="view"></param>
         public void AddCP(CP cp, MapView view = null)
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
             PinSetIcon(pin, "location_3_profile");
-            pin.Scale = 0.2f;
+            pin.Scale = 0.8f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
 
@@ -499,6 +567,12 @@ namespace LAMA.Services
                 view.Pins.Add(pin);
         }
 
+        /// <summary>
+        /// Adds the PointOfInterest to the internal data.
+        /// Also adds a pin to a MapView if specified.
+        /// </summary>
+        /// <param name="poi"></param>
+        /// <param name="view"></param>
         public void AddPointOfInterest(PointOfInterest poi, MapView view = null)
         {
             Pin pin = CreatePin(poi.Coordinates.first, poi.Coordinates.second, "POI", view);
@@ -514,7 +588,31 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Adds the alert to the internal data.
+        /// Adds the Road to the internal data.
+        /// Also adds Polyline to a MapView if specified.
+        /// </summary>
+        /// <param name="road"></param>
+        /// <param name="view"></param>
+        public void AddRoad(Road road, MapView view = null)
+        {
+            var polyline = new Polyline();
+            polyline.StrokeWidth = (float)road.Thickness;
+            polyline.StrokeColor = new XColor(
+                road.Color[0], // R
+                road.Color[1], // G
+                road.Color[2], // B
+                road.Color[3]  // A
+                );
+
+            foreach (var coords in road.Coordinates)
+                polyline.Positions.Add(new Position(coords.second, coords.first));
+
+            _roadPolyLines.Add(road.ID, polyline);
+            view?.Drawables.Add(polyline);
+        }
+
+        /// <summary>
+        /// Adds an alert to the internal data.
         /// Also adds a pin to a MapView if specified.
         /// </summary>
         /// <param name="lon"></param>
@@ -539,45 +637,78 @@ namespace LAMA.Services
         }
 
         /// <summary>
-        /// Removes polyline from internal data.
+        /// Removes the Road from the internal data.
         /// Immediately removes from MapView, if specified.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="view"></param>
-        public void RemovePolyline(long id, MapView view = null)
+        public void RemoveRoad(long id, MapView view = null)
         {
-            view?.Drawables.Remove(_polyLines[id]);
-            _polyLines.Remove(id);
+            if (!_roadPolyLines.ContainsKey(id))
+                return;
+
+            view?.Drawables.Remove(_roadPolyLines[id]);
+            _roadPolyLines.Remove(id);
         }
 
         /// <summary>
-        /// Removes the event from the internal data.
+        /// Removes the Activity from the internal data.
         /// Also removes it from MapView if specified.
         /// </summary>
         /// <param name="activityID"></param>
         /// <param name="view"></param>
         public void RemoveActivity(long activityID, MapView view = null)
         {
+            if (!_activityPins.ContainsKey(activityID))
+                return;
+
             view?.Pins.Remove(_activityPins[activityID]);
             _activityPins.Remove(activityID);
         }
 
         /// <summary>
-        /// Removes the alert from the internal data.
+        /// Removes the Alert from the internal data.
         /// Also removes it from a MapView if specified.
         /// </summary>
-        /// <param name="noficationID"></param>
+        /// <param name="alertID"></param>
         /// <param name="view"></param>
-        public void RemoveAlert(ulong noficationID, MapView view = null)
+        public void RemoveAlert(ulong alertID, MapView view = null)
         {
-            view?.Pins.Remove(_alertPins[noficationID]);
-            _alertPins.Remove(noficationID);
+            if (!_alertPins.ContainsKey(alertID))
+                return;
+
+            view?.Pins.Remove(_alertPins[alertID]);
+            _alertPins.Remove(alertID);
         }
 
-        public void RemovePOI(long poiID, MapView view = null)
+        /// <summary>
+        /// Removes the PointOfInterest from the internal data.
+        /// Also removes it from a MapView if specified.
+        /// </summary>
+        /// <param name="poiID"></param>
+        /// <param name="view"></param>
+        public void RemovePointOfInterest(long poiID, MapView view = null)
         {
+            if (!_pointOfInterestPins.ContainsKey(poiID))
+                return;
+
             view?.Pins.Remove(_pointOfInterestPins[poiID]);
             _pointOfInterestPins.Remove(poiID);
+        }
+
+        /// <summary>
+        /// Removes the CP from the internal data.
+        /// Also removes it from a MapView if specified.
+        /// </summary>
+        /// <param name="cpID"></param>
+        /// <param name="view"></param>
+        public void RemoveCP(long cpID, MapView view = null)
+        {
+            if (!_cpPins.ContainsKey(cpID))
+                return;
+
+            view?.Pins.Remove(_cpPins[cpID]);
+            _cpPins.Remove(cpID);
         }
 
         /// <summary>
@@ -588,6 +719,9 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void RemovePin(Pin pin, MapView view = null)
         {
+            if (!_pins.Contains(pin))
+                return;
+
             _pins.Remove(pin);
             view?.Pins.Remove(pin);
         }
@@ -670,7 +804,7 @@ namespace LAMA.Services
         public long AddPolyline(Polyline polyline, MapView view = null)
         {
             long id = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.nextID();
-            _polyLines.Add(id, polyline);
+            _roadPolyLines.Add(id, polyline);
             view?.Drawables.Add(polyline);
             return id;
         }
@@ -681,20 +815,21 @@ namespace LAMA.Services
         public void PolylineFlush()
         {
             foreach (var polyline in _polylineBuffer)
-                AddPolyline(polyline);
+                SavePolyline(polyline);
         }
 
         public void PolylineDeletion() { _polylineDeletion = true; }
         public void PolylineStopDeletion() { _polylineDeletion = false; }
 
-        private void SavePolyline(long id)
+        private void SavePolyline(Polyline polyline)
         {
             var road = new Road();
-            var polyline = _polyLines[id];
             var c = polyline.StrokeColor;
+            var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
 
-            road.ID = id;
+            road.ID = rememberedList.nextID();
             road.Thickness = polyline.StrokeWidth;
+            road.Color.Clear();
             road.Color.Add(c.R);
             road.Color.Add(c.G);
             road.Color.Add(c.B);
@@ -703,23 +838,11 @@ namespace LAMA.Services
             foreach (var pos in polyline.Positions)
                 road.Coordinates.Add(new Pair<double, double>(pos.Longitude, pos.Latitude));
 
-            DatabaseHolder<Road, RoadStorage>.Instance.rememberedList.add(road);
+            rememberedList.add(road);
         }
         private long LoadRoad(Road road)
         {
-            var polyline = new Polyline();
-            polyline.StrokeWidth = (float)road.Thickness;
-            polyline.StrokeColor = new XColor(
-                road.Color[0], // R
-                road.Color[1], // G
-                road.Color[2], // B
-                road.Color[3]  // A
-                );
-
-            foreach (var coords in road.Coordinates)
-                polyline.Positions.Add(new Position(coords.second, coords.first));
-
-            _polyLines[road.ID] = polyline;
+            AddRoad(road);
             return road.ID;
         }
         #endregion
@@ -836,7 +959,7 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            foreach (int id in _activityPins.Keys)
+            foreach (long id in _activityPins.Keys)
                 if (_activityPins[id] == e.Pin)
                 {
                     OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
@@ -845,6 +968,7 @@ namespace LAMA.Services
             _prevTime = _time;
             e.Handled = true;
         }
+
         private void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
             if (_polylineAddition || _polylineDeletion)
@@ -867,6 +991,9 @@ namespace LAMA.Services
             float deletionDistance = 10;
             List<Position> toRemove = new List<Position>();
 
+            if (view == null) view = _activeMapView;
+            if (view == null) return;
+
             MPoint point1 = SphericalMercator.FromLonLat(pos.Longitude, pos.Latitude);
             double resolution = view.GetMapInfo(point1).Resolution;
 
@@ -887,24 +1014,37 @@ namespace LAMA.Services
                 toRemove.Clear();
             }
 
-
-            foreach (var polyline in _polyLines.Values)
+            Func<(int, int)?> getRemoveIndex = () =>
             {
-                for (int i = 0; i < polyline.Positions.Count; i++)
+                foreach (var kvp in _roadPolyLines)
                 {
-                    var position = polyline.Positions[i];
-                    MPoint point2 = position.ToMapsui();
+                    int id = (int)kvp.Key;
+                    Polyline polyline = kvp.Value;
 
-                    if (point1.Distance(point2) / resolution < deletionDistance)
-                        toRemove.Add(position);
+                    for (int i = 0; i < polyline.Positions.Count; i++)
+                    {
+                        var position = polyline.Positions[i];
+                        MPoint point2 = position.ToMapsui();
+
+                        if (point1.Distance(point2) / resolution < deletionDistance)
+                            return (id, i);
+                    }
                 }
 
-                foreach (var position in toRemove)
-                    polyline.Positions.Remove(position);
+                return null;
+            };
 
-                toRemove.Clear();
-            }
+            (int, int)? roadToRemove = getRemoveIndex();
+            if (roadToRemove == null) return;
 
+            (int rID, int rIndex) = roadToRemove.Value;
+            var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
+            var road = rememberedList.getByID(rID);
+
+            if (road.Coordinates.Count > 2)
+                rememberedList.getByID(rID).Coordinates.RemoveAt(rIndex);
+            else
+                rememberedList.removeByID(rID);
         }
 
         private void HandleMapClickedSelection(object sender, MapClickedEventArgs e)
@@ -912,6 +1052,85 @@ namespace LAMA.Services
             _selectionPin.Position = new Position(e.Point.Latitude, e.Point.Longitude);
             OnMapClick?.Invoke(e.Point);
             e.Handled = true;
+        }
+
+        private void SQLEvents_created(Serializable created)
+        {
+            if (created is LarpActivity activity)
+                AddActivity(activity, _activeMapView);
+
+            if (created is PointOfInterest poi)
+                AddPointOfInterest(poi, _activeMapView);
+
+            if (created is CP cp)
+                AddCP(cp, _activeMapView);
+
+            if (created is Road road)
+                AddRoad(road, _activeMapView);
+        }
+
+        private void SQLEvents_dataDeleted(Serializable deleted)
+        {
+            if (deleted is LarpActivity activity)
+                RemoveActivity(activity.ID, _activeMapView);
+
+            if (deleted is PointOfInterest poi)
+                RemovePointOfInterest(poi.ID, _activeMapView);
+
+            if (deleted is CP cp)
+                RemoveCP(cp.ID, _activeMapView);
+
+            if (deleted is Road road)
+                RemoveRoad(road.ID, _activeMapView);
+        }
+
+        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is LarpEvent)
+            {
+                bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
+                if (isClient && _isGlobalPanLimits)
+                    SetPanLimits(_activeMapView, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
+
+                if (isClient && _isGlobalZoomLimits)
+                {
+                    SetZoomLimits(_activeMapView, LarpEvent.minZoom, LarpEvent.maxZoom);
+                    Zoom(_activeMapView, LarpEvent.maxZoom);
+                }
+
+                MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
+                MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
+                _limitsVisual.Positions.Clear();
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
+                _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
+                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+            }
+
+            if (changed is LarpActivity activity)
+            {
+                RemoveActivity(activity.ID, _activeMapView);
+                AddActivity(activity, _activeMapView);
+            }
+
+            if (changed is PointOfInterest poi)
+            {
+                RemovePointOfInterest(poi.ID, _activeMapView);
+                AddPointOfInterest(poi, _activeMapView);
+            }
+
+            if (changed is CP cp)
+            {
+                RemoveCP(cp.ID, _activeMapView);
+                AddCP(cp, _activeMapView);
+            }
+
+            if (changed is Road road)
+            {
+                RemoveRoad(road.ID, _activeMapView);
+                AddRoad(road, _activeMapView);
+            }
         }
         #endregion
     }

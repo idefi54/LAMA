@@ -31,7 +31,8 @@ namespace LAMA.ActivityGraphLib
         private float _mouseX;
         private float _mouseY;
         private Layout<View> _canvasLayout;
-        private bool _editMode;
+        private List<ActivityButton> ActivityButtons;
+        private INavigation _navigation;
 
         // Public
         //===============================================
@@ -45,6 +46,11 @@ namespace LAMA.ActivityGraphLib
             private set => _offsetY = value / _maxOffsetY;
         }
         private float _offsetY;
+
+        /// <summary>
+        /// Allows for editing the buttons and such.
+        /// </summary>
+        public bool EditMode { get; set; }
 
         /// <summary>
         /// Max height of the graph.
@@ -70,6 +76,9 @@ namespace LAMA.ActivityGraphLib
         /// Is in mode for creation new a activity.
         /// </summary>
         public bool ActivityCreationMode { get; private set; } = false;
+
+        public ActivityButton DraggedButton { get; set; } = null;
+
 
         /// <summary>
         /// Larger value zooms in the graph.
@@ -117,13 +126,12 @@ namespace LAMA.ActivityGraphLib
         /// <summary>
         /// Converts mouse cursor horizontal location to time on the current state of the activity graph.
         /// </summary>
-        /// <param name="x">Xamarin horizontal location on screen.</param>
+        /// <param name="x">Pixel horizontal location on screen.</param>
         /// <returns></returns>
         public DateTime ToLocalTime(float x)
         {
-            float minutes = ToPixels(x) / MinuteWidth / Zoom;
+            float minutes = x / MinuteWidth / Zoom;
             return TimeOffset.AddMinutes(minutes).ToLocalTime();
-            //return TimeOffset.AddMinutes(minutes - (minutes % 5));
         }
 
         /// <summary>
@@ -134,7 +142,20 @@ namespace LAMA.ActivityGraphLib
         public float FromTime(DateTime time)
         {
             TimeSpan difference = time - TimeOffset;
-            return FromPixels((float)difference.TotalMinutes * MinuteWidth * Zoom);
+            return (float)difference.TotalMinutes * MinuteWidth * Zoom;
+        }
+
+        public float RoundToFiveMinutes(float x)
+        {
+            var time = ToLocalTime(x);
+            time = new DateTime(
+                time.Year,
+                time.Month,
+                time.Day,
+                time.Hour,
+                time.Minute - time.Minute % 5,
+                0);
+            return FromTime(time);
         }
 
         /// <summary>
@@ -157,14 +178,27 @@ namespace LAMA.ActivityGraphLib
             set { _mouseY = ToPixels(value - XamOffset); }
         }
 
-        public ActivityGraph(Layout<View> canvasGrid)
+        public ActivityGraph(Layout<View> canvasGrid, INavigation navigation)
         {
+            ActivityButtons = new List<ActivityButton>();
             Zoom = 2;
             OffsetY = 0;
             _canvasLayout = canvasGrid;
+            _navigation = navigation;
             TimeOffset = DateTime.Now;
             ReloadActivities();
             _canvasView.InvalidateSurface();
+
+            SQLEvents.created += SQLEvents_created;
+        }
+
+        private void SQLEvents_created(Serializable created)
+        {
+            LarpActivity activity = created as LarpActivity;
+            if (activity == null) return;
+
+            AddActivity(activity);
+            InvalidateSurface();
         }
 
         /// <summary>
@@ -179,32 +213,26 @@ namespace LAMA.ActivityGraphLib
             if (TimeLabels == null)
                 return;
 
-            if (_width < 1000)
-            {
-                //_dateLabel.FontSize = 8;
-                foreach (var label in TimeLabels)
-                    label.FontSize = 8;
+            // Tested at these values
+            float baseSize = 15;
+            float baseWidth = 1520;
 
-            } else
-            {
-                //_dateLabel.FontSize = 14;
-                foreach (var label in TimeLabels)
-                    label.FontSize = 14;
-            }
+            // Adjust to arbitrary width
+            foreach (var label in TimeLabels)
+                label.FontSize = baseSize * Zoom * _canvasView.Width / baseWidth;
         }
 
         /// <summary>
         /// Scrolls through the graff in x and y axis.
         /// x represents time.
         /// </summary>
-        /// <param name="dx"></param>
-        /// <param name="dy"></param>
+        /// <param name="dx">In pixel coordinates.</param>
+        /// <param name="dy">In pixel coordinates.</param>
         public void Move(float dx, float dy)
         {
-            dx = ToPixels(dx);
             dx /= _columnWidth * Zoom / 60;
             TimeOffset = TimeOffset.AddMinutes(-dx);
-            OffsetY += ToPixels(dy);
+            OffsetY += dy;
             OffsetY = Math.Min(OffsetY, 0);
             OffsetY = Math.Max(_maxOffsetY, OffsetY);
         }
@@ -217,13 +245,6 @@ namespace LAMA.ActivityGraphLib
         {
             // Background Color
             canvas.Clear(SKColors.Black);
-
-            // Buttons -> edit mode
-            foreach (ActivityButton button in ActivityButtons())
-            {
-                button.Update();
-                if (_editMode) button.DrawBoders(canvas);
-            }
 
             SKPaint paint = new SKPaint();
             paint.Color = SKColors.Blue;
@@ -287,7 +308,7 @@ namespace LAMA.ActivityGraphLib
                 paint.Color = SKColors.Red;
                 paint.StrokeWidth = 3;
 
-                float x = ToPixels(FromTime(DateTime.Now));
+                float x = FromTime(DateTime.Now);
                 canvas.DrawLine(
                     x, 0, x, _height * Zoom + OffsetY,
                     paint);
@@ -313,22 +334,25 @@ namespace LAMA.ActivityGraphLib
             canvas.DrawLine(0, offset, 10, offset, paint);
             canvas.DrawLine(0, offset + _height - 200, 10, offset + _height - 200, paint);
 
+            // Indicator for adding activities
             paint.Color = SKColors.Green;
             if (ActivityCreationMode)
-                canvas.DrawRect(_mouseX - 50, _mouseY - 25, 100, 50, paint);
+            {
+                float hour = MinuteWidth * 60 * Zoom;
+                float left = _mouseX - hour / 2;
+                float top = _mouseY - ActivityButton.DEFAULT_HEIGHT / 2;
+                float width = hour;
+                float height = ActivityButton.DEFAULT_HEIGHT * Zoom;
+                canvas.DrawRect(left, top, width, height, paint);
+            }
 
+            // Buttons
             DrawConnections(canvas);
-        }
-
-        /// <summary>
-        /// Disables ActivityButtons and makes it possible to move them with mouse.
-        /// </summary>
-        /// <param name="edit"></param>
-        public void SwitchEditMode(bool edit)
-        {
-            foreach (ActivityButton button in ActivityButtons())
-                button.IsEnabled = !edit;
-            _editMode = edit;
+            foreach (ActivityButton button in ActivityButtons)
+            {
+                button.Update();
+                button.Draw(canvas, _mouseX, _mouseY, EditMode);
+            }
         }
 
         /// <summary>
@@ -337,7 +361,7 @@ namespace LAMA.ActivityGraphLib
         /// <param name="active"></param>
         public void SwitchActivityCreationMode(bool active)
         {
-            SwitchEditMode(active);
+            EditMode = active;
             ActivityCreationMode = active;
         }
 
@@ -346,10 +370,7 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public void ReloadActivities()
         {
-            // Remove all instances of ActivityButton
-            int count = _canvasLayout.Children.Count;
-            for (int i = 0; i < count - 1; i++)
-                _canvasLayout.Children.RemoveAt(1);
+            ActivityButtons.Clear();
 
             var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
 
@@ -357,11 +378,23 @@ namespace LAMA.ActivityGraphLib
             for (int i = 0; i < rememberedList.Count; i++)
             {
                 LarpActivity activity = rememberedList[i];
-                DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start);
+                DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
 
                 if ((start - TimeOffset).Duration() < maxDifference)
-                    _canvasLayout.Children.Add(new ActivityButton(activity, this));
+                    ActivityButtons.Add(new ActivityButton(activity, this, _navigation));
             }
+        }
+
+        /// <summary>
+        /// Calculates GraphY for the LarpActivity from position on the graph.
+        /// </summary>
+        /// <param name="y">Pixel coordinates.</param>
+        /// <param name="height">Pixel coordinates.</param>
+        /// <returns></returns>
+        public float CalculateGraphY(float y, float height = ActivityButton.DEFAULT_HEIGHT)
+        {
+            y = (y - height / 2) / Zoom;
+            return (y - OffsetY / Zoom) / (Height - height);
         }
 
         /// <summary>
@@ -370,8 +403,8 @@ namespace LAMA.ActivityGraphLib
         /// <param name="canvas"></param>
         public void DrawConnections(SKCanvas canvas)
         {
-            foreach (ActivityButton button1 in ActivityButtons())
-                foreach (ActivityButton button2 in ActivityButtons())
+            foreach (ActivityButton button1 in ActivityButtons)
+                foreach (ActivityButton button2 in ActivityButtons)
                     if (button1.Activity.prerequisiteIDs.Contains(button2.Activity.ID))
                         ActivityButton.DrawConnection(canvas, this, button1, button2);
         }
@@ -384,9 +417,9 @@ namespace LAMA.ActivityGraphLib
         /// <returns></returns>
         public ActivityButton GetButtonAt(float x, float y)
         {
-            foreach (ActivityButton button in ActivityButtons())
+            foreach (ActivityButton button in ActivityButtons)
             {
-                if (button.Bounds.Offset(button.TranslationX, button.TranslationY + _canvasLayout.Y).Contains(x, y))
+                if (button.GetHitbox(EditMode).Contains(x, y))
                     return button;
             }
 
@@ -400,9 +433,14 @@ namespace LAMA.ActivityGraphLib
         /// <returns></returns>
         public ActivityButton AddActivity(LarpActivity activity)
         {
-            var button = new ActivityButton(activity, this);
-            _canvasLayout.Children.Add(button);
+            var button = new ActivityButton(activity, this, _navigation);
+            ActivityButtons.Add(button);
             return button;
+        }
+
+        public void RemoveActivity(ActivityButton button)
+        {
+            ActivityButtons.Remove(button);
         }
 
         /// <summary>
@@ -421,12 +459,6 @@ namespace LAMA.ActivityGraphLib
         {
             TimeOffset = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
             _offsetY = (float)activity.GraphY;
-        }
-
-        private IEnumerable<ActivityButton> ActivityButtons()
-        {
-            for (int i = 1; i < _canvasLayout.Children.Count; i++)
-                yield return _canvasLayout.Children[i] as ActivityButton;
         }
     }
 }

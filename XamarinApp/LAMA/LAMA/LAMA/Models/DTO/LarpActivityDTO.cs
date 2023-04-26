@@ -17,6 +17,7 @@ namespace LAMA.Models.DTO
         public long duration {get; set;}
         public int day {get; set;}
         public long start {get; set;}
+        public double GraphY { get; set; }
         public Pair<double, double> place {get; set;}
         public Status status {get; set;}
         public List<Pair<long, int>> requiredItems {get; set;}
@@ -34,6 +35,7 @@ namespace LAMA.Models.DTO
             duration = larpActivity.duration;
             day = larpActivity.day;
             start = larpActivity.start;
+            GraphY = larpActivity.GraphY;
             place = larpActivity.place;
             status = larpActivity.status;
             requiredItems = larpActivity.requiredItems.Select(x => x).ToList();
@@ -43,12 +45,17 @@ namespace LAMA.Models.DTO
 
         public LarpActivity CreateLarpActivity()
         {
-            return new LarpActivity(ID, name, description, preparationNeeded, eventType,
+            var larpActivity = new LarpActivity(ID, name, description, preparationNeeded, eventType,
                 new EventList<long>(prerequisiteIDs),
                 duration, day, start, place, status,
                 new EventList<Pair<long, int>>(requiredItems),
                 new EventList<Pair<string, int>>(roles),
                 new EventList<Pair<long, string>>(registrationByRole));
+
+            // Because it's not in the constructor...
+            larpActivity.GraphY = GraphY;
+
+            return larpActivity;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using LAMA.Models;
 using LAMA.Singletons;
+using LAMA.Communicator;
 
 namespace LAMA
 {
@@ -45,9 +46,17 @@ namespace LAMA
 
         public static SQLiteAsyncConnection connection { get { return _connection; } }
         private static SQLiteAsyncConnection _connection = null;
-        public static SQLiteAsyncConnection makeConnection()
+
+        
+
+        public static SQLiteAsyncConnection makeConnection(string newName = null)
         {
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (newName != null && newName != string.Empty)
+                databaseName = newName;
+            
+            Console.WriteLine("making database with name " + databaseName);
+
             string path = Path.Combine(directory, databaseName);
 
 
@@ -79,10 +88,27 @@ namespace LAMA
 
                 if (_connection != null)
                     _connection.CloseAsync().Wait();
-
+                
                 LarpEvent.Instance.DeleteData();
                 _connection = null;
                 File.Delete(path);
+
+                DatabaseHolder<ChatMessage, ChatMessageStorage>.reset();
+                DatabaseHolder<CP, CPStorage>.reset();
+                DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.reset();
+                DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.reset();
+                DatabaseHolder<InventoryItem, InventoryItemStorage>.reset();
+                DatabaseHolder<LarpActivity, LarpActivityStorage>.reset();
+                DatabaseHolder<PointOfInterest, PointOfInterestStorage>.reset();
+                DatabaseHolder<Road, RoadStorage>.reset();
+                LocalStorage.reset();
+                LarpEvent.reset();
+                DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.reset();
+                DatabaseHolderStringDictionary<Command, CommandStorage>.reset();
+                //timevalie
+                //command
+
+
                 makeConnection();
             }
 
@@ -98,11 +124,11 @@ namespace LAMA
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQL()
+        public OurSQL(string databaseName = null)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection();
+                SQLConnectionWrapper.makeConnection(databaseName);
             connection = SQLConnectionWrapper.connection;
 
             string name = new Storage().GetType().Name;
@@ -208,11 +234,11 @@ namespace LAMA
         SQLiteAsyncConnection connection { get; }
 
 
-        public OurSQLDictionary()
+        public OurSQLDictionary(string databaseName = null)
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection();
+                SQLConnectionWrapper.makeConnection(databaseName);
             connection = SQLConnectionWrapper.connection;
 
 

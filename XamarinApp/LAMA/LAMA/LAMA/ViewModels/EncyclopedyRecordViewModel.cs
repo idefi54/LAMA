@@ -2,12 +2,13 @@
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class EncyclopedyRecordViewModel:BaseViewModel
+    public class EncyclopedyRecordViewModel:BaseViewModel, INotifyPropertyChanged
     {
         INavigation Navigation;
         public EncyclopedyRecord record { get; private set; }
@@ -34,14 +35,40 @@ namespace LAMA.ViewModels
                 _Name = record.Name;
                 _Text = record.FullText;
                 _TLDR = record.TLDR;
+                record.IGotUpdated += onUpdated;
             }
             AddRecordCommand = new Command(onCreate);
             Edit = new Command(onEdit);
             Return = new Command(onReturn);
             Create = new Command(onCreateSave);
             Save = new Command(onSave);
+
+
+            
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        void onUpdated(object sender, int index)
+        {
+            string propName = String.Empty;
+            switch(index)
+            {
+                default: 
+                    return;
+                case 1:
+                    propName = nameof(Name);
+                    break;
+                case 2:
+                    propName = nameof(TLDR);
+                    break;
+                case 3:
+                    propName = nameof(Text);
+                    break;
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
         void onCreate()
         {
             Navigation.PushAsync(new CreateEncyclopedyRecordView());

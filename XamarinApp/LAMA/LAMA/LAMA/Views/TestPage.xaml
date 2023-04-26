@@ -33,7 +33,7 @@
                 <Button Text="Inventory" Clicked="OnInventory"/>
                 <Button Text="CPs" Clicked="OnCP"/>
                 <Button Text="Encyclopedy" Clicked="OnEncyclopedy"/>
-
+                <Button Text="LarpEvent" Clicked="OnLarpEvent"/>
 				<Button Text="Hide Example" Clicked="OnHideExample"/>
 				<Button Text="Dropdown Menu Over Example" Clicked="OnDropdownOverExample"/>
 				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
