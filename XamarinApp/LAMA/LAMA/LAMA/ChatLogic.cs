@@ -52,6 +52,7 @@ namespace LAMA
         public void SendMessage(int channelID, string message)
         {
             // just save the sent message and the remembered list does the rest by itself
+            Debug.WriteLine(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count);
             database.add(new Models.ChatMessage( 
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(LocalStorage.cpID).name, 
                 channelID, message,DateTimeOffset.Now.ToUnixTimeMilliseconds(), LocalStorage.cpID == 0));

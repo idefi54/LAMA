@@ -11,6 +11,8 @@ namespace LAMA.UWP
 
     internal class UWPActivityGraphGUI : IActivityGraphGUI
     {
+        private bool previous = false;
+
         public (Layout<View>, ActivityGraph) CreateGUI(INavigation navigation)
         {
             var canvasView = CreateCanvasView();
@@ -18,7 +20,7 @@ namespace LAMA.UWP
             canvasLayout.Children.Add(canvasView);
             canvasLayout.HorizontalOptions = LayoutOptions.FillAndExpand;
             canvasLayout.VerticalOptions = LayoutOptions.FillAndExpand;
-            var graph = new ActivityGraph(canvasLayout, navigation);
+            var graph = new ActivityGraph(canvasLayout);
             canvasView.PaintSurface += (object sender, SKPaintSurfaceEventArgs args) =>
             {
                 graph.Update(args);
@@ -51,7 +53,6 @@ namespace LAMA.UWP
             {
                 Children =
                 {
-                    new OurNavigationMenu(),
                     controlRow,
                     dateRow,
                     timeRow,
@@ -118,7 +119,7 @@ namespace LAMA.UWP
                 editSwitch.IsToggled = false;
                 editSwitch.VerticalOptions = LayoutOptions.Center;
                 editSwitch.HorizontalOptions = LayoutOptions.End;
-                editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
+                editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.SwitchEditMode(e.Value); };
                 editStack.Children.Add(editSwitch);
                 grid.Children.Add(editStack, 3, 0);
             }

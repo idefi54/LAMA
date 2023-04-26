@@ -117,14 +117,9 @@ namespace LAMA.ViewModels
             };
             //await App.Current.MainPage.Navigation.PushAsync(new InventoryView());
         }
-        private void OnGoToLarpEvent(object obj)
+        private async void OnGoToLarpEvent(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new LarpEventView())
-            {
-                BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
-                BarBackgroundColor = ColorPalette.PrimaryColor
-            };
-            //throw new Exception("not implemented, it's in another branch");
+            throw new Exception("not implemented, it's in another branch");
             //await App.Current.MainPage.Navigation.PushAsync(new LarpEventView());
         }
         private void OnGoToPOI(object obj)

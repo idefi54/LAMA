@@ -20,6 +20,8 @@ namespace LAMA
             App.Current.Resources["DefaultTitleBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
             App.Current.Resources["DefaultTabbedBarBackgroundColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
             App.Current.Resources["AccentColor"] = new SolidColorBrush(Colors.ColorPalette.PrimaryColor);
+
+            Debug.WriteLine("Main Page");
         }
 
         protected async override void OnAppearing()

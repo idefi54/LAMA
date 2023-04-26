@@ -83,7 +83,7 @@
 					<ListView.ItemTemplate>
 						<DataTemplate>
 							<ViewCell>
-								<Grid Padding="5" Margin="5" BackgroundColor="{Binding Color}">
+								<Grid Padding="5" Margin="5" >
 									<Grid.RowDefinitions>
 										<RowDefinition Height="auto" />
 										<RowDefinition Height="auto" />
@@ -107,7 +107,6 @@
 										</On>
 									</OnPlatform>
 									<Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" Text="Del" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
-										Command="{Binding Path=BindingContext.RemoveLarpActivity, Source={x:Reference Name=LarpActivityList}}"
 										CommandParameter="{Binding .}"/>
 
 									<Grid.GestureRecognizers>

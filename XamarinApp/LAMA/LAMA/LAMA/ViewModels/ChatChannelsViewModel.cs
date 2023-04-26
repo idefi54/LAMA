@@ -35,6 +35,7 @@ namespace LAMA.ViewModels
             {
                 LarpEvent.ChatChannels.Add(ChannelName);
             }
+            Debug.WriteLine($"ChatCannels: {LarpEvent.ChatChannels.Count}");
             ChannelName = "";
             OnPropertyChanged("ChannelName");
         }
@@ -67,6 +68,7 @@ namespace LAMA.ViewModels
 
         private void PropagateChanged()
         {
+            Debug.WriteLine("PropagateChanged");
             Channels.Clear();
 
             for (int i = 0; i < LarpEvent.ChatChannels.Count; i++)

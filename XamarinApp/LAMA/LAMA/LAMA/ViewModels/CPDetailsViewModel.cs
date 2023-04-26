@@ -34,9 +34,9 @@ namespace LAMA.ViewModels
         public string Notes { get { return _notes; } set { SetProperty(ref _notes, value); } }
         string permissions;
         public string Permissions { get{ return permissions; } set { SetProperty(ref permissions, value); } }
-        public bool CanChangeCPs { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || cp.ID == LocalStorage.cpID; } set { } }
-        public bool CanOpenDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID== LocalStorage.cpID; } set { } }
-        public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
+        public bool CanChangeCPs { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
+        public bool CanOpenDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission); } set { } }
+        public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission); } set { } }
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
         public Command AddPermissionCommand { get; private set; }

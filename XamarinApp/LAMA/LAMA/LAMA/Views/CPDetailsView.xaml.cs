@@ -20,7 +20,7 @@ namespace LAMA.Views
             InitializeComponent();
             BindingContext = new ViewModels.CPDetailsViewModel(Navigation, cp);
         }
-        
+
         protected async override void OnAppearing()
         {
             base.OnAppearing();
@@ -58,14 +58,10 @@ namespace LAMA.Views
 
         protected override void OnDisappearing()
         {
-
             base.OnDisappearing();
-            if (_mapView == null)
-                return;
             var scrollView = Content as ScrollView;
             (scrollView.Children[0] as StackLayout).Children.Remove(_mapView);
             _mapView = null;
         }
-        
     }
 }

@@ -92,7 +92,6 @@ namespace LAMA.Views
             bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
             EditLabel.IsVisible = canEdit;
             EditSwitch.IsVisible = canEdit;
-            SetGlobalBoundsButton.IsVisible = canEdit;
 
             // Add activity indicator
             var activityIndicator = new ActivityIndicator
@@ -113,8 +112,8 @@ namespace LAMA.Views
 
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
-                await DisplayAlert("Lokace není přístupná",
-                    "Prosíme, zapněte si lokaci nebo zadejte domovskou lokaci.", "OK");
+                await DisplayAlert("Location not available",
+                    "Please, turn on your location or set your home location.", "OK");
             }
 
             // Handle the fucking map
@@ -142,7 +141,7 @@ namespace LAMA.Views
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
                 MapHandler.Zoom(_mapView);
                 SetHomeLocationButton.BackgroundColor = Color.Gray;
-                SetHomeLocationButton.Text = "Zadejte domovskou lokaci";
+                SetHomeLocationButton.Text = "Change Home Location";
             }
             SetHomeLocationButton.Clicked += SetHomeClicked;
 
@@ -165,7 +164,7 @@ namespace LAMA.Views
         private void SetHomeClicked(object sender, EventArgs e)
         {
             SetHomeLocationButton.BackgroundColor = Color.Gray;
-            SetHomeLocationButton.Text = "Změnit Domovskou lokaci";
+            SetHomeLocationButton.Text = "Change Home Location";
         }
 
         private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)

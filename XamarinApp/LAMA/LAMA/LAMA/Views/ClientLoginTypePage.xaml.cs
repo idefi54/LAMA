@@ -25,8 +25,11 @@ namespace LAMA.Views
 
         public ClientLoginTypePage()
         {
+            Debug.WriteLine("ClientLoginTypePage");
+            Debug.WriteLine("Initialized Component");
             InitializeComponent();
             this.BindingContext = viewModel;
+            Debug.WriteLine("Client Loging Type Page Initialized");
         }
         public ClientLoginTypePage(ClientCommunicator communicator)
         {

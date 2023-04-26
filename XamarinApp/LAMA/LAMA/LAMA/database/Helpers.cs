@@ -38,7 +38,7 @@ namespace LAMA
         {
             bool negative = false;
 
-            while (offset < input.Length && !char.IsDigit(input[offset]))
+            while (!char.IsDigit(input[offset]) && offset < input.Length)
             {
                 if (input[offset] == '-')
                     negative = true;
@@ -170,17 +170,6 @@ namespace LAMA
             }
             return output;
         }
-        public static Pair<int,int> readIntPair(string input)
-        {
-            if (input == null)
-                return new Pair<int, int>(0, 0);
-            int i = 0;
-            skipNonDigits(input, ref i);
-            int first = readInt(input, ref i);
-            skipNonDigits(input, ref i);
-            int second = readInt(input, ref i);
-            return new Pair<int, int>(first, second);
-        }
 
         public static EventList<Pair<long, long>> readLongPairField(string input)
         {
@@ -289,7 +278,7 @@ namespace LAMA
             for (int i = 0; i < input.Count; ++i)
             {
                 if (i != 0)
-                    output.Append(separator);
+                    output.Append(separator + " ");
                 output.Append((int)(object)input[i]);
             }
             return output.ToString();

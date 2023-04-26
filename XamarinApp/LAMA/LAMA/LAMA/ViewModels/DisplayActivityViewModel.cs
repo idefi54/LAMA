@@ -186,18 +186,9 @@ namespace LAMA.ViewModels
             {
 				UnregisterAsync();
 				return;
-			}
+            }
 
-			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
-
-			if (activityDeleted)
-			{
-				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte přihlásit na aktivitu, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Activita neexistuje");
-				await Navigation.PopAsync();
-				return;
-			}
-
-			if (_activity.roles.Count == 0)
+			if(_activity.roles.Count == 0)
             {
 				await _messageService.ShowAlertAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
 				return;
@@ -243,16 +234,7 @@ namespace LAMA.ViewModels
         }
 
         private async void UnregisterAsync()
-		{
-			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
-
-			if (activityDeleted)
-			{
-				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Activita neexistuje");
-				await Navigation.PopAsync();
-				return;
-			}
-
+        {
 			long cpID = LocalStorage.cpID;
 			string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second.Trim()).ToArray();
 
@@ -277,18 +259,8 @@ namespace LAMA.ViewModels
 			isRegistered = IsRegistered();
         }
 
-        private async void UpdateActivity(LarpActivityDTO larpActivityDTO)
+        private void UpdateActivity(LarpActivityDTO larpActivityDTO)
 		{
-			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
-
-			if(activityDeleted)
-			{
-				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte upravit aktivitu, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.","Activita neexistuje");
-				await Navigation.PopAsync();
-				return;
-			}
-
-
 			_activity.UpdateWhole(
 				larpActivityDTO.name,
 				larpActivityDTO.description,

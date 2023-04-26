@@ -33,21 +33,13 @@
                     
                     <Button
                     x:Name="SetHomeLocationButton"
-                    Text="Zadejte domovskou lokaci"
+                    Text="Change Home Location"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     Command="{Binding SaveHome}"/>
 
-                    <Button
-                        x:Name="SetGlobalBoundsButton"
-                        Text="Omezit mapu pro hráče"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        Command="{Binding SetGlobalBounds}"
-                        />
-
-                    <Label x:Name="EditLabel" Text="Edit" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label x:Name="EditLabel" Text="Edit"/>
+                    <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}"/>
 
                 </StackLayout>
 

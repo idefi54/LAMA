@@ -23,7 +23,6 @@ namespace LAMA.ViewModels
         }
         public Command FilterDropdown { get; private set; }
         public Command SaveHome { get; private set; }
-        public Command SetGlobalBounds { get; private set; }
 
         /// <summary>
         /// Edit switch for adding polylines.
@@ -43,8 +42,6 @@ namespace LAMA.ViewModels
         {
             FilterDropdown = new Command(HandleFilterDropdown);
             SaveHome = new Command(HandleSaveHome);
-            SetGlobalBounds = new Command(HandleSetGlobalBounds);
-
             _getMapView = getMapView;
             _keyboard = DependencyService.Get<IKeyboardService>();
 
@@ -74,11 +71,15 @@ namespace LAMA.ViewModels
             MapHandler.Instance.CurrentLocation = loc;
             await MapHandler.Instance.UpdateLocation(_getMapView(), false);
             MapHandler.Instance.SetLocationVisible(_getMapView(), MapHandler.Instance.CurrentLocation != null);
-        }
+            MapHandler.CenterOn(_getMapView(), MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
+            MapHandler.Zoom(_getMapView());
 
-        public void HandleSetGlobalBounds()
-        {
-            MapHandler.SetGlobalBoundsFromView(_getMapView());
+
+            // TODO: How to call alert from viewmodel?
+            //if (Device.RuntimePlatform != Device.WPF)
+            //{
+            //    await DisplayAlert("Success", "The location has been set. Tap the button to return to location at any time.", "OK");
+            //}
         }
 
         private void OnKeyDown(string key)

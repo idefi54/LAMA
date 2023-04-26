@@ -13,11 +13,6 @@ namespace LAMA.Singletons
         public static event DataChangedDelegate DataChanged;
 
         static LarpEvent instance = null;
-
-        public static void reset()
-        {
-            instance = null;
-        }
         public static LarpEvent Instance
         {
             get
@@ -74,23 +69,16 @@ namespace LAMA.Singletons
             instance = null;
         }
 
-        
-        /// <summary>
-        /// remember start and end day
-        /// </summary>
-        public static Pair<DateTimeOffset, DateTimeOffset> Days
+        static EventList<DateTimeOffset> _Days = null;
+        public static EventList<DateTimeOffset> Days
         {
             get
             {
-
-                var times =  Helpers.readIntPair(Instance.days);
-                return new Pair<DateTimeOffset, DateTimeOffset>(DateTimeOffset.FromUnixTimeMilliseconds(times.first), DateTimeOffset.FromUnixTimeMilliseconds(times.second));
-            }
-
-            set 
-            {
-                Instance.days = value.ToString();
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                if(_Days == null)
+                {
+                    Instance.insurance = Instance.getTypeID();
+                }
+                return _Days;
             }
         }
 
@@ -126,70 +114,18 @@ namespace LAMA.Singletons
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
             }
         }
-
-        public static double minX 
-        { 
-            get { return Instance._minX; } 
-            set 
-            { 
-                Instance._minX = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            } 
-        }
-        public static double minY 
-        {
-            get { return Instance._minY; }
-            set 
-            { 
-                Instance._minY = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            }
-        }
-        public static double maxX
-        {
-            get { return Instance._maxX; }
-            set
-            {
-                Instance._maxX = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            }
-        }
-        public static double maxY
-        {
-            get { return Instance._maxY; }
-            set
-            {
-                Instance._maxY = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            }
-        }
-        public static double minZoom 
-        {
-            get { return Instance._minZoom; }
-            set
-            {
-                Instance._minZoom = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            }
-        }
-        public static double maxZoom 
-        {
-            get { return Instance._maxZoom; }
-            set
-            {
-                Instance._maxZoom = value;
-                SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-            }
-        }
-
-
-
     
         public void init()
         {
             List<long> temp = Helpers.readLongField(days);
 
-            
+            _Days = new EventList<DateTimeOffset>();
+            for (int i = 0; i < temp.Count; ++i) 
+            {
+                _Days.Add(DateTimeOffset.FromUnixTimeMilliseconds(temp[i]));
+            }
+
+            _Days.dataChanged += saveDays;
             _chatChannels = new EventList<string>();
 
             List<string> channels = Helpers.readStringField(chatChannels);
@@ -201,15 +137,32 @@ namespace LAMA.Singletons
             _chatChannels.dataChanged += saveChatChannels;
 
         }
-        
+        static void saveDays()
+        {
+            StringBuilder output = new StringBuilder();
+            foreach (var day in Days)
+            {
+                if (output.Length > 0)
+                {
+                    output.Append("," + day.ToUnixTimeMilliseconds());
+                }
+                else
+                {
+                    output.Append(day.ToUnixTimeMilliseconds());
+                }
+            }
+            Instance.days = output.ToString();
+            SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+        }
         static void saveChatChannels()
         {
+            Debug.WriteLine("Saving chat channels");
             StringBuilder output = new StringBuilder();
             foreach (var channel in _chatChannels)
             {
                 if (output.Length > 0)
                 {
-                    output.Append(Helpers.separator + channel);
+                    output.Append("," + channel);
                 }
                 else
                 {
@@ -217,6 +170,7 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
+            Debug.WriteLine(output);
             SQLEvents.invokeChanged(Instance, 2);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
@@ -227,17 +181,6 @@ namespace LAMA.Singletons
         public string days { get; set; }
         public string chatChannels { get; set; }
         public long lastClientID { get; set; }
-
-        public double _minX = double.NegativeInfinity;
-        public double _minY = double.NegativeInfinity;
-        public double _maxX = double.PositiveInfinity;
-        public double _maxY = double.PositiveInfinity;
-        public double _minZoom = -1;
-        public double _maxZoom = -1;
-
-
-
-
 
 
         static string[] atributes = { "name", "days", "chatChannels", "lastClientID" };
@@ -274,6 +217,7 @@ namespace LAMA.Singletons
                     break;
                 case 2:
                     chatChannels = value;
+                    Debug.WriteLine("Changing Chat Channels");
                     List<string> channels = Helpers.readStringField(chatChannels);
                     for (int j = 0; j < channels.Count; ++j)
                     {

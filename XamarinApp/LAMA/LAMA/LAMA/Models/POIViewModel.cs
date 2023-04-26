@@ -1,5 +1,5 @@
-﻿using LAMA.Models;
-using LAMA.Services;
+﻿using LAMA.Services;
+using LAMA.ViewModels;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -9,16 +9,16 @@ using System.Xml.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace LAMA.ViewModels
+namespace LAMA.Models
 {
-    class POIViewModel : BaseViewModel, INotifyPropertyChanged
+    class POIViewModel:BaseViewModel, INotifyPropertyChanged
     {
         INavigation navigation;
         public PointOfInterest POI;
 
-        string name = string.Empty;
+        string name = String.Empty;
         public string Name { get { return name; } set { SetProperty(ref name, value); } }
-        string description = string.Empty;
+        string description = String.Empty;
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
 
         public bool Icon0Checked { get; set; }
@@ -70,7 +70,7 @@ namespace LAMA.ViewModels
 
         async void onSave()
         {
-            if (POI != null)
+            if(POI != null)
             {
                 POI.Name = name;
                 POI.description = description;
@@ -82,7 +82,6 @@ namespace LAMA.ViewModels
                 (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
                 list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), GetIcon(), name, description));
             }
-            await navigation.PopAsync();
         }
         async void onCancel()
         {

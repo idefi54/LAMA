@@ -53,10 +53,6 @@ namespace LAMA.WPF
         {
             LAMA.Views.ActivityGraphPage currPage = null;
 
-            // Very dirty fix - not ideal
-            float correctionX = (this.WindowState == WindowState.Maximized) ? -7.2f : 0;
-            float correctionY = (this.WindowState == WindowState.Maximized) ? 6.4f : 0;
-
             if (Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Count > 0)
             {
                 int index = Xamarin.Forms.Application.Current.MainPage.Navigation.NavigationStack.Count - 1;
@@ -70,7 +66,7 @@ namespace LAMA.WPF
                 TouchTracking.TouchActionEventArgs args = new TouchTracking.TouchActionEventArgs(
                     id: touchId,
                     type: type,
-                    location: new TouchTracking.TouchTrackingPoint(x + correctionX, y - difference + correctionY),
+                    location: new TouchTracking.TouchTrackingPoint(x, y - difference),
                     isInContact: true);
 
                 currPage.OnTouchEffectAction(this, args);

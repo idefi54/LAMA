@@ -205,10 +205,7 @@ namespace LAMA.Views
 
             DisplayAlert("Current user:", user.name, "ok");
         }
-        async void OnLarpEvent(object sender, EventArgs args)
-        {
-            await Navigation.PushAsync(new LarpEventView());
-        }
+
 
 
 

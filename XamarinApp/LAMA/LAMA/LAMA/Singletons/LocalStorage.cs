@@ -10,11 +10,6 @@ namespace LAMA
     public class LocalStorage
     {
 
-        public static void reset()
-        {
-            instance = null;
-        }
-
         static LocalStorage instance = null;
         static LocalStorage Instance { get
             {
@@ -26,10 +21,13 @@ namespace LAMA
                 {
                     
                     string name =  new LocalStorage().GetType().Name;
+                    Debug.WriteLine(name);
                     var a = SQLConnectionWrapper.connection.GetTableInfoAsync(name);
                     a.Wait();
+                    Debug.WriteLine("After GetTableInfoAsync");
                     if (a.Result.Count == 0)
                     {
+                        Debug.WriteLine("a.Result.Count != 0");
                         SQLConnectionWrapper.connection.CreateTableAsync<LocalStorage>().Wait();
                     }
 
@@ -152,9 +150,9 @@ namespace LAMA
         public int ID { get; set; } = 0;
         public string _serverName { get; set; }
         public string _clientName { get; set; }
-        public int _clientID { get; set; } = -1;
+        public int _clientID { get; set; }
         public int _cpID { get; set; } = -1;
-        public int _maxClientID { get; set; } = 0;
+        public int _maxClientID { get; set; } = -1;
         public long _lastUpdateTime { get; set; } = 0;
 
     }

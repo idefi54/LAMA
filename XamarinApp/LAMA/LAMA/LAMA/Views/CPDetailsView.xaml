@@ -1,17 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.CPDetailsView"
-             xmlns:colors="clr-namespace:LAMA.Colors"
-             xmlns:common="clr-namespace:LAMA.Views"
-             xmlns:forms="clr-namespace:LAMA.Forms">
-
-
-    <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanOpenDetails}"/>
-        <forms:BindableToolbarItem Text="Smazat" Command="{Binding DeleteCommand}" IsVisible="{Binding CanChangeCP}" />
-    </ContentPage.ToolbarItems>
-
+             x:Class="LAMA.Views.CPDetailsView">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
@@ -69,7 +59,8 @@
 					   VerticalTextAlignment="End"/>
 
 
-               
+                <Button Text="Upravit" Command="{Binding EditCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanOpenDetails}"></Button>
+                <Button Text="Smazat" Command="{Binding DeleteCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

@@ -192,6 +192,7 @@ namespace LAMA.Communicator
                 myAes.Key = AESkey;
                 myAes.IV = new byte[16];
                 myAes.Padding = PaddingMode.Zeros;
+                Debug.WriteLine($"bytes length: {bytes.Length}");
                 if (!ECB)
                 {
                     Random random = new Random();
@@ -212,6 +213,7 @@ namespace LAMA.Communicator
                 {
                     myAes.IV.Concat(encrypted);
                 }
+                Debug.WriteLine($"Encrypted length: {encrypted.Length}");
                 return encrypted;
             }
         }
@@ -271,6 +273,7 @@ namespace LAMA.Communicator
             int offset = 0;
             if (encrypted.Length % 16 != 0)
             {
+                Debug.WriteLine($"Wrong length message: {encrypted.Length}");
                 offset = encrypted.Length;
                 return null;
             }
@@ -303,6 +306,7 @@ namespace LAMA.Communicator
                     }
                 }
             }
+            Debug.WriteLine($"Decrypted length: {decryptedBytes.Count}");
             return decryptedBytes.ToArray();
         }
         /// <summary>
@@ -386,7 +390,6 @@ namespace LAMA.Communicator
                 offset += offsetChange;
 
             }
-            Debug.WriteLine(messages.Count);
             string result = String.Join("", messages);
             return result;
         }

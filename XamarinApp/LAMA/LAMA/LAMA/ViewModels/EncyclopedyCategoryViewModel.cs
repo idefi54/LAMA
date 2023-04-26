@@ -7,26 +7,23 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class EncyclopedyCategoryViewModel: BaseViewModel, INotifyPropertyChanged
+    public class EncyclopedyCategoryViewModel: BaseViewModel
     {
         public EncyclopedyCategory category { get; private set; }
 
 
-        public TrulyObservableCollection<EncyclopedyCategoryViewModel> Categories { get; private set; }
-        public TrulyObservableCollection<EncyclopedyRecordViewModel> Records { get; private set; }
+        public ObservableCollection<EncyclopedyCategoryViewModel> Categories { get; private set; }
+        public ObservableCollection<EncyclopedyRecordViewModel> Records { get; private set; }
         string name = "";
         public string Name { get { return name; } set{ SetProperty(ref name, value);} }
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
         public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
-        public bool CanCreate { get { return CanChangeEncyclopedy && category == null; } }
-        public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
 
@@ -46,7 +43,7 @@ namespace LAMA.ViewModels
         INavigation Navigation;
 
 
-
+        
         int _SelectedCategoryIndex;
         int _SelectedRecordIndex;
 
@@ -84,15 +81,12 @@ namespace LAMA.ViewModels
         public int SelectedCategoryIndex { get { return _SelectedCategoryIndex; } set { SetProperty(ref _SelectedCategoryIndex, value); } }
         public int SelectedRecordIndex { get { return _SelectedRecordIndex; } set { SetProperty(ref _SelectedRecordIndex, value); } }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation)
         {
             this.category = category;
             this.Navigation = navigation;
-            Categories = new TrulyObservableCollection<EncyclopedyCategoryViewModel>();
-            Records = new TrulyObservableCollection<EncyclopedyRecordViewModel>();
+            Categories = new ObservableCollection<EncyclopedyCategoryViewModel>();
+            Records = new ObservableCollection<EncyclopedyRecordViewModel>();
 
 
             OpenRecordDetailsCommand = new Command<object>(onOpenRecord);
@@ -126,12 +120,12 @@ namespace LAMA.ViewModels
                 EncyclopedyOrphanage.ParentlessCategories.CollectionChanged += OnCategoriesChanged;
                 EncyclopedyOrphanage.ParentlessRecords.CollectionChanged += OnRecordsChanged;
 
-                Categories = new TrulyObservableCollection<EncyclopedyCategoryViewModel>();
+                Categories = new ObservableCollection<EncyclopedyCategoryViewModel>();
                 foreach(var a in EncyclopedyOrphanage.ParentlessCategories)
                 {
                     Categories.Add(new EncyclopedyCategoryViewModel(a, navigation));
                 }
-                Records = new TrulyObservableCollection<EncyclopedyRecordViewModel>();
+                Records = new ObservableCollection<EncyclopedyRecordViewModel>();
                 foreach(var a in EncyclopedyOrphanage.ParentlessRecords)
                 {
                     Records.Add(new EncyclopedyRecordViewModel(a, navigation));
@@ -156,32 +150,7 @@ namespace LAMA.ViewModels
                 }
             }
 
-            if(category != null)
-                category.IGotUpdated += onUpdated;
-
         }
-
-        void onUpdated(object sender, int index)
-        {
-            string propName = string.Empty;
-
-            switch(index)
-            {
-                case 1:
-                    propName = nameof(Name);
-                    break;
-                case 2:
-                    propName = nameof(Description);
-                    break;
-                default:
-                    return;
-
-            }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
-
-
-
         void OnMyCategoriesChanged()
         {
             var categoryList = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
@@ -191,7 +160,6 @@ namespace LAMA.ViewModels
             {
                 Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Categories)));
         }
         void OnMyRecordsChanged()
         {
@@ -201,7 +169,6 @@ namespace LAMA.ViewModels
             {
                 Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Records)));
         }
         void OnCategoriesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -246,6 +213,9 @@ namespace LAMA.ViewModels
         {
             category.Name = name;
             category.Description = description;
+            category.ChildCategories.Clear();
+            category.Records.Clear();
+           
 
             await Navigation.PopAsync();
         }

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
@@ -25,8 +24,6 @@ namespace LAMA.ViewModels
 
         private bool _showDeleteButton;
         public bool ShowDeleteButton { get { return _showDeleteButton; } set { SetProperty(ref _showDeleteButton, value, nameof(ShowDeleteButton)); } }
-
-        public Color Color => _larpActivity.GetColor(0.2f);
 
         public void SetName(string name)
 		{
@@ -48,27 +45,34 @@ namespace LAMA.ViewModels
         string TimeFormat(long unixStart)
         {
 
-            DateTime startDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(unixStart).ToLocalTime();
+            DateTime startDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(unixStart);
 
-            TimeSpan difference = startDate - DateTime.Now;
+            long nowSeconds = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            string result = difference >= TimeSpan.Zero ? "začíná za " : "začalo před ";
+            long resultSeconds = (unixStart/1000) - nowSeconds;
 
-            TimeSpan duration = difference.Duration();
+            string result = resultSeconds >= 0 ? "začíná za " : "začalo před ";
+            resultSeconds = Math.Abs(resultSeconds);
 
-            long resultMinutes = duration.Minutes;
-            long resultHours = duration.Hours;
-            long resultDays = duration.Days;
+            long resultMinutes = (resultSeconds / 60) % 60;
+            long resultHours = (resultSeconds / 3600) % 24;
+            long resultDays = resultSeconds / 86400;
 
-            if (resultDays != 0)
+            if (resultDays > 0)
                 result += resultDays.ToString() + "d ";
 
-            if (resultHours != 0)
+            if (resultHours > 0)
                 result += resultHours.ToString() + "h ";
 
+            //if (resultMinutes > 0)
             result += resultMinutes.ToString() + "m ";
 
+
+            //result += (resultSeconds % 60) + "s";
+
             return $"{startDate.ToString("H:mm d/M/yyyy")} ({result})";
+
+            //return hours + ":" + minutes;
         }
 
         private string ParticipationFormat()

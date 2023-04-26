@@ -4,24 +4,15 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
-    public class WrongNgrokAddressFormatException : Exception
-    {
-        public WrongNgrokAddressFormatException() { }
-    }
-    public class PasswordTooShortException : Exception
-    {
-        public PasswordTooShortException() { }
-    }
-
     /// <summary>
     /// Wrong client name, client password, server password or a server with this name already exists
     /// </summary>
-    public class WrongCredentialsException : Exception
+    public class WrongCreadintialsException : Exception
     {
-        public WrongCredentialsException() { }
-        public WrongCredentialsException(string message)
+        public WrongCreadintialsException() { }
+        public WrongCreadintialsException(string message)
             : base(message) { }
-        public WrongCredentialsException(string message, Exception inner)
+        public WrongCreadintialsException(string message, Exception inner)
             : base(message, inner) { }
     }
 

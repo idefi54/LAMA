@@ -15,7 +15,7 @@ namespace LAMA.Droid
             canvasLayout.Children.Add(canvasView);
             canvasLayout.HorizontalOptions = LayoutOptions.FillAndExpand;
             canvasLayout.VerticalOptions = LayoutOptions.FillAndExpand;
-            var graph = new ActivityGraph(canvasLayout, navigation);
+            var graph = new ActivityGraph(canvasLayout);
             canvasView.PaintSurface += (object sender, SKPaintSurfaceEventArgs args) =>
             {
                 graph.Update(args);
