@@ -228,12 +228,12 @@ namespace LAMA.Singletons
         public string chatChannels { get; set; }
         public long lastClientID { get; set; }
 
-        public double _minX;
-        public double _minY;
-        public double _maxX;
-        public double _maxY;
-        public double _minZoom;
-        public double _maxZoom;
+        public double _minX = double.NegativeInfinity;
+        public double _minY = double.NegativeInfinity;
+        public double _maxX = double.PositiveInfinity;
+        public double _maxY = double.PositiveInfinity;
+        public double _minZoom = -1;
+        public double _maxZoom = -1;
 
 
 
