@@ -468,6 +468,10 @@ namespace LAMA.ViewModels
 				roles, 
 				registered);
 
+			// GraphY is not on the page, so needs to be transfered like this.
+			if (this.larpActivity != null)
+				larpActivity.GraphY = this.larpActivity.GraphY;
+
 			var activityDto = new LarpActivityDTO(larpActivity);
 			_createNewActivity(activityDto);
 
