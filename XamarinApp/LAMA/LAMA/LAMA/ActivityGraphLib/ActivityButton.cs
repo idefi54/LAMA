@@ -89,18 +89,28 @@ namespace LAMA.ActivityGraphLib
 
             // Draw the button
             //=======================
-            var paint = new SKPaint();
-            paint.Color = Activity.GetGraphColor();
-            if (editing) paint.Color = paint.Color.WithAlpha(125);
-            int radius = GetCornerRadius(Activity.eventType);
-            canvas.DrawRoundRect(X, Y, Width, Height * _graph.Zoom, radius, radius, paint);
+            using (var paint = new SKPaint())
+            {
+                // Fill
+                paint.Color = Activity.GetGraphColor();
+                paint.Style = SKPaintStyle.Fill;
+                if (editing) paint.Color = paint.Color.WithAlpha(125);
+                int radius = GetCornerRadius(Activity.eventType);
+                canvas.DrawRoundRect(X, Y, Width, Height * _graph.Zoom, radius, radius, paint);
+
+                // Outline
+                paint.Color = SKColors.Black;
+                paint.Style = SKPaintStyle.Stroke;
+                paint.StrokeWidth = 1.5f;
+                canvas.DrawRoundRect(X, Y, Width, Height * _graph.Zoom, radius, radius, paint);
+            }
 
             // Text on the button
-            using (var textPaint = new SKPaint())
+            using (var paint = new SKPaint())
             {
-                textPaint.Style = SKPaintStyle.StrokeAndFill;
-                textPaint.TextSize = Height * _graph.Zoom * 0.4f;
-                textPaint.IsAntialias = true;
+                paint.Style = SKPaintStyle.StrokeAndFill;
+                paint.TextSize = Height * _graph.Zoom * 0.4f;
+                paint.IsAntialias = true;
 
                 // Commented out breaking the text.
                 //int count = (int)textPaint.BreakText(Activity.name, Width, out float textWidth);
@@ -108,22 +118,22 @@ namespace LAMA.ActivityGraphLib
 
                 // Text overflows instead.
                 string text = Activity.name;
-                float textWidth = textPaint.MeasureText(text);
+                float textWidth = paint.MeasureText(text);
 
                 float tx = X + Width / 2 - textWidth / 2;
                 float ty = Y + Height * _graph.Zoom * 0.6f;
 
                 // Outline
-                textPaint.StrokeWidth = 2f * _graph.Zoom;
-                textPaint.FakeBoldText = true;
-                textPaint.Color = SKColors.Black.WithAlpha(200);
-                canvas.DrawText(text, tx, ty, textPaint);
+                paint.StrokeWidth = 2f * _graph.Zoom;
+                paint.FakeBoldText = true;
+                paint.Color = SKColors.Black.WithAlpha(200);
+                canvas.DrawText(text, tx, ty, paint);
 
                 // Normal
-                textPaint.Color = SKColors.White;
-                textPaint.StrokeWidth = 0.1f * _graph.Zoom;
-                textPaint.FakeBoldText = false;
-                canvas.DrawText(text, tx, ty, textPaint);
+                paint.Color = SKColors.White;
+                paint.StrokeWidth = 0.1f * _graph.Zoom;
+                paint.FakeBoldText = false;
+                canvas.DrawText(text, tx, ty, paint);
             }
 
             if (!editing)
@@ -131,6 +141,7 @@ namespace LAMA.ActivityGraphLib
 
             // Draw Left
             //=======================
+            using (var paint = new SKPaint())
             {
                 float lx = X;
                 paint.Color = SKColors.Green;
@@ -149,6 +160,7 @@ namespace LAMA.ActivityGraphLib
 
             // Draw Right
             //=======================
+            using (var paint = new SKPaint())
             {
                 float rx = X + Width;
                 paint.Color = SKColors.Green;
@@ -167,16 +179,17 @@ namespace LAMA.ActivityGraphLib
 
             // Draw Move
             //=======================
-            if (_editState == EditState.Move)
-            {
-                float mX = mouseX - Width / 2;
-                float mY = mouseY - Height / 2;
-                paint.Color = SKColors.Orange.WithAlpha(125);
-                canvas.DrawRect(mX, mY, Width, Height * _graph.Zoom, paint);
-                paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_graph.OffsetY);
-                canvas.DrawLine(mX, mY, mX, 0, paint);
-                canvas.DrawLine(mX + Width, mY, mX + Width, 0, paint);
-            }
+            using (var paint = new SKPaint())
+                if (_editState == EditState.Move)
+                {
+                    float mX = mouseX - Width / 2;
+                    float mY = mouseY - Height / 2;
+                    paint.Color = SKColors.Orange.WithAlpha(125);
+                    canvas.DrawRect(mX, mY, Width, Height * _graph.Zoom, paint);
+                    paint.PathEffect = SKPathEffect.CreateDash(new float[] { 15f, 10f }, -_graph.OffsetY);
+                    canvas.DrawLine(mX, mY, mX, 0, paint);
+                    canvas.DrawLine(mX + Width, mY, mX + Width, 0, paint);
+                }
         }
 
         /// <summary>
@@ -285,10 +298,10 @@ namespace LAMA.ActivityGraphLib
         /// <param name="b"></param>
         public static void DrawConnection(SKCanvas canvas, ActivityGraph graph, ActivityButton a, ActivityButton b)
         {
-           var aRect = new SKRect(a.X,
-               a.Y - graph.OffsetY,
-               a.X + a.Width,
-               a.Y - graph.OffsetY + a.Height);
+            var aRect = new SKRect(a.X,
+                a.Y - graph.OffsetY,
+                a.X + a.Width,
+                a.Y - graph.OffsetY + a.Height);
 
             var bRect = new SKRect(
                 b.X,
