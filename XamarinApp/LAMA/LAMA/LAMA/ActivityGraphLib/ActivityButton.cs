@@ -99,13 +99,19 @@ namespace LAMA.ActivityGraphLib
             using (var textPaint = new SKPaint())
             {
                 textPaint.Style = SKPaintStyle.StrokeAndFill;
-                textPaint.TextSize = Height * _graph.Zoom * 0.8f;
+                textPaint.TextSize = Height * _graph.Zoom * 0.4f;
                 textPaint.IsAntialias = true;
 
-                int count = (int)textPaint.BreakText(Activity.name, Width, out float textWidth);
-                var text = Activity.name.Substring(0, count);
+                // Commented out breaking the text.
+                //int count = (int)textPaint.BreakText(Activity.name, Width, out float textWidth);
+                //var text = Activity.name.Substring(0, count);
+
+                // Text overflows instead.
+                string text = Activity.name;
+                float textWidth = textPaint.MeasureText(text);
+
                 float tx = X + Width / 2 - textWidth / 2;
-                float ty = Y + Height * _graph.Zoom * 0.75f;
+                float ty = Y + Height * _graph.Zoom * 0.6f;
 
                 // Outline
                 textPaint.StrokeWidth = 2f * _graph.Zoom;
