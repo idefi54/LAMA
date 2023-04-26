@@ -445,8 +445,8 @@ namespace LAMA.ViewModels
 
 			int tmp_day = 0;
 
-			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0, 0, DateTimeKind.Utc);
-			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0, 0, DateTimeKind.Utc);
+			DateTime finalStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0, 0, DateTimeKind.Local);
+			DateTime finalEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0, 0, DateTimeKind.Local);
 
 
 			long start = finalStart.ToUnixTimeMilliseconds();
