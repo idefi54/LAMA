@@ -557,7 +557,7 @@ namespace LAMA.Services
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
             PinSetIcon(pin, "location_3_profile");
-            pin.Scale = 0.2f;
+            pin.Scale = 0.8f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
 
