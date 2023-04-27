@@ -1,6 +1,7 @@
 ﻿using LAMA.Models;
 using LAMA.Models.DTO;
 using LAMA.Services;
+using LAMA.Themes;
 using LAMA.ViewModels;
 using Plugin.Geolocator;
 using System;
@@ -212,17 +213,10 @@ namespace LAMA.Views
 
         async void OnIconSelection(object sender, EventArgs args)
         {
-            string icon = await IconSelectionPage.ShowIconSelectionPage(Navigation,
-                new string[] {
-                "LAMA.Resources.Icons.accept_1.png",
-                "LAMA.Resources.Icons.accept_cr.png",
-                "LAMA.Resources.Icons.add_sq.png",
-                "LAMA.Resources.Icons.aim_1.png",
-                "LAMA.Resources.Icons.arrow_cr.png",
-                "LAMA.Resources.Icons.bag_3_open.png",
-                "LAMA.Resources.Icons.box.png",
-                "LAMA.Resources.Icons.calendar.png",
-                });
+            var icons = IconLibrary.GetAllIcons();
+            int selectedIndex = await IconSelectionPage.ShowIconSelectionPage(Navigation, icons);
+            string iconPath = icons[selectedIndex];
+            Debug.WriteLine(iconPath);
         }
 
 

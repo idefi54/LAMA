@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="clr-namespace:LAMA.Views"
-             xmlns:colors="clr-namespace:LAMA.Colors"
+             xmlns:colors="clr-namespace:LAMA.Themes"
              mc:Ignorable="d"
              x:Class="LAMA.Views.ClientChooseServerPage"
 			 Shell.NavBarIsVisible="False"

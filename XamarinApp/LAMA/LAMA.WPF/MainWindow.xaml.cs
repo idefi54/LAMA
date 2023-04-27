@@ -39,7 +39,7 @@ namespace LAMA.WPF
 
             if (Device.RuntimePlatform == Device.WPF)
             {
-                string primaryHex = Colors.ColorPalette.PrimaryColor.ToHex();
+                string primaryHex = Themes.ColorPalette.PrimaryColor.ToHex();
                 System.Windows.Media.Color primaryColor = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(primaryHex);
                 //App.Current.Resources["WindowBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
                 App.Current.Resources["CommandBarBackgroundColor"] = new System.Windows.Media.SolidColorBrush(primaryColor);
