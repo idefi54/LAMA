@@ -64,7 +64,7 @@ namespace LAMA.Services
         private MapView _activeMapView;
         private Polyline _limitsVisual;
         private bool _isGlobalPanLimits =>
-            !double.IsInfinity(LarpEvent.minX) 
+            !double.IsInfinity(LarpEvent.minX)
             && !double.IsInfinity(LarpEvent.maxX)
             && !double.IsInfinity(LarpEvent.minY)
             && !double.IsInfinity(LarpEvent.maxY);
@@ -332,7 +332,7 @@ namespace LAMA.Services
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
-            
+
             bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
             if (isClient && _isGlobalPanLimits)
                 SetPanLimits(view, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
@@ -508,7 +508,7 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void AddActivity(LarpActivity activity, MapView view = null)
         {
-            Pin pin = CreatePin(activity.place.first, activity.place.second, "normal");
+            Pin pin = CreatePin(activity.place.first, activity.place.second, "Activity");
             pin.Callout.Title = $"{activity.name}";
             pin.Callout.Subtitle =
                 $"Status: {activity.status}\n"
@@ -928,6 +928,7 @@ namespace LAMA.Services
 
         private void HandlePinClicked(object sender, PinClickedEventArgs e)
         {
+            Debug.WriteLine("CLICK");
             _time = _stopwatch.ElapsedMilliseconds;
 
             if (e.NumOfTaps == 1 && e.Pin.Label != "temp")
@@ -936,12 +937,23 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            foreach (long id in _activityPins.Keys)
-                if (_activityPins[id] == e.Pin)
-                {
-                    OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
-                    break;
-                }
+            //*/
+            if (e.Pin.Label == "Activity")
+                foreach (long id in _activityPins.Keys)
+                    if (_activityPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
+            if (e.Pin.Label == "POI")
+                foreach (long id in _pointOfInterestPins.Keys)
+                    if (_pointOfInterestPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
             _prevTime = _time;
             e.Handled = true;
         }
