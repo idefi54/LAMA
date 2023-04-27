@@ -937,7 +937,6 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            //*/
             if (e.Pin.Label == "Activity")
                 foreach (long id in _activityPins.Keys)
                     if (_activityPins[id] == e.Pin)
@@ -949,6 +948,14 @@ namespace LAMA.Services
             if (e.Pin.Label == "POI")
                 foreach (long id in _pointOfInterestPins.Keys)
                     if (_pointOfInterestPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
+            if (e.Pin.Label == "CP")
+                foreach (long id in _cpPins.Keys)
+                    if (_cpPins[id] == e.Pin)
                     {
                         OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
                         break;
