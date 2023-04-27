@@ -188,6 +188,14 @@ namespace LAMA.Views
                 await Navigation.PushAsync(new POIDetailsView(pointOfInterest));
             }
 
+            if (e.Pin.Label == "CP")
+            {
+                var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+                CP cp = rememberedList.getByID(id);
+                disappearing = true;
+                await Navigation.PushAsync(new CPDetailsView(cp));
+            }
+
             e.Handled = true;
         }
     }
