@@ -2,7 +2,7 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:LAMA.Views"
-       xmlns:colors="clr-namespace:LAMA.Colors"
+       xmlns:colors="clr-namespace:LAMA.Themes"
        Title="LAMA"
        x:Class="LAMA.AppShell"
        TitleColor="{x:Static colors:ColorPalette.ButtonTextColor}"

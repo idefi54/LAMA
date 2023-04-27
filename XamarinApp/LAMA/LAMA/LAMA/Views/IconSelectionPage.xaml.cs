@@ -16,13 +16,13 @@ namespace LAMA.Views
     public partial class IconSelectionPage : ContentPage
     {
         private const float IMAGE_SIZE = 20f;
-        private Dictionary<Button, string> buttonIcons;
-        private TaskCompletionSource<string> _taskCompletionSource;
+        private Dictionary<Button, int> buttonIcons;
+        private TaskCompletionSource<int> _taskCompletionSource;
 
-        public IconSelectionPage(IEnumerable<string> icons = null)
+        public IconSelectionPage(IList<string> icons = null)
         {
             InitializeComponent();
-            buttonIcons = new Dictionary<Button, string>();
+            buttonIcons = new Dictionary<Button, int>();
 
             if (icons == null)
             {
@@ -39,14 +39,16 @@ namespace LAMA.Views
             int columns = 10;
             int count = 0;
 
-            foreach(string icon in icons)
+            for (int i = 0; i < icons.Count; i++)
             {
+                var icon = icons[i];
                 var button = new Button();
                 button.HorizontalOptions = LayoutOptions.Fill;
                 button.VerticalOptions = LayoutOptions.Fill;
                 button.BackgroundColor = Color.Transparent;
                 button.BorderColor = Color.Transparent;
-                buttonIcons[button] = icon;
+                button.Clicked += ButtonClicked;
+                buttonIcons[button] = i;
 
                 var image = new Image();
                 image.HorizontalOptions = LayoutOptions.Center;
@@ -64,6 +66,7 @@ namespace LAMA.Views
                 count++;
             }
         }
+
         private void ButtonClicked(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -75,9 +78,9 @@ namespace LAMA.Views
             }
         }
 
-        private Task<string> GetIcon()
+        private Task<int> GetIcon()
         {
-            _taskCompletionSource = new TaskCompletionSource<string>();
+            _taskCompletionSource = new TaskCompletionSource<int>();
             return _taskCompletionSource.Task;
         }
 
@@ -92,11 +95,11 @@ namespace LAMA.Views
         /// </summary>
         /// <param name="navigation"></param>
         /// <returns></returns>
-        public static async Task<string> ShowIconSelectionPage(INavigation navigation, IEnumerable<string> icons = null)
+        public static async Task<int> ShowIconSelectionPage(INavigation navigation, IList<string> icons = null)
         {
             var page = new IconSelectionPage(icons);
             await navigation.PushModalAsync(page);
-            string icon = await page.GetIcon();
+            int icon = await page.GetIcon();
             await navigation.PopModalAsync();
             return icon;
         }

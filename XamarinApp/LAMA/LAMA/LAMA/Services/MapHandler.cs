@@ -24,6 +24,7 @@ using Xamarin.Forms;
 using System.Reflection;
 using System.IO;
 using LAMA.Singletons;
+using LAMA.Themes;
 
 namespace LAMA.Services
 {
@@ -260,11 +261,7 @@ namespace LAMA.Services
 
         public static string PointOfInterestIcon(int iconID)
         {
-            if (iconID == 0) return "location_1";
-            if (iconID == 1) return "connection_2";
-            if (iconID == 2) return "flag_2";
-            if (iconID == 3) return "tes_2";
-            return "location_1";
+            return IconLibrary.GetIconsByClass<PointOfInterest>()[iconID];
         }
 
         public static void SetGlobalBoundsFromView(MapView view)
@@ -519,27 +516,7 @@ namespace LAMA.Services
                 + "\n"
                 + $"Double click to show the activity.";
 
-            switch (activity.status)
-            {
-                case ActivityStatus.awaitingPrerequisites:
-                    PinSetIcon(pin, "time_1"); break;
-
-                case ActivityStatus.readyToLaunch:
-                    PinSetIcon(pin, "mini_next"); break;
-
-                case ActivityStatus.launched:
-                    PinSetIcon(pin, "profile_close_add"); break;
-
-                case ActivityStatus.inProgress:
-                    PinSetIcon(pin, "sword"); break;
-
-                case ActivityStatus.completed:
-                    PinSetIcon(pin, "accept_cr"); break;
-
-                default:
-                    PinSetIcon(pin, "sword");
-                    break;
-            }
+            PinSetIcon(pin, IconLibrary.GetIconsByLarpActivityStatus(activity.status));
 
             _activityPins[activity.ID] = pin;
 
@@ -556,7 +533,7 @@ namespace LAMA.Services
         public void AddCP(CP cp, MapView view = null)
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
-            PinSetIcon(pin, "location_3_profile");
+            PinSetIcon(pin, IconLibrary.GetIconsByClass<CP>()[0]);
             pin.Scale = 0.8f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
@@ -623,7 +600,7 @@ namespace LAMA.Services
         public ulong AddAlert(double lon, double lat, string text, MapView view = null)
         {
             Pin p = CreatePin(lon, lat, "important");
-            PinSetIcon(p, "message_2_exp-1");
+            PinSetIcon(p, "LAMA.Resources.Icons.message_2_exp-1");
             p.Callout.Title = text;
             p.Color = XColor.Red;
             p.Callout.Color = XColor.Red;
@@ -936,9 +913,9 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 LoadRoad(rememberedList[i]);
         }
-        private byte[] GetIcon(string name)
+        private byte[] GetIcon(string path)
         {
-            var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png");
+            var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream(path);
             return stream.ToBytes();
         }
         #endregion

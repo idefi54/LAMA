@@ -134,9 +134,6 @@ namespace LAMA.Views
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
 
-            // test
-            MapHandler.Instance.AddAlert(20, 20, "ALERT", _mapView);
-
             if (MapHandler.Instance.CurrentLocation != null)
             {
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);

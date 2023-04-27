@@ -2,7 +2,7 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.App"
-             xmlns:colors="clr-namespace:LAMA.Colors"
+             xmlns:colors="clr-namespace:LAMA.Themes"
              UserAppTheme="Light">
     <!--
         Define global resources and styles here, that apply to all pages in your app.

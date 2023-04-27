@@ -6,7 +6,7 @@ using SkiaSharp;
 using System;
 using Xamarin.Forms;
 using System.Diagnostics;
-using LAMA.Colors;
+using LAMA.Themes;
 
 namespace LAMA.ActivityGraphLib
 {
