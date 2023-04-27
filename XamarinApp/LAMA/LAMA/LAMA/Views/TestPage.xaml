@@ -38,7 +38,8 @@
 				<Button Text="Dropdown Menu Over Example" Clicked="OnDropdownOverExample"/>
 				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
 				<Button Text="Image Example" Clicked="OnImageExample"/>
-			</StackLayout>
+                <Button Text="Icon Selection" Clicked="OnIconSelection"/>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

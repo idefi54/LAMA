@@ -210,7 +210,20 @@ namespace LAMA.Views
             await Navigation.PushAsync(new LarpEventView());
         }
 
-
+        async void OnIconSelection(object sender, EventArgs args)
+        {
+            string icon = await IconSelectionPage.ShowIconSelectionPage(Navigation,
+                new string[] {
+                "LAMA.Resources.Icons.accept_1.png",
+                "LAMA.Resources.Icons.accept_cr.png",
+                "LAMA.Resources.Icons.add_sq.png",
+                "LAMA.Resources.Icons.aim_1.png",
+                "LAMA.Resources.Icons.arrow_cr.png",
+                "LAMA.Resources.Icons.bag_3_open.png",
+                "LAMA.Resources.Icons.box.png",
+                "LAMA.Resources.Icons.calendar.png",
+                });
+        }
 
 
         void onAddPermissionsPermission(object sender, EventArgs args)
