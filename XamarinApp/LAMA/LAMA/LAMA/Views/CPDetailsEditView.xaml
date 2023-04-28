@@ -6,9 +6,14 @@
         <ScrollView>
             <StackLayout Padding="15" >
 
+                <Label Text="Jméno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
                 <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
-
+                <Label Text="Přezdívka"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
                 <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
 

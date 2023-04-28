@@ -12,7 +12,7 @@ namespace LAMA.ViewModels
         
         public string Name { get { return cp.name; } }
         public string Nick { get { return cp.nick; } }
-        public string Roles { get { return cp.roles.ToString(); } }
+        public string Roles { get { return cp.roles.ToReadableString(); } }
 
         public CPViewModel(CP cp)
         {

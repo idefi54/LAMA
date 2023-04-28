@@ -49,11 +49,14 @@ namespace LAMA
 
         
 
-        public static SQLiteAsyncConnection makeConnection(string newName = null)
+        public static SQLiteAsyncConnection makeConnection()
         {
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            if (newName != null && newName != string.Empty)
-                databaseName = newName;
+
+            databaseName = CommunicationInfo.Instance.ServerName + "_LAMA_Database";
+            if (CommunicationInfo.Instance.IsServer)
+                databaseName = databaseName + "_server";
+            databaseName = databaseName + ".db";
             
             Console.WriteLine("making database with name " + databaseName);
 
@@ -128,7 +131,7 @@ namespace LAMA
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection(databaseName);
+                SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
             string name = new Storage().GetType().Name;
@@ -238,7 +241,7 @@ namespace LAMA
         {
 
             if (SQLConnectionWrapper.connection == null)
-                SQLConnectionWrapper.makeConnection(databaseName);
+                SQLConnectionWrapper.makeConnection();
             connection = SQLConnectionWrapper.connection;
 
 

@@ -61,12 +61,12 @@ namespace LAMA.ViewModels
             DeleteCommand = new Command(OnDelete);
             name = cp.name;
             nick = cp.nick;
-            roles = cp.roles.ToString();
+            roles = cp.roles.ToReadableString();
             phone = cp.phone;
             facebook = cp.facebook;
             discord = cp.discord;
             _notes = cp.notes;
-            permissions = cp.permissions.ToString();
+            permissions = cp.permissions.ToReadableString();
             AddPermissionCommand = new Command(onAddPermission);
             RemovePermissionCommand = new Command(onRemovePermission);
 
@@ -95,6 +95,8 @@ namespace LAMA.ViewModels
                 cp.discord = discord;
             if (cp.notes != _notes)
                 cp.notes = _notes;
+
+            navigation.PopAsync();
         }
 
         void OnEdit()
@@ -129,8 +131,8 @@ namespace LAMA.ViewModels
         {
             cp.permissions.Add(namesToPermissions[AddablePermissions[PermissionToAdd]]);
             figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToString());
-            Permissions = cp.permissions.ToString();
+            SetProperty(ref permissions, cp.permissions.ToReadableString());
+            Permissions = cp.permissions.ToReadableString();
         }
         void onRemovePermission()
         {
@@ -139,8 +141,8 @@ namespace LAMA.ViewModels
                 return;
             cp.permissions.Remove(namesToPermissions[CurrentPermissions[permissionToRemove]]);
             figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToString());
-            Permissions = cp.permissions.ToString();
+            SetProperty(ref permissions, cp.permissions.ToReadableString());
+            Permissions = cp.permissions.ToReadableString();
         }
         async void OnDelete()
         {

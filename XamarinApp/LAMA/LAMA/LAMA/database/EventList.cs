@@ -54,6 +54,28 @@ namespace LAMA
         {
             base.Add(what);
         }
+        public string ToReadableString()
+        {
+
+            if (Count == 0)
+                return string.Empty;
+            else
+            {
+                StringBuilder output = new StringBuilder();
+                bool first = true;
+                for (int i = 0; i < Count; ++i)
+                {
+                    if (!first)
+                        output.Append(", ");
+
+                    if (first)
+                        first = false;
+                    output.Append(this[i].ToString());
+
+                }
+                return output.ToString();
+            }
+        }
         public override string ToString()
         {
             if(Count == 0)
