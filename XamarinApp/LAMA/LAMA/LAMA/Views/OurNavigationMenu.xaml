@@ -3,7 +3,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="LAMA.Views.OurNavigationMenu"
-    xmlns:colors="clr-namespace:LAMA.Colors"
+    xmlns:colors="clr-namespace:LAMA.Themes"
     Padding="0" 
     Spacing="0"
     BackgroundColor="{x:Static colors:ColorPalette.LighterPrimaryColor}">

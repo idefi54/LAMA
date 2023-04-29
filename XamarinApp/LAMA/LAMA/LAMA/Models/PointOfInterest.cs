@@ -8,7 +8,7 @@ using Xamarin.Essentials;
 
 namespace LAMA.Models
 {
-    public class PointOfInterest:Serializable
+    public class PointOfInterest : Serializable
     {
         long id;
         public long ID { get { return id; } set { id = value; updateValue(0, value.ToString()); } }
@@ -78,7 +78,7 @@ namespace LAMA.Models
                 case 4:
                     description = value;
                     break;
-                }
+            }
         }
 
         public void buildFromStrings(string[] input)
@@ -97,8 +97,8 @@ namespace LAMA.Models
                 case 0: return id.ToString();
                 case 1: return coordinates.ToString();
                 case 2: return icon.ToString();
-                case 3 : return name;
-                case 4 : return description;
+                case 3: return name;
+                case 4: return description;
             }
             throw new Exception("wrong index called");
         }

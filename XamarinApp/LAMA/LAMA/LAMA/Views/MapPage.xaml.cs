@@ -16,6 +16,7 @@ namespace LAMA.Views
     public partial class MapPage : ContentPage
     {
         private MapView _mapView;
+        private bool disappearing = false;
 
         public MapPage()
         {
@@ -88,6 +89,7 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
+            disappearing = false;
 
             bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
             EditLabel.IsVisible = canEdit;
@@ -134,9 +136,6 @@ namespace LAMA.Views
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
 
-            // test
-            MapHandler.Instance.AddAlert(20, 20, "ALERT", _mapView);
-
             if (MapHandler.Instance.CurrentLocation != null)
             {
                 MapHandler.CenterOn(_mapView, MapHandler.Instance.CurrentLocation.Longitude, MapHandler.Instance.CurrentLocation.Latitude);
@@ -168,14 +167,35 @@ namespace LAMA.Views
             SetHomeLocationButton.Text = "Změnit Domovskou lokaci";
         }
 
-        private async void OnPinClicked(PinClickedEventArgs e, long activityID, bool doubleClick)
+        private async void OnPinClicked(PinClickedEventArgs e, long id, bool doubleClick)
         {
-            if (!doubleClick)
+            if (!doubleClick || disappearing)
                 return;
 
-            var rememberedList = DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList;
-            Models.LarpActivity activity = rememberedList.getByID(activityID);
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            if (e.Pin.Label == "Activity")
+            {
+                var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+                LarpActivity activity = rememberedList.getByID(id);
+                disappearing = true;
+                await Navigation.PushAsync(new DisplayActivityPage(activity));
+            }
+
+            if (e.Pin.Label == "POI")
+            {
+                var rememberedList = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
+                PointOfInterest pointOfInterest = rememberedList.getByID(id);
+                disappearing = true;
+                await Navigation.PushAsync(new POIDetailsView(pointOfInterest));
+            }
+
+            if (e.Pin.Label == "CP")
+            {
+                var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+                CP cp = rememberedList.getByID(id);
+                disappearing = true;
+                await Navigation.PushAsync(new CPDetailsView(cp));
+            }
+
             e.Handled = true;
         }
     }

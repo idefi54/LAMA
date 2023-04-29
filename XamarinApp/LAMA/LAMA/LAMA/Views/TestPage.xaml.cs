@@ -1,6 +1,7 @@
 ﻿using LAMA.Models;
 using LAMA.Models.DTO;
 using LAMA.Services;
+using LAMA.Themes;
 using LAMA.ViewModels;
 using Plugin.Geolocator;
 using System;
@@ -210,7 +211,13 @@ namespace LAMA.Views
             await Navigation.PushAsync(new LarpEventView());
         }
 
-
+        async void OnIconSelection(object sender, EventArgs args)
+        {
+            var icons = IconLibrary.GetAllIcons();
+            int selectedIndex = await IconSelectionPage.ShowIconSelectionPage(Navigation, icons);
+            string iconPath = icons[selectedIndex];
+            Debug.WriteLine(iconPath);
+        }
 
 
         void onAddPermissionsPermission(object sender, EventArgs args)

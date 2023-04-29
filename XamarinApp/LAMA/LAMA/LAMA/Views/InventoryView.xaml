@@ -5,7 +5,7 @@
              x:Class="LAMA.Views.InventoryView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              xmlns:common="clr-namespace:LAMA.Views"
-             xmlns:colors="clr-namespace:LAMA.Colors"
+             xmlns:colors="clr-namespace:LAMA.Themes"
 			 Title="Inventář">
 
     <ContentPage.ToolbarItems>

@@ -24,6 +24,7 @@ using Xamarin.Forms;
 using System.Reflection;
 using System.IO;
 using LAMA.Singletons;
+using LAMA.Themes;
 
 namespace LAMA.Services
 {
@@ -63,7 +64,7 @@ namespace LAMA.Services
         private MapView _activeMapView;
         private Polyline _limitsVisual;
         private bool _isGlobalPanLimits =>
-            !double.IsInfinity(LarpEvent.minX) 
+            !double.IsInfinity(LarpEvent.minX)
             && !double.IsInfinity(LarpEvent.maxX)
             && !double.IsInfinity(LarpEvent.minY)
             && !double.IsInfinity(LarpEvent.maxY);
@@ -260,11 +261,7 @@ namespace LAMA.Services
 
         public static string PointOfInterestIcon(int iconID)
         {
-            if (iconID == 0) return "location_1";
-            if (iconID == 1) return "connection_2";
-            if (iconID == 2) return "flag_2";
-            if (iconID == 3) return "tes_2";
-            return "location_1";
+            return IconLibrary.GetIconsByClass<PointOfInterest>()[iconID];
         }
 
         public static void SetGlobalBoundsFromView(MapView view)
@@ -335,7 +332,7 @@ namespace LAMA.Services
             SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
-            
+
             bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
             if (isClient && _isGlobalPanLimits)
                 SetPanLimits(view, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
@@ -511,7 +508,7 @@ namespace LAMA.Services
         /// <param name="view"></param>
         public void AddActivity(LarpActivity activity, MapView view = null)
         {
-            Pin pin = CreatePin(activity.place.first, activity.place.second, "normal");
+            Pin pin = CreatePin(activity.place.first, activity.place.second, "Activity");
             pin.Callout.Title = $"{activity.name}";
             pin.Callout.Subtitle =
                 $"Status: {activity.status}\n"
@@ -519,27 +516,7 @@ namespace LAMA.Services
                 + "\n"
                 + $"Double click to show the activity.";
 
-            switch (activity.status)
-            {
-                case ActivityStatus.awaitingPrerequisites:
-                    PinSetIcon(pin, "time_1"); break;
-
-                case ActivityStatus.readyToLaunch:
-                    PinSetIcon(pin, "mini_next"); break;
-
-                case ActivityStatus.launched:
-                    PinSetIcon(pin, "profile_close_add"); break;
-
-                case ActivityStatus.inProgress:
-                    PinSetIcon(pin, "sword"); break;
-
-                case ActivityStatus.completed:
-                    PinSetIcon(pin, "accept_cr"); break;
-
-                default:
-                    PinSetIcon(pin, "sword");
-                    break;
-            }
+            PinSetIcon(pin, IconLibrary.GetIconsByLarpActivityStatus(activity.status));
 
             _activityPins[activity.ID] = pin;
 
@@ -556,7 +533,7 @@ namespace LAMA.Services
         public void AddCP(CP cp, MapView view = null)
         {
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
-            PinSetIcon(pin, "location_3_profile");
+            PinSetIcon(pin, IconLibrary.GetIconsByClass<CP>()[0]);
             pin.Scale = 0.8f;
             pin.Color = XColor.Orange;
             pin.Callout.Title = cp.name;
@@ -623,7 +600,7 @@ namespace LAMA.Services
         public ulong AddAlert(double lon, double lat, string text, MapView view = null)
         {
             Pin p = CreatePin(lon, lat, "important");
-            PinSetIcon(p, "message_2_exp-1");
+            PinSetIcon(p, "LAMA.Resources.Icons.message_2_exp-1");
             p.Callout.Title = text;
             p.Color = XColor.Red;
             p.Callout.Color = XColor.Red;
@@ -936,9 +913,9 @@ namespace LAMA.Services
             for (int i = 0; i < rememberedList.Count; i++)
                 LoadRoad(rememberedList[i]);
         }
-        private byte[] GetIcon(string name)
+        private byte[] GetIcon(string path)
         {
-            var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream($"LAMA.Resources.Icons.{name}.png");
+            var stream = typeof(MapHandler).GetTypeInfo().Assembly.GetManifestResourceStream(path);
             return stream.ToBytes();
         }
         #endregion
@@ -951,6 +928,7 @@ namespace LAMA.Services
 
         private void HandlePinClicked(object sender, PinClickedEventArgs e)
         {
+            Debug.WriteLine("CLICK");
             _time = _stopwatch.ElapsedMilliseconds;
 
             if (e.NumOfTaps == 1 && e.Pin.Label != "temp")
@@ -959,12 +937,30 @@ namespace LAMA.Services
                 else
                     e.Pin.ShowCallout();
 
-            foreach (long id in _activityPins.Keys)
-                if (_activityPins[id] == e.Pin)
-                {
-                    OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
-                    break;
-                }
+            if (e.Pin.Label == "Activity")
+                foreach (long id in _activityPins.Keys)
+                    if (_activityPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
+            if (e.Pin.Label == "POI")
+                foreach (long id in _pointOfInterestPins.Keys)
+                    if (_pointOfInterestPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
+            if (e.Pin.Label == "CP")
+                foreach (long id in _cpPins.Keys)
+                    if (_cpPins[id] == e.Pin)
+                    {
+                        OnPinClick?.Invoke(e, id, _time - _prevTime < _doubleClickTime);
+                        break;
+                    }
+
             _prevTime = _time;
             e.Handled = true;
         }
