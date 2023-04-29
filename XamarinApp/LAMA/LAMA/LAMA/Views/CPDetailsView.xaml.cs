@@ -15,10 +15,12 @@ namespace LAMA.Views
     public partial class CPDetailsView : ContentPage
     {
         private MapView _mapView;
+        private Models.CP _cp;
         public CPDetailsView(Models.CP cp)
         {
             InitializeComponent();
             BindingContext = new ViewModels.CPDetailsViewModel(Navigation, cp);
+            _cp = cp;
         }
         
         protected async override void OnAppearing()
@@ -29,8 +31,8 @@ namespace LAMA.Views
             var layout = scrollView.Children[0] as StackLayout;
 
             var mapHorizontalOption = LayoutOptions.Fill;
-            var mapVerticalOption = LayoutOptions.Fill;
-            int mapHeightRequest = 300;
+            var mapVerticalOption = LayoutOptions.EndAndExpand;
+            int mapHeightRequest = 450;
             var mapBackgroundColor = Color.Gray;
 
             var activityIndicator = new ActivityIndicator
@@ -52,6 +54,7 @@ namespace LAMA.Views
                 BackgroundColor = mapBackgroundColor
             };
             MapHandler.Instance.MapViewSetup(_mapView);
+            MapHandler.CenterOn(_mapView, _cp.location.first, _cp.location.second);
             layout.Children.Remove(activityIndicator);
             layout.Children.Add(_mapView);
         }

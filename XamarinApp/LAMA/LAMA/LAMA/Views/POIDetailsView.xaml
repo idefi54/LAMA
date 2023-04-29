@@ -23,7 +23,17 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" />
 
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Ikona:"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"/>
 
+                <Image Source="{Binding CurrentIcon, Mode=TwoWay}"
+                       HeightRequest="40"
+                       WidthRequest="40"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center"/>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
