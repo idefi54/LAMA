@@ -31,7 +31,7 @@ namespace LAMA.ViewModels
             set
             {
                 _currentIconIndex = value;
-                CurrentIcon = ImageSource.FromResource(_icons[_currentIconIndex], Assembly.GetExecutingAssembly());
+                CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
             }
         }
         private ImageSource _currentIcon;
@@ -65,12 +65,31 @@ namespace LAMA.ViewModels
                 Name = POI.Name;
                 Description = POI.Description;
                 CurrentIconIndex = POI.Icon;
+                POI.IGotUpdated += onPOIChanged;
             }
 
             Save = new Command(onSave);
             Cancel = new Command(onCancel);
             Edit = new Command(onEdit);
             IconChange = new Command(onIconChange);
+        }
+
+        private void onPOIChanged(object sender, int e)
+        {
+            var poi = sender as PointOfInterest;
+
+            switch (e)
+            {
+                case 2:
+                    CurrentIconIndex = poi.Icon;
+                    break;
+                case 3:
+                    Name = poi.Name;
+                    break;
+                case 4:
+                    Description = poi.Description;
+                    break;
+            }
         }
 
         async void onSave()
@@ -85,7 +104,7 @@ namespace LAMA.ViewModels
             {
                 var list = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
                 (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
-                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), 0, name, description));
+                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), CurrentIconIndex, name, description));
             }
             await navigation.PopAsync();
         }

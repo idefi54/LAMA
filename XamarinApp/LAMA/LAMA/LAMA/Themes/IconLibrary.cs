@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using LAMA.Models;
 using System.Text;
+using Xamarin.Forms;
 
 namespace LAMA.Themes
 {
@@ -75,6 +76,12 @@ namespace LAMA.Themes
                 default: return _larpActivityIcons[0];
             }
 
+        }
+
+        public static ImageSource GetImageSourceFromResourcePath(string resourcePath)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return ImageSource.FromResource(resourcePath, assembly);
         }
     }
 }
