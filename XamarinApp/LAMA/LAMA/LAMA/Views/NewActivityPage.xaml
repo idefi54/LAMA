@@ -6,13 +6,21 @@
              Title="{Binding Title}"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels" xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 xmlns:themes="clr-namespace:LAMA.Themes"
+			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
 
 	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
+		<ToolbarItem Command="{Binding SaveCommand}" IconImageSource="{x:Static themes:IconLibrary.SaveIconSource}"/>
 	</ContentPage.ToolbarItems>
 	
-    <ContentPage.Content>
+	<NavigationPage.TitleView>
+		<StackLayout>
+			<ImageButton Command="{Binding SaveCommand}" Source="{x:Static themes:IconLibrary.SaveIconSource}" WidthRequest="50" HeightRequest="50" HorizontalOptions="End"/>
+		</StackLayout>
+	</NavigationPage.TitleView>
+
+	<ContentPage.Content>
 		<ScrollView>
 			<StackLayout Padding="15,15,30,15" >
 				<Label Text="Název aktivity"

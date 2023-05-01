@@ -147,6 +147,17 @@ namespace LAMA.Models
             }
         }
 
+        int _iconIndex;
+        public int IconIndex
+        {
+            get { return _iconIndex; }
+            set
+            {
+                _iconIndex = value;
+                updateValue(15, _iconIndex.ToString());
+            }
+        }
+
         void initChangeListeners()
         {
             _prerequisiteIDs.dataChanged += onPrerequisiteChange;
@@ -160,7 +171,7 @@ namespace LAMA.Models
         }
         public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
             long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<long, int>>requiredItems, 
-            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations)
+            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations, int iconIndex = 0)
         {
             _ID = ID;
             _name = name;
@@ -176,6 +187,7 @@ namespace LAMA.Models
             _requiredItems = requiredItems;
             _roles = roles;
             _registrationByRole = registrations;
+            _iconIndex = iconIndex;
 
             initChangeListeners();
         }
@@ -375,6 +387,8 @@ namespace LAMA.Models
                     return _registrationByRole.ToString();
                 case 14:
                     return _graphY.ToString();
+                case 15:
+                    return _iconIndex.ToString();
             }
             throw new Exception("wrong index selected");
         }
@@ -440,7 +454,9 @@ namespace LAMA.Models
                     int j = 0;
                     _graphY = Helpers.readDouble(value, ref j);
                     break;
-
+                case 15:
+                    _iconIndex = Helpers.readInt(value);
+                    break;
             }
         }
 

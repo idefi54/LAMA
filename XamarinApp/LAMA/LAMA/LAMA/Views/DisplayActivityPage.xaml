@@ -7,6 +7,7 @@
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              xmlns:forms="clr-namespace:LAMA.Forms"
+			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
     <ContentPage.ToolbarItems>
