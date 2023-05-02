@@ -316,7 +316,7 @@ namespace LAMA.Singletons
             }
             throw new System.NotImplementedException();
         }
-        public long getTypeID()
+        public int getTypeID()
         {
             return 12345;
         }
