@@ -4,6 +4,7 @@ using Mapsui.UI.Forms;
 using LAMA.Services;
 using LAMA.Views;
 using Xamarin.Essentials;
+using LAMA.Singletons;
 
 namespace LAMA.ViewModels
 {

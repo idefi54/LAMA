@@ -26,7 +26,7 @@ using System.IO;
 using LAMA.Singletons;
 using LAMA.Themes;
 
-namespace LAMA.Services
+namespace LAMA.Singletons
 {
     public class MapHandler
     {
@@ -389,6 +389,9 @@ namespace LAMA.Services
             if (IsFilteredIn(EntityType.CPs))
                 foreach (Pin pin in _cpPins.Values)
                 {
+                    if (pin == _cpPins[LocalStorage.cpID])
+                        continue;
+
                     view.Pins.Add(pin);
                     //pin.Scale = 0.5f;
                 }

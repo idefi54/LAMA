@@ -1,5 +1,6 @@
 ﻿using LAMA.Models;
  using LAMA.Services;
+using LAMA.Singletons;
 using LAMA.ViewModels;
 using Mapsui.UI.Forms;
 using System;

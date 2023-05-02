@@ -9,6 +9,7 @@ using System;
 using LAMA.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Views
 {

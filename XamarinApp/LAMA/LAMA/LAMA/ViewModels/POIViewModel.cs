@@ -1,5 +1,6 @@
 ﻿using LAMA.Models;
 using LAMA.Services;
+using LAMA.Singletons;
 using LAMA.Themes;
 using LAMA.Views;
 using System;

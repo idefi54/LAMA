@@ -1,4 +1,5 @@
 ﻿using LAMA.Services;
+using LAMA.Singletons;
 using Mapsui.UI.Forms;
 using System;
 using System.Collections.Generic;

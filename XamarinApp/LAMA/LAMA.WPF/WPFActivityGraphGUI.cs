@@ -27,7 +27,7 @@ namespace LAMA.UWP
 
             WPF.App.Current.MainWindow.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.LeftCtrl)
+                if (e.Key == System.Windows.Input.Key.X)
                     graph.SwitchActivityCreationMode(true);
 
                 canvasView.InvalidateSurface();
@@ -35,7 +35,7 @@ namespace LAMA.UWP
 
             WPF.App.Current.MainWindow.KeyUp += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.LeftCtrl)
+                if (e.Key == System.Windows.Input.Key.X)
                     graph.SwitchActivityCreationMode(false);
 
                 canvasView.InvalidateSurface();

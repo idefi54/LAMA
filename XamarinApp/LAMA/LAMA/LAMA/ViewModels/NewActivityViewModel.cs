@@ -12,6 +12,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Globalization;
+using LAMA.Singletons;
 
 namespace LAMA.ViewModels
 {

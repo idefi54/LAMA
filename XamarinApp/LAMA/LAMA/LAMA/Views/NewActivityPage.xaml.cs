@@ -13,6 +13,7 @@ using LAMA.Services;
 using LAMA.Models.DTO;
 
 using Mapsui.UI.Forms;
+using LAMA.Singletons;
 
 namespace LAMA.Views
 {
