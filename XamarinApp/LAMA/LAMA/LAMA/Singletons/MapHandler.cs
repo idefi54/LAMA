@@ -373,35 +373,20 @@ namespace LAMA.Singletons
 
             if (IsFilteredIn(EntityType.Activities))
                 foreach (Pin pin in _activityPins.Values)
-                {
                     view.Pins.Add(pin);
-                    //pin.Scale = _pinScale;
-                }
 
             if (IsFilteredIn(EntityType.Alerts))
                 foreach (Pin pin in _alertPins.Values)
-                {
                     view.Pins.Add(pin);
-                    //pin.Scale = _pinScale;
-                }
-
 
             if (IsFilteredIn(EntityType.CPs))
-                foreach (Pin pin in _cpPins.Values)
-                {
-                    if (pin == _cpPins[LocalStorage.cpID])
-                        continue;
-
-                    view.Pins.Add(pin);
-                    //pin.Scale = 0.5f;
-                }
-
+                foreach (long id in _cpPins.Keys)
+                    if (id != LocalStorage.cpID)
+                        view.Pins.Add(_cpPins[id]);
+                
             if (IsFilteredIn(EntityType.PointsOfIntrest))
                 foreach (Pin pin in _pointOfInterestPins.Values)
-                {
                     view.Pins.Add(pin);
-                    //pin.Scale = _pinScale;
-                }
 
             if (IsFilteredIn(EntityType.Polylines))
             {
