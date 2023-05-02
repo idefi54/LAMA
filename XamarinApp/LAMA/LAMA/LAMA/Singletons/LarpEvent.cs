@@ -91,6 +91,7 @@ namespace LAMA.Singletons
             {
                 Instance.days = value.ToString();
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 1);
             }
         }
 
@@ -101,6 +102,7 @@ namespace LAMA.Singletons
             {
                 Instance.name = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 10);
             }
         }
 
@@ -124,6 +126,7 @@ namespace LAMA.Singletons
             {
                 Instance.lastClientID = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 3);
             }
         }
 
@@ -134,6 +137,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 4);
             } 
         }
         public static double minY 
@@ -143,6 +147,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 5);
             }
         }
         public static double maxX
@@ -152,6 +157,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 6);
             }
         }
         public static double maxY
@@ -161,6 +167,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 7);
             }
         }
         public static double minZoom 
@@ -170,6 +177,7 @@ namespace LAMA.Singletons
             {
                 Instance._minZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 8);
             }
         }
         public static double maxZoom 
@@ -179,6 +187,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 9);
             }
         }
 
