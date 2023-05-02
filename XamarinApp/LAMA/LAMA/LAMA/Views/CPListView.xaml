@@ -33,7 +33,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontSize="Small" />
                                 <Label Grid.Row="0" Grid.Column="2" Text="{Binding Nick}" FontSize="Small" />
-                                <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Roles}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
+                                <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Roles}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
 
 
                                 <OnPlatform x:TypeArguments="View">
