@@ -1082,7 +1082,7 @@ namespace LAMA.Services
 
         private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
         {
-            if (changed is LarpEvent)
+            if (changed is LarpEvent && _activeMapView != null)
             {
                 bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
                 if (isClient && _isGlobalPanLimits)
