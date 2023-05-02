@@ -1,4 +1,4 @@
-﻿using LAMA.Colors;
+﻿using LAMA.Themes;
 using LAMA.Communicator;
 using LAMA.Singletons;
 using LAMA.Views;
@@ -109,7 +109,7 @@ namespace LAMA.ViewModels
                 }
                 if (Device.RuntimePlatform == Device.WPF)
                 {
-                    App.Current.MainPage = new NavigationPage(new ClientLoginTypePage(communicator))
+                    App.Current.MainPage = new NavigationPage(new ClientChooseNamePage(communicator, false))
                     {
                         BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                         BarBackgroundColor = ColorPalette.PrimaryColor
@@ -118,7 +118,7 @@ namespace LAMA.ViewModels
                 else
                 {
                     //ClientLoginTypePage.InitPage(communicator);
-                    await Shell.Current.Navigation.PushAsync(new ClientLoginTypePage(communicator));
+                    await Shell.Current.Navigation.PushAsync(new ClientChooseNamePage(communicator, false));
                     //await Shell.Current.GoToAsync($"{nameof(ClientLoginTypePage)}?communicator={communicator}");
                     //await Shell.Current.GoToAsync($"//{nameof(ClientLoginTypePage)}");
                 }

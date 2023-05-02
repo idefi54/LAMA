@@ -21,10 +21,10 @@ namespace LAMA.ViewModels
         {
             if (Device.RuntimePlatform == Device.WPF)
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new ServerLoginTypePage());
+                await Application.Current.MainPage.Navigation.PushAsync(new ServerLoginPage(false));
             }
             else {
-                await Shell.Current.GoToAsync($"//{nameof(ServerLoginTypePage)}");
+                await Shell.Current.GoToAsync($"//{nameof(ServerLoginPage)}?newServer={false}");
             }
         }
 

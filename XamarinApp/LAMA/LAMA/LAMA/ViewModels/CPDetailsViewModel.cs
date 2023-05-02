@@ -39,17 +39,20 @@ namespace LAMA.ViewModels
         public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
-        public Command AddPermissionCommand { get; private set; }
-        public Command RemovePermissionCommand { get; private set; }
+        //public Command AddPermissionCommand { get; private set; }
+        //public Command RemovePermissionCommand { get; private set; }
         public Command DeleteCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> CurrentPermissions { get; } = new ObservableCollection<string>();
-        int permissionToAdd;
-        public int PermissionToAdd { get { return permissionToAdd; }set { SetProperty(ref permissionToAdd, value); } }
-        int permissionToRemove;
-        public int PermissionToRemove { get { return permissionToRemove; } set { SetProperty(ref permissionToRemove, value); } }
+        //int permissionToAdd;
+        //public int PermissionToAdd { get { return permissionToAdd; }set { SetProperty(ref permissionToAdd, value); } }
+        //int permissionToRemove;
+        //public int PermissionToRemove { get { return permissionToRemove; } set { SetProperty(ref permissionToRemove, value); } }
 
-        Dictionary<string, CP.PermissionType> namesToPermissions = new Dictionary<string, CP.PermissionType>();
+        //Dictionary<string, CP.PermissionType> namesToPermissions = new Dictionary<string, CP.PermissionType>();
+
+        ObservableCollection<PermissionViewModel> _permissionList = new ObservableCollection<PermissionViewModel>();
+        public ObservableCollection<PermissionViewModel> PermissionList { get { return _permissionList; } }
 
         public CPDetailsViewModel(INavigation navigation, CP cp)
         {
@@ -61,22 +64,24 @@ namespace LAMA.ViewModels
             DeleteCommand = new Command(OnDelete);
             name = cp.name;
             nick = cp.nick;
-            roles = cp.roles.ToString();
+            roles = cp.roles.ToReadableString();
             phone = cp.phone;
             facebook = cp.facebook;
             discord = cp.discord;
             _notes = cp.notes;
-            permissions = cp.permissions.ToString();
-            AddPermissionCommand = new Command(onAddPermission);
-            RemovePermissionCommand = new Command(onRemovePermission);
-
+            permissions = cp.permissions.ToReadableString();
+            
 
             foreach (CP.PermissionType perm in Enum.GetValues(typeof(CP.PermissionType)))
             {
-                namesToPermissions.Add(Enum.GetName(typeof(CP.PermissionType), perm), perm);
+                PermissionList.Add(new PermissionViewModel(perm.ToString(), cp.permissions.Contains(perm), 
+                    CanChangePermissions && 
+                    //also don't allow to change my own permission to change permissions
+                    !(cp.ID==LocalStorage.cpID && perm == CP.PermissionType.SetPermission), 
+                    perm));
             }
 
-            figureOutPermissions();
+            //figureOutPermissions();
 
 
         }
@@ -95,12 +100,23 @@ namespace LAMA.ViewModels
                 cp.discord = discord;
             if (cp.notes != _notes)
                 cp.notes = _notes;
+
+            if(CanChangePermissions)
+                foreach(var a in PermissionList)
+                {
+                    if(a.Checked && !cp.permissions.Contains(a.type))
+                        cp.permissions.Add(a.type);
+                    else if (!a.Checked && cp.permissions.Contains(a.type))
+                        cp.permissions.Remove(a.type);
+                }
+            navigation.PopAsync();
         }
 
         void OnEdit()
         {
             navigation.PushAsync(new CPDetailsEditView(cp));
         }
+        /*
         void figureOutPermissions()
         {
             AddablePermissions.Clear();
@@ -124,13 +140,14 @@ namespace LAMA.ViewModels
                 }
             }
         }
-
+        */
+        /*
         void onAddPermission()
         {
             cp.permissions.Add(namesToPermissions[AddablePermissions[PermissionToAdd]]);
             figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToString());
-            Permissions = cp.permissions.ToString();
+            SetProperty(ref permissions, cp.permissions.ToReadableString());
+            Permissions = cp.permissions.ToReadableString();
         }
         void onRemovePermission()
         {
@@ -139,9 +156,10 @@ namespace LAMA.ViewModels
                 return;
             cp.permissions.Remove(namesToPermissions[CurrentPermissions[permissionToRemove]]);
             figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToString());
-            Permissions = cp.permissions.ToString();
+            SetProperty(ref permissions, cp.permissions.ToReadableString());
+            Permissions = cp.permissions.ToReadableString();
         }
+        */
         async void OnDelete()
         {
             // don't delete yourself

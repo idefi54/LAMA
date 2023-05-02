@@ -95,7 +95,6 @@
     <EmbeddedResource Include="Resources\Icons\location_1_minus.png" />
     <EmbeddedResource Include="Resources\Icons\location_3_profile.png" />
     <EmbeddedResource Include="Resources\Icons\map.png" />
-    <EmbeddedResource Include="Resources\Icons\marker.png" />
     <EmbeddedResource Include="Resources\Icons\menu_1.png" />
     <EmbeddedResource Include="Resources\Icons\message_1_dots.png" />
     <EmbeddedResource Include="Resources\Icons\message_2_exp-1.png" />
@@ -225,6 +224,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\HideExamplePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\IconSelectionPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\IntermediateHackPage.xaml">

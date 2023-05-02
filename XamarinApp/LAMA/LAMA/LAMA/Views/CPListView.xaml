@@ -4,7 +4,7 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.CPListView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
-             xmlns:colors="clr-namespace:LAMA.Colors"
+             xmlns:colors="clr-namespace:LAMA.Themes"
              xmlns:common="clr-namespace:LAMA.Views">
 
     <ContentPage.ToolbarItems>

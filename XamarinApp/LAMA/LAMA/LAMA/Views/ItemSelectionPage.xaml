@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.ItemSelectionPage"
-             xmlns:colors="clr-namespace:LAMA.Colors">
+             xmlns:colors="clr-namespace:LAMA.Themes">
 	<ContentPage.Content>
 		<ListView x:Name="ItemSelectionList" ItemsSource="{Binding ItemsListItems}" SelectedItem="{Binding SelectedItem}" Margin="5,5,5,0">
 			<ListView.ItemTemplate>

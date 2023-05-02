@@ -1,9 +1,11 @@
 ﻿using LAMA.Models;
 using LAMA.Services;
+using LAMA.Themes;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using Xamarin.Essentials;
@@ -11,7 +13,7 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    class POIViewModel : BaseViewModel, INotifyPropertyChanged
+    class POIViewModel : BaseViewModel
     {
         INavigation navigation;
         public PointOfInterest POI;
@@ -21,51 +23,73 @@ namespace LAMA.ViewModels
         string description = string.Empty;
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
 
-        public bool Icon0Checked { get; set; }
-        public bool Icon1Checked { get; set; }
-        public bool Icon2Checked { get; set; }
-        public bool Icon3Checked { get; set; }
+        private string[] _icons;
+        private int _currentIconIndex;
+        private int CurrentIconIndex
+        {
+            get => _currentIconIndex;
+            set
+            {
+                _currentIconIndex = value;
+                CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
+            }
+        }
+        private ImageSource _currentIcon;
+        public ImageSource CurrentIcon
+        {
+            get
+            {
+                return _currentIcon;
+            }
+            set
+            {
+                SetProperty(ref _currentIcon, value);
+            }
+        }
 
         public Command Save { get; set; }
         public Command Cancel { get; set; }
         public Command Edit { get; set; }
+        public Command IconChange { get; set; }
         public bool CanChange { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI); } }
         public POIViewModel(INavigation navigation, PointOfInterest POI)
         {
             this.navigation = navigation;
             this.POI = POI;
+            // Icons need to be assigned before assigning icon index
+            _icons = IconLibrary.GetIconsByClass<PointOfInterest>();
+            CurrentIconIndex = 0;
 
             if (POI != null)
             {
-                POI.IGotUpdated += onChange;
                 Name = POI.Name;
                 Description = POI.Description;
+                CurrentIconIndex = POI.Icon;
+                POI.IGotUpdated += onPOIChanged;
             }
+
             Save = new Command(onSave);
             Cancel = new Command(onCancel);
             Edit = new Command(onEdit);
+            IconChange = new Command(onIconChange);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        void onChange(object sender, int index)
+        private void onPOIChanged(object sender, int e)
         {
-            string propName = "";
+            var poi = sender as PointOfInterest;
 
-            switch (index)
+            switch (e)
             {
+                case 2:
+                    CurrentIconIndex = poi.Icon;
+                    break;
                 case 3:
-                    propName = nameof(Name);
-                    Name = POI.Name;
+                    Name = poi.Name;
                     break;
                 case 4:
-                    propName = nameof(Description);
-                    Description = POI.Description;
+                    Description = poi.Description;
                     break;
-                default:
-                    return;
             }
-
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
         async void onSave()
@@ -74,13 +98,13 @@ namespace LAMA.ViewModels
             {
                 POI.Name = name;
                 POI.description = description;
-                POI.Icon = GetIcon();
+                POI.Icon = CurrentIconIndex;
             }
             else
             {
                 var list = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
                 (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
-                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), GetIcon(), name, description));
+                list.add(new PointOfInterest(list.nextID(), new Pair<double, double>(lon, lat), CurrentIconIndex, name, description));
             }
             await navigation.PopAsync();
         }
@@ -92,14 +116,9 @@ namespace LAMA.ViewModels
         {
             await navigation.PushAsync(new POIEditView(POI));
         }
-
-        private int GetIcon()
+        async void onIconChange()
         {
-            if (Icon0Checked) return 0;
-            if (Icon1Checked) return 1;
-            if (Icon2Checked) return 2;
-            if (Icon3Checked) return 3;
-            return 0;
+            CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(navigation, _icons);
         }
     }
 }

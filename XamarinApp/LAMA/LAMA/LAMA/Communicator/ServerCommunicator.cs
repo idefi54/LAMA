@@ -302,6 +302,7 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
+                if (messageParts.Length < 2) continue;
                 if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
@@ -455,13 +456,13 @@ namespace LAMA.Communicator
                 {
                     throw new CantConnectToDatabaseException("Nepodařilo se připojit k databázi.");
                 }
-                else if (responseString == "credintials")
+                else if (responseString == "credentials")
                 {
-                    throw new WrongCredentialsException("Špatné heslo, nebo neexistující server.");
+                    throw new WrongCredentialsException("Neexistující server");
                 }
                 else if (responseString == "password")
                 {
-                    throw new WrongCredentialsException("password.");
+                    throw new WrongCredentialsException("password");
                 }
             }
 
@@ -471,7 +472,7 @@ namespace LAMA.Communicator
             CommunicationInfo.Instance.ServerName = name;
             CommunicationInfo.Instance.IsServer = true;
 
-            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
+            //if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             LarpEvent.Name = name;
             attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -608,6 +609,7 @@ namespace LAMA.Communicator
         /// <param name="clientID"></param>
         private void ExistingClientID(Socket current, string clientName, string password, int clientID)
         {
+            bool passwordCorrect = true;
             if (clientID == -1)
             {
                 LocalStorage.MaxClientID += 1;
@@ -618,9 +620,9 @@ namespace LAMA.Communicator
             {
                 //Add password testing
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password))
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
+                    passwordCorrect = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password);
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
                     string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
                     lock (ServerCommunicator.socketsLock)
@@ -636,7 +638,10 @@ namespace LAMA.Communicator
             {
                 clientSockets[clientID] = current;
             }
-            SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client doesn't exist", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            if (passwordCorrect)
+                SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+            else
+                SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Password", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         /// <summary>

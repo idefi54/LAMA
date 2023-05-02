@@ -1,4 +1,4 @@
-﻿using LAMA.Colors;
+﻿using LAMA.Themes;
 using LAMA.Services;
 using LAMA.Views;
 using System;
