@@ -102,7 +102,7 @@ namespace LAMA.Singletons
             {
                 Instance.name = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 10);
+                SQLEvents.invokeChanged(instance, 2);
             }
         }
 
@@ -126,7 +126,7 @@ namespace LAMA.Singletons
             {
                 Instance.lastClientID = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 3);
+                SQLEvents.invokeChanged(instance, 4);
             }
         }
 
@@ -137,7 +137,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 4);
+                SQLEvents.invokeChanged(instance, 5);
             } 
         }
         public static double minY 
@@ -147,7 +147,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 5);
+                SQLEvents.invokeChanged(instance, 6);
             }
         }
         public static double maxX
@@ -157,7 +157,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 6);
+                SQLEvents.invokeChanged(instance, 7);
             }
         }
         public static double maxY
@@ -167,7 +167,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 7);
+                SQLEvents.invokeChanged(instance, 8);
             }
         }
         public static double minZoom 
@@ -177,7 +177,7 @@ namespace LAMA.Singletons
             {
                 Instance._minZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 8);
+                SQLEvents.invokeChanged(instance, 9);
             }
         }
         public static double maxZoom 
@@ -187,7 +187,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
-                SQLEvents.invokeChanged(instance, 9);
+                SQLEvents.invokeChanged(instance, 10);
             }
         }
 
@@ -226,7 +226,7 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
-            SQLEvents.invokeChanged(Instance, 2);
+            SQLEvents.invokeChanged(Instance, 3);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
@@ -237,24 +237,26 @@ namespace LAMA.Singletons
         public string chatChannels { get; set; }
         public long lastClientID { get; set; }
 
-        public double _minX = double.NegativeInfinity;
-        public double _minY = double.NegativeInfinity;
-        public double _maxX = double.PositiveInfinity;
-        public double _maxY = double.PositiveInfinity;
-        public double _minZoom = -1;
-        public double _maxZoom = -1;
+        public double _minX { get; set; } = double.NegativeInfinity;
+        public double _minY { get; set; } = double.NegativeInfinity;
+        public double _maxX { get; set; } = double.PositiveInfinity;
+        public double _maxY { get; set; } = double.PositiveInfinity;
+        public double _minZoom { get; set; } = -1;
+        public double _maxZoom { get; set; } = -1;
 
 
 
 
 
 
-        static string[] atributes = { "name", "days", "chatChannels", "lastClientID" };
+        static string[] atributes = { "days", "name", "chatChannels", "lastClientID", "minX", "minY", "maxX", "maxY", 
+        "minZoom", "maxZoom"};
         public string[] getAttributeNames()
         { return atributes; }
         public string[] getAttributes()
         {
-            return new string[] { name, days.ToString(), chatChannels.ToString().ToString(), lastClientID.ToString() };
+            return new string[] { days.ToString(), name, chatChannels.ToString(), LastClientID.ToString(), minX.ToString(), minY.ToString()
+            , maxX.ToString(), maxY.ToString(), minZoom.ToString(), maxZoom.ToString()};
         }
         public int numOfAttributes()
         {
@@ -273,28 +275,20 @@ namespace LAMA.Singletons
 
         public void setAttribute(int i, string value)
         {
+
             switch(i)
             {
-                case 0: 
-                    name = value;
-                    break;
-                case 1: 
-                    days = value;
-                    break;
-                case 2:
-                    chatChannels = value;
-                    List<string> channels = Helpers.readStringField(chatChannels);
-                    for (int j = 0; j < channels.Count; ++j)
-                    {
-                        if (!ChatChannels.Contains(channels[j]) || j >= ChatChannels.Count)
-                        {
-                            ChatChannels.Add(channels[j]);
-                        }
-                    }
-                    break;
-                case 3:
-                    lastClientID = Helpers.readLong(value);
-                    break;
+                case 1: days = value; break;
+                case 2: name = value; break;
+                case 3: chatChannels = value; break;
+                case 4: lastClientID = Helpers.readLong(value); break;
+                case 5: _minX = Helpers.readDouble(value);break;
+                case 6: _minY = Helpers.readDouble(value);break;
+                case 7: _maxX = Helpers.readDouble(value);break;
+                case 8: _maxY = Helpers.readDouble(value);break;
+                case 9: _minZoom = Helpers.readDouble(value);break;
+                case 10: _maxZoom = Helpers.readDouble(value);break;
+
             }
         }
         public void buildFromStrings(string[] input)

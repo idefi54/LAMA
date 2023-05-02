@@ -128,6 +128,11 @@ namespace LAMA
             return -1;
         }
 
+        public static double readDouble(string input)
+        {
+            int i = 0; 
+            return readDouble(input, ref i);
+        }
         public static double readDouble(string input, ref int offset)
         {
             if (input == null)
