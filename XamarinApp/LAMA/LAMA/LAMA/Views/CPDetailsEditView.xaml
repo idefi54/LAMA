@@ -45,13 +45,29 @@
 
                 <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
 
-                <Picker Title="Pravomoc" ItemsSource="{Binding AddablePermissions}" SelectedIndex="{Binding PermissionToAdd}"  HorizontalOptions="Start" IsVisible="{Binding CanChangePermissions}"/>
-                <Button Text="Přidat" Command="{Binding AddPermissionCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangePermissions}"></Button>
-
-                <Picker Title="Pravomoc" ItemsSource="{Binding CurrentPermissions}" SelectedIndex="{Binding PermissionToRemove}"  HorizontalOptions="Start" IsVisible="{Binding CanChangePermissions}"/>
-                <Button Text="Odebrat" Command="{Binding RemovePermissionCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangePermissions}"></Button>
 
 
+                <ListView x:Name="PermissionList" ItemsSource="{Binding PermissionList}" SelectionMode="None" Margin="5,5,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="5" Margin="5" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding Name}" Grid.Column="0"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Checked}" IsEnabled="{Binding CanChange}"/>
+
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 
 
             </StackLayout>
