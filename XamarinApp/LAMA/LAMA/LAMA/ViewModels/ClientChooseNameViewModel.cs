@@ -90,21 +90,37 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                isNew = false;
                 return;
             }
             catch (ClientRefusedException)
             {
+                bool choseToCreateNewCP = false;
                 if (isNew) {
                     await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem už existuje, zvolte prosím jiné jméno", "OK");
                 } 
+                else if (communicator.clientRefusedMessage == "Client")
+                {
+                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Existující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit", "Ano", "Ne");
+                }
                 else
                 {
-                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem neexistuje, nebo jste zadal/a špatné heslo", "OK");
+                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "Zadal/a jste špatné heslo", "OK");
                 }
+
                 CreatingCP = false;
-                LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
-                return;
+                if (choseToCreateNewCP)
+                {
+                    isNew = true;
+                    OnLoginClicked(obj);
+                    return;
+                }
+                else
+                {
+                    LoginEnabled = true;
+                    return;
+                }
             }
             catch (TimeoutException)
             {
@@ -112,6 +128,7 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                isNew = false;
                 return;
             }
             catch (Exception e)
@@ -120,6 +137,7 @@ namespace LAMA.ViewModels
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";
+                isNew = false;
                 return;
             }
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one

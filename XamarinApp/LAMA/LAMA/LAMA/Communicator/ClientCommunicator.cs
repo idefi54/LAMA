@@ -599,7 +599,7 @@ namespace LAMA.Communicator
                 CommunicationInfo.Instance.ServerName = serverName;
                 CommunicationInfo.Instance.IsServer = false;
 
-                if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
+                //if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
                 LarpEvent.Name = serverName;
                 attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
                 objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
@@ -703,7 +703,7 @@ namespace LAMA.Communicator
                 CommunicationInfo.Instance.ServerName = serverName;
                 CommunicationInfo.Instance.IsServer = false;
 
-                if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
+                //if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
                 LarpEvent.Name = serverName;
                 attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
                 objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
