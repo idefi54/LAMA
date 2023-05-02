@@ -40,7 +40,8 @@ namespace LAMA.ViewModels
             ServerLoginCommand = new Xamarin.Forms.Command(OnServerLoginClicked);
             DatabaseNameCommand = new Xamarin.Forms.Command(OnChangeDatabaseName);
             DatabaseNameDisplay = $"Database Name: {SQLConnectionWrapper.databaseName}";
-            isNewServer = newServer;
+            //isNewServer = newServer;
+            isNewServer = false;
         }
 
         private void OnChangeDatabaseName()
@@ -88,28 +89,37 @@ namespace LAMA.ViewModels
             }
             catch (PasswordTooShortException)
             {
+                isNewServer = false;
                 await App.Current.MainPage.DisplayAlert("Příliš Krátké Heslo", "Zadané heslo je příliš krátké, heslo musí mít minimálně 5 znaků.", "OK");
                 return;
             }
             catch (CantConnectToCentralServerException)
             {
+                isNewServer = false;
                 await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
                 return;
             }
             catch (WrongNgrokAddressFormatException)
             {
+                isNewServer = false;
                 await App.Current.MainPage.DisplayAlert("Ngrok Adresa", "Uvedená ngrok adresa není ve správném formátu - příklad validní ngrok adresy: tcp://2.tcp.eu.ngrok.io:19912", "OK");
                 return;
             }
-            catch (WrongCredentialsException)
+            catch (WrongCredentialsException e)
             {
                 if (isNewServer)
                 {
                     await App.Current.MainPage.DisplayAlert("Jméno Serveru", "Server s tímto jménem už existuje. Zvolte jiné jméno, nebo se přihlašte jako existující server.", "OK");
                 }
+                else if (e.Message == "password")
+                {
+                    await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Zadali jste špatné heslo.", "OK");
+                }
                 else
                 {
-                    await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Server s tímto jménem buď neexistuje, nebo jste zadali špatné heslo.", "OK");
+                    isNewServer = await App.Current.MainPage.DisplayAlert("Neexistující Server", "Server s tímto jménem neexistuje. Chcete ho vytvořit?", "Ano", "Ne");
+                    if (isNewServer)
+                        OnServerLoginClicked(e);
                 }
                 return;
             }
