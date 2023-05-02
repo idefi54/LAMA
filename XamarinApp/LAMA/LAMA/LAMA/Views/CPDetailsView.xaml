@@ -8,8 +8,8 @@
 
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanOpenDetails}"/>
-        <forms:BindableToolbarItem Text="Smazat" Command="{Binding DeleteCommand}" IsVisible="{Binding CanChangeCP}" />
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanEditDetails}"/>
+        <forms:BindableToolbarItem Text="Smazat" Command="{Binding DeleteCommand}" IsVisible="{Binding CanDeleteCP}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
