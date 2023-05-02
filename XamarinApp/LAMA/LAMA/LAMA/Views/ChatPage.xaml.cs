@@ -58,7 +58,7 @@ namespace LAMA.Views
             {
                 string newText = e.NewTextValue;
                 string oldText = e.OldTextValue;
-                if (newText.Length == oldText.Length+2)
+                if (newText.Length == oldText.Length+2 && oldText.Trim().Length != 0)
                 {
                     int i;
                     for (i = 0; i < oldText.Length; i++) {
