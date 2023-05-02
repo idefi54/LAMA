@@ -234,7 +234,6 @@ namespace LAMA.Communicator
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
                     Singletons.LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
                     if (indexAttribute == 2)
