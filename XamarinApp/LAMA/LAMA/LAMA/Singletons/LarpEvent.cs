@@ -270,6 +270,7 @@ namespace LAMA.Singletons
         public void setAttributeDatabase(int i, string value)
         {
             setAttribute(i, value);
+            SQLEvents.invokeChanged(this, i);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
@@ -302,16 +303,22 @@ namespace LAMA.Singletons
         {
             switch(i)
             {
-                case 0: return name;
                 case 1: return days;
-                case 2: return chatChannels;
-                case 3: return lastClientID.ToString();
+                case 2: return name;
+                case 3: return chatChannels;
+                case 4: return lastClientID.ToString();
+                case 5: return _minX.ToString();
+                case 6: return _minY.ToString();
+                case 7: return _maxX.ToString();
+                case 8: return _maxY.ToString();
+                case 9: return _minZoom.ToString();
+                case 10: return _maxZoom.ToString();
             }
-            return null;
+            throw new System.NotImplementedException();
         }
-        public int getTypeID()
+        public long getTypeID()
         {
-            return 1234;
+            return 12345;
         }
 
 
