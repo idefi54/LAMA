@@ -381,8 +381,7 @@ namespace LAMA.Singletons
 
             if (IsFilteredIn(EntityType.CPs))
                 foreach (long id in _cpPins.Keys)
-                    if (id != LocalStorage.cpID)
-                        view.Pins.Add(_cpPins[id]);
+                    view.Pins.Add(_cpPins[id]);
                 
             if (IsFilteredIn(EntityType.PointsOfIntrest))
                 foreach (Pin pin in _pointOfInterestPins.Values)
@@ -520,6 +519,9 @@ namespace LAMA.Singletons
         /// <param name="view"></param>
         public void AddCP(CP cp, MapView view = null)
         {
+            if (cp.ID == LocalStorage.cpID)
+                return;
+
             Pin pin = CreatePin(cp.location.first, cp.location.second, "CP");
             PinSetIcon(pin, IconLibrary.GetIconsByClass<CP>()[0]);
             pin.Scale = 0.8f;
@@ -884,7 +886,6 @@ namespace LAMA.Singletons
             var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
             for (int i = 0; i < rememberedList.Count; i++)
-                if (rememberedList[i].ID != LocalStorage.cpID)
                     AddCP(rememberedList[i], view);
         }
         private void LoadPointsOfIntrest(MapView view = null)
