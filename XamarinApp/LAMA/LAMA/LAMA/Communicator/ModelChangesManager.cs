@@ -95,7 +95,7 @@ namespace LAMA.Communicator
                 long cpID = Int64.Parse(locations[i]);
                 string location = locations[i+1];
                 int locationIndex = 7;
-                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID) != null)
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID) != null && cpID != LocalStorage.cpID)
                 {
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID).setAttribute(locationIndex, location);
                 }

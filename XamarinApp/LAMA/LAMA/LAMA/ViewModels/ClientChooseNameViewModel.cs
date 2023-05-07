@@ -55,6 +55,8 @@ namespace LAMA.ViewModels
             LoginEnabled = false;
             try
             {
+                if (clientName == null || clientName.Trim() == "") throw new EntryMissingException("Přezdívka");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
                 if (password.Length < 5)
                 {
                     throw new PasswordTooShortException();
@@ -83,6 +85,15 @@ namespace LAMA.ViewModels
                         }
                     }
                 }
+            }
+            catch (EntryMissingException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+                isNew = false;
+                return;
             }
             catch (PasswordTooShortException)
             {

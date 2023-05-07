@@ -80,12 +80,24 @@ namespace LAMA.ViewModels
             //password - libovolné, klienti ho pak musí opakovat (u existujícího serveru [jméno] to pak při správném hesle edituje hodnoty)
             try
             {
+                if (name == null || name.Trim() == "") throw new EntryMissingException("Jméno Serveru");
+                if (ngrokEndpoint == null || ngrokEndpoint.Trim() == "") throw new EntryMissingException("Ngrok Endpoint");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Serverové Heslo");
+                if (personalPassword == null || personalPassword.Trim() == "") throw new EntryMissingException("Osobní Heslo");
+                if (nick == null || nick.Trim() == "") throw new EntryMissingException("Přezdívka");
+
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, ngrokEndpoint, password, personalPassword, nick, isNewServer);
                 //new ServerCommunicator(name, IP, port, password);
                 Console.WriteLine("Communicator launched");
 
+            }
+            catch (EntryMissingException e)
+            {
+                isNewServer = false;
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                return;
             }
             catch (PasswordTooShortException)
             {
