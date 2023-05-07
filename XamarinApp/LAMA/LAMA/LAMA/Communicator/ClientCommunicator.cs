@@ -447,6 +447,7 @@ namespace LAMA.Communicator
             {
                 if (!s.Connected)
                 {
+                    wasUpdated = false;
                     if (listener != null)
                     {
                         listener = null;
@@ -458,6 +459,9 @@ namespace LAMA.Communicator
                         if (loggedIn && LocalStorage.clientID != -1)
                         {
                             SendCommand(new Command($"ClientConnected{Separators.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                            RequestUpdate();
+                            listener = new Thread(StartListening);
+                            listener.Start();
                         }
                     }
                     catch (SocketException e)
@@ -489,8 +493,8 @@ namespace LAMA.Communicator
         {
             Debug.WriteLine("Connected");
             if (LocalStorage.clientID != -1 )
-            _connected = true;
-            THIS.wasUpdated = true;
+                _connected = true;
+                THIS.wasUpdated = true;
         }
 
         /// <summary>
