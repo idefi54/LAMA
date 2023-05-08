@@ -9,6 +9,7 @@ using System.Linq;
 using Xamarin.Forms.Shapes;
 using Newtonsoft.Json.Converters;
 using Xamarin.Forms.Internals;
+using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
@@ -55,6 +56,23 @@ namespace LAMA.Communicator
                 if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                 DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
             }
+            if (messageParts[1] == "RequestRole" && server)
+            {
+                RequestRole(Int64.Parse(messageParts[2]), messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ReceiveRole" && !server)
+            {
+                if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ReceiveRole(Int64.Parse(messageParts[2]), messageParts[3], Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "RemoveRole" && server)
+            {
+                RemoveRole(Int64.Parse(messageParts[2]), Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "RemoveRoleResult" && !server)
+            {
+                RemoveRoleResult(Int64.Parse(messageParts[2]), Int32.Parse(messageParts[3]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+            }
             if (messageParts[1] == "ItemCreated")
             {
                 Debug.WriteLine("ItemCreated");
@@ -84,6 +102,44 @@ namespace LAMA.Communicator
                     if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
                     RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
                 }
+            }
+        }
+        
+        public void RequestRole(long activityID, string roleRequested, long cpID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool gotRole = DisplayActivityViewModel.TryGetRole(activityID, roleRequested, cpID);
+                communicator.SendCommand(new Command($"ReceiveRole{Separators.messagePartSeparator}{activityID}{Separators.messagePartSeparator}{roleRequested}{Separators.messagePartSeparator}{Convert.ToInt32(gotRole)}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), 
+                    activityID + Separators.messageSeparator + roleRequested, 
+                    clientID));
+            }
+        }
+
+        public void RemoveRole(long activityID, long cpID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool roleRemoved = DisplayActivityViewModel.TryRemoveRoles(activityID, cpID);
+                communicator.SendCommand(new Command($"RemoveRoleResult{Separators.messagePartSeparator}{activityID}{Separators.messagePartSeparator}{Convert.ToInt32(roleRemoved)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    activityID + Separators.messageSeparator + "RemoveRole",
+                    clientID));
+            }
+        }
+
+        public void RemoveRoleResult(long activityID, int response, string command, Socket current)
+        {
+            DisplayActivityViewModel.InvokeRoleRemovedResult(activityID, response == 1);
+        }
+
+        public void ReceiveRole(long activityID, string roleRequested, int response, string command, Socket current)
+        {
+            if (!testing && !server)
+            {
+                Debug.WriteLine("Invoke Role Received");
+                DisplayActivityViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
             }
         }
 
@@ -154,8 +210,8 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
             string command = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + attributeIndex + Separators.messagePartSeparator.ToString() + changed.getAttribute(attributeIndex);
-            if (!testing && !(objectType == "LAMA.Models.CP" &&
-                    changed.getAttributes()[attributeIndex] == "location"))
+            if (!testing && !(!server && objectType == "LAMA.Models.LarpActivity"
+                    && changed.getAttributeNames()[attributeIndex] == "registrationByRole"))
                 communicator.SendCommand(new Command(command, updateTime, objectType + Separators.messagePartSeparator.ToString() + objectID));
         }
 
@@ -184,49 +240,57 @@ namespace LAMA.Communicator
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
 
-                if (objectType == "LAMA.Models.LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity" &&
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.CP")
+                if (objectType == "LAMA.Models.CP" &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.InventoryItem")
+                if (objectType == "LAMA.Models.InventoryItem" &&
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.ChatMessage")
+                if (objectType == "LAMA.Models.ChatMessage" &&
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.EncyclopedyCategory")
+                if (objectType == "LAMA.Models.EncyclopedyCategory" &&
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.EncyclopedyRecord")
+                if (objectType == "LAMA.Models.EncyclopedyRecord" &&
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.PointOfInterest")
+                if (objectType == "LAMA.Models.PointOfInterest" &&
+                    DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.Road")
+                if (objectType == "LAMA.Models.Road" &&
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
@@ -235,8 +299,7 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
-                    Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
-                    Singletons.LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
+                    LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
                     if (indexAttribute == 2)
                     {
                         command = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute + Separators.messagePartSeparator.ToString() + LarpEvent.Instance.chatChannels;
@@ -246,7 +309,7 @@ namespace LAMA.Communicator
                 {
                     // Notify every client
                     if (!testing && !(objectType == "LAMA.Models.CP" &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).getAttributes()[indexAttribute] == "location")) 
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).getAttributeNames()[indexAttribute] == "location")) 
                         communicator.SendCommand(new Command(command, updateTime, attributeID));
                 }
             }
@@ -945,6 +1008,20 @@ namespace LAMA.Communicator
                     objectIgnoreDeletion = objectCacheID;
                 }
             }
+        }
+
+        internal void OnRoleRequested(long activityID, string roleName)
+        {
+            string command = "RequestRole" + Separators.messagePartSeparator + activityID + Separators.messagePartSeparator + roleName + Separators.messagePartSeparator + LocalStorage.cpID + Separators.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + Separators.messageSeparator + roleName));
+        }
+
+        internal void OnRoleRemoved(long activityID)
+        {
+            string command = "RemoveRole" + Separators.messagePartSeparator.ToString() + activityID + Separators.messagePartSeparator + LocalStorage.cpID + Separators.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + Separators.messageSeparator + "RoleRemoved"));
         }
     }
 }

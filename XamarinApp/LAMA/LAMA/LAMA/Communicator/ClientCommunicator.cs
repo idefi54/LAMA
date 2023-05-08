@@ -13,6 +13,7 @@ using LAMA.Singletons;
 using Xamarin.Forms;
 using Mapsui.Providers.Wms;
 using LAMA.Models;
+using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
@@ -203,7 +204,7 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
-                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations" || messageParts[1] == "ReceiveRole" || messageParts[1] == "RemoveRoleResult")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -651,6 +652,8 @@ namespace LAMA.Communicator
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
+                DisplayActivityViewModel.roleRequested += modelChangesManager.OnRoleRequested;
+                DisplayActivityViewModel.roleRemoved += modelChangesManager.OnRoleRemoved;
                 logger.LogWrite("Initialization finished");
             }
         }

@@ -112,7 +112,7 @@ namespace LAMA.ViewModels
                 } 
                 else if (communicator.clientRefusedMessage == "Client")
                 {
-                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Existující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit", "Ano", "Ne");
+                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Neexistující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit?", "Ano", "Ne");
                 }
                 else
                 {
