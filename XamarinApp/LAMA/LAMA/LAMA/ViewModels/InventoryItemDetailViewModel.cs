@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 namespace LAMA.ViewModels
 {
@@ -77,6 +78,9 @@ namespace LAMA.ViewModels
         }
         public void OnBorrow()
         {
+            if (!CheckExistence().Result)
+                return;
+
             if (_howManyBorrow < 1)
                 return;
 
@@ -90,6 +94,9 @@ namespace LAMA.ViewModels
         }
         public void OnReturn()
         {
+            if (!CheckExistence().Result)
+                return;
+
             if (_returnNum < 1)
                 return;
 
@@ -123,8 +130,28 @@ namespace LAMA.ViewModels
         }
         async void onDelete()
         {
+            if (!CheckExistence().Result)
+                return;
+
             DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.removeByID(_item.ID);
             await Navigation.PopAsync();
+        }
+
+        private async Task<bool> CheckExistence()
+        {
+            bool itemDeleted = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(_item.ID) == default(InventoryItem);
+
+            if (itemDeleted)
+            {
+                await DependencyService.Get<Services.IMessageService>()
+                    .ShowAlertAsync(
+                        "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán. Nyní budete navráceni zpět do seznamu předmětů."),
+                        "Předmět neexistuje");
+                    await Navigation.PopAsync();
+                IsBusy = false;
+                return false;
+            }
+            return true;
         }
     }
 }
