@@ -36,7 +36,6 @@
                        VerticalOptions="Center"/>
                 </StackLayout>
             </StackLayout>
-            <Button Clicked="ExpandMap"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
