@@ -63,7 +63,7 @@ namespace LAMA.Singletons
                         instance = new LarpEvent();
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
                     }
-                    instance.init();
+                    instance.setChatChannels();
                     return instance;
                 }
             }
@@ -194,19 +194,13 @@ namespace LAMA.Singletons
 
 
     
-        public void init()
+        public void setChatChannels()
         {
-            List<long> temp = Helpers.readLongField(days);
 
+
+            _chatChannels = Helpers.readStringField(chatChannels);
             
-            _chatChannels = new EventList<string>();
 
-            List<string> channels = Helpers.readStringField(chatChannels);
-            _chatChannels = new EventList<string>();
-            for (int i = 0; i < channels.Count; ++i)
-            {
-                _chatChannels.Add(channels[i]);
-            }
             _chatChannels.dataChanged += saveChatChannels;
 
         }
@@ -281,7 +275,10 @@ namespace LAMA.Singletons
             {
                 case 1: days = value; break;
                 case 2: name = value; break;
-                case 3: chatChannels = value; break;
+                case 3: 
+                    chatChannels = value;
+                    setChatChannels();
+                    break;
                 case 4: lastClientID = Helpers.readLong(value); break;
                 case 5: _minX = Helpers.readDouble(value);break;
                 case 6: _minY = Helpers.readDouble(value);break;
