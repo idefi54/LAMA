@@ -145,9 +145,9 @@ namespace LAMA.ViewModels
             {
                 await DependencyService.Get<Services.IMessageService>()
                     .ShowAlertAsync(
-                        "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán. Nyní budete navráceni zpět do seznamu předmětů."),
+                        "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán. Nyní budete navráceni zpět do seznamu předmětů.",
                         "Předmět neexistuje");
-                    await Navigation.PopAsync();
+                await Navigation.PopAsync();
                 IsBusy = false;
                 return false;
             }
