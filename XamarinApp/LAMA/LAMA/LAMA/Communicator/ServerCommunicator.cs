@@ -735,7 +735,7 @@ namespace LAMA.Communicator
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
-            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update"));
+            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update", id));
         }
 
         /// <summary>
@@ -781,7 +781,7 @@ namespace LAMA.Communicator
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
-            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update"));
+            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update", id));
         }
     }
 }

@@ -58,7 +58,7 @@ namespace LAMA.Views
             {
                 string newText = e.NewTextValue;
                 string oldText = e.OldTextValue;
-                if (newText.Length == oldText.Length+2 && oldText.Trim().Length != 0)
+                if (newText.Length == oldText.Length+2)
                 {
                     int i;
                     for (i = 0; i < oldText.Length; i++) {
@@ -68,7 +68,10 @@ namespace LAMA.Views
                     if (newText[i] == '\r' && newText[i+1]== '\n')
                     {
                         chatViewModel.MessageText = oldText;
-                        chatViewModel.OnEntryComplete(sender, null);
+                        if (oldText.Trim().Length != 0)
+                        {
+                            chatViewModel.OnEntryComplete(sender, null);
+                        }
                     }
                 }
             }
