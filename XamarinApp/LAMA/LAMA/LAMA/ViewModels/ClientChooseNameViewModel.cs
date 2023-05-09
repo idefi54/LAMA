@@ -55,6 +55,8 @@ namespace LAMA.ViewModels
             LoginEnabled = false;
             try
             {
+                if (clientName == null || clientName.Trim() == "") throw new EntryMissingException("Přezdívka");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
                 if (password.Length < 5)
                 {
                     throw new PasswordTooShortException();
@@ -66,7 +68,7 @@ namespace LAMA.ViewModels
                 while (true)
                 {
                     await Task.Delay(500);
-                    if (communicator.connected)
+                    if (communicator.loggedIn)
                     {
                         break;
                     }
@@ -77,12 +79,21 @@ namespace LAMA.ViewModels
                     else
                     {
                         timer += 0.5f;
-                        if (timer > 5.0f)
+                        if (timer > 10.0f)
                         {
                             throw new TimeoutException("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
                         }
                     }
                 }
+            }
+            catch (EntryMissingException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+                isNew = false;
+                return;
             }
             catch (PasswordTooShortException)
             {
@@ -101,7 +112,7 @@ namespace LAMA.ViewModels
                 } 
                 else if (communicator.clientRefusedMessage == "Client")
                 {
-                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Existující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit", "Ano", "Ne");
+                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Neexistující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit?", "Ano", "Ne");
                 }
                 else
                 {

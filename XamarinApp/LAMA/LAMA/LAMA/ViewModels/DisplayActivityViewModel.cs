@@ -12,11 +12,75 @@ using System.Linq;
 using LAMA.Services;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Reflection;
+using Xamarin.Forms.Internals;
+using LAMA.Singletons;
+using System.Data;
+using System.Threading;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace LAMA.ViewModels
 {
     public class DisplayActivityViewModel : BaseViewModel
     {
+		public delegate void RoleRequestedDelegate(long activityID, string roleName);
+		public static event RoleRequestedDelegate roleRequested;
+        public delegate void RoleReceivedDelegate(long activityID, string roleName, bool wasGivenRole);
+        public static event RoleReceivedDelegate roleReceived;
+
+        public delegate void RoleRemovedDelegate(long activityID);
+        public static event RoleRemovedDelegate roleRemoved;
+        public delegate void RoleRemovedResultDelegate(long activityID, bool wasRemoved);
+        public static event RoleRemovedResultDelegate roleRemovedResult;
+
+        public static void InvokeRoleRemoved(long activityID)
+        {
+            roleRemoved?.Invoke(activityID);
+        }
+
+        public static void InvokeRoleRemovedResult(long activityID, bool wasRemoved)
+        {
+            roleRemovedResult?.Invoke(activityID, wasRemoved);
+        }
+
+        public static void InvokeRoleRequested(long activityID, string roleName)
+		{
+			roleRequested?.Invoke(activityID, roleName);
+		}
+
+        public static void InvokeRoleReceived(long activityID, string roleName, bool wasGivenRole)
+        {
+			Debug.WriteLine("Receive Role Invoked");
+            roleReceived?.Invoke(activityID, roleName, wasGivenRole);
+        }
+
+		public static bool TryGetRole(long activityID, string selectedRole, long cpID)
+		{
+			if (CommunicationInfo.Instance.IsServer)
+			{
+				LarpActivity _activity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
+				if (_activity == null) return false;
+				int alreadyRegisteredCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+
+				if (_activity.roles.Where(x => x.first == selectedRole).First().second > alreadyRegisteredCount)
+				{
+					_activity.registrationByRole.Add(new Pair<long, string>(cpID, selectedRole));
+					return true;
+				}
+			}
+			return false;
+        }
+
+		public static bool TryRemoveRoles(long activityID, long cpID)
+		{
+            LarpActivity _activity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(activityID);
+            if (_activity == null) return false;
+            string[] roles = _activity.registrationByRole.Where(x => x.first == cpID).Select(x => x.second.Trim()).ToArray();
+            _activity.registrationByRole.RemoveAll(x => x.first == cpID);
+			return true;
+        }
+
         private string _activityName;
         public string ActivityName { get { return _activityName; } set { SetProperty(ref _activityName, value); } }
 
@@ -36,7 +100,7 @@ namespace LAMA.ViewModels
 		private string _end;
 		private string _duration;
 
-		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
+        public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public string Status { get { return _status; } set { SetProperty(ref _status, value); } }
@@ -71,8 +135,9 @@ namespace LAMA.ViewModels
 
 		public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
 
+        public bool NotBusy => !IsBusy;
 
-		public string StatusCommandText => "Změnit stav";
+        public string StatusCommandText => "Změnit stav";
 		public Command StatusCommand { get; }
 
 
@@ -213,25 +278,29 @@ namespace LAMA.ViewModels
 
 		private async void OnSignUp()
 		{
+			IsBusy = true;
 			if (isRegistered)
             {
 				UnregisterAsync();
-				return;
+                IsBusy = false;
+                return;
 			}
 
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
 
 			if (activityDeleted)
 			{
-				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte přihlásit na aktivitu, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Activita neexistuje");
+				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte přihlásit na aktivitu, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
 				await Navigation.PopAsync();
-				return;
+                IsBusy = false;
+                return;
 			}
 
 			if (_activity.roles.Count == 0)
             {
 				await _messageService.ShowAlertAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
-				return;
+                IsBusy = false;
+                return;
             }
 
 			string[] roles = _activity.roles.Select(x => x.first).ToArray();
@@ -240,7 +309,10 @@ namespace LAMA.ViewModels
             {
 				int? selectionResult = await _messageService.ShowSelectionAsync("Vyberte roli ke které se chcete přihlásit.", roles);
 				if (!selectionResult.HasValue)
-					return;
+				{
+                    IsBusy = false;
+                    return;
+				}
 				index = selectionResult.Value;
             }
 
@@ -248,25 +320,52 @@ namespace LAMA.ViewModels
 
 			int alreadyRegisteredCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
 
-			if(_activity.roles.Where(x=>x.first == selectedRole).First().second > alreadyRegisteredCount)
-            {
-				_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID,selectedRole));
-				var editedRole = Roles.Where(role => role.Name == selectedRole).FirstOrDefault();
-				editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
+			if (CommunicationInfo.Instance.IsServer)
+			{
+				if (_activity.roles.Where(x => x.first == selectedRole).First().second > alreadyRegisteredCount)
+				{
+					_activity.registrationByRole.Add(new Pair<long, string>(LocalStorage.cpID, selectedRole));
+					var editedRole = Roles.Where(role => role.Name == selectedRole).FirstOrDefault();
+					editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == selectedRole).Count();
 
-				var Toast = DependencyService.Get<ToastInterface>();
-				if (Toast != null)
-					Toast.DoTheThing("Zaregistrován jako " + selectedRole + " do " + ActivityName + ".");
-
-
+					var Toast = DependencyService.Get<ToastInterface>();
+					if (Toast != null)
+						Toast.DoTheThing("Zaregistrován jako " + selectedRole + " do " + ActivityName + ".");
+                    else await _messageService.ShowAlertAsync("Zaregistrován jako " + selectedRole + " do " + ActivityName + ".");
+                }
+				else
+				{
+					await _messageService.ShowAlertAsync("Daná role má již zaplněnou kapacitu. Pokud se chcete stále účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
+				}
 			}
 			else
-            {
-				await _messageService.ShowAlertAsync("Daná role má již zaplněnou kapacitu. Pokud chcete stále se účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
-            }
+			{
+				InvokeRoleRequested(_activity.ID, selectedRole);
+				AutoResetEvent waitHandle = new AutoResetEvent(false);
+				bool success = false;
+				RoleReceivedDelegate ourDelegate = delegate (long activityID, string roleName, bool wasGivenRole)
+				{
+					Debug.WriteLine("Our Delegate");
+					success = wasGivenRole;
+					waitHandle.Set();  // signal that the finished event was raised
+				};
 
+				roleReceived += ourDelegate;
+				bool receivedSignal = await Task.Run(() => waitHandle.WaitOne(5000));
+				roleReceived -= ourDelegate;
+				if (!receivedSignal) await _messageService.ShowAlertAsync("Server na požadavek registrace neodpověděl, zkontrolujte prosím své připojení.");
+				else if (!success) await _messageService.ShowAlertAsync("Daná role má již zaplněnou kapacitu. Pokud se chcete stále účastnit této aktivity, přihlašte se na jinou roli nebo požádejte o úpravu kapacity.");
+				else
+				{
+					var Toast = DependencyService.Get<ToastInterface>();
+					if (Toast != null)
+						Toast.DoTheThing("Zaregistrován jako " + selectedRole + " do " + ActivityName + ".");
+					else await _messageService.ShowAlertAsync("Zaregistrován jako " + selectedRole + " do " + ActivityName + ".");
+                }
+			}
 			isRegistered = IsRegistered();
-		}
+            IsBusy = false;
+        }
 
 		private async void OnShowOnGraph()
         {
@@ -275,12 +374,14 @@ namespace LAMA.ViewModels
 
         private async void UnregisterAsync()
 		{
+			IsBusy = true;
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
 
 			if (activityDeleted)
 			{
-				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Activita neexistuje");
+				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
 				await Navigation.PopAsync();
+				IsBusy = false;
 				return;
 			}
 
@@ -297,15 +398,48 @@ namespace LAMA.ViewModels
 
 				if (result)
 				{
-					_activity.registrationByRole.RemoveAll(x => x.first == cpID);
-					var editedRoles = Roles.Where(role => roles.Contains(role.Name));
-					foreach (var editedRole in editedRoles)
-                    {
-						editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == editedRole.Name).Count();
+					if (CommunicationInfo.Instance.IsServer)
+					{
+						_activity.registrationByRole.RemoveAll(x => x.first == cpID);
+						var editedRoles = Roles.Where(role => roles.Contains(role.Name));
+						foreach (var editedRole in editedRoles)
+						{
+							editedRole.CurrentCount = _activity.registrationByRole.Where(x => x.second == editedRole.Name).Count();
+						}
 					}
+					else
+					{
+                        InvokeRoleRemoved(_activity.ID);
+                        AutoResetEvent waitHandle = new AutoResetEvent(false);
+                        bool success = false;
+                        RoleRemovedResultDelegate ourDelegate = delegate (long activityID, bool removedSuccessfully)
+                        {
+                            Debug.WriteLine("Our Delegate");
+                            success = removedSuccessfully;
+                            waitHandle.Set();  // signal that the finished event was raised
+                        };
+
+                        roleRemovedResult += ourDelegate;
+                        bool receivedSignal = await Task.Run(() => waitHandle.WaitOne(5000));
+						roleRemovedResult -= ourDelegate;
+						if (!receivedSignal) await _messageService.ShowAlertAsync("Server na požadavek odhlášení z aktivity neodpověděl, zkontrolujte prosím své připojení.");
+						else if (!success)
+						{
+							await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
+							await Navigation.PopAsync();
+						}
+						else
+						{
+							var Toast = DependencyService.Get<ToastInterface>();
+							if (Toast != null)
+								Toast.DoTheThing("Odhlášení z " + ActivityName + " proběhlo úspěšně.");
+							else await _messageService.ShowAlertAsync("Odhlášení z " + ActivityName + " proběhlo úspěšně.");
+						}
+                    }
 				}
             }
 			isRegistered = IsRegistered();
+			IsBusy = false;
         }
 
         private async void UpdateActivity(LarpActivityDTO larpActivityDTO)

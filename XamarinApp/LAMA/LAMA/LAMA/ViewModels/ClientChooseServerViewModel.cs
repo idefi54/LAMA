@@ -84,6 +84,8 @@ namespace LAMA.ViewModels
             //možnost vybrat
             try
             {
+                if (serverName == null || serverName.Trim() == "") throw new EntryMissingException("Jméno Serveru");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 //serverName - jméno toho serveru (identifikátor)
                 //heslo serveru
@@ -122,6 +124,15 @@ namespace LAMA.ViewModels
                     //await Shell.Current.GoToAsync($"{nameof(ClientLoginTypePage)}?communicator={communicator}");
                     //await Shell.Current.GoToAsync($"//{nameof(ClientLoginTypePage)}");
                 }
+            }
+            catch (EntryMissingException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
             }
             catch (CantConnectToCentralServerException)
             {

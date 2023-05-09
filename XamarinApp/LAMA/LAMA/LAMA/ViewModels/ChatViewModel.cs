@@ -54,12 +54,12 @@ namespace LAMA.ViewModels
 
         private void OnMessageSent()
         {
-            if (MessageText != "")
+            if (MessageText.Trim() != "")
             {
                 ChatLogic.Instance.SendMessage(channelID, MessageText);
+                MessageText = "";
+                OnPropertyChanged("MessageText");
             }
-            MessageText = "";
-            OnPropertyChanged("MessageText");
         }
 
         public ChatViewModel(INavigation navigation, string channelName, ChatPage page)

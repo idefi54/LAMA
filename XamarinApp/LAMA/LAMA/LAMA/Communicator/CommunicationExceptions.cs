@@ -13,6 +13,12 @@ namespace LAMA.Communicator
         public PasswordTooShortException() { }
     }
 
+    public class EntryMissingException : Exception
+    {
+        public EntryMissingException(string message)
+            : base(message) { }
+    }
+
     /// <summary>
     /// Wrong client name, client password, server password or a server with this name already exists
     /// </summary>

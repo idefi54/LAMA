@@ -303,7 +303,7 @@ namespace LAMA.Communicator
                     }
                 }
                 if (messageParts.Length < 2) continue;
-                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations" || messageParts[1] == "RequestRole" || messageParts[1] == "RemoveRole")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -735,6 +735,7 @@ namespace LAMA.Communicator
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
+            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update"));
         }
 
         /// <summary>
@@ -780,7 +781,7 @@ namespace LAMA.Communicator
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
-            SendCommand(new Command("UpdateFinished", "update"));
+            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update"));
         }
     }
 }

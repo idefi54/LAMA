@@ -13,6 +13,7 @@ using LAMA.Singletons;
 using Xamarin.Forms;
 using Mapsui.Providers.Wms;
 using LAMA.Models;
+using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
@@ -203,7 +204,7 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
-                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations" || messageParts[1] == "ReceiveRole" || messageParts[1] == "RemoveRoleResult")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -271,6 +272,7 @@ namespace LAMA.Communicator
 
         private void UpdateFinished()
         {
+            Debug.WriteLine("UpdateFinished");
             loggedIn = true;
         }
         
@@ -447,6 +449,7 @@ namespace LAMA.Communicator
             {
                 if (!s.Connected)
                 {
+                    wasUpdated = false;
                     if (listener != null)
                     {
                         listener = null;
@@ -458,6 +461,9 @@ namespace LAMA.Communicator
                         if (loggedIn && LocalStorage.clientID != -1)
                         {
                             SendCommand(new Command($"ClientConnected{Separators.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                            RequestUpdate();
+                            listener = new Thread(StartListening);
+                            listener.Start();
                         }
                     }
                     catch (SocketException e)
@@ -489,8 +495,8 @@ namespace LAMA.Communicator
         {
             Debug.WriteLine("Connected");
             if (LocalStorage.clientID != -1 )
-            _connected = true;
-            THIS.wasUpdated = true;
+                _connected = true;
+                THIS.wasUpdated = true;
         }
 
         /// <summary>
@@ -647,6 +653,8 @@ namespace LAMA.Communicator
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
+                DisplayActivityViewModel.roleRequested += modelChangesManager.OnRoleRequested;
+                DisplayActivityViewModel.roleRemoved += modelChangesManager.OnRoleRemoved;
                 logger.LogWrite("Initialization finished");
             }
         }
