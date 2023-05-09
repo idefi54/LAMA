@@ -39,5 +39,8 @@ namespace LAMA.Themes
         public static Color ActivityCancelled = Color.Red;
         public static Color ActivityDefault = Color.White;
 
+        public static Color BorrowColor = Color.SteelBlue;
+        public static Color ReturnColor = Color.SpringGreen;
+
     }
 }

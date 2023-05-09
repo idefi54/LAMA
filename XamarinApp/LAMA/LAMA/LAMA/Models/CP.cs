@@ -73,8 +73,9 @@ namespace LAMA.Models
         }
         string _password = string.Empty;
         public string password { get { return _password; } set { _password = value; updateValue(10, value); } }
-        
-        
+
+        bool _isArchived = false;
+        public bool IsArchived { get { return _isArchived; } set { _isArchived = value; updateValue(11, value ? "1" : "0") ; } }
 
         public CP()
         {
@@ -126,7 +127,7 @@ namespace LAMA.Models
 
 
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes", "permissions", "password"};
+            "discord", "location", "notes", "permissions", "password", "isArchived"};
 
         public long getID()
         {
@@ -182,6 +183,9 @@ namespace LAMA.Models
                 case 10:
                     _password = value;
                     break;
+                case 11:
+                    _isArchived = Helpers.readInt(value) == 1;
+                    break;
                
             }
         }
@@ -210,9 +214,10 @@ namespace LAMA.Models
                 case 8: return _notes;
                 case 9: return Helpers.EnumEventListToString(_permissions);
                 case 10: return _password;
+                case 11: return _isArchived ? "1" : "0";
                 
             }
-            throw new Exception("wring index called");
+            throw new Exception("wrong index called");
         }
         public string[] getAttributes()
         {

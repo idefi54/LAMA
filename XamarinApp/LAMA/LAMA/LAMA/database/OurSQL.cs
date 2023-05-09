@@ -51,6 +51,7 @@ namespace LAMA
 
         public static SQLiteAsyncConnection makeConnection()
         {
+            resetCaches();
             string directory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             databaseName = CommunicationInfo.Instance.ServerName + "_LAMA_Database";
@@ -96,25 +97,26 @@ namespace LAMA
                 _connection = null;
                 File.Delete(path);
 
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.reset();
-                DatabaseHolder<CP, CPStorage>.reset();
-                DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.reset();
-                DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.reset();
-                DatabaseHolder<InventoryItem, InventoryItemStorage>.reset();
-                DatabaseHolder<LarpActivity, LarpActivityStorage>.reset();
-                DatabaseHolder<PointOfInterest, PointOfInterestStorage>.reset();
-                DatabaseHolder<Road, RoadStorage>.reset();
-                LocalStorage.reset();
-                LarpEvent.reset();
-                DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.reset();
-                DatabaseHolderStringDictionary<Command, CommandStorage>.reset();
-                //timevalie
-                //command
-
+                resetCaches();
 
                 makeConnection();
             }
 
+        }
+        static public void resetCaches()
+        {
+            DatabaseHolder<ChatMessage, ChatMessageStorage>.reset();
+            DatabaseHolder<CP, CPStorage>.reset();
+            DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.reset();
+            DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.reset();
+            DatabaseHolder<InventoryItem, InventoryItemStorage>.reset();
+            DatabaseHolder<LarpActivity, LarpActivityStorage>.reset();
+            DatabaseHolder<PointOfInterest, PointOfInterestStorage>.reset();
+            DatabaseHolder<Road, RoadStorage>.reset();
+            LocalStorage.reset();
+            LarpEvent.reset();
+            DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.reset();
+            DatabaseHolderStringDictionary<Command, CommandStorage>.reset();
         }
     }
 

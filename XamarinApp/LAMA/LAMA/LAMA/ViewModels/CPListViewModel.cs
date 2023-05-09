@@ -13,6 +13,8 @@ namespace LAMA.ViewModels
         INavigation navigation;
 
 
+        public bool ShowArchived { get { return CanAddCP; } }
+
         public Command AddCPCommand { get; private set; }
 
         TrulyObservableCollection<CPViewModel> _CPList = new TrulyObservableCollection<CPViewModel>();
@@ -32,6 +34,9 @@ namespace LAMA.ViewModels
         bool _showDropdown = false;
         public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value); } }
 
+        TrulyObservableCollection<CPViewModel> _ArchivedCPList = new TrulyObservableCollection<CPViewModel>();
+        public TrulyObservableCollection<CPViewModel> ArchivedCPList { get { return _ArchivedCPList; } }
+
         public CPListViewModel(INavigation navigation)
         {
             this.navigation = navigation;
@@ -48,10 +53,14 @@ namespace LAMA.ViewModels
         {
             var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             CPList.Clear();
+            ArchivedCPList.Clear();
             for (int i = 0; i < list.Count; ++i) 
             { 
                 var newOne = new CPViewModel(list[i]);
-                CPList.Add(newOne);
+                if(!list[i].IsArchived)
+                    CPList.Add(newOne);
+                else 
+                    ArchivedCPList.Add(newOne);
                 IDToViewModel.Add(list[i].ID, newOne);
             
             }
@@ -67,8 +76,12 @@ namespace LAMA.ViewModels
             }
             var item = (CP)made;
             OnCancelFilter();
-            CPList.Add(new CPViewModel(item));
-            IDToViewModel.Add(item.ID, CPList[CPList.Count - 1]);
+            var model = new CPViewModel(item);
+            if (!item.IsArchived)
+                CPList.Add(model);
+            else
+                ArchivedCPList.Add(model);
+            IDToViewModel.Add(item.ID, model);
             OnFilter();
 
         }
@@ -80,7 +93,10 @@ namespace LAMA.ViewModels
             }
             var item = (CP)deleted;
             OnCancelFilter();
-            CPList.Remove(IDToViewModel[item.ID]);
+            if(!item.IsArchived)
+                CPList.Remove(IDToViewModel[item.ID]);
+            else
+                ArchivedCPList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
             OnFilter();
         }

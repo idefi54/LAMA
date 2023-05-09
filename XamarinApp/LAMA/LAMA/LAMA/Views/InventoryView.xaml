@@ -56,10 +56,10 @@
                                     <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="1" Text="Zapůjčeno" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}"/>
                                     <Label Grid.Row="3" Grid.Column="1" Grid.RowSpan="1" Text="{Binding Borrowed}" FontSize="Small" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
 
-                                    <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+                                    <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.BorrowColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 										    Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
 										    CommandParameter="{Binding .}"/>
-                                    <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+                                    <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 										    Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
 										    CommandParameter="{Binding .}"/>
 

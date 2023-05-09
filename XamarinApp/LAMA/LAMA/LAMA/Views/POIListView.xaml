@@ -34,6 +34,16 @@
                                     <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
                                     <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="MISSING ICON" FontSize="Small" />
 
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <On Platform="WPF">
+                                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
+												Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+												Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=OpenDetails}"
+												CommandParameter="{Binding .}"/>
+                                        </On>
+                                    </OnPlatform>
+
                                     <Grid.GestureRecognizers>
 
                                         <TapGestureRecognizer 

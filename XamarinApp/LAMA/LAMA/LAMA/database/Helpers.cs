@@ -58,7 +58,8 @@ namespace LAMA
         }
         public static int readInt(string input, ref int offset)
         {
-
+            if (input == null)
+                return 0;
 
             bool negative = false;
             int i = offset;

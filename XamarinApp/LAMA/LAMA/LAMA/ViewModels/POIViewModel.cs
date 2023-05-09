@@ -52,6 +52,7 @@ namespace LAMA.ViewModels
         public Command Cancel { get; set; }
         public Command Edit { get; set; }
         public Command IconChange { get; set; }
+        public Command Delete { get; set; }
         public bool CanChange { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI); } }
         public POIViewModel(INavigation navigation, PointOfInterest POI)
         {
@@ -73,6 +74,7 @@ namespace LAMA.ViewModels
             Cancel = new Command(onCancel);
             Edit = new Command(onEdit);
             IconChange = new Command(onIconChange);
+            Delete = new Command(onDelete);
         }
 
         private void onPOIChanged(object sender, int e)
@@ -121,5 +123,12 @@ namespace LAMA.ViewModels
         {
             CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(navigation, _icons);
         }
+        private async void onDelete()
+        {
+            var list = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
+            list.removeByID(POI.ID);
+            await navigation.PopAsync();
+        }
     }
+    
 }

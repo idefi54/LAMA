@@ -5,6 +5,7 @@
              x:Class="LAMA.Views.POIDetailsView">
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Změnit" Command="{Binding Edit}" IsVisible="{Binding CanChange}" />
+        <forms:BindableToolbarItem Text="Smazat" Command="{Binding Delete}" IsVisible="{Binding CanChange}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

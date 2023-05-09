@@ -37,10 +37,14 @@ namespace LAMA.ViewModels
         public bool CanDeleteCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
         public bool CanEditDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID== LocalStorage.cpID; } set { } }
         public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
+        public bool CanArchiveCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived; } }
+        public bool CanUnarchiveCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived; } }
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
         //public Command AddPermissionCommand { get; private set; }
         //public Command RemovePermissionCommand { get; private set; }
+        public Command Archive { get; }
+        public Command Unarchive { get; }
         public Command DeleteCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> CurrentPermissions { get; } = new ObservableCollection<string>();
@@ -83,8 +87,21 @@ namespace LAMA.ViewModels
 
             //figureOutPermissions();
 
-
+            SQLEvents.dataChanged += gotChanged;
+            Archive = new Command(onArchive);
+            Unarchive = new Command(onUnarchive);
         }
+
+
+        public void onArchive()
+        {
+            cp.IsArchived = true;
+        }
+        public void onUnarchive()
+        {
+            cp.IsArchived = false;
+        }
+
         void OnSave()
         {
             if (cp.name != name)
@@ -169,6 +186,27 @@ namespace LAMA.ViewModels
 
             DatabaseHolder<CP, CPStorage>.Instance.rememberedList.removeByID(cp.ID);
             await navigation.PopAsync();
+        }
+
+        void gotChanged(Serializable obj, int index)
+        {
+            if (obj.GetType() != typeof(CP))
+                return;
+            CP cp = (CP)obj;
+            //"ID", "name", "nick", "roles", "phone", "facebook",
+            //"discord", "location", "notes", "permissions", "password"
+            switch (index)
+            {
+                case 1: Name = cp.name; break;
+                case 2: Nick = cp.nick; break;
+                case 3: Roles = cp.roles.ToReadableString(); break;
+                case 4: Phone = cp.phone; break;
+                case 5: Facebook = cp.facebook; break;
+                case 6: Discord = cp.discord; break;
+                case 8: Notes = cp.notes; break;
+                case 9: Permissions = cp.permissions.ToReadableString(); break;
+            }
+
         }
      }
 }

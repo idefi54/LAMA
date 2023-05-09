@@ -2,7 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CPDetailsEditView"
-			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Přidat" Command="{Binding SaveCommand}" IsVisible ="{Binding CanChangeCPs}"/>
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
@@ -43,8 +49,6 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
                 <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
-
-                <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
 
 
 				<Label Text="Pravomoce" 
