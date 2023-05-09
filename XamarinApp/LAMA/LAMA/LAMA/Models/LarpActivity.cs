@@ -136,7 +136,7 @@ namespace LAMA.Models
         public EventList<Pair<long, string>> registrationByRole { get { return _registrationByRole; } }
         void registrationByRoleChanged() { updateValue(13, _registrationByRole.ToString()); }
 
-        double _graphY;
+        double _graphY = -1;
         public double GraphY
         {
             get { return _graphY; }
