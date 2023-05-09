@@ -54,7 +54,7 @@ namespace LAMA.ViewModels
 
         private void OnMessageSent()
         {
-            if (MessageText.Trim() != "")
+            if (!String.IsNullOrWhiteSpace(MessageText))
             {
                 ChatLogic.Instance.SendMessage(channelID, MessageText);
                 MessageText = "";

@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.CPDetailsEditView">
+             x:Class="LAMA.Views.CPDetailsEditView"
+			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
@@ -46,8 +47,16 @@
                 <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
 
 
+				<Label Text="Pravomoce" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				<Label Text="{Binding Permissions}" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"
+					   IsVisible="{Binding CanChangePermissions, Converter={Converters:InverseBoolConverter}}"/>
 
-                <StackLayout x:Name="PermissionList" BindableLayout.ItemsSource="{Binding PermissionList}" Margin="5,5,5,0">
+				<StackLayout x:Name="PermissionList" BindableLayout.ItemsSource="{Binding PermissionList}"
+							 Margin="5,5,5,0" IsVisible="{Binding CanChangePermissions}">
                     <BindableLayout.ItemTemplate>
 						<DataTemplate>
 							<Grid Padding="5" Margin="5" >
