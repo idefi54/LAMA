@@ -14,7 +14,6 @@ namespace LAMA.ActivityGraphLib
     public class ActivityButton
     {
         private float X, Y;
-        private float Width, Height = DEFAULT_HEIGHT;
         private float _sideWidth = 10;
         private bool _isVisible;
         private INavigation _navigation;
@@ -25,7 +24,10 @@ namespace LAMA.ActivityGraphLib
         private ActivityGraph _graph;
 
         public LarpActivity Activity;
-        public const float DEFAULT_HEIGHT = 20;
+        public const float DEFAULT_HEIGHT = 0.0913f;
+
+        public float Width { get; private set; }
+        public float Height => DEFAULT_HEIGHT * (_graph.Height * (1 - DEFAULT_HEIGHT));
 
         public ActivityButton(LarpActivity activity, ActivityGraph activityGraph, INavigation navigation)
         {
