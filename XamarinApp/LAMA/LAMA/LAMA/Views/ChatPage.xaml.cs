@@ -3,6 +3,7 @@ using LAMA.ViewModels;
 using Mapsui.Widgets;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -54,10 +55,12 @@ namespace LAMA.Views
 
         protected void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.OldTextValue != null && !_shiftHeld && Device.RuntimePlatform == Device.WPF)
+            string oldText;
+            if (e.OldTextValue == null) oldText = "";
+            else oldText = e.OldTextValue;
+            if (!_shiftHeld && Device.RuntimePlatform == Device.WPF)
             {
                 string newText = e.NewTextValue;
-                string oldText = e.OldTextValue;
                 if (newText.Length == oldText.Length+2)
                 {
                     int i;
