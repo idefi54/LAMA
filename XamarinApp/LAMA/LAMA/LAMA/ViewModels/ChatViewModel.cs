@@ -56,7 +56,8 @@ namespace LAMA.ViewModels
 
         public void MessageSent(string message)
         {
-            if (!String.IsNullOrWhiteSpace(MessageText))
+            message = message.Trim();
+            if (!String.IsNullOrWhiteSpace(message))
             {
                 ChatLogic.Instance.SendMessage(channelID, message);
                 MessageText = "";
@@ -65,11 +66,7 @@ namespace LAMA.ViewModels
 
         private void OnMessageSent()
         {
-            if (!String.IsNullOrWhiteSpace(MessageText))
-            {
-                ChatLogic.Instance.SendMessage(channelID, MessageText);
-                MessageText = "";
-            }
+            MessageSent(MessageText);
         }
 
         public ChatViewModel(INavigation navigation, string channelName, ChatPage page)
