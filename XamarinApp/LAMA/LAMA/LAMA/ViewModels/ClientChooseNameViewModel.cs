@@ -68,7 +68,7 @@ namespace LAMA.ViewModels
                 while (true)
                 {
                     await Task.Delay(500);
-                    if (communicator.connected)
+                    if (communicator.loggedIn)
                     {
                         break;
                     }
@@ -79,7 +79,7 @@ namespace LAMA.ViewModels
                     else
                     {
                         timer += 0.5f;
-                        if (timer > 5.0f)
+                        if (timer > 10.0f)
                         {
                             throw new TimeoutException("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
                         }

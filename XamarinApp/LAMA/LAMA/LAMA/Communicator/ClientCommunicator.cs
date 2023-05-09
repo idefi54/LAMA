@@ -272,6 +272,7 @@ namespace LAMA.Communicator
 
         private void UpdateFinished()
         {
+            Debug.WriteLine("UpdateFinished");
             loggedIn = true;
         }
         

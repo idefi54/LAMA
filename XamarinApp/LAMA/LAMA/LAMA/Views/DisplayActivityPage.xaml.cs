@@ -1,12 +1,7 @@
 ﻿using LAMA.Models;
-using LAMA.Services;
 using LAMA.Singletons;
 using LAMA.ViewModels;
 using Mapsui.UI.Forms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -30,7 +25,7 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var scrollView = Content as ScrollView;
+            var scrollView = (Content as AbsoluteLayout).Children[0] as ScrollView;
             var layout = scrollView.Children[0] as StackLayout;
 
             var mapHorizontalOption = LayoutOptions.Fill;
@@ -80,7 +75,7 @@ namespace LAMA.Views
             if (_mapView == null)
                 return;
 
-            var scrollView = Content as ScrollView;
+            var scrollView = (Content as AbsoluteLayout).Children[0] as ScrollView;
             (scrollView.Children[0] as StackLayout).Children.Remove(_mapView);
             _mapView = null;
         }

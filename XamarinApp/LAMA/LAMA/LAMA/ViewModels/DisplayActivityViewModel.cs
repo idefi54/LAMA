@@ -100,13 +100,6 @@ namespace LAMA.ViewModels
 		private string _end;
 		private string _duration;
 
-		private bool _working;
-        public bool Working
-        {
-            get { return _working; }
-            set { SetProperty(ref _working, value); }
-        }
-
         public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
 		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
@@ -142,8 +135,9 @@ namespace LAMA.ViewModels
 
 		public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
 
+        public bool NotBusy => !IsBusy;
 
-		public string StatusCommandText => "Změnit stav";
+        public string StatusCommandText => "Změnit stav";
 		public Command StatusCommand { get; }
 
 
@@ -284,10 +278,12 @@ namespace LAMA.ViewModels
 
 		private async void OnSignUp()
 		{
+			IsBusy = true;
 			if (isRegistered)
             {
 				UnregisterAsync();
-				return;
+                IsBusy = false;
+                return;
 			}
 
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
@@ -296,13 +292,15 @@ namespace LAMA.ViewModels
 			{
 				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte přihlásit na aktivitu, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
 				await Navigation.PopAsync();
-				return;
+                IsBusy = false;
+                return;
 			}
 
 			if (_activity.roles.Count == 0)
             {
 				await _messageService.ShowAlertAsync("Aktivita neobsahuje žádné role ke kterým by se šlo přihlásit.");
-				return;
+                IsBusy = false;
+                return;
             }
 
 			string[] roles = _activity.roles.Select(x => x.first).ToArray();
@@ -311,7 +309,10 @@ namespace LAMA.ViewModels
             {
 				int? selectionResult = await _messageService.ShowSelectionAsync("Vyberte roli ke které se chcete přihlásit.", roles);
 				if (!selectionResult.HasValue)
-					return;
+				{
+                    IsBusy = false;
+                    return;
+				}
 				index = selectionResult.Value;
             }
 
@@ -363,7 +364,8 @@ namespace LAMA.ViewModels
                 }
 			}
 			isRegistered = IsRegistered();
-		}
+            IsBusy = false;
+        }
 
 		private async void OnShowOnGraph()
         {
@@ -372,12 +374,14 @@ namespace LAMA.ViewModels
 
         private async void UnregisterAsync()
 		{
+			IsBusy = true;
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
 
 			if (activityDeleted)
 			{
 				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
 				await Navigation.PopAsync();
+				IsBusy = false;
 				return;
 			}
 
@@ -435,6 +439,7 @@ namespace LAMA.ViewModels
 				}
             }
 			isRegistered = IsRegistered();
+			IsBusy = false;
         }
 
         private async void UpdateActivity(LarpActivityDTO larpActivityDTO)
