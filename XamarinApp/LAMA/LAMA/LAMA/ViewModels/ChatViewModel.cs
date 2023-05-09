@@ -11,15 +11,17 @@ using Xamarin.Forms;
 using System.Linq;
 using LAMA.Singletons;
 using LAMA.Views;
+using System.Xml.Linq;
 
 namespace LAMA.ViewModels
 {
-    internal class ChatViewModel : INotifyPropertyChanged
+    internal class ChatViewModel : BaseViewModel
     {
         //public Xamarin.Forms.Command AddMessageCommand { get; }
 
         public Xamarin.Forms.Command MessageSentCommand { get; }
-        public string MessageText { get; set; }
+        private string _messageText;
+        public string MessageText { get { return _messageText; } set { SetProperty(ref _messageText, value); } }
         public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; set; }
 
         INavigation Navigation;
@@ -54,7 +56,7 @@ namespace LAMA.ViewModels
 
         private void OnMessageSent()
         {
-            if (MessageText.Trim() != "")
+            if (!String.IsNullOrWhiteSpace(MessageText))
             {
                 ChatLogic.Instance.SendMessage(channelID, MessageText);
                 MessageText = "";

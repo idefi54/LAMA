@@ -6,7 +6,8 @@
              Title="{Binding Title}"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
-			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels" xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
+			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
 
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>

@@ -300,7 +300,7 @@ namespace LAMA.Communicator
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
-                    if (indexAttribute == 2)
+                    if (indexAttribute == 3)
                     {
                         command = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute + Separators.messagePartSeparator.ToString() + LarpEvent.Instance.chatChannels;
                     }

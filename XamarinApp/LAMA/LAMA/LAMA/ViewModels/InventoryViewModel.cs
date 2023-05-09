@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace LAMA.ViewModels
@@ -75,6 +76,10 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (InventoryItemViewModel)obj;
+
+            if (!CheckExistence(viewModel.Item.ID).Result)
+                return;
+
             await Navigation.PushAsync(new InventoryItemDetail(viewModel.Item));
         }
         private void OnChange(Serializable changed, int index)
@@ -106,6 +111,9 @@ namespace LAMA.ViewModels
             OnCancelFilter();
             var item = (InventoryItem)deleted;
 
+            if (!CheckExistence(item.ID).Result)
+                return;
+
             ItemList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
             OnFilter();
@@ -121,7 +129,10 @@ namespace LAMA.ViewModels
                 return;
             }
             var itemViewModel = (InventoryItemViewModel)obj;
-            
+
+            if (!CheckExistence(itemViewModel.Item.ID).Result)
+                return;
+
             itemViewModel.Item.Borrow(1);
         }
         private async void OnReturnItem(object obj)
@@ -134,11 +145,30 @@ namespace LAMA.ViewModels
             }
             var itemViewModel = (InventoryItemViewModel)obj;
 
+            if (!CheckExistence(itemViewModel.Item.ID).Result)
+                return;
+
             itemViewModel.Item.Return(1);
         }
         private async void OnCreateItem()
         {
             await Navigation.PushAsync(new CreateInventoryItemView());
+        }
+
+        private async Task<bool> CheckExistence(long itemID)
+        {
+            bool itemDeleted = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(itemID) == default(InventoryItem);
+
+            if (itemDeleted)
+            {
+                await DependencyService.Get<Services.IMessageService>()
+                    .ShowAlertAsync(
+                        "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán.",
+                        "Předmět neexistuje");
+                IsBusy = false;
+                return false;
+            }
+            return true;
         }
 
 
