@@ -318,12 +318,14 @@ namespace LAMA.Singletons
                     {
                         hidableView.IsVisible = true;
                         button.Text = EXPAND;
+                        view.HeightRequest = heightRequest;
                         view.HorizontalOptions = LayoutOptions.Fill;
                         view.VerticalOptions = LayoutOptions.Fill;
                     } else
                     {
                         hidableView.IsVisible = false;
                         button.Text = HIDE;
+                        view.HeightRequest = -1;
                         view.HorizontalOptions = LayoutOptions.FillAndExpand;
                         view.VerticalOptions = LayoutOptions.FillAndExpand;
                     }
