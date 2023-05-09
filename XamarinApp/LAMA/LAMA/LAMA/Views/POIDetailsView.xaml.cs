@@ -87,5 +87,27 @@ namespace LAMA.Views
             _mapView = null;
         }
 
+        void ExpandMap(object sender, EventArgs args)
+        {
+            const string EXPAND = "Expand Map";
+            const string HIDE = "Hide Map";
+            var button = (Button)sender;
+
+            if (button.Text == HIDE)
+            {
+                DetailsView.IsVisible = true;
+                button.Text = EXPAND;
+                _mapView.HorizontalOptions = LayoutOptions.FillAndExpand;
+                _mapView.VerticalOptions = LayoutOptions.FillAndExpand;
+            }
+            else
+            {
+                DetailsView.IsVisible = false;
+                button.Text = HIDE;
+                _mapView.HorizontalOptions = LayoutOptions.Fill;
+                _mapView.VerticalOptions = LayoutOptions.Fill;
+                _mapView.HeightRequest = -1;
+            } 
+        }
     }
 }

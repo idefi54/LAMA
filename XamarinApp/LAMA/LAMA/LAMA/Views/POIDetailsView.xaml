@@ -9,31 +9,34 @@
 
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Jméno"
+            <StackLayout x:Name="DetailsView">
+                <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-            <Label Text="{Binding Name}"
+                <Label Text="{Binding Name}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
-            <Label Text="Popis"
+                <Label Text="Popis"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" />
-            <Label Text="{Binding Description}"
+                <Label Text="{Binding Description}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" />
 
-            <StackLayout Orientation="Horizontal">
-                <Label Text="Ikona:"
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Ikona:"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"/>
 
-                <Image Source="{Binding CurrentIcon, Mode=TwoWay}"
+                    <Image Source="{Binding CurrentIcon, Mode=TwoWay}"
                        HeightRequest="40"
                        WidthRequest="40"
                        HorizontalOptions="Start"
                        VerticalOptions="Center"/>
+                </StackLayout>
             </StackLayout>
+            <Button Clicked="ExpandMap"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
