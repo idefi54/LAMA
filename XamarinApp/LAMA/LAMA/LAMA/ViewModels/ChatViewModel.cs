@@ -54,13 +54,21 @@ namespace LAMA.ViewModels
             OnMessageSent();
         }
 
+        public void MessageSent(string message)
+        {
+            if (!String.IsNullOrWhiteSpace(MessageText))
+            {
+                ChatLogic.Instance.SendMessage(channelID, message);
+                MessageText = "";
+            }
+        }
+
         private void OnMessageSent()
         {
             if (!String.IsNullOrWhiteSpace(MessageText))
             {
                 ChatLogic.Instance.SendMessage(channelID, MessageText);
                 MessageText = "";
-                OnPropertyChanged("MessageText");
             }
         }
 
