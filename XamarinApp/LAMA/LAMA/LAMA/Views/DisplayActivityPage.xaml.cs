@@ -14,6 +14,7 @@ namespace LAMA.Views
     {
         private MapView _mapView;
         private LarpActivity _activity;
+        private Button _expandButton;
 
         public DisplayActivityPage(LarpActivity activity)
         {
@@ -25,33 +26,8 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var scrollView = (Content as AbsoluteLayout).Children[0] as ScrollView;
-            var layout = scrollView.Children[0] as StackLayout;
-
-            var mapHorizontalOption = LayoutOptions.Fill;
-            var mapVerticalOption = LayoutOptions.Fill;
-            int mapHeightRequest = 300;
-            var mapBackgroundColor = Color.Gray;
-
-            var activityIndicator = new ActivityIndicator
-            {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                IsRunning = true
-            };
-            layout.Children.Add(activityIndicator);
-
-            await Task.Delay(500);
-            _mapView = new MapView
-            {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                BackgroundColor = mapBackgroundColor
-            };
-
             MapHandler mapHandler = MapHandler.Instance;
+            (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsLayout);
             mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: false);
 
             if (_activity != null)
@@ -64,19 +40,12 @@ namespace LAMA.Views
                 mapHandler.SetSelectionPin(lon, lat);
                 MapHandler.CenterOn(_mapView, lon, lat);
             }
-
-            layout.Children.Remove(activityIndicator);
-            layout.Children.Add(_mapView);
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            if (_mapView == null)
-                return;
-
-            var scrollView = (Content as AbsoluteLayout).Children[0] as ScrollView;
-            (scrollView.Children[0] as StackLayout).Children.Remove(_mapView);
+            MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
         }
     }

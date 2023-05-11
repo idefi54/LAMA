@@ -381,7 +381,7 @@ namespace LAMA.ActivityGraphLib
                 DateTime start = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
 
                 if ((start - TimeOffset).Duration() < maxDifference)
-                    ActivityButtons.Add(new ActivityButton(activity, this, _navigation));
+                    AddActivity(activity);
             }
         }
 
@@ -435,6 +435,44 @@ namespace LAMA.ActivityGraphLib
         {
             var button = new ActivityButton(activity, this, _navigation);
             ActivityButtons.Add(button);
+
+            if (activity.GraphY >= 0)
+                return button;
+
+            long startX = activity.start;
+            long endX = activity.start + activity.duration;
+            double height = ActivityButton.DEFAULT_HEIGHT;
+            double startY = 0;
+            double endY = startY + height;
+
+            var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+            var ySorted = new SortedDictionary<double, LarpActivity>();
+
+
+            for (int i = 0; i < rememberedList.Count; i++)
+            {
+                var activity2 = rememberedList[i];
+                if (activity2 == activity || activity2.GraphY < 0) continue;
+                ySorted.Add(activity2.GraphY, activity2);
+            }
+
+            foreach (var activity2 in ySorted.Values)
+            {
+                if (activity2 == activity) continue;
+
+                long start2X = activity2.start;
+                long end2X = activity2.start + activity2.duration;
+                double start2Y = activity2.GraphY;
+                double end2Y = start2Y + height;
+
+                if (end2X > startX && start2X < endX && end2Y > startY && start2Y < endY)
+                {
+                    startY = end2Y;
+                    endY += start2Y + height;
+                }
+            }
+
+            button.Activity.GraphY = startY;
             return button;
         }
 
@@ -459,6 +497,11 @@ namespace LAMA.ActivityGraphLib
         {
             TimeOffset = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
             _offsetY = (float)activity.GraphY;
+        }
+
+        private void AddActivityButton()
+        {
+
         }
     }
 }

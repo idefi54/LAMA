@@ -19,6 +19,7 @@ namespace LAMA.Views
     {
         PointOfInterest _poi;
         private MapView _mapView;
+        private Button _expandButton;
 
         public POIDetailsView()
         {
@@ -37,32 +38,9 @@ namespace LAMA.Views
             base.OnAppearing();
             var layout = Content as StackLayout;
 
-            var mapHorizontalOption = LayoutOptions.Fill;
-            var mapVerticalOption = LayoutOptions.Fill;
-            int mapHeightRequest = 300;
-            var mapBackgroundColor = Color.Gray;
-
-            var activityIndicator = new ActivityIndicator
-            {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                IsRunning = true,
-                IsVisible = true
-            };
-            layout.Children.Add(activityIndicator);
-
-            await Task.Delay(500);
-            _mapView = new MapView
-            {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                BackgroundColor = mapBackgroundColor
-            };
-
-            MapHandler mapHandler = MapHandler.Instance;
-            mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: false);
+            var mapHandler = MapHandler.Instance;
+            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(layout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsView);
+            mapHandler.MapViewSetup(_mapView, showSelection:true);
 
             if (_poi != null)
             {
@@ -70,22 +48,17 @@ namespace LAMA.Views
                 double lon = _poi.Coordinates.first;
                 double lat = _poi.Coordinates.second;
 
-                mapHandler.RemoveActivity(id, _mapView);
+                mapHandler.RemovePointOfInterest(id, _mapView);
                 mapHandler.SetSelectionPin(lon, lat);
                 MapHandler.CenterOn(_mapView, lon, lat);
             }
-
-            layout.Children.Remove(activityIndicator);
-            layout.Children.Add(_mapView);
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            if (_mapView == null) return;
-            (Content as StackLayout).Children.Remove(_mapView);
+            MapHandler.Instance.RemoveMapView(_mapView, (Content as StackLayout), _expandButton);
             _mapView = null;
         }
-
     }
 }

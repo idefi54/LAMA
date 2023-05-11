@@ -10,141 +10,135 @@
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}" IsEnabled="{Binding NotBusy}"/>
-        <ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}" IsEnabled="{Binding NotBusy}"/>
-        <forms:BindableToolbarItem Text="Změnit stav" Command="{Binding StatusCommand}" IsVisible="{Binding CanChangeActivity}" IsEnabled="{Binding NotBusy}"/>
-        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}" IsEnabled="{Binding NotBusy}"/>
-	</ContentPage.ToolbarItems>
-	
-	<ContentPage.Content>
-        <AbsoluteLayout>
-            <ScrollView AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-				<StackLayout  Padding="30,15,30,15" >
-					<Label Text="Název aktivity"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<Label Text="{Binding Name}" FontSize="Default"   Padding="0,0,0,20"/>
+        <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}"/>
+        <ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
+        <forms:BindableToolbarItem Text="Změnit stav" Command="{Binding StatusCommand}" IsVisible="{Binding CanChangeActivity}"/>
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <StackLayout x:Name="DetailsLayout"  Padding="30,15,30,15" >
+                    <Label Text="Název aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Name}" FontSize="Default"   Padding="0,0,0,20"/>
 
 
 
-					<Label Text="Popis aktivity"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<Label Text="{Binding Description}"  Margin="0"  Padding="0,0,0,20"/>
+                    <Label Text="Popis aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Description}"  Margin="0"  Padding="0,0,0,20"/>
 
 
-					<Label Text="Typ aktivity"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<Label Text="{Binding Type}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+                    <Label Text="Typ aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Type}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
 
 
-					<Label Text="Status aktivity"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<Label Text="{Binding Status}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+                    <Label Text="Status aktivity"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Status}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
 
 
-					<Label Text="Časové rozmezí"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
+                    <Label Text="Časové rozmezí"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
 
-					<Grid Padding="0,0,0,20">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="auto" />
-							<RowDefinition Height="auto" />
-							<RowDefinition Height="auto" />
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="auto" />
-							<ColumnDefinition Width="20" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
+                    <Grid Padding="0,0,0,20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Text="Začátek:" HorizontalOptions="Start" VerticalOptions="End"/>
-						<Label Grid.Row="0" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Start}"/>
-						<Label Grid.Row="1" Grid.Column="0" Text="Konec:" HorizontalOptions="Start" VerticalOptions="End"/>
-						<Label Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" Text="{Binding End}"/>
-						<Label Grid.Row="2" Grid.Column="0" Text="Délka trvání:" HorizontalOptions="Start" VerticalOptions="End"/>
-						<Label Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Duration}"/>
-					</Grid>
-
-
-					<Label Text="Role"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<StackLayout BindableLayout.ItemsSource="{Binding Roles}" Margin="0,0,0,20">
-						<BindableLayout.ItemTemplate>
-							<DataTemplate>
-								<Grid HorizontalOptions="Fill">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="auto" />
-										<ColumnDefinition Width="20" />
-										<ColumnDefinition Width="*" />
-									</Grid.ColumnDefinitions>
-
-									<Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
-									<Label Grid.Row="0" Grid.Column="2" Text="{Binding Count}" MinimumWidthRequest="100" WidthRequest="100"/>
-								</Grid>
-							</DataTemplate>
-						</BindableLayout.ItemTemplate>
-					</StackLayout>
-
-					<Label Text="Závislost na aktivitách"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<StackLayout BindableLayout.ItemsSource="{Binding Dependencies}" Margin="0,0,0,20">
-						<BindableLayout.ItemTemplate>
-							<DataTemplate>
-								<Grid HorizontalOptions="Fill">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*" />
-									</Grid.ColumnDefinitions>
-									<Label Grid.Column="0" Text="{Binding Name}"/>
-								</Grid>
-							</DataTemplate>
-						</BindableLayout.ItemTemplate>
-					</StackLayout>
-
-					<Label Text="Potřebná příprava"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<Label Text="{Binding Preparations}"  Margin="0" MinimumHeightRequest="300" Padding="0,0,0,20"/>
+                        <Label Grid.Row="0" Grid.Column="0" Text="Začátek:" HorizontalOptions="Start" VerticalOptions="End"/>
+                        <Label Grid.Row="0" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Start}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Konec:" HorizontalOptions="Start" VerticalOptions="End"/>
+                        <Label Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" Text="{Binding End}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Text="Délka trvání:" HorizontalOptions="Start" VerticalOptions="End"/>
+                        <Label Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" Text="{Binding Duration}"/>
+                    </Grid>
 
 
-					<Label Text="Vybavení"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-					<StackLayout BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
-						<BindableLayout.ItemTemplate>
-							<DataTemplate>
-								<Grid HorizontalOptions="Fill">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="auto" />
-										<ColumnDefinition Width="20" />
-										<ColumnDefinition Width="*" />
-									</Grid.ColumnDefinitions>
-									<Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
-									<Label Grid.Row="0" Grid.Column="2" Text="{Binding Count}" MinimumWidthRequest="100" WidthRequest="100"/>
-								</Grid>
-							</DataTemplate>
-						</BindableLayout.ItemTemplate>
-					</StackLayout>
+                    <Label Text="Role"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <StackLayout BindableLayout.ItemsSource="{Binding Roles}" Margin="0,0,0,20">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalOptions="Fill">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
+                                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Count}" MinimumWidthRequest="100" WidthRequest="100"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <Label Text="Závislost na aktivitách"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <StackLayout BindableLayout.ItemsSource="{Binding Dependencies}" Margin="0,0,0,20">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalOptions="Fill">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Text="{Binding Name}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <Label Text="Potřebná příprava"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Preparations}"  Margin="0" MinimumHeightRequest="300" Padding="0,0,0,20"/>
 
 
-					<Label Text="Lokace"
-						   HorizontalTextAlignment="Start"
-						   VerticalTextAlignment="End"/>
-				</StackLayout>
-			</ScrollView>
-            <StackLayout
-				x:Name="aiLayout"
-				IsVisible="{Binding IsBusy}"
-				AbsoluteLayout.LayoutBounds="0,0,1,1"
-				AbsoluteLayout.LayoutFlags="All"
-				BackgroundColor="Gray" Opacity="0.5">
-                <ActivityIndicator IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+                    <Label Text="Vybavení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <StackLayout BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalOptions="Fill">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
+                                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Count}" MinimumWidthRequest="100" WidthRequest="100"/>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+
+                    <Label Text="Lokace"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                </StackLayout>
+
+                <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
             </StackLayout>
-        </AbsoluteLayout>
-	</ContentPage.Content>
+        </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

@@ -12,30 +12,34 @@
 
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Jméno"
+            <StackLayout x:Name="DetailsLayout">
+                <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-            <Entry Text="{Binding Name}" FontSize="Medium" />
+                <Entry Text="{Binding Name}" FontSize="Medium" />
 
-            <Label Text="Popis"
+                <Label Text="Popis"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" />
-            <Entry Text="{Binding Description}" FontSize="Medium" />
+                <Entry Text="{Binding Description}" FontSize="Medium" />
 
 
-            <StackLayout Orientation="Horizontal">
-                <Label
+                <StackLayout Orientation="Horizontal">
+                    <Label
                     Text="Změnit ikonu:"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"/>
-                <ImageButton
+                    <ImageButton
                     HorizontalOptions="Start"
                     VerticalOptions="Center"
                     WidthRequest="40"
                     HeightRequest="40"
                     Source="{Binding CurrentIcon, Mode=TwoWay}"
                     Command="{Binding IconChange}"/>
+                </StackLayout>
             </StackLayout>
+
+            <StackLayout x:Name="MapLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
