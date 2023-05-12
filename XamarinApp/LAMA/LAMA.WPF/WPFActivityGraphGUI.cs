@@ -5,6 +5,8 @@ using System;
 using Xamarin.Forms;
 using System.Windows;
 
+using Key = System.Windows.Input.Key;
+
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
 {
@@ -27,16 +29,22 @@ namespace LAMA.UWP
 
             WPF.App.Current.MainWindow.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.X)
-                    graph.SwitchActivityCreationMode(true);
+                if (e.Key == Key.X)
+                    graph.Mode = ActivityGraph.EditingMode.Create;
+
+                if (e.Key == Key.C)
+                    graph.Mode = ActivityGraph.EditingMode.Connect;
+
+                if (e.Key == Key.D)
+                    graph.Mode = ActivityGraph.EditingMode.Disconnect;
 
                 canvasView.InvalidateSurface();
             };
 
             WPF.App.Current.MainWindow.KeyUp += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.X)
-                    graph.SwitchActivityCreationMode(false);
+                if (e.Key == Key.X || e.Key == Key.C || e.Key == Key.D)
+                    graph.Mode = ActivityGraph.EditingMode.None;
 
                 canvasView.InvalidateSurface();
             };

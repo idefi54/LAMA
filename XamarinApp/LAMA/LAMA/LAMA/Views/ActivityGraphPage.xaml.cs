@@ -110,7 +110,7 @@ namespace LAMA.Views
                 }
 
                 // Create new activity -> redirect to NewActivtyPage
-                if (_graph.ActivityCreationMode)
+                if (_graph.Mode == ActivityGraph.EditingMode.Create)
                 {
                     var time = _graph.ToLocalTime(px);
                     _touchActions.Remove(args.Id);
@@ -123,7 +123,6 @@ namespace LAMA.Views
                     activity.start = time.ToUnixTimeMilliseconds() - hourMilliseconds / 2;
                     activity.duration = hourMilliseconds;
                     activity.day = time.Day;
-
 
                     Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
