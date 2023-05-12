@@ -13,19 +13,20 @@ namespace LAMA.ActivityGraphLib
 
     public class ActivityButton
     {
-        private float X, Y;
         private float _sideWidth = 10;
         private bool _isVisible;
         private INavigation _navigation;
         private float _sideWidthXam => _graph.FromPixels(_sideWidth);
-        private enum EditState { None, Left, Right, Move }
+        private enum EditState { None, Left, Right, Move, Connect, Disconnect }
         private EditState _editState;
 
         private ActivityGraph _graph;
 
         public LarpActivity Activity;
-        public const float DEFAULT_HEIGHT = 0.0913f;
+        public const float DEFAULT_HEIGHT = 0.05f;
 
+        public float X { get; private set; }
+        public float Y { get; private set; }
         public float Width { get; private set; }
         public float Height => DEFAULT_HEIGHT * (_graph.Height * (1 - DEFAULT_HEIGHT));
 
@@ -197,6 +198,20 @@ namespace LAMA.ActivityGraphLib
                     canvas.DrawLine(mX, mY, mX, 0, paint);
                     canvas.DrawLine(mX + Width, mY, mX + Width, 0, paint);
                 }
+
+            if (_editState == EditState.Connect)
+                _graph.DrawConnection(canvas, this, mouseX, mouseY);
+
+            if (_editState == EditState.Disconnect)
+                _graph.DrawConnection(canvas, this, mouseX, mouseY, SKColors.Red);
+        }
+
+        /// <summary>
+        /// Call the actual functionality of the button.
+        /// </summary>
+        public void Click()
+        {
+            _navigation.PushAsync(new DisplayActivityPage(Activity));
         }
 
         /// <summary>
@@ -210,16 +225,16 @@ namespace LAMA.ActivityGraphLib
             float yRel = y - Y;
 
             _editState = EditState.Move;
+            if (_graph.Mode == ActivityGraph.EditingMode.Connect) _editState = EditState.Connect;
+            if (_graph.Mode == ActivityGraph.EditingMode.Disconnect) _editState = EditState.Disconnect;
+
+            // Clicked inside of the button - no adjusting width
             if (yRel < 0 || yRel > Height * _graph.Zoom || xRel < -_sideWidth || xRel > Width + _sideWidth)
                 return;
 
+            // Adjusting width
             if (xRel < 0) _editState = EditState.Left;
             if (xRel > Width) _editState = EditState.Right;
-        }
-
-        public void Click()
-        {
-            _navigation.PushAsync(new DisplayActivityPage(Activity));
         }
 
         /// <summary>
@@ -274,6 +289,20 @@ namespace LAMA.ActivityGraphLib
                 Activity.GraphY = (y - _graph.OffsetY / _graph.Zoom) / (_graph.Height - Height);
             }
 
+            if (_editState == EditState.Connect)
+            {
+                ActivityButton b = _graph.GetButtonAt(x, y);
+                if (b != null && b != this && !b.Activity.prerequisiteIDs.Contains(Activity.ID))
+                    b.Activity.prerequisiteIDs.Add(Activity.ID);
+            }
+
+            if (_editState == EditState.Disconnect)
+            {
+                ActivityButton b = _graph.GetButtonAt(x, y);
+                if (b != null && b != this && b.Activity.prerequisiteIDs.Contains(Activity.ID))
+                    b.Activity.prerequisiteIDs.Remove(Activity.ID);
+            }
+
             _editState = EditState.None;
         }
 
@@ -294,38 +323,6 @@ namespace LAMA.ActivityGraphLib
                 X + Width + _sideWidth,
                 Y + Height * _graph.Zoom
                 );
-        }
-
-        /// <summary>
-        /// Draws bezier curve between 2 buttons.
-        /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="graph"></param>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        public static void DrawConnection(SKCanvas canvas, ActivityGraph graph, ActivityButton a, ActivityButton b)
-        {
-            var aRect = new SKRect(a.X,
-                a.Y - graph.OffsetY,
-                a.X + a.Width,
-                a.Y - graph.OffsetY + a.Height);
-
-            var bRect = new SKRect(
-                b.X,
-                b.Y - graph.OffsetY,
-                b.X + b.Width,
-                b.Y - graph.OffsetY + b.Height);
-
-            var paint = new SKPaint();
-            paint.Color = SKColors.WhiteSmoke;
-            paint.Style = SKPaintStyle.Stroke;
-            paint.StrokeWidth = 2;
-
-            SKPath path = new SKPath();
-            paint.IsAntialias = true;
-            path.MoveTo(aRect.MidX, aRect.MidY);
-            path.QuadTo(aRect.MidX, bRect.MidY, bRect.MidX, bRect.MidY);
-            canvas.DrawPath(path, paint);
         }
 
         private int GetCornerRadius(LarpActivity.EventType type)
