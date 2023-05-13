@@ -25,6 +25,7 @@ using System.Reflection;
 using System.IO;
 using LAMA.Singletons;
 using LAMA.Themes;
+using LAMA.Extensions;
 
 namespace LAMA.Singletons
 {
@@ -572,7 +573,7 @@ namespace LAMA.Singletons
                 + "\n"
                 + $"Double click to show the activity.";
 
-            PinSetIcon(pin, IconLibrary.GetIconsByLarpActivityStatus(activity.status));
+            PinSetIcon(pin, activity.GetIconByteArray());
 
             _activityPins[activity.ID] = pin;
 
@@ -934,13 +935,17 @@ namespace LAMA.Singletons
             return p;
         }
 
-        private void PinSetIcon(Pin pin, string iconName)
+        private void PinSetIcon(Pin pin, byte[] icon)
         {
             pin.Type = PinType.Icon;
-            byte[] icon = GetIcon(iconName);
-
             pin.Icon = icon;
             pin.Anchor = new XPoint(0, -pin.Height / 4.0);
+        }
+
+        private void PinSetIcon(Pin pin, string iconName)
+        {
+            byte[] icon = GetIcon(iconName);
+            PinSetIcon(pin, icon);
         }
 
         private void LoadActivities(MapView view = null)
