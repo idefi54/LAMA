@@ -572,7 +572,7 @@ namespace LAMA.ActivityGraphLib
                 p1.Y + v * v * (p0.Y - p1.Y) + t * t * (p2.Y - p1.Y));
 
             SKPoint difference = new SKPoint(
-                // Computation of the derivative of quadratic bezier at t = 0.5
+                // Computation of the derivative of quadratic bezier at t
                 2 * v * (p1.X - p0.X) + 2 * t * (p2.X - p1.X),
                 2 * v * (p1.Y - p0.Y) + 2 * t * (p2.Y - p1.Y));
 
