@@ -72,10 +72,8 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public Layout<View> DateView { get; set; }
 
-        /// <summary>
-        /// Is in mode for creation new a activity.
-        /// </summary>
-        public bool ActivityCreationMode { get; private set; } = false;
+        public enum EditingMode { None, Create, Connect, Disconnect }
+        public EditingMode Mode { get; set; }
 
         public ActivityButton DraggedButton { get; set; } = null;
 
@@ -186,6 +184,7 @@ namespace LAMA.ActivityGraphLib
             _canvasLayout = canvasGrid;
             _navigation = navigation;
             TimeOffset = DateTime.Now;
+            Mode = EditingMode.None;
             ReloadActivities();
             _canvasView.InvalidateSurface();
 
@@ -336,33 +335,25 @@ namespace LAMA.ActivityGraphLib
 
             // Indicator for adding activities
             paint.Color = SKColors.Green;
-            if (ActivityCreationMode)
+            if (Mode == EditingMode.Create)
             {
+                float height = ActivityButton.DEFAULT_HEIGHT * (Height * (1 - ActivityButton.DEFAULT_HEIGHT));
                 float hour = MinuteWidth * 60 * Zoom;
                 float left = _mouseX - hour / 2;
-                float top = _mouseY - ActivityButton.DEFAULT_HEIGHT / 2;
+                float top = _mouseY - height / 2;
                 float width = hour;
-                float height = ActivityButton.DEFAULT_HEIGHT * Zoom;
+                height *= Zoom;
                 canvas.DrawRect(left, top, width, height, paint);
             }
 
             // Buttons
             DrawConnections(canvas);
+
             foreach (ActivityButton button in ActivityButtons)
             {
                 button.Update();
                 button.Draw(canvas, _mouseX, _mouseY, EditMode);
             }
-        }
-
-        /// <summary>
-        /// Switches edit mode and draws location of the new would be button.
-        /// </summary>
-        /// <param name="active"></param>
-        public void SwitchActivityCreationMode(bool active)
-        {
-            EditMode = active;
-            ActivityCreationMode = active;
         }
 
         /// <summary>
@@ -403,10 +394,10 @@ namespace LAMA.ActivityGraphLib
         /// <param name="canvas"></param>
         public void DrawConnections(SKCanvas canvas)
         {
-            foreach (ActivityButton button1 in ActivityButtons)
-                foreach (ActivityButton button2 in ActivityButtons)
-                    if (button1.Activity.prerequisiteIDs.Contains(button2.Activity.ID))
-                        ActivityButton.DrawConnection(canvas, this, button1, button2);
+            foreach (ActivityButton button in ActivityButtons)
+                foreach (ActivityButton prerequisite in ActivityButtons)
+                    if (button.Activity.prerequisiteIDs.Contains(prerequisite.Activity.ID))
+                        DrawConnection(canvas, prerequisite, button);
         }
 
         /// <summary>
@@ -499,9 +490,107 @@ namespace LAMA.ActivityGraphLib
             _offsetY = (float)activity.GraphY;
         }
 
-        private void AddActivityButton()
+        /// <summary>
+        /// Draws a bezier curve between 2 buttons.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="color"></param>
+        public void DrawConnection(SKCanvas canvas, ActivityButton a, ActivityButton b, SKColor? color = null)
         {
+            var aRect = new SKRect(
+                a.X,
+                a.Y - OffsetY,
+                a.X + a.Width,
+                a.Y - OffsetY + a.Height * Zoom);
 
+            var bRect = new SKRect(
+                b.X,
+                b.Y - OffsetY,
+                b.X + b.Width,
+                b.Y - OffsetY + b.Height * Zoom);
+
+            DrawConnection(canvas, aRect.MidX, aRect.MidY, bRect.MidX, bRect.MidY, color);
+        }
+
+        /// <summary>
+        /// Draws a bezier curve between a button and a point on the graph.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="a"></param>
+        /// <param name="toX"></param>
+        /// <param name="toY"></param>
+        /// <param name="color"></param>
+        public void DrawConnection(SKCanvas canvas, ActivityButton a, float toX, float toY, SKColor? color = null)
+        {
+            var aRect = new SKRect(
+                a.X,
+                a.Y - OffsetY,
+                a.X + a.Width,
+                a.Y - OffsetY + a.Height * Zoom);
+
+            DrawConnection(canvas, aRect.MidX, aRect.MidY, toX, toY, color);
+        }
+
+        /// <summary>
+        /// Draws a bezier curve between 2 points on the graph.
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="fromX"></param>
+        /// <param name="fromY"></param>
+        /// <param name="toX"></param>
+        /// <param name="toY"></param>
+        /// <param name="color"></param>
+        public void DrawConnection(SKCanvas canvas, float fromX, float fromY, float toX, float toY, SKColor? color = null)
+        {
+            var paint = new SKPaint();
+            paint.Color = color ?? SKColors.WhiteSmoke;
+            paint.Style = SKPaintStyle.Stroke;
+            paint.StrokeWidth = 2;
+            paint.IsAntialias = true;
+
+            // Draw the curve
+            //===========================
+            SKPoint p0 = new SKPoint(fromX, fromY);
+            SKPoint p1 = new SKPoint((toX - fromX) / 2 + fromX, toY);
+            SKPoint p2 = new SKPoint(toX, toY);
+
+            SKPath path = new SKPath();
+            path.MoveTo(p0);
+            path.QuadTo(p1, p2);
+            canvas.DrawPath(path, paint);
+
+            // Draw the arrow
+            //===========================
+            float t = 0.5f;
+            float v = 1 - t;
+
+            SKPoint midPoint = new SKPoint(
+                // Computation of quadratic bezier at t
+                p1.X + v * v * (p0.X - p1.X) + t * t * (p2.X - p1.X),
+                p1.Y + v * v * (p0.Y - p1.Y) + t * t * (p2.Y - p1.Y));
+
+            SKPoint difference = new SKPoint(
+                // Computation of the derivative of quadratic bezier at t
+                2 * v * (p1.X - p0.X) + 2 * t * (p2.X - p1.X),
+                2 * v * (p1.Y - p0.Y) + 2 * t * (p2.Y - p1.Y));
+
+            float distance = difference.Length;
+            SKPoint direction = new SKPoint(difference.X / distance, difference.Y / distance);
+            SKPoint normal = new SKPoint(direction.Y, -direction.X);
+            float length = 20;
+
+            SKPoint arrowPoint1 = new SKPoint(
+                midPoint.X - direction.X * length + normal.X * length / 2,
+                midPoint.Y - direction.Y * length + normal.Y * length / 2);
+
+            SKPoint arrowPoint2 = new SKPoint(
+                midPoint.X - direction.X * length - normal.X * length / 2,
+                midPoint.Y - direction.Y * length - normal.Y * length / 2);
+
+            canvas.DrawLine(midPoint, arrowPoint1, paint);
+            canvas.DrawLine(midPoint, arrowPoint2, paint);
         }
     }
 }
