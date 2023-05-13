@@ -8,8 +8,8 @@ using Xamarin.Forms;
 
 namespace LAMA.Extensions
 {
-	public static class LarpActivityExtension
-	{
+    public static class LarpActivityExtension
+    {
         public static SKColor GetGraphColor(this LarpActivity activity)
         {
             switch (activity.status)
@@ -32,7 +32,7 @@ namespace LAMA.Extensions
         }
 
         public static SKColor GetCalculatedGraphColor(this LarpActivity activity)
-		{
+        {
             Color color = activity.GetColor();
 
             SKColor skcolor = new SKColor(
@@ -42,7 +42,7 @@ namespace LAMA.Extensions
                 (byte)(byte.MaxValue * color.A));
 
             return skcolor;
-		}
+        }
 
         public static Color GetColor(this LarpActivity activity)
         {
@@ -68,6 +68,21 @@ namespace LAMA.Extensions
         public static Color GetColor(this LarpActivity activity, double alpha)
         {
             return activity.GetColor().MultiplyAlpha(alpha);
+        }
+
+        public static ImageSource GetIconImageSource(this LarpActivity activity)
+        {
+            return IconLibrary.GetImageSourceFromResourcePath(
+                resourcePath: IconLibrary.GetIconsByLarpActivityStatus(activity.status),
+                color: activity.GetColor());
+        }
+
+        public static byte[] GetIconByteArray(this LarpActivity activity)
+        {
+            string resourcePath = IconLibrary.GetIconsByLarpActivityStatus(activity.status);
+            Color color = GetColor(activity);
+
+            return IconLibrary.GetByteArrayFromResourcePath(resourcePath, color);
         }
     }
 }

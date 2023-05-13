@@ -4,6 +4,11 @@ using System.Reflection;
 using LAMA.Models;
 using System.Text;
 using Xamarin.Forms;
+using System.Drawing;
+
+using XColor = Xamarin.Forms.Color;
+using DColor = System.Drawing.Color;
+using System.IO;
 
 namespace LAMA.Themes
 {
@@ -31,7 +36,7 @@ namespace LAMA.Themes
                 ICON_PREFIX + "profile_close_add.png",
                 ICON_PREFIX + "sword.png",
                 ICON_PREFIX + "accept_cr.png",
-                ICON_PREFIX + "sword.png"
+                ICON_PREFIX + "X_simple_1.png"
         };
 
         private static readonly string[] _cpIcons = { ICON_PREFIX + "location_3_profile.png" };
@@ -73,15 +78,64 @@ namespace LAMA.Themes
                 case LarpActivity.Status.launched: return _larpActivityIcons[2];
                 case LarpActivity.Status.inProgress: return _larpActivityIcons[3];
                 case LarpActivity.Status.completed: return _larpActivityIcons[4];
+                case LarpActivity.Status.cancelled: return _larpActivityIcons[5];
                 default: return _larpActivityIcons[0];
             }
-
         }
 
-        public static ImageSource GetImageSourceFromResourcePath(string resourcePath)
+        public static ImageSource GetImageSourceFromResourcePath(string resourcePath, XColor? color = null)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            return ImageSource.FromResource(resourcePath, assembly);
+            Bitmap bitmap = Bitmap.FromStream(assembly.GetManifestResourceStream(resourcePath)) as Bitmap;
+
+            color = XColor.Red;
+            if (color != null)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int r = (byte)(color.Value.R * 255);
+                        int g = (byte)(color.Value.G * 255);
+                        int b = (byte)(color.Value.B * 255);
+                        int a = bitmap.GetPixel(x, y).A;
+                        var dColor = DColor.FromArgb(a, r, g, b);
+                        bitmap.SetPixel(x, y, dColor);
+                    }
+            }
+
+
+            return ImageSource.FromStream(() =>
+            {
+                Stream stream = new MemoryStream();
+                bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream;
+            });
+        }
+
+        public static byte[] GetByteArrayFromResourcePath(string resourcePath, XColor? color = null)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            Bitmap bitmap = Bitmap.FromStream(assembly.GetManifestResourceStream(resourcePath)) as Bitmap;
+
+            if (color != null)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        int r = (byte)(color.Value.R * 255);
+                        int g = (byte)(color.Value.G * 255);
+                        int b = (byte)(color.Value.B * 255);
+                        int a = bitmap.GetPixel(x, y).A;
+                        var dColor = DColor.FromArgb(a, r, g, b);
+                        bitmap.SetPixel(x, y, dColor);
+                    }
+            }
+
+
+            Stream stream = new MemoryStream();
+            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            stream.Position = 0;
+            return stream.ToBytes();
         }
     }
 }

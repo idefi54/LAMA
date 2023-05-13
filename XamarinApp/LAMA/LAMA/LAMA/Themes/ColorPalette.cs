@@ -31,13 +31,13 @@ namespace LAMA.Themes
         public static SKColor ActivityGraphDefault = SKColors.White;
 
 
-        public static Color ActivityAwaitingPrerequisites = Color.White;
-        public static Color ActivityReadyToLaunch = Color.LightBlue;
-        public static Color ActivityLaunched = Color.LightGreen;
-        public static Color ActivityInProgress = Color.PeachPuff;
-        public static Color ActivityCompleted = Color.Gray;
+        public static Color ActivityAwaitingPrerequisites = Color.FromRgb(0.3, 0.3, 0.3);
+        public static Color ActivityReadyToLaunch = Color.DarkBlue;
+        public static Color ActivityLaunched = Color.DarkGreen;
+        public static Color ActivityInProgress = Color.Orange;
+        public static Color ActivityCompleted = Color.FromRgb(0.1, 0.1, 0.1);
         public static Color ActivityCancelled = Color.Red;
-        public static Color ActivityDefault = Color.White;
+        public static Color ActivityDefault = Color.DarkGray;
 
     }
 }

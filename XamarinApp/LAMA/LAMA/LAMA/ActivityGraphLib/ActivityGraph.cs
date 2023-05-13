@@ -243,7 +243,7 @@ namespace LAMA.ActivityGraphLib
         public void Draw(SKCanvas canvas)
         {
             // Background Color
-            canvas.Clear(SKColors.Black);
+            canvas.Clear(new SKColor(20, 20, 20));
 
             SKPaint paint = new SKPaint();
             paint.Color = SKColors.Blue;
