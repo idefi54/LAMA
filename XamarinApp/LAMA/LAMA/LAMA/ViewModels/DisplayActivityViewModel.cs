@@ -19,6 +19,7 @@ using System.Data;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using LAMA.Themes;
 
 namespace LAMA.ViewModels
 {
@@ -117,6 +118,34 @@ namespace LAMA.ViewModels
 		public string End { get { return _end; } set { SetProperty(ref _end, value); } }
 		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
 
+		#region Icons
+
+		private string[] _icons;
+		private int _currentIconIndex;
+		private int CurrentIconIndex
+		{
+			get => _currentIconIndex;
+			set
+			{
+				_currentIconIndex = value;
+				CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
+			}
+		}
+		private ImageSource _currentIcon;
+		public ImageSource CurrentIcon
+		{
+			get
+			{
+				return _currentIcon;
+			}
+			set
+			{
+				SetProperty(ref _currentIcon, value);
+			}
+		}
+
+		#endregion
+
 
 		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
@@ -148,6 +177,8 @@ namespace LAMA.ViewModels
 		public Command ShowOnGraphCommand { get; }
 		public Command EditCommand { get; }
 
+		public Command IconChange { get; set; }
+
 
 		private INavigation Navigation;
 
@@ -160,6 +191,10 @@ namespace LAMA.ViewModels
 
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
 
+			// Icons need to be assigned before assigning icon index
+			_icons = IconLibrary.GetIconsByClass<LarpActivity>();
+			CurrentIconIndex = 0;
+
 			Initialize(activity);
 
 			isRegistered = IsRegistered();
@@ -168,6 +203,8 @@ namespace LAMA.ViewModels
 			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
 			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
+
+			IconChange = new Command(OnIconChange);
 
 			SQLEvents.dataChanged += PropagateChanged;
 			SQLEvents.dataDeleted += PropagateDeleted;
@@ -184,6 +221,7 @@ namespace LAMA.ViewModels
 			Description = _activity.description;
 			Type = _activity.eventType.ToFriendlyString();
 			Status = _activity.status.ToFriendlyString();
+			CurrentIconIndex = _activity.IconIndex;
 
 			UpdateDisplayedTime();
 
@@ -274,6 +312,11 @@ namespace LAMA.ViewModels
 		private async void OnEdit()
 		{
 			await Navigation.PushAsync(new NewActivityPage(UpdateActivity,_activity));
+		}
+
+		private async void OnIconChange()
+		{
+			CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(Navigation, _icons);
 		}
 
 		private async void OnSignUp()
@@ -370,9 +413,9 @@ namespace LAMA.ViewModels
 		private async void OnShowOnGraph()
         {
 			await Navigation.PushAsync(new ActivityGraphPage(_activity));
-        }
+		}
 
-        private async void UnregisterAsync()
+		private async void UnregisterAsync()
 		{
 			IsBusy = true;
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
@@ -463,7 +506,8 @@ namespace LAMA.ViewModels
 				larpActivityDTO.day,
 				larpActivityDTO.start,
 				larpActivityDTO.place,
-				larpActivityDTO.status);
+				larpActivityDTO.status,
+				larpActivityDTO.iconIndex);
 
 			Name = larpActivityDTO.name;
 			Description = larpActivityDTO.description;

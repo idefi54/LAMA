@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Globalization;
 using LAMA.Singletons;
+using LAMA.Themes;
 
 namespace LAMA.ViewModels
 {
@@ -141,6 +142,34 @@ namespace LAMA.ViewModels
 
 		#endregion Time
 
+		#region Icons
+
+		private string[] _icons;
+		private int _currentIconIndex;
+		private int CurrentIconIndex
+		{
+			get => _currentIconIndex;
+			set
+			{
+				_currentIconIndex = value;
+				CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
+			}
+		}
+		private ImageSource _currentIcon;
+		public ImageSource CurrentIcon
+		{
+			get
+			{
+				return _currentIcon;
+			}
+			set
+			{
+				SetProperty(ref _currentIcon, value);
+			}
+		}
+
+		#endregion
+
 
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;
@@ -162,6 +191,8 @@ namespace LAMA.ViewModels
 
 		public Command AddNewItem { get; }
 		public Command<ItemItemViewModel> RemoveItem { get; }
+
+		public Command IconChange { get; set; }
 
 		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
 		{
@@ -186,6 +217,10 @@ namespace LAMA.ViewModels
 				TimeStringMinuteOptions.Add(i);
 			}
 
+			// Icons need to be assigned before assigning icon index
+			_icons = IconLibrary.GetIconsByClass<LarpActivity>();
+			CurrentIconIndex = 0;
+
 			if (larpActivity != null)
             {
 				Title = "Upravit Aktivitu";
@@ -194,6 +229,7 @@ namespace LAMA.ViewModels
 				Description = larpActivity.description;
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
+				CurrentIconIndex = larpActivity.IconIndex;
 
 				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
 				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration).ToLocalTime();
@@ -260,6 +296,8 @@ namespace LAMA.ViewModels
 
 			SetStartTimeDateCommand = new Command(OnSetStartTimeDate);
 			SetEndTimeDateCommand = new Command(OnSetEndTimeDate);
+
+			IconChange = new Command(OnIconChange);
 		}
 
 		public async void OnSetStartTimeDate()
@@ -388,6 +426,11 @@ namespace LAMA.ViewModels
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
 		}
 
+		private async void OnIconChange()
+		{
+			CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(_navigation, _icons);
+		}
+
 		private async void OnCancel()
 		{
 			// This will pop the current page off the navigation stack
@@ -467,7 +510,8 @@ namespace LAMA.ViewModels
 				LarpActivity.Status.readyToLaunch,
 				items, 
 				roles, 
-				registered);
+				registered,
+				CurrentIconIndex);
 
 			// GraphY is not on the page, so needs to be transfered like this.
 			if (this.larpActivity != null)
