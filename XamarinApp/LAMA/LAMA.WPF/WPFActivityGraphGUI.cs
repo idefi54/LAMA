@@ -2,10 +2,12 @@
 using LAMA.Views;
 using SkiaSharp.Views.Forms;
 using System;
+using LAMA;
 using Xamarin.Forms;
 using System.Windows;
 
 using Key = System.Windows.Input.Key;
+using LAMA.ViewModels;
 
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
@@ -13,6 +15,20 @@ namespace LAMA.UWP
 
     internal class UWPActivityGraphGUI : IActivityGraphGUI
     {
+        private class EditViewModel : BaseViewModel
+        {
+            private bool _editVisible;
+            public bool EditVisible { get => _editVisible; set { SetProperty(ref _editVisible, value); } }
+
+            public EditViewModel()
+            {
+                EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+                LocalStorage.cp.permissions.dataChanged +=
+                    () => EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+            }
+        }
+
+
         public (Layout<View>, ActivityGraph) CreateGUI(INavigation navigation)
         {
             var canvasView = CreateCanvasView();
@@ -129,6 +145,9 @@ namespace LAMA.UWP
                 editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
                 editStack.Children.Add(editSwitch);
                 grid.Children.Add(editStack, 3, 0);
+
+                editStack.BindingContext = new EditViewModel();
+                editStack.SetBinding(View.IsVisibleProperty, "EditVisible");
             }
 
             return grid;
