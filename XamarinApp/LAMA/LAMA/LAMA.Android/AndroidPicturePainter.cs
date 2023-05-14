@@ -21,7 +21,9 @@ namespace LAMA.Droid
     {
         public Stream ColorImage(Stream stream, int r, int g, int b)
         {
-            Bitmap bitmap = BitmapFactory.DecodeStream(stream);
+            var options = new BitmapFactory.Options();
+            options.InMutable = true;
+            Bitmap bitmap = BitmapFactory.DecodeStream(stream, null, options);
 
             for (int y = 0; y < bitmap.Height; y++)
                 for (int x = 0; x < bitmap.Width; x++)

@@ -97,15 +97,6 @@ namespace LAMA.Views
             EditSwitch.IsVisible = canEdit;
             SetGlobalBoundsButton.IsVisible = canEdit;
 
-            // Add activity indicator
-            var activityIndicator = new ActivityIndicator
-            {
-                VerticalOptions = LayoutOptions.CenterAndExpand,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                IsRunning = true
-            };
-            MapLayout.Children.Add(activityIndicator);
-
             // Handle permissions and location
             if (Device.RuntimePlatform != Device.WPF)
             {
@@ -120,19 +111,10 @@ namespace LAMA.Views
                     "Prosíme, zapněte si lokaci nebo zadejte domovskou lokaci.", "OK");
             }
 
-            // Handle the fucking map
-            await Task.Delay(500);
+            MapHandler mapHandler = MapHandler.Instance;
+            (_mapView, _) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.FillAndExpand, LayoutOptions.FillAndExpand, 300, null);
+            mapHandler.MapViewSetup(_mapView, showSelection: false, relocateSelection: false);
 
-            // Init Map View
-            _mapView = new MapView
-            {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                BackgroundColor = Color.Gray,
-                //HeightRequest = Application.Current.MainPage.Height
-            };
-
-            MapHandler.Instance.MapViewSetup(_mapView);
             MapHandler.Instance.OnPinClick += OnPinClicked;
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
@@ -145,9 +127,6 @@ namespace LAMA.Views
                 SetHomeLocationButton.Text = "Zadejte domovskou lokaci";
             }
             SetHomeLocationButton.Clicked += SetHomeClicked;
-
-            MapLayout.Children.Remove(activityIndicator);
-            MapLayout.Children.Add(_mapView);
         }
 
         protected override void OnDisappearing()

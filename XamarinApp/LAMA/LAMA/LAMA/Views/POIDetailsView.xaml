@@ -36,6 +36,7 @@
                        VerticalOptions="Center"/>
                 </StackLayout>
             </StackLayout>
+            <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
