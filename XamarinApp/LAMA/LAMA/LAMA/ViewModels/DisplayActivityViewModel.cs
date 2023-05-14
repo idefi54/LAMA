@@ -190,6 +190,8 @@ namespace LAMA.ViewModels
 			Navigation = navigation;
 
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+			_roles = new TrulyObservableCollection<RoleItemViewModel>();
+			_items = new TrulyObservableCollection<ItemItemViewModel>();
 
 			// Icons need to be assigned before assigning icon index
 			_icons = IconLibrary.GetIconsByClass<LarpActivity>();
@@ -213,6 +215,8 @@ namespace LAMA.ViewModels
 		private void Initialize(LarpActivity activity)
 		{
 			Dependencies.Clear();
+			_roles.Clear();
+			_items.Clear();
 
 			_activity = activity;
 			ActivityName = _activity.name;
@@ -234,7 +238,7 @@ namespace LAMA.ViewModels
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
 			}
-			_roles = new TrulyObservableCollection<RoleItemViewModel>();
+
 			foreach (Pair<string, int> item in _activity.roles)
 			{
 				int registered = _activity.registrationByRole
@@ -243,7 +247,6 @@ namespace LAMA.ViewModels
 				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
 
-			_items = new TrulyObservableCollection<ItemItemViewModel>();
 			foreach (var item in _activity.requiredItems)
 			{
 				InventoryItem invItem = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
@@ -512,40 +515,11 @@ namespace LAMA.ViewModels
 				larpActivityDTO.status,
 				larpActivityDTO.iconIndex);
 
-			Name = larpActivityDTO.name;
-			Description = larpActivityDTO.description;
-
-			Roles.Clear();
 			_activity.UpdateRoles(larpActivityDTO.roles);
-			foreach(var role in larpActivityDTO.roles)
-			{
-				int registered = _activity.registrationByRole
-					.Where(x => x.second.Trim() == role.first)
-					.Count();
-				Roles.Add(new RoleItemViewModel(role.first, role.second, registered, false));
-			}
-
-			Items.Clear();
 			_activity.UpdateItems(larpActivityDTO.requiredItems);
-			foreach(var item in larpActivityDTO.requiredItems)
-            {
-				InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
-				Items.Add(new ItemItemViewModel(invItem, item.second));
-            }
-
-			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
-			foreach (int id in _activity.prerequisiteIDs)
-			{
-				LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
-				Dependencies.Add(new LarpActivityShortItemViewModel(la));
-			}
 
-			UpdateDisplayedTime();
-
-			DayIndex = (larpActivityDTO.day + 1) + ".";
-			Preparations = larpActivityDTO.preparationNeeded;
-			Location = larpActivityDTO.place.ToString();
+			Initialize(_activity);
 		}
 
 		private bool IsRegistered()
