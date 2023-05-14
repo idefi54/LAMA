@@ -304,7 +304,10 @@ namespace LAMA.ViewModels
 
 			if (result.HasValue)
             {
-				_activity.status = (LarpActivity.Status)options[result.Value].Item1;
+				var oldStatus = _activity.status;
+				_activity.UpdateStatus((LarpActivity.Status)options[result.Value].Item1);
+				if (_activity.status == oldStatus)
+					await _messageService.ShowAlertAsync("Změna neproběhla, protože byla anulována automatickým nastavením stavu.");
 				Status = _activity.status.ToFriendlyString();
             }
 		}

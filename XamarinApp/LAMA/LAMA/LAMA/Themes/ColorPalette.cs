@@ -35,7 +35,7 @@ namespace LAMA.Themes
         public static Color ActivityReadyToLaunch = Color.DarkBlue;
         public static Color ActivityLaunched = Color.DarkGreen;
         public static Color ActivityInProgress = Color.Orange;
-        public static Color ActivityCompleted = Color.FromRgb(0.1, 0.1, 0.1);
+        public static Color ActivityCompleted = Color.Purple;//Color.FromRgb(0.1, 0.1, 0.1);
         public static Color ActivityCancelled = Color.Red;
         public static Color ActivityDefault = Color.DarkGray;
 
