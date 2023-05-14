@@ -293,6 +293,7 @@ namespace LAMA.Models
                 if (!prerequisiteIDs.Contains(id))
                     prerequisiteIDs.Add(id);
             }
+            onPrerequisiteChange();
 
             AutomaticStatusUpdate();
         }
