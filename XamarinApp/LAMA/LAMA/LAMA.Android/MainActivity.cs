@@ -9,6 +9,10 @@ using LAMA.Services;
 using Xamarin.Forms;
 using AndroidX.AppCompat.App;
 
+using Bitmap = Android.Graphics.Bitmap;
+using Color = Android.Graphics.Color;
+using System.IO;
+
 namespace LAMA.Droid
 {
     [Activity(Label = "LAMA", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize, LaunchMode = LaunchMode.SingleTop)]
@@ -17,7 +21,7 @@ namespace LAMA.Droid
         Intent serviceIntent;
         private const int RequestCode = 5469;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
             base.OnCreate(savedInstanceState);

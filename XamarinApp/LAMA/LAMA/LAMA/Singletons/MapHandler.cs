@@ -574,7 +574,6 @@ namespace LAMA.Singletons
                 + $"Double click to show the activity.";
 
             PinSetIcon(pin, activity.GetIconByteArray());
-
             _activityPins[activity.ID] = pin;
 
             if (view != null && IsFilteredIn(EntityType.Activities))
