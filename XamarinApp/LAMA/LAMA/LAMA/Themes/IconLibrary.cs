@@ -86,55 +86,30 @@ namespace LAMA.Themes
         public static ImageSource GetImageSourceFromResourcePath(string resourcePath, XColor? color = null)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            Bitmap bitmap = Bitmap.FromStream(assembly.GetManifestResourceStream(resourcePath)) as Bitmap;
+            var stream = assembly.GetManifestResourceStream(resourcePath);
 
-            color = XColor.Red;
             if (color != null)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        int r = (byte)(color.Value.R * 255);
-                        int g = (byte)(color.Value.G * 255);
-                        int b = (byte)(color.Value.B * 255);
-                        int a = bitmap.GetPixel(x, y).A;
-                        var dColor = DColor.FromArgb(a, r, g, b);
-                        bitmap.SetPixel(x, y, dColor);
-                    }
-            }
+                stream = DependencyService.Get<IPicturePainter>().ColorImage(
+                    stream,
+                    (byte)(color.Value.R * 255),
+                    (byte)(color.Value.G * 255),
+                    (byte)(color.Value.B * 255));
 
-
-            return ImageSource.FromStream(() =>
-            {
-                Stream stream = new MemoryStream();
-                bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                return stream;
-            });
+            return ImageSource.FromStream(() => stream);
         }
 
         public static byte[] GetByteArrayFromResourcePath(string resourcePath, XColor? color = null)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            Bitmap bitmap = Bitmap.FromStream(assembly.GetManifestResourceStream(resourcePath)) as Bitmap;
+            var stream = assembly.GetManifestResourceStream(resourcePath);
 
             if (color != null)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                    for (int x = 0; x < bitmap.Width; x++)
-                    {
-                        int r = (byte)(color.Value.R * 255);
-                        int g = (byte)(color.Value.G * 255);
-                        int b = (byte)(color.Value.B * 255);
-                        int a = bitmap.GetPixel(x, y).A;
-                        var dColor = DColor.FromArgb(a, r, g, b);
-                        bitmap.SetPixel(x, y, dColor);
-                    }
-            }
+                stream = DependencyService.Get<IPicturePainter>().ColorImage(
+                    stream,
+                    (byte)(color.Value.R * 255),
+                    (byte)(color.Value.G * 255),
+                    (byte)(color.Value.B * 255));
 
-
-            Stream stream = new MemoryStream();
-            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-            stream.Position = 0;
             return stream.ToBytes();
         }
     }

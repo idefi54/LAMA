@@ -11,7 +11,7 @@
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Přidat" Command="{Binding Create}" IsVisible ="{Binding CanChange}"/>
     </ContentPage.ToolbarItems>
-    
+
     <ContentPage.Content>
         <StackLayout>
             <common:OurNavigationMenu></common:OurNavigationMenu>
@@ -37,7 +37,7 @@
                                     <Image Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1"
                                            Source="{Binding CurrentIcon, Mode=TwoWay}"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
-                                    
+
                                     <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                                            MaxLines="2" LineBreakMode="TailTruncation"
                                            Text="{Binding Description}"
@@ -45,11 +45,21 @@
                                            HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
 
                                     <OnPlatform x:TypeArguments="View">
-                                        <On Platform="WPF">
-                                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
 												Command="{Binding Path=BindingContext.OpenDetails, Source={x:Reference Name=CategoryList}}"
 												CommandParameter="{Binding .}"/>
-                                        </On>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
                                     </OnPlatform>
 
                                     <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="2"

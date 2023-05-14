@@ -36,10 +36,8 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            var layout = Content as StackLayout;
-
             var mapHandler = MapHandler.Instance;
-            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(layout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsView);
+            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsView);
             mapHandler.MapViewSetup(_mapView, showSelection:true);
 
             if (_poi != null)
