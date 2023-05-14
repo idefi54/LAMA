@@ -324,13 +324,26 @@ namespace LAMA.ViewModels
 
 			if (String.IsNullOrWhiteSpace(_name)
 				|| String.IsNullOrWhiteSpace(_description))
-            {
+			{
 				messageBuilder.AppendLine("Název aktivity a popis aktivity musí být vyplněny.");
-            }
+			}
 
-			bool duplicates = false;
+			if (_name != null && (_name.Length > 100))
+				messageBuilder.AppendLine("Název aktivity nemůže mít více než 100 znaků");
+
+			if (_description != null && _description.Length > 1000)
+				messageBuilder.AppendLine("Popis aktivity nemůže mít více než 1000 znaků");
+
+            if (_preparations != null && _preparations.Length > 1000)
+                messageBuilder.AppendLine("Popis přípravy nemůže mít více než 1000 znaků");
+
+            bool roleTooLong = false;
+			bool roleMissing = false;
+            bool duplicates = false;
 			foreach(var role in Roles)
 			{
+				if (String.IsNullOrWhiteSpace(role.Name)) roleMissing = true;
+				else if (role.Name.Length > 50) roleTooLong = true;
 				foreach(var role2 in Roles)
 				{
 					if (role.Name == role2.Name && role != role2)
@@ -341,6 +354,14 @@ namespace LAMA.ViewModels
             {
 				messageBuilder.AppendLine("Nemohou být dvě role se stejným názvem.");
             }
+			if (roleMissing)
+			{
+				messageBuilder.AppendLine("Role musí mít vyplněný název");
+			}
+			if (roleTooLong)
+			{
+				messageBuilder.AppendLine("Název role může mít maximálně 50 znků");
+			}
 
 			DateTime start = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hours, StartTime.Minutes, 0);
 			DateTime end = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hours, EndTime.Minutes, 0);

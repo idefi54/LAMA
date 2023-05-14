@@ -56,8 +56,9 @@ namespace LAMA.ViewModels
 
         public void MessageSent(string message)
         {
+            bool inputValid = InputChecking.CheckInput(message, "Chatová Zpráva", 5000);
             message = message.Trim();
-            if (!String.IsNullOrWhiteSpace(message))
+            if (inputValid)
             {
                 ChatLogic.Instance.SendMessage(channelID, message);
                 MessageText = "";

@@ -3,8 +3,10 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace LAMA.ViewModels
 {
@@ -83,12 +85,26 @@ namespace LAMA.ViewModels
         }
         async void onCreateSave()
         {
+            bool textValid = InputChecking.CheckInput(record.FullText, "Plný Text", 5000);
+            if (!textValid) return;
+            bool nameValid = InputChecking.CheckInput(record.Name, "Název Stránky", 100);
+            if (!nameValid) return;
+            bool TLDRValid = InputChecking.CheckInput(record.TLDR, "Shrnutí", 500, true);
+            if (!TLDRValid) return;
+
             var list = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList;
             list.add(new EncyclopedyRecord(list.nextID(), _Name, _TLDR, _Text));
             await Navigation.PopAsync();
         }
         async void onSave()
         {
+            bool textValid = InputChecking.CheckInput(record.FullText, "Plný Text", 5000);
+            if (!textValid) return;
+            bool nameValid = InputChecking.CheckInput(record.Name, "Název Stránky", 100);
+            if (!nameValid) return;
+            bool TLDRValid = InputChecking.CheckInput(record.TLDR, "Shrnutí", 500, true);
+            if (!TLDRValid) return;
+
             record.FullText = _Text;
             record.Name = _Name;
             record.TLDR = _TLDR;
