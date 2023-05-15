@@ -7,6 +7,7 @@
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              xmlns:forms="clr-namespace:LAMA.Forms"
+			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
 
     <ContentPage.ToolbarItems>
@@ -42,10 +43,22 @@
                     <Label Text="Status aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Label Text="{Binding Status}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+					<Label Text="{Binding Status}"  HorizontalOptions="Start" Padding="0,0,0,20"/>
+
+					<StackLayout Orientation="Horizontal">
+						<Label Text="Ikona:"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"/>
+
+						<Image Source="{Binding CurrentIcon, Mode=TwoWay}"
+                       HeightRequest="40"
+                       WidthRequest="40"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center"/>
+					</StackLayout>
 
 
-                    <Label Text="Časové rozmezí"
+					<Label Text="Časové rozmezí"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 

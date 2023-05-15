@@ -19,6 +19,7 @@ using System.Data;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using LAMA.Themes;
 
 namespace LAMA.ViewModels
 {
@@ -117,6 +118,34 @@ namespace LAMA.ViewModels
 		public string End { get { return _end; } set { SetProperty(ref _end, value); } }
 		public string Duration { get { return _duration; } set { SetProperty(ref _duration, value); } }
 
+		#region Icons
+
+		private string[] _icons;
+		private int _currentIconIndex;
+		private int CurrentIconIndex
+		{
+			get => _currentIconIndex;
+			set
+			{
+				_currentIconIndex = value;
+				CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
+			}
+		}
+		private ImageSource _currentIcon;
+		public ImageSource CurrentIcon
+		{
+			get
+			{
+				return _currentIcon;
+			}
+			set
+			{
+				SetProperty(ref _currentIcon, value);
+			}
+		}
+
+		#endregion
+
 
 		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
@@ -148,6 +177,8 @@ namespace LAMA.ViewModels
 		public Command ShowOnGraphCommand { get; }
 		public Command EditCommand { get; }
 
+		public Command IconChange { get; set; }
+
 
 		private INavigation Navigation;
 
@@ -159,6 +190,12 @@ namespace LAMA.ViewModels
 			Navigation = navigation;
 
 			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+			_roles = new TrulyObservableCollection<RoleItemViewModel>();
+			_items = new TrulyObservableCollection<ItemItemViewModel>();
+
+			// Icons need to be assigned before assigning icon index
+			_icons = IconLibrary.GetIconsByClass<LarpActivity>();
+			CurrentIconIndex = 0;
 
 			Initialize(activity);
 
@@ -169,6 +206,8 @@ namespace LAMA.ViewModels
 			EditCommand = new Xamarin.Forms.Command(OnEdit);
 			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
 
+			IconChange = new Command(OnIconChange);
+
 			SQLEvents.dataChanged += PropagateChanged;
 			SQLEvents.dataDeleted += PropagateDeleted;
 		}
@@ -176,6 +215,8 @@ namespace LAMA.ViewModels
 		private void Initialize(LarpActivity activity)
 		{
 			Dependencies.Clear();
+			_roles.Clear();
+			_items.Clear();
 
 			_activity = activity;
 			ActivityName = _activity.name;
@@ -184,6 +225,7 @@ namespace LAMA.ViewModels
 			Description = _activity.description;
 			Type = _activity.eventType.ToFriendlyString();
 			Status = _activity.status.ToFriendlyString();
+			CurrentIconIndex = _activity.IconIndex;
 
 			UpdateDisplayedTime();
 
@@ -196,7 +238,7 @@ namespace LAMA.ViewModels
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
 				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
 			}
-			_roles = new TrulyObservableCollection<RoleItemViewModel>();
+
 			foreach (Pair<string, int> item in _activity.roles)
 			{
 				int registered = _activity.registrationByRole
@@ -205,7 +247,6 @@ namespace LAMA.ViewModels
 				_roles.Add(new RoleItemViewModel(item.first, item.second, registered, false));
 			}
 
-			_items = new TrulyObservableCollection<ItemItemViewModel>();
 			foreach (var item in _activity.requiredItems)
 			{
 				InventoryItem invItem = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
@@ -266,7 +307,10 @@ namespace LAMA.ViewModels
 
 			if (result.HasValue)
             {
-				_activity.status = (LarpActivity.Status)options[result.Value].Item1;
+				var oldStatus = _activity.status;
+				_activity.UpdateStatus((LarpActivity.Status)options[result.Value].Item1);
+				if (_activity.status == oldStatus)
+					await _messageService.ShowAlertAsync("Změna neproběhla, protože byla anulována automatickým nastavením stavu.");
 				Status = _activity.status.ToFriendlyString();
             }
 		}
@@ -274,6 +318,11 @@ namespace LAMA.ViewModels
 		private async void OnEdit()
 		{
 			await Navigation.PushAsync(new NewActivityPage(UpdateActivity,_activity));
+		}
+
+		private async void OnIconChange()
+		{
+			CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(Navigation, _icons);
 		}
 
 		private async void OnSignUp()
@@ -370,9 +419,9 @@ namespace LAMA.ViewModels
 		private async void OnShowOnGraph()
         {
 			await Navigation.PushAsync(new ActivityGraphPage(_activity));
-        }
+		}
 
-        private async void UnregisterAsync()
+		private async void UnregisterAsync()
 		{
 			IsBusy = true;
 			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
@@ -463,42 +512,14 @@ namespace LAMA.ViewModels
 				larpActivityDTO.day,
 				larpActivityDTO.start,
 				larpActivityDTO.place,
-				larpActivityDTO.status);
+				larpActivityDTO.status,
+				larpActivityDTO.iconIndex);
 
-			Name = larpActivityDTO.name;
-			Description = larpActivityDTO.description;
-
-			Roles.Clear();
 			_activity.UpdateRoles(larpActivityDTO.roles);
-			foreach(var role in larpActivityDTO.roles)
-			{
-				int registered = _activity.registrationByRole
-					.Where(x => x.second.Trim() == role.first)
-					.Count();
-				Roles.Add(new RoleItemViewModel(role.first, role.second, registered, false));
-			}
-
-			Items.Clear();
 			_activity.UpdateItems(larpActivityDTO.requiredItems);
-			foreach(var item in larpActivityDTO.requiredItems)
-            {
-				InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
-				Items.Add(new ItemItemViewModel(invItem, item.second));
-            }
-
-			Dependencies.Clear();
 			_activity.UpdatePrerequisiteIDs(larpActivityDTO.prerequisiteIDs);
-			foreach (int id in _activity.prerequisiteIDs)
-			{
-				LarpActivity la = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
-				Dependencies.Add(new LarpActivityShortItemViewModel(la));
-			}
 
-			UpdateDisplayedTime();
-
-			DayIndex = (larpActivityDTO.day + 1) + ".";
-			Preparations = larpActivityDTO.preparationNeeded;
-			Location = larpActivityDTO.place.ToString();
+			Initialize(_activity);
 		}
 
 		private bool IsRegistered()

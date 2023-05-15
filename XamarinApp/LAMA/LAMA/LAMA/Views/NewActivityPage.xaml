@@ -7,6 +7,7 @@
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
 
     <ContentPage.ToolbarItems>
@@ -35,8 +36,22 @@
 					   VerticalTextAlignment="End"/>
                     <Picker Title="Typ aktivity" HorizontalOptions="Start"
 						ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}"/>
+					
+					<StackLayout Orientation="Horizontal">
+						<Label
+                            Text="Změnit ikonu:"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"/>
+						<ImageButton
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Source="{Binding CurrentIcon, Mode=TwoWay}"
+                            Command="{Binding IconChange}"/>
+					</StackLayout>
 
-                    <Label Text="Časové rozmezí"
+					<Label Text="Časové rozmezí"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
