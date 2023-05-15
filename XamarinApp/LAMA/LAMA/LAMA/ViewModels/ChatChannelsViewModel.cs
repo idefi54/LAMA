@@ -18,6 +18,8 @@ namespace LAMA.ViewModels
     public class ChatChannelsViewModel : BaseViewModel
     {
         public Xamarin.Forms.Command ChannelCreatedCommand { get; }
+        public Xamarin.Forms.Command ArchiveChannelCommand { get; }
+        public Xamarin.Forms.Command RestoreChannelCommand { get; }
         public Command<object> ChatChannelTapped { get; private set; }
         private string _channelName;
         public string ChannelName
@@ -55,6 +57,8 @@ namespace LAMA.ViewModels
         {
             ChannelCreatedCommand = new Xamarin.Forms.Command(OnChannelCreated);
             ChatChannelTapped = new Command<object>(DisplayChannel);
+            ArchiveChannelCommand = new Command<object>(ArchiveChannel);
+            RestoreChannelCommand = new Command<object>(RestoreChannel);
 
             Navigation = navigation;
 
@@ -101,6 +105,36 @@ namespace LAMA.ViewModels
 
             string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
             await Navigation.PushAsync(new ChatPage(channelName));
+        }
+
+        private async void ArchiveChannel(object obj)
+        {
+            if (obj.GetType() != typeof(ChatChannelsItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ChatChannelsItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+
+            string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
+            int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
+            LarpEvent.ChatChannels[index] = SpecialCharacters.archivedChannelIndicator + channelName;
+            LarpEvent.ChatChannels.InvokeDataChanged();
+        }
+
+        private async void RestoreChannel(object obj)
+        {
+            if (obj.GetType() != typeof(ChatChannelsItemViewModel))
+            {
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ChatChannelsItemViewModel).Name
+                    + "\nActual: " + obj.GetType().Name, "OK");
+                return;
+            }
+
+            string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
+            int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
+            LarpEvent.ChatChannels[index] = channelName;
+            LarpEvent.ChatChannels.InvokeDataChanged();
         }
     }
 }

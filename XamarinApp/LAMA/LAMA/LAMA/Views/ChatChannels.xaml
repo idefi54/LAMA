@@ -33,14 +33,14 @@
 											Text="Archive" Padding="20,10,20,10" Margin="5,5,5,5"
 											BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
                                             IsVisible="{Binding CanArchive}"
-											Command="{Binding Path=BindingContext.ArchiveChannel, Source={x:Reference Name=Channels}}"
+											Command="{Binding Path=BindingContext.ArchiveChannelCommand, Source={x:Reference Name=Channels}}"
 											CommandParameter="{Binding .}"/>
 
                                 <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="1"
 											Text="Restore" Padding="20,10,20,10" Margin="5,5,5,5"
 											BackgroundColor="{x:Static colors:ColorPalette.PrimaryColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
                                             IsVisible="{Binding CanRestore}"
-											Command="{Binding Path=BindingContext.RestoreChannel, Source={x:Reference Name=Channels}}"
+											Command="{Binding Path=BindingContext.RestoreChannelCommand, Source={x:Reference Name=Channels}}"
 											CommandParameter="{Binding .}"/>
                             </Grid>
                         </DataTemplate>

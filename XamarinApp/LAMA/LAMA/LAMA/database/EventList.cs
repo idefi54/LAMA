@@ -25,6 +25,11 @@ namespace LAMA
             dataChanged?.Invoke();
         }
 
+        public void InvokeDataChanged()
+        {
+            dataChanged?.Invoke();
+        }
+
         public new void RemoveAll(Predicate<T> predicate)
         {
             int lengthStart = Count;
@@ -117,7 +122,7 @@ namespace LAMA
             dataChanged?.Invoke();
         }
 
-        public void Update (EventList<T> otherOne)
+        public void Update(EventList<T> otherOne)
         {
             
             for(int i = 0; i< otherOne.Count; ++i)
