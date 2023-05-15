@@ -61,8 +61,10 @@ namespace LAMA.ViewModels
                 {
                     throw new PasswordTooShortException();
                 }
-                //client Name - přezdívka klienta
-                //password - heslo klienta
+
+                if (clientName.Length > 100) throw new EntryTooLongException(100, "Přezdívka");
+                if (password.Length > 100) throw new EntryTooLongException(100, "Heslo");
+
                 communicator.LoginAsCP(clientName, password, isNew);
                 float timer = 0.0f;
                 while (true)
@@ -89,6 +91,15 @@ namespace LAMA.ViewModels
             catch (EntryMissingException e)
             {
                 await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+                isNew = false;
+                return;
+            }
+            catch (EntryTooLongException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
                 CreatingCP = false;
                 LoginEnabled = true;
                 communicator.clientRefusedMessage = "";

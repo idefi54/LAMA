@@ -95,6 +95,11 @@ namespace LAMA.ViewModels
 
         async void onSave()
         {
+            bool nameValid = InputChecking.CheckInput(name, "Název", 5000);
+            if (!nameValid) return;
+            bool descriptionValid = InputChecking.CheckInput(description, "Popis", 100);
+            if (!descriptionValid) return;
+
             if (POI != null)
             {
                 POI.Name = name;

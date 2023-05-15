@@ -86,6 +86,12 @@ namespace LAMA.ViewModels
                 if (personalPassword == null || personalPassword.Trim() == "") throw new EntryMissingException("Osobní Heslo");
                 if (nick == null || nick.Trim() == "") throw new EntryMissingException("Přezdívka");
 
+                if (name.Length > 100) throw new EntryTooLongException(100, "Jméno Serveru");
+                if (ngrokEndpoint.Length > 100) throw new EntryTooLongException(100, "Ngrok Endpoint");
+                if (password.Length > 100) throw new EntryTooLongException(100, "Serverové Heslo");
+                if (personalPassword.Length > 100) throw new EntryTooLongException(100, "Osobní Heslo");
+                if (nick.Length > 100) throw new EntryTooLongException(100, "Přezdívka");
+
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, ngrokEndpoint, password, personalPassword, nick, isNewServer);
@@ -97,6 +103,12 @@ namespace LAMA.ViewModels
             {
                 isNewServer = false;
                 await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                return;
+            }
+            catch (EntryTooLongException e)
+            {
+                isNewServer = false;
+                await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
                 return;
             }
             catch (PasswordTooShortException)

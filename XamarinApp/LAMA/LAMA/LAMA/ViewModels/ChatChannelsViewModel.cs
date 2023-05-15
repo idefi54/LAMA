@@ -31,12 +31,13 @@ namespace LAMA.ViewModels
 
         private void OnChannelCreated()
         {
-            if (ChannelName != "")
+            bool inputValid = InputChecking.CheckInput(ChannelName, "Jméno kanálu", 50);
+            if (inputValid)
             {
                 LarpEvent.ChatChannels.Add(ChannelName);
+                ChannelName = "";
+                OnPropertyChanged("ChannelName");
             }
-            ChannelName = "";
-            OnPropertyChanged("ChannelName");
         }
 
         protected void OnPropertyChanged(string propertyName)

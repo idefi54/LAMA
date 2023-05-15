@@ -87,6 +87,21 @@ namespace LAMA.ViewModels
         }
         void OnSave()
         {
+            bool cpNameValid = InputChecking.CheckInput(name, "Jméno CP", 50);
+            if (!cpNameValid) return;
+            bool cpNickValid = InputChecking.CheckInput(nick, "Přezdívka CP", 50);
+            if (!cpNickValid) return;
+            bool cpRolesValid = InputChecking.CheckInput(roles, "Role", 200, true);
+            if (!cpRolesValid) return;
+            bool cpPhoneValid = InputChecking.CheckInput(phone, "Telefon", 20, true);
+            if (!cpPhoneValid) return;
+            bool cpFacebookValid = InputChecking.CheckInput(facebook, "Facebook", 100, true);
+            if (!cpFacebookValid) return;
+            bool cpDiscordValid = InputChecking.CheckInput(discord, "Discord", 100, true);
+            if (!cpDiscordValid) return;
+            bool cpNotesValid = InputChecking.CheckInput(_notes, "Role", 1000, true);
+            if (!cpNotesValid) return;
+
             if (cp.name != name)
                 cp.name = name;
             if (cp.nick != nick)
