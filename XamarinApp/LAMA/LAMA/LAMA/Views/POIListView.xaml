@@ -69,16 +69,6 @@
 											Command="{Binding Path=BindingContext.Remove, Source={x:Reference Name=CategoryList}}"
 											CommandParameter="{Binding .}"/>
 
-
-                                    <OnPlatform x:TypeArguments="View">
-                                        <On Platform="WPF">
-                                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
-												Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
-												Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=OpenDetails}"
-												CommandParameter="{Binding .}"/>
-                                        </On>
-                                    </OnPlatform>
-
                                     <Grid.GestureRecognizers>
 
                                         <TapGestureRecognizer 

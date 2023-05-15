@@ -133,7 +133,6 @@ namespace LAMA.ActivityGraphLib
                 canvas.DrawText(text, tx, ty, paint);
 
                 // Normal
-                //paint.FakeBoldText = false;
                 paint.Color = SKColors.White;
                 paint.Style = SKPaintStyle.Fill;
                 canvas.DrawText(text, tx, ty, paint);
