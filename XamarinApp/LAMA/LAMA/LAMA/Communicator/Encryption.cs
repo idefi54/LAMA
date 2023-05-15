@@ -346,9 +346,9 @@ namespace LAMA.Communicator
                             offset += 16;
                             string decodingBuffer = Encoding.UTF8.GetString(buffer);
                             decryptedBytes.AddRange(buffer);
-                            if (decodingBuffer.Contains(Separators.messageSeparator))
+                            if (decodingBuffer.Contains(SpecialCharacters.messageSeparator))
                             {
-                                decrypted = decrypted + decodingBuffer.Substring(0, decodingBuffer.IndexOf(Separators.messageSeparator) + 1);
+                                decrypted = decrypted + decodingBuffer.Substring(0, decodingBuffer.IndexOf(SpecialCharacters.messageSeparator) + 1);
                                 csDecrypt.Close();
                                 break;
                             }
