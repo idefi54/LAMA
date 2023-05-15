@@ -220,6 +220,8 @@ namespace LAMA.ViewModels
             if (obj.GetType() != typeof(CP))
                 return;
             CP cp = (CP)obj;
+            if (cp.ID != this.cp.ID)
+                return;
             //"ID", "name", "nick", "roles", "phone", "facebook",
             //"discord", "location", "notes", "permissions", "password"
             switch (index)
