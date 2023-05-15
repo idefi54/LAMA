@@ -242,7 +242,7 @@ namespace LAMA.Communicator
 
                     if (IsLeaf(current))
                     {
-                        if (current.Symbol == Separators.messageSeparator)
+                        if (current.Symbol == SpecialCharacters.messageSeparator)
                         {
                             decoded += current.Symbol;
                             //skip the rest of the block modify offset

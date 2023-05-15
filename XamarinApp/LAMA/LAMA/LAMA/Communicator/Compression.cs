@@ -11,9 +11,9 @@ namespace LAMA.Communicator
         public Compression()
         {
             Dictionary<char, int> frequencies = new Dictionary<char, int>();
-            frequencies.Add(Separators.messageSeparator, 500);
-            frequencies.Add(Separators.messagePartSeparator, 1000);
-            frequencies.Add(Separators.attributesSeparator, 1000);
+            frequencies.Add(SpecialCharacters.messageSeparator, 500);
+            frequencies.Add(SpecialCharacters.messagePartSeparator, 1000);
+            frequencies.Add(SpecialCharacters.attributesSeparator, 1000);
             frequencies.Add(Helpers.separator, 1000);
 
             frequencies.Add(' ', 1000);
