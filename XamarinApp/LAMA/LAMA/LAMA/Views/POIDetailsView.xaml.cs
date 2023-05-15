@@ -55,7 +55,7 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            MapHandler.Instance.RemoveMapView(_mapView, (Content as StackLayout), _expandButton);
+            MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
         }
     }
