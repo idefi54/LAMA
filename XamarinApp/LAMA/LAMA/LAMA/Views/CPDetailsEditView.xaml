@@ -6,7 +6,7 @@
              xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Přidat" Command="{Binding SaveCommand}" IsVisible ="{Binding CanChangeCPs}"/>
+        <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}" IsVisible ="{Binding CanChangeCPs}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
