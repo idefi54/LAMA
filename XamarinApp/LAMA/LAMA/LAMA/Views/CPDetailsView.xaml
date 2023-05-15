@@ -16,62 +16,65 @@
 
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout Padding="15" >
-                <Label Text="{Binding Name}"
+            <StackLayout>
+                <StackLayout x:Name="DetailsLayout" Padding="15" >
+                    <Label Text="{Binding Name}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
 
-                <Label Text="{Binding Nick}"
+                    <Label Text="{Binding Nick}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
 
-                <Label Text="Role"
+                    <Label Text="Role"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding Roles}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-
-                <Label Text="Telefon"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding Phone}"
+                    <Label Text="{Binding Roles}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
-                <Label Text="Facebook"
+                    <Label Text="Telefon"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Label Text= "{Binding Facebook}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-
-                <Label Text="Discord"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Label Text= "{Binding Discord}"
+                    <Label Text="{Binding Phone}"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
-                <Label Text="Poznámky"
+                    <Label Text="Facebook"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding Notes}" 
+                    <Label Text= "{Binding Facebook}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                    <Label Text="Discord"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text= "{Binding Discord}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                    <Label Text="Poznámky"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                    <Label Text="{Binding Notes}" 
                        HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
 
-                <Label Text="Pravomoce" 
+                    <Label Text="Pravomoce" 
                        HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding Permissions}" 
+                    <Label Text="{Binding Permissions}" 
                        HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
 
-               
+
+                </StackLayout>
+                <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

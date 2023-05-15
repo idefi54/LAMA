@@ -25,6 +25,7 @@ using System.Reflection;
 using System.IO;
 using LAMA.Singletons;
 using LAMA.Themes;
+using LAMA.Extensions;
 
 namespace LAMA.Singletons
 {
@@ -279,6 +280,75 @@ namespace LAMA.Singletons
         #endregion
 
         #region GENERAL MAPVIEW HANDLING
+
+        public async Task<(MapView, Button)> CreateAndAddMapView(Layout<View> layout, LayoutOptions horizontalOptions, LayoutOptions verticalOptions, double heightRequest, Layout<View> hidableView = null)
+        {
+            var activityIndicator = new ActivityIndicator
+            {
+                VerticalOptions = verticalOptions,
+                HorizontalOptions = horizontalOptions,
+                HeightRequest = heightRequest,
+                IsRunning = true,
+                IsVisible = true
+            };
+            layout.Children.Add(activityIndicator);
+
+            await Task.Delay(500);
+
+            var view = new MapView
+            {
+                VerticalOptions = verticalOptions,
+                HorizontalOptions = horizontalOptions,
+                HeightRequest = heightRequest,
+                BackgroundColor = XColor.Gray
+            };
+
+            const string EXPAND = "Expand Map";
+            const string HIDE = "Hide Map";
+
+            Button button = null;
+            if (hidableView != null)
+            {
+                button = new Button();
+                button.Text = EXPAND;
+                button.Clicked += (object sender, EventArgs args) =>
+                {
+                    var b = (Button)sender;
+
+                    if (b.Text == HIDE)
+                    {
+                        hidableView.IsVisible = true;
+                        button.Text = EXPAND;
+                        view.HeightRequest = heightRequest;
+                        view.HorizontalOptions = LayoutOptions.Fill;
+                        view.VerticalOptions = LayoutOptions.Fill;
+                    } else
+                    {
+                        hidableView.IsVisible = false;
+                        button.Text = HIDE;
+                        view.HeightRequest = -1;
+                        view.HorizontalOptions = LayoutOptions.FillAndExpand;
+                        view.VerticalOptions = LayoutOptions.FillAndExpand;
+                    }
+                };
+
+                layout.Children.Add(button);
+            }
+
+            layout.Children.Remove(activityIndicator);
+            layout.Children.Add(view);
+            return (view, button);
+        }
+
+        public void RemoveMapView(MapView view, Layout<View> layout, Button expandButton = null)
+        {
+            if (view != null)
+                layout.Children.Remove(view);
+
+            if (expandButton != null)
+                layout.Children.Remove(expandButton);
+        }
+
         /// <summary>
         /// General MapView setup. Creates a Map, loads data and adds events.
         /// </summary>
@@ -382,7 +452,7 @@ namespace LAMA.Singletons
             if (IsFilteredIn(EntityType.CPs))
                 foreach (long id in _cpPins.Keys)
                     view.Pins.Add(_cpPins[id]);
-                
+
             if (IsFilteredIn(EntityType.PointsOfIntrest))
                 foreach (Pin pin in _pointOfInterestPins.Values)
                     view.Pins.Add(pin);
@@ -503,8 +573,7 @@ namespace LAMA.Singletons
                 + "\n"
                 + $"Double click to show the activity.";
 
-            PinSetIcon(pin, IconLibrary.GetIconsByLarpActivityStatus(activity.status));
-
+            PinSetIcon(pin, activity.GetIconByteArray());
             _activityPins[activity.ID] = pin;
 
             if (view != null && IsFilteredIn(EntityType.Activities))
@@ -865,13 +934,17 @@ namespace LAMA.Singletons
             return p;
         }
 
-        private void PinSetIcon(Pin pin, string iconName)
+        private void PinSetIcon(Pin pin, byte[] icon)
         {
             pin.Type = PinType.Icon;
-            byte[] icon = GetIcon(iconName);
-
             pin.Icon = icon;
             pin.Anchor = new XPoint(0, -pin.Height / 4.0);
+        }
+
+        private void PinSetIcon(Pin pin, string iconName)
+        {
+            byte[] icon = GetIcon(iconName);
+            PinSetIcon(pin, icon);
         }
 
         private void LoadActivities(MapView view = null)
@@ -886,7 +959,7 @@ namespace LAMA.Singletons
             var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
             for (int i = 0; i < rememberedList.Count; i++)
-                    AddCP(rememberedList[i], view);
+                AddCP(rememberedList[i], view);
         }
         private void LoadPointsOfIntrest(MapView view = null)
         {

@@ -91,6 +91,7 @@
     <Compile Include="AndroidActivityGraphGUI.cs" />
     <Compile Include="AndroidLocationService.cs" />
     <Compile Include="AndroidNotificationManager.cs" />
+    <Compile Include="AndroidPicturePainter.cs" />
     <Compile Include="AndroidToast.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="NotificationHelper.cs" />

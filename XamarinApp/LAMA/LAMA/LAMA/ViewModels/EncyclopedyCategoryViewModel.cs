@@ -8,8 +8,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace LAMA.ViewModels
 {
@@ -244,6 +246,10 @@ namespace LAMA.ViewModels
 
         async void onSave()
         {
+            bool categoryNameValid = InputChecking.CheckInput(name, "Jméno Kategorie", 50);
+            if (!categoryNameValid) return;
+            bool categoryDescriptionValid = InputChecking.CheckInput(description, "Popis Kategorie", 1000);
+            if (!categoryDescriptionValid) return;
             category.Name = name;
             category.Description = description;
 
@@ -251,6 +257,10 @@ namespace LAMA.ViewModels
         }
         async void onCreate()
         {
+            bool categoryNameValid = InputChecking.CheckInput(Name, "Jméno Kategorie", 50);
+            if (!categoryNameValid) return;
+            bool categoryDescriptionValid = InputChecking.CheckInput(Description, "Popis Kategorie", 1000);
+            if (!categoryDescriptionValid) return;
             var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
             var newCategory = new EncyclopedyCategory(list.nextID(), Name, Description);
             list.add(newCategory);

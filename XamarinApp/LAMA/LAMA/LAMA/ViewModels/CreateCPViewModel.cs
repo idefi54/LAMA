@@ -1,8 +1,10 @@
 ﻿using LAMA.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace LAMA.ViewModels
 {
@@ -38,6 +40,21 @@ namespace LAMA.ViewModels
         }
         void OnSave()
         {
+            bool cpNameValid = InputChecking.CheckInput(_name, "Jméno CP", 50);
+            if (!cpNameValid) return;
+            bool cpNickValid = InputChecking.CheckInput(_nick, "Přezdívka CP", 50);
+            if (!cpNickValid) return;
+            bool cpRolesValid = InputChecking.CheckInput(_roles, "Role", 200, true);
+            if (!cpRolesValid) return;
+            bool cpPhoneValid = InputChecking.CheckInput(_phone, "Telefon", 20, true);
+            if (!cpPhoneValid) return;
+            bool cpFacebookValid = InputChecking.CheckInput(_facebook, "Facebook", 100, true);
+            if (!cpFacebookValid) return;
+            bool cpDiscordValid = InputChecking.CheckInput(_discord, "Discord", 100, true);
+            if (!cpDiscordValid) return;
+            bool cpNotesValid = InputChecking.CheckInput(_notes, "Role", 1000, true);
+            if (!cpNotesValid) return;
+
             var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             var toAdd = new CP(list.nextID(), _name, _nick, Helpers.readStringField(_roles), _phone, _facebook, _discord, _notes);
             list.add(toAdd);

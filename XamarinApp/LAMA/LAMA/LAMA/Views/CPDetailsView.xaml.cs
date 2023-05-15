@@ -16,6 +16,7 @@ namespace LAMA.Views
     public partial class CPDetailsView : ContentPage
     {
         private MapView _mapView;
+        private Button _expandButton;
         private Models.CP _cp;
         public CPDetailsView(Models.CP cp)
         {
@@ -28,46 +29,26 @@ namespace LAMA.Views
         {
             base.OnAppearing();
 
-            var scrollView = Content as ScrollView;
-            var layout = scrollView.Children[0] as StackLayout;
+            MapHandler mapHandler = MapHandler.Instance;
+            (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsLayout);
+            mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: false);
 
-            var mapHorizontalOption = LayoutOptions.Fill;
-            var mapVerticalOption = LayoutOptions.EndAndExpand;
-            int mapHeightRequest = 450;
-            var mapBackgroundColor = Color.Gray;
-
-            var activityIndicator = new ActivityIndicator
+            if (_cp != null)
             {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                IsRunning = true,
-                IsVisible = true,
-            };
-            layout.Children.Add(activityIndicator);
+                long id = _cp.ID;
+                double lon = _cp.location.first;
+                double lat = _cp.location.second;
 
-            await Task.Delay(500);
-            _mapView = new MapView
-            {
-                VerticalOptions = mapVerticalOption,
-                HorizontalOptions = mapHorizontalOption,
-                HeightRequest = mapHeightRequest,
-                BackgroundColor = mapBackgroundColor
-            };
-            MapHandler.Instance.MapViewSetup(_mapView);
-            MapHandler.CenterOn(_mapView, _cp.location.first, _cp.location.second);
-            layout.Children.Remove(activityIndicator);
-            layout.Children.Add(_mapView);
+                mapHandler.RemoveCP(id, _mapView);
+                mapHandler.SetSelectionPin(lon, lat);
+                MapHandler.CenterOn(_mapView, lon, lat);
+            }
         }
 
         protected override void OnDisappearing()
         {
-
             base.OnDisappearing();
-            if (_mapView == null)
-                return;
-            var scrollView = Content as ScrollView;
-            (scrollView.Children[0] as StackLayout).Children.Remove(_mapView);
+            MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
         }
         

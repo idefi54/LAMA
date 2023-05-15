@@ -19,6 +19,17 @@ namespace LAMA.Communicator
             : base(message) { }
     }
 
+    public class EntryTooLongException : Exception
+    {
+        public int length;
+        public string fieldName;
+        public EntryTooLongException(int length, string fieldName)
+        {
+            this.length = length;
+            this.fieldName = fieldName;
+        }
+    }
+
     /// <summary>
     /// Wrong client name, client password, server password or a server with this name already exists
     /// </summary>

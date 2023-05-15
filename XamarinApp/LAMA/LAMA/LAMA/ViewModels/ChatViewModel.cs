@@ -54,14 +54,20 @@ namespace LAMA.ViewModels
             OnMessageSent();
         }
 
+        public void MessageSent(string message)
+        {
+            bool inputValid = InputChecking.CheckInput(message, "Chatová Zpráva", 5000);
+            message = message.Trim();
+            if (inputValid)
+            {
+                ChatLogic.Instance.SendMessage(channelID, message);
+                MessageText = "";
+            }
+        }
+
         private void OnMessageSent()
         {
-            if (!String.IsNullOrWhiteSpace(MessageText))
-            {
-                ChatLogic.Instance.SendMessage(channelID, MessageText);
-                MessageText = "";
-                OnPropertyChanged("MessageText");
-            }
+            MessageSent(MessageText);
         }
 
         public ChatViewModel(INavigation navigation, string channelName, ChatPage page)

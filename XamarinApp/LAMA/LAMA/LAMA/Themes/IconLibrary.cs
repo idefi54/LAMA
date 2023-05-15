@@ -4,6 +4,11 @@ using System.Reflection;
 using LAMA.Models;
 using System.Text;
 using Xamarin.Forms;
+using System.Drawing;
+
+using XColor = Xamarin.Forms.Color;
+using DColor = System.Drawing.Color;
+using System.IO;
 
 namespace LAMA.Themes
 {
@@ -31,7 +36,7 @@ namespace LAMA.Themes
                 ICON_PREFIX + "profile_close_add.png",
                 ICON_PREFIX + "sword.png",
                 ICON_PREFIX + "accept_cr.png",
-                ICON_PREFIX + "sword.png"
+                ICON_PREFIX + "X_simple_1.png"
         };
 
         private static readonly string[] _cpIcons = { ICON_PREFIX + "location_3_profile.png" };
@@ -73,15 +78,39 @@ namespace LAMA.Themes
                 case LarpActivity.Status.launched: return _larpActivityIcons[2];
                 case LarpActivity.Status.inProgress: return _larpActivityIcons[3];
                 case LarpActivity.Status.completed: return _larpActivityIcons[4];
+                case LarpActivity.Status.cancelled: return _larpActivityIcons[5];
                 default: return _larpActivityIcons[0];
             }
-
         }
 
-        public static ImageSource GetImageSourceFromResourcePath(string resourcePath)
+        public static ImageSource GetImageSourceFromResourcePath(string resourcePath, XColor? color = null)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            return ImageSource.FromResource(resourcePath, assembly);
+            var stream = assembly.GetManifestResourceStream(resourcePath);
+
+            if (color != null)
+                stream = DependencyService.Get<IPicturePainter>().ColorImage(
+                    stream,
+                    (byte)(color.Value.R * 255),
+                    (byte)(color.Value.G * 255),
+                    (byte)(color.Value.B * 255));
+
+            return ImageSource.FromStream(() => stream);
+        }
+
+        public static byte[] GetByteArrayFromResourcePath(string resourcePath, XColor? color = null)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream(resourcePath);
+
+            if (color != null)
+                stream = DependencyService.Get<IPicturePainter>().ColorImage(
+                    stream,
+                    (byte)(color.Value.R * 255),
+                    (byte)(color.Value.G * 255),
+                    (byte)(color.Value.B * 255));
+
+            return stream.ToBytes();
         }
     }
 }

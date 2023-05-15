@@ -2,15 +2,16 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:LAMA.Forms"
+             xmlns:colors="clr-namespace:LAMA.Themes"
              x:Class="LAMA.Views.POIListView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              xmlns:common="clr-namespace:LAMA.Views">
 
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Přidat" Command="{Binding Create}" IsVisible ="{Binding CanCreate}"/>
+        <forms:BindableToolbarItem Text="Přidat" Command="{Binding Create}" IsVisible ="{Binding CanChange}"/>
     </ContentPage.ToolbarItems>
-    
+
     <ContentPage.Content>
         <StackLayout>
             <common:OurNavigationMenu></common:OurNavigationMenu>
@@ -26,13 +27,47 @@
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
-                                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="MISSING ICON" FontSize="Small" />
+                                    <Image Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1"
+                                           Source="{Binding CurrentIcon, Mode=TwoWay}"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                                    <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                           MaxLines="2" LineBreakMode="TailTruncation"
+                                           Text="{Binding Description}"
+                                           FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}"
+                                           HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+												Command="{Binding Path=BindingContext.OpenDetails, Source={x:Reference Name=CategoryList}}"
+												CommandParameter="{Binding .}"/>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+
+                                    <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="2"
+											Text="Del" Padding="20,10,20,10" Margin="5,5,5,5"
+											BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+                                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:POIListViewModel}}, Path=CanChange}"
+											Command="{Binding Path=BindingContext.Remove, Source={x:Reference Name=CategoryList}}"
+											CommandParameter="{Binding .}"/>
 
 
                                     <OnPlatform x:TypeArguments="View">

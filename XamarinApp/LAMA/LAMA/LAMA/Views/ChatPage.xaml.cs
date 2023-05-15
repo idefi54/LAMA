@@ -3,6 +3,7 @@ using LAMA.ViewModels;
 using Mapsui.Widgets;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -54,12 +55,16 @@ namespace LAMA.Views
 
         protected void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.OldTextValue != null && !_shiftHeld && Device.RuntimePlatform == Device.WPF)
+            Debug.WriteLine("OnTextChanged");
+            string oldText;
+            if (e.OldTextValue == null) oldText = "";
+            else oldText = e.OldTextValue;
+            if (!_shiftHeld && Device.RuntimePlatform == Device.WPF)
             {
                 string newText = e.NewTextValue;
-                string oldText = e.OldTextValue;
                 if (newText.Length == oldText.Length+2)
                 {
+                    Debug.WriteLine("newText.Length == oldText.Length+2");
                     int i;
                     for (i = 0; i < oldText.Length; i++) {
                         if (newText[i] != oldText[i]) break;
@@ -67,10 +72,13 @@ namespace LAMA.Views
                     Debug.WriteLine(newText[i]);
                     if (newText[i] == '\r' && newText[i+1]== '\n')
                     {
-                        chatViewModel.MessageText = oldText;
                         if (oldText.Trim().Length != 0)
                         {
-                            chatViewModel.OnEntryComplete(sender, null);
+                            chatViewModel.MessageSent(oldText);
+                        }
+                        else
+                        {
+                            chatViewModel.MessageText = oldText;
                         }
                     }
                 }

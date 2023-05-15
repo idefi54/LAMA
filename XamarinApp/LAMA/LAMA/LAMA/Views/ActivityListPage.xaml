@@ -8,123 +8,135 @@
 			 x:Name="ActivitiesPage"
 			 Title="Seznam Aktivit">
 
-	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Řadit" Command="{Binding SortCommand}"/>
-		<ToolbarItem Text="Filtr" Command="{Binding FilterCommand}"/>
-		<forms:BindableToolbarItem Text="Nová Aktivita" Command="{Binding AddActivityCommand}" IsVisible="{Binding CanChangeActivity}"/>
-	</ContentPage.ToolbarItems>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Řadit" Command="{Binding SortCommand}"/>
+        <ToolbarItem Text="Filtr" Command="{Binding FilterCommand}"/>
+        <forms:BindableToolbarItem Text="Nová Aktivita" Command="{Binding AddActivityCommand}" IsVisible="{Binding CanChangeActivity}"/>
+    </ContentPage.ToolbarItems>
 
 
-	<ContentPage.Content>
-		<StackLayout>
-			<Frame x:Name="SortDropdownMenu"
+    <ContentPage.Content>
+        <StackLayout>
+            <Frame x:Name="SortDropdownMenu"
 				   BackgroundColor="LightBlue"
 				   IsVisible="{Binding ShowSortDropdown}"
 				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-					<Button Grid.Row="0" Grid.Column="0"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" Grid.Column="0"
 							Text="{Binding ActivitySorter.SortNameString}"
 							Command="{Binding ActivitySorter.SortNameCommand}"/>
-					<Button Grid.Row="0" Grid.Column="1"
+                    <Button Grid.Row="0" Grid.Column="1"
 							Text="{Binding ActivitySorter.SortStartString}"
 							Command="{Binding ActivitySorter.SortStartCommand}"/>
-					<Button Grid.Row="0" Grid.Column="2"
+                    <Button Grid.Row="0" Grid.Column="2"
 							Text="{Binding ActivitySorter.SortPeopleString}"
 							Command="{Binding ActivitySorter.SortPeopleCommand}"/>
-					<Button Grid.Row="0" Grid.Column="3"
+                    <Button Grid.Row="0" Grid.Column="3"
 							Text="{Binding ActivitySorter.SortFreeSpotsString}"
 							Command="{Binding ActivitySorter.SortFreeSpotsCommand}"/>
-				</Grid>
-			</Frame>
-			<Frame x:Name="FilterDropdownMenu"
+                </Grid>
+            </Frame>
+            <Frame x:Name="FilterDropdownMenu"
 				   BackgroundColor="LightBlue"
 				   IsVisible="{Binding ShowFilterDropdown}">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-					<Label Grid.Row="0" Grid.Column="0"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0"
 						Text="Název"/>
-					<Entry Grid.Row="0" Grid.Column="1"
+                    <Entry Grid.Row="0" Grid.Column="1"
 						   Text="{Binding ActivityFilter.SearchName}"/>
-					
-					<Label Grid.Row="1" Grid.Column="0"
+
+                    <Label Grid.Row="1" Grid.Column="0"
 						Text="Typ"/>
-					<Picker Grid.Row="1" Grid.Column="1"
+                    <Picker Grid.Row="1" Grid.Column="1"
 							ItemsSource="{Binding ActivityFilter.SearchTypeList}"
 							SelectedIndex="{Binding ActivityFilter.SearchTypeIndex}"/>
 
-					<Label Grid.Row="2" Grid.Column="0"
+                    <Label Grid.Row="2" Grid.Column="0"
 						Text="Přihlášení"/>
-					<Picker Grid.Row="2" Grid.Column="1"
+                    <Picker Grid.Row="2" Grid.Column="1"
 							ItemsSource="{Binding ActivityFilter.SearchRegistrationList}"
 							SelectedIndex="{Binding ActivityFilter.SearchRegistrationIndex}"/>
-					
-					<Label Grid.Row="3" Grid.Column="0"
+
+                    <Label Grid.Row="3" Grid.Column="0"
 						Text="Status"/>
-					<Picker Grid.Row="3" Grid.Column="1"
+                    <Picker Grid.Row="3" Grid.Column="1"
 							ItemsSource="{Binding ActivityFilter.SearchStatusList}"
 							SelectedIndex="{Binding ActivityFilter.SearchStatusIndex}"/>
-				</Grid>
-			</Frame>
-			<StackLayout  Spacing="0">
-				<common:OurNavigationMenu></common:OurNavigationMenu>
-				<Label IsVisible="{Binding ActivityFilter.IsFiltered}"
+                </Grid>
+            </Frame>
+            <StackLayout  Spacing="0">
+                <common:OurNavigationMenu></common:OurNavigationMenu>
+                <Label IsVisible="{Binding ActivityFilter.IsFiltered}"
 					   BackgroundColor="Yellow" TextColor="Black"
 					   Padding="10"
 					   Text="Seznam je filtrovaný"/>
-				<ListView x:Name="LarpActivityList" ItemsSource="{Binding FilteredLarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
-					<ListView.ItemTemplate>
-						<DataTemplate>
-							<ViewCell>
-								<Grid Padding="5" Margin="5" BackgroundColor="{Binding Color}">
-									<Grid.RowDefinitions>
-										<RowDefinition Height="auto" />
-										<RowDefinition Height="auto" />
-									</Grid.RowDefinitions>
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="20" />
-										<ColumnDefinition Width="*" />
-										<ColumnDefinition Width="auto" />
-										<ColumnDefinition Width="auto" />
-										<ColumnDefinition Width="auto" />
-									</Grid.ColumnDefinitions>
-									<Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
-									<Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding Participation}" FontSize="Small" />
-									<Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Detail}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
+                <ListView x:Name="LarpActivityList" ItemsSource="{Binding FilteredLarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="5" Margin="5" BackgroundColor="{Binding Color}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding Participation}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Detail}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
 
-									<OnPlatform x:TypeArguments="View">
-										<On Platform="WPF">
-											<Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
 												Command="{Binding Path=BindingContext.LarpActivityTapped, Source={x:Reference Name=LarpActivityList}}"
 												CommandParameter="{Binding .}"/>
-										</On>
-									</OnPlatform>
-									<Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="2"
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+
+
+                                    <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="2"
 											Text="Del" Padding="20,10,20,10" Margin="5,5,5,5"
 											BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
                                             IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityListViewModel}}, Path=CanChangeActivity}"
 											Command="{Binding Path=BindingContext.RemoveLarpActivity, Source={x:Reference Name=LarpActivityList}}"
 											CommandParameter="{Binding .}"/>
 
-									<Grid.GestureRecognizers>
-										<TapGestureRecognizer 
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer 
 											NumberOfTapsRequired="2"
 											Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ActivityListViewModel}}, Path=LarpActivityTapped}"		
 											CommandParameter="{Binding .}" />
-									</Grid.GestureRecognizers>
-								</Grid>
-							</ViewCell>
-						</DataTemplate>
-					</ListView.ItemTemplate>
-				</ListView>
-			</StackLayout>
-		</StackLayout>
-	</ContentPage.Content>
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>
