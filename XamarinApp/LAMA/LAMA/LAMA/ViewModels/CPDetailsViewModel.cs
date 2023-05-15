@@ -37,8 +37,10 @@ namespace LAMA.ViewModels
         public bool CanDeleteCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
         public bool CanEditDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID== LocalStorage.cpID; } set { } }
         public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
-        public bool CanArchiveCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived; } }
-        public bool CanUnarchiveCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived; } }
+        bool _CanArchiveCP = false;
+        public bool CanArchiveCP { get { return _CanArchiveCP; } set { SetProperty(ref _CanArchiveCP, value); } }
+        bool _CanUnarchiveCP = false;
+        public bool CanUnarchiveCP { get { return _CanUnarchiveCP; } set { SetProperty(ref _CanUnarchiveCP, value); } }
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
         //public Command AddPermissionCommand { get; private set; }
@@ -60,6 +62,10 @@ namespace LAMA.ViewModels
 
         public CPDetailsViewModel(INavigation navigation, CP cp)
         {
+            SetProperty(ref _CanArchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived);
+            SetProperty(ref _CanUnarchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived);
+
+
             this.navigation = navigation;
             this.cp = cp;
             _notes = cp.notes;
@@ -96,10 +102,16 @@ namespace LAMA.ViewModels
         public void onArchive()
         {
             cp.IsArchived = true;
+            //SetProperty(ref _CanArchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived);
+            //SetProperty(ref _CanUnarchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived);
+            CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
+            CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
         }
         public void onUnarchive()
         {
             cp.IsArchived = false;
+            CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
+            CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
         }
 
         void OnSave()

@@ -14,10 +14,12 @@ namespace LAMA.ViewModels
         public string Nick { get { return cp.nick; } }
         public string Roles { get { return cp.roles.ToReadableString(); } }
 
-        public CPViewModel(CP cp)
+        CPListViewModel cpList = null;
+        public CPViewModel(CP cp, CPListViewModel cpList)
         {
             this.cp = cp;
             cp.IGotUpdated += onUpdate;
+            this.cpList = cpList;
         }
         public event PropertyChangedEventHandler PropertyChanged;
         private void onUpdate(object sender, int index)
@@ -33,6 +35,9 @@ namespace LAMA.ViewModels
                     break;
                 case 3: 
                     propName = nameof(Roles);
+                    break;
+                case 11:
+                    cpList.ChangeList(cp);
                     break;
                 default: 
                     return;
