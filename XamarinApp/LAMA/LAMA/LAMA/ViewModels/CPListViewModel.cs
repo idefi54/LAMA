@@ -56,13 +56,12 @@ namespace LAMA.ViewModels
             ArchivedCPList.Clear();
             for (int i = 0; i < list.Count; ++i) 
             { 
-                var newOne = new CPViewModel(list[i]);
+                var newOne = new CPViewModel(list[i], this);
                 if(!list[i].IsArchived)
                     CPList.Add(newOne);
                 else 
                     ArchivedCPList.Add(newOne);
                 IDToViewModel.Add(list[i].ID, newOne);
-            
             }
             SQLEvents.created += OnCreated;
             SQLEvents.dataDeleted += OnDeleted;
@@ -76,7 +75,7 @@ namespace LAMA.ViewModels
             }
             var item = (CP)made;
             OnCancelFilter();
-            var model = new CPViewModel(item);
+            var model = new CPViewModel(item, this);
             if (!item.IsArchived)
                 CPList.Add(model);
             else
@@ -85,6 +84,7 @@ namespace LAMA.ViewModels
             OnFilter();
 
         }
+
         private void OnDeleted(Serializable deleted)
         {
             if (deleted.GetType() != typeof(CP))
@@ -203,5 +203,22 @@ namespace LAMA.ViewModels
             }
         }
 
+
+        public void ChangeList(CP whose)
+        {
+            //newly archived
+            if(whose.IsArchived && CPList.Contains( IDToViewModel[whose.ID] ))
+            {
+                CPList.Remove( IDToViewModel[whose.ID] );
+                ArchivedCPList.Add( IDToViewModel[whose.ID] );
+            }
+            //newly unarchived
+            else if (!whose.IsArchived && ArchivedCPList.Contains(IDToViewModel[whose.ID]))
+            {
+                ArchivedCPList.Remove(IDToViewModel[whose.ID]);
+                CPList.Add(IDToViewModel[whose.ID]);
+            }
+
+        }
     }
 }

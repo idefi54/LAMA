@@ -189,14 +189,14 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             Debug.WriteLine($"Message string received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
-            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(SpecialCharacters.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 message = message.Trim('\0');
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(Separators.messagePartSeparator);
+                string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -293,7 +293,7 @@ namespace LAMA.Communicator
         private void RequestUpdate()
         {
             string q = "";
-            q += $"Update{Separators.messagePartSeparator}";
+            q += $"Update{SpecialCharacters.messagePartSeparator}";
             q += LocalStorage.clientID;
             SendCommand(new Command(q, LastUpdate, "None"));
         }
@@ -417,13 +417,13 @@ namespace LAMA.Communicator
             if (isNew)
             {
                 SendCommand(new Command(
-                    $"RequestID{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    $"RequestID{SpecialCharacters.messagePartSeparator}{cpName}{SpecialCharacters.messagePartSeparator}{Encryption.EncryptPassword(password)}{SpecialCharacters.messagePartSeparator}{LocalStorage.clientID}", 
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             else
             {
                 SendCommand(new Command(
-                    $"RequestIDExisting{Separators.messagePartSeparator}{cpName}{Separators.messagePartSeparator}{Encryption.EncryptPassword(password)}{Separators.messagePartSeparator}{LocalStorage.clientID}", 
+                    $"RequestIDExisting{SpecialCharacters.messagePartSeparator}{cpName}{SpecialCharacters.messagePartSeparator}{Encryption.EncryptPassword(password)}{SpecialCharacters.messagePartSeparator}{LocalStorage.clientID}", 
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
             }
             if (broadcastTimer == null)
@@ -460,7 +460,7 @@ namespace LAMA.Communicator
                         s.Connect(_IP, _port);
                         if (loggedIn && LocalStorage.clientID != -1)
                         {
-                            SendCommand(new Command($"ClientConnected{Separators.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
+                            SendCommand(new Command($"ClientConnected{SpecialCharacters.messagePartSeparator}{LocalStorage.clientID}", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
                             RequestUpdate();
                             listener = new Thread(StartListening);
                             listener.Start();
@@ -550,7 +550,7 @@ namespace LAMA.Communicator
         /// </summary>
         private void SendClientInfo()
         {
-            string command = "ClientConnected" + Separators.messagePartSeparator + LocalStorage.clientID;
+            string command = "ClientConnected" + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
             SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None"));
         }
         /// <summary>

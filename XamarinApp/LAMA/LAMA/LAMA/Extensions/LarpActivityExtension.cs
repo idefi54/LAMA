@@ -10,6 +10,7 @@ namespace LAMA.Extensions
 {
     public static class LarpActivityExtension
     {
+
         public static SKColor GetGraphColor(this LarpActivity activity)
         {
             switch (activity.status)

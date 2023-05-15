@@ -288,13 +288,13 @@ namespace LAMA.Communicator
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
             Debug.WriteLine($"Message String Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
-            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(Separators.messageSeparator);
+            string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(SpecialCharacters.messageSeparator);
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
-                string[] messageParts = message.Split(Separators.messagePartSeparator);
+                string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
                     if (messageParts[j].Length > 0 && messageParts[j][messageParts[j].Length - 1] == 'Â')
@@ -624,7 +624,7 @@ namespace LAMA.Communicator
                 {
                     passwordCorrect = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password);
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
+                    string command = $"GiveID{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}{cpID}";
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -639,9 +639,9 @@ namespace LAMA.Communicator
                 clientSockets[clientID] = current;
             }
             if (passwordCorrect)
-                SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                SendCommand(new Command($"ClientRefused{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}Client", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
             else
-                SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Password", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                SendCommand(new Command($"ClientRefused{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}Password", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
         }
 
         /// <summary>
@@ -666,7 +666,7 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    SendCommand(new Command($"ClientRefused{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}Client with this name already exists", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                    SendCommand(new Command($"ClientRefused{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}Client with this name already exists", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
                     lock (ServerCommunicator.socketsLock)
                     {
                         clientSockets[clientID] = current;
@@ -682,7 +682,7 @@ namespace LAMA.Communicator
                 cpID = cp.ID;
                 cp.password = Encryption.EncryptPassword(password);
             }
-            string command = $"GiveID{Separators.messagePartSeparator}{clientID}{Separators.messagePartSeparator}{cpID}";
+            string command = $"GiveID{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}{cpID}";
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[clientID] = current;
@@ -730,8 +730,8 @@ namespace LAMA.Communicator
                 if (entry.time > lastUpdateTime)
                 {
                     string value = entry.value;
-                    string[] keyParts = entry.key.Split(Separators.messagePartSeparator);
-                    string command = "DataUpdated" + Separators.messagePartSeparator + keyParts[0] + Separators.messagePartSeparator + keyParts[1] + Separators.messagePartSeparator + keyParts[2] + Separators.messagePartSeparator + value;
+                    string[] keyParts = entry.key.Split(SpecialCharacters.messagePartSeparator);
+                    string command = "DataUpdated" + SpecialCharacters.messagePartSeparator + keyParts[0] + SpecialCharacters.messagePartSeparator + keyParts[1] + SpecialCharacters.messagePartSeparator + keyParts[2] + SpecialCharacters.messagePartSeparator + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
@@ -750,7 +750,7 @@ namespace LAMA.Communicator
             for (int i = 0; i < objectsCache.Count; i++)
             {
                 Command entry = objectsCache[i];
-                string[] keyParts = entry.key.Split(Separators.messageSeparator);
+                string[] keyParts = entry.key.Split(SpecialCharacters.messageSeparator);
                 string objectType = keyParts[0];
                 long ID = Int64.Parse(keyParts[1]);
                 if (entry.time > lastUpdateTime)
@@ -764,7 +764,7 @@ namespace LAMA.Communicator
                     else if (objectType == "LAMA.Models.EncyclopedyRecord") serializable = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList.getByID(ID);
                     else continue;
                     string[] attributes = serializable.getAttributes();
-                    string command = "ItemCreated" + Separators.messageSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + String.Join(Separators.attributesSeparator.ToString(), attributes);
+                    string command = "ItemCreated" + SpecialCharacters.messageSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + String.Join(SpecialCharacters.attributesSeparator.ToString(), attributes);
                     SendCommand(new Command(command, entry.time, entry.getKey(), id));
                 }
             }
@@ -772,12 +772,12 @@ namespace LAMA.Communicator
             for (int i = 0; i < attributesCache.Count; i++)
             {
                 TimeValue entry = attributesCache[i];
-                string[] keyParts = entry.key.Split(Separators.messageSeparator);
-                Command creationEntry = objectsCache.getByKey(keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1]);
+                string[] keyParts = entry.key.Split(SpecialCharacters.messageSeparator);
+                Command creationEntry = objectsCache.getByKey(keyParts[0] + SpecialCharacters.messageSeparator.ToString() + keyParts[1]);
                 if (entry.time > lastUpdateTime && entry.time > creationEntry.time && !(creationEntry.time > lastUpdateTime))
                 {
                     string value = entry.value;
-                    string command = "DataUpdated" + Separators.messageSeparator.ToString() + keyParts[0] + Separators.messageSeparator.ToString() + keyParts[1] + Separators.messageSeparator.ToString() + keyParts[2] + Separators.messageSeparator.ToString() + value;
+                    string command = "DataUpdated" + SpecialCharacters.messageSeparator.ToString() + keyParts[0] + SpecialCharacters.messageSeparator.ToString() + keyParts[1] + SpecialCharacters.messageSeparator.ToString() + keyParts[2] + SpecialCharacters.messageSeparator.ToString() + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
