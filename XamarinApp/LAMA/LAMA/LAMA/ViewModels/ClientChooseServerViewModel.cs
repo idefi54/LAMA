@@ -86,6 +86,9 @@ namespace LAMA.ViewModels
             {
                 if (serverName == null || serverName.Trim() == "") throw new EntryMissingException("Jméno Serveru");
                 if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
+                if (serverName.Length > 100) throw new EntryTooLongException(100, "Jméno Serveru");
+                if (password.Length > 100) throw new EntryTooLongException(100, "Heslo");
+
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 //serverName - jméno toho serveru (identifikátor)
                 //heslo serveru
@@ -128,6 +131,15 @@ namespace LAMA.ViewModels
             catch (EntryMissingException e)
             {
                 await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                TryingToConnect = false;
+                LoginEnabled = true;
+                FakeLoginEnabled = true;
+                DatabaseEnabled = true;
+                return;
+            }
+            catch (EntryTooLongException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
                 FakeLoginEnabled = true;
