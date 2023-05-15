@@ -79,6 +79,13 @@ namespace LAMA.Views
             }
         }
 
+        async void OnTestPrompt(object sender, EventArgs args)
+        {
+            var messagesService = DependencyService.Get<IMessageService>();
+            string prompt = await messagesService.DisplayPromptAsync("enter prompt");
+            await messagesService.ShowAlertAsync(prompt);
+        }
+
         async void OnDisplayActivity(object sender, EventArgs args)
         {
             //await Shell.Current.GoToAsync($"//{nameof(DisplayActivityPage)}");

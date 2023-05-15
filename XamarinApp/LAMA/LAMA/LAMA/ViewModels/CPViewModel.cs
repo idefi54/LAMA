@@ -38,7 +38,7 @@ namespace LAMA.ViewModels
                     break;
                 case 11:
                     cpList.ChangeList(cp);
-                    break;
+                    return;
                 default: 
                     return;
             }

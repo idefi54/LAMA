@@ -26,7 +26,7 @@ namespace LAMA.ViewModels
         public string Name { get { return name; } set{ SetProperty(ref name, value);} }
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
-        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
+        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } }
         public bool CanCreate { get { return CanChangeEncyclopedy && category == null; } }
         public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }

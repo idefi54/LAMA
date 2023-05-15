@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace LAMA.Services
 {
@@ -11,6 +12,8 @@ namespace LAMA.Services
         Task<bool> ShowConfirmationAsync(string message, string title = "LAMA");
         Task<int?> ShowSelectionAsync(string message, string[] options);
         Task<int?> ShowSelectionAsync(string message, List<string> options);
+        Task<string> DisplayPromptAsync(string message, string title = "LAMA", string okText = "OK", string cancleText = "Zrušit");
+
     }
 
     public class MessageService : IMessageService
@@ -48,6 +51,20 @@ namespace LAMA.Services
             }
 
             return null;
+        }
+
+        public async Task<string> DisplayPromptAsync(string message, string title = "LAMA", string okText = "OK", string cancleText = "Zrušit")
+        {
+            if(Device.RuntimePlatform == Device.Android)
+            {
+                Task<string> task = App.Current.MainPage.DisplayPromptAsync(title, message, okText, cancleText);
+
+                return await task;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

@@ -39,6 +39,7 @@
 				<Button Text="Dropdown Menu Above Example" Clicked="OnDropdownAboveExample"/>
 				<Button Text="Image Example" Clicked="OnImageExample"/>
                 <Button Text="Icon Selection" Clicked="OnIconSelection"/>
+				<Button Text="Test Prompt" Clicked="OnTestPrompt"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

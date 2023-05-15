@@ -170,6 +170,7 @@ namespace LAMA.ViewModels
 
 		#endregion
 
+		private LarpActivity.Status status;
 
 		INavigation _navigation;
 		Action<LarpActivityDTO> _createNewActivity;
@@ -221,6 +222,8 @@ namespace LAMA.ViewModels
 			_icons = IconLibrary.GetIconsByClass<LarpActivity>();
 			CurrentIconIndex = 0;
 
+			status = LarpActivity.Status.awaitingPrerequisites;
+
 			if (larpActivity != null)
             {
 				Title = "Upravit Aktivitu";
@@ -230,6 +233,7 @@ namespace LAMA.ViewModels
 				Type = larpActivity.eventType.ToString();
 				TypeIndex = (int)larpActivity.eventType;
 				CurrentIconIndex = larpActivity.IconIndex;
+				status = larpActivity.status;
 
 				StartDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start).ToLocalTime();
 				EndDate = DateTimeExtension.UnixTimeStampMillisecondsToDateTime(activity.start + activity.duration).ToLocalTime();
@@ -528,7 +532,7 @@ namespace LAMA.ViewModels
 				tmp_day,
 				start,
 				new Pair<double, double>(lon, lat), 
-				LarpActivity.Status.readyToLaunch,
+				status,
 				items, 
 				roles, 
 				registered,
