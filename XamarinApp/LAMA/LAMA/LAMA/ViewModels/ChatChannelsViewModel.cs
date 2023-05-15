@@ -15,17 +15,21 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
-    public class ChatChannelsViewModel : INotifyPropertyChanged
+    public class ChatChannelsViewModel : BaseViewModel
     {
         public Xamarin.Forms.Command ChannelCreatedCommand { get; }
         public Command<object> ChatChannelTapped { get; private set; }
-        public string ChannelName { get; set; }
+        private string _channelName;
+        public string ChannelName
+        {
+            get { return _channelName; }
+            set { SetProperty(ref _channelName, value); }
+        }
 
         public bool CanCreateChannels { get; set; }
-        public ObservableCollection<String> Channels { get; set; }
+        public TrulyObservableCollection<ChatChannelsItemViewModel> Channels { get; }
 
         INavigation Navigation;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
 
@@ -49,43 +53,53 @@ namespace LAMA.ViewModels
 
         public ChatChannelsViewModel(INavigation navigation)
         {
-            LarpEvent.ChatChannels.dataChanged += PropagateChanged;
             ChannelCreatedCommand = new Xamarin.Forms.Command(OnChannelCreated);
             ChatChannelTapped = new Command<object>(DisplayChannel);
 
             Navigation = navigation;
 
-            Channels = new ObservableCollection<string>();
+            Channels = new TrulyObservableCollection<ChatChannelsItemViewModel>();
 
             for (int i = 0; i < LarpEvent.ChatChannels.Count; i++)
             {
-                Channels.Add(LarpEvent.ChatChannels[i]);
+                Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
             }
 
             if (LocalStorage.cpID == 0) CanCreateChannels = true;
             else CanCreateChannels = false;
+            SQLEvents.dataChanged += PropagateChanged;
         }
 
-        private void PropagateChanged()
+        private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
-            Channels.Clear();
+            Debug.WriteLine("Propagate Changed");
+            Debug.WriteLine($"{changedAttributeIndex}: {changed.GetType().Name}");
+            if (changed == null || changed.GetType() != typeof(LarpEvent) || changedAttributeIndex != 3)
+                return;
 
+            Debug.WriteLine("Propagate Changed passed");
+            for (int i = Channels.Count - 1; i >= 0; i--)
+            {
+                Channels.Remove(Channels[i]);
+            }
             for (int i = 0; i < LarpEvent.ChatChannels.Count; i++)
             {
-                Channels.Add(LarpEvent.ChatChannels[i]);
+                Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
             }
+
+            Channels.Refresh();
         }
 
         private async void DisplayChannel(object obj)
         {
-            if (obj.GetType() != typeof(string))
+            if (obj.GetType() != typeof(ChatChannelsItemViewModel))
             {
-                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(string).Name
+                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ChatChannelsItemViewModel).Name
                     + "\nActual: " + obj.GetType().Name, "OK");
                 return;
             }
 
-            string channelName = (string)obj;
+            string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
             await Navigation.PushAsync(new ChatPage(channelName));
         }
     }
