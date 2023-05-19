@@ -207,9 +207,6 @@ namespace LAMA.ViewModels
 			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
 
 			IconChange = new Command(OnIconChange);
-
-			SQLEvents.dataChanged += PropagateChanged;
-			SQLEvents.dataDeleted += PropagateDeleted;
 		}
 
 		private void Initialize(LarpActivity activity)
@@ -255,6 +252,18 @@ namespace LAMA.ViewModels
 		}
 
 		#region Database Propagate Events
+
+		public void OnAppearing()
+        {
+			SQLEvents.dataChanged += PropagateChanged;
+			SQLEvents.dataDeleted += PropagateDeleted;
+		}
+
+		public void OnDisappearing()
+        {
+			SQLEvents.dataChanged -= PropagateChanged;
+			SQLEvents.dataDeleted -= PropagateDeleted;
+		}
 
 		private void PropagateChanged(Serializable changed, int changedAttributeIndex)
 		{
