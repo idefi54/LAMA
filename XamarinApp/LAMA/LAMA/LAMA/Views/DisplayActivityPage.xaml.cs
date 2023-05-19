@@ -47,7 +47,7 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            (BindingContext as DisplayActivityViewModel).OnAppearing();
+            (BindingContext as DisplayActivityViewModel).OnDisappearing();
 
             MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
