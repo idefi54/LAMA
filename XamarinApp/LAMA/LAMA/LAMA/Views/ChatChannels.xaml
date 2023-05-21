@@ -17,7 +17,9 @@
                     HorizontalTextAlignment="Start"
                     FontSize="Medium"
                     TextColor="{x:Static colors:ColorPalette.TextColor}"
-                    FontAttributes="Italic" />
+                    FontAttributes="Italic"
+                    Text="{Binding SearchText}"
+                    TextChanged="OnTextChanged"/>
                 <ScrollView>
                     <StackLayout x:Name="Channels" BindableLayout.ItemsSource="{Binding Channels}" Margin="5,5,5,0">
                         <BindableLayout.ItemTemplate>

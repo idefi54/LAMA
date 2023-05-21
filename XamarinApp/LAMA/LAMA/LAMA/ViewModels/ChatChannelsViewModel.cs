@@ -88,7 +88,7 @@ namespace LAMA.ViewModels
             RestoreChannelCommand = new Command<object>(RestoreChannel);
             RenameChannelCommand = new Command<object>(RenameChannel);
             ChannelSetNewNameCommand = new Command<object>(SetNewChannelName);
-            HideRenameDialogCommand = new Xamarin.Forms.Command<object>(HideRenameDialog);
+            HideRenameDialogCommand = new Command<object>(HideRenameDialog);
 
             Navigation = navigation;
 
@@ -221,6 +221,27 @@ namespace LAMA.ViewModels
                 }
                 LarpEvent.ChatChannels.InvokeDataChanged();
                 DisplayRenameDialog = false;
+            }
+        }
+
+        public void ApplyFilter(string filter)
+        {
+            bool IsFiltered = !String.IsNullOrWhiteSpace(filter);
+
+            Func<ChatChannelsItemViewModel, bool> filterCheck = (channel) =>
+            {
+                if (IsFiltered && !channel.ChannelName.ToLower().Contains(filter))
+                    return false;
+                return true;
+            };
+
+            TrulyObservableCollection<ChatChannelsItemViewModel> _filteredList = new TrulyObservableCollection<ChatChannelsItemViewModel>();
+            foreach (ChatChannelsItemViewModel channel in Channels)
+            {
+                if (filterCheck(channel) && !channel.IsVisible && channel.CanBeVisible())
+                    channel.IsVisible = true;
+                else if (!filterCheck(channel) && channel.IsVisible)
+                    channel.IsVisible = false;
             }
         }
     }

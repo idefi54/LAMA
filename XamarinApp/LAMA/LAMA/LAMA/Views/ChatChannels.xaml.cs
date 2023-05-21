@@ -25,5 +25,10 @@ namespace LAMA.Views
         {
             viewModel.DisplayRenameDialog = false;
         }
+
+        public void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            viewModel.ApplyFilter(e.NewTextValue);
+        }
     }
 }
