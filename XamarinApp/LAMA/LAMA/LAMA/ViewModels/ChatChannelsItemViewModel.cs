@@ -35,6 +35,13 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _canRestore, value); }
         }
 
+        private bool _canRename;
+        public bool CanRename
+        {
+            get { return _canRename; }
+            set { SetProperty(ref _canRename, value); }
+        }
+
         private bool archived;
 
         public ChatChannelsItemViewModel(string channel)
@@ -44,7 +51,13 @@ namespace LAMA.ViewModels
             else _channelName = channel;
             _canArchive = CommunicationInfo.Instance.IsServer && !archived;
             _canRestore = CommunicationInfo.Instance.IsServer && archived;
-            _isVisible = CommunicationInfo.Instance.IsServer || !archived;
+            _isVisible = CanBeVisible();
+            _canRename = CommunicationInfo.Instance.IsServer;
+        }
+
+        public bool CanBeVisible()
+        {
+            return CommunicationInfo.Instance.IsServer || !archived;
         }
     }
 }

@@ -32,7 +32,7 @@
                     <Entry Placeholder="Přezdívka" Text="{Binding NickName}"/>
                     <Label Text="Osobní Heslo:"/>
                     <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding PersonalPassword}"/>
-                    <Button Text="Přihlásit se jako server" HorizontalOptions="Center" Command="{Binding ServerLoginCommand}"/>
+                    <Button Text="Přihlásit se jako server" Padding="20,10,20,10" HorizontalOptions="End" Command="{Binding ServerLoginCommand}"/>
                     <Label Text="{Binding ErrorLabel, Mode=TwoWay}"/>
                 </StackLayout>
             </ScrollView>
