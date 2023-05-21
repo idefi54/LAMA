@@ -13,11 +13,17 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChatChannels : ContentPage
     {
+        private ChatChannelsViewModel viewModel;
         public ChatChannels()
         {
             InitializeComponent();
+            viewModel = new ChatChannelsViewModel(Navigation);
+            BindingContext = viewModel;
+        }
 
-            BindingContext = new ChatChannelsViewModel(Navigation);
+        public void DialogBackground_Focused(object sender, FocusEventArgs e)
+        {
+            viewModel.DisplayRenameDialog = false;
         }
     }
 }

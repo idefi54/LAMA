@@ -17,7 +17,7 @@
                     <Entry Placeholder="Přezdívka" Text="{Binding ClientName}"/>
                     <Label Text="Heslo:"/>
                     <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ClientPassword}"/>
-                    <Button Text="Přihlásit se jako CP" HorizontalOptions="Center" Command="{Binding LoginCommand}" IsEnabled="{Binding LoginEnabled}"/>
+                    <Button Text="Přihlásit se jako CP" Padding="20,10,20,10" HorizontalOptions="End" Command="{Binding LoginCommand}" IsEnabled="{Binding LoginEnabled}"/>
                     <Label Text="{Binding ErrorLabel, Mode=TwoWay}"/>
                     <ActivityIndicator IsRunning="{Binding CreatingCP}"/>
                 </StackLayout>

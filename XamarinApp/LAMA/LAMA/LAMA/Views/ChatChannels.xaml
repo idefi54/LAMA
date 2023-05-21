@@ -7,8 +7,17 @@
 			 x:Name="ChatChannelsPage">
     <ContentPage.Content>
         <AbsoluteLayout>
-            <StackLayout  Spacing="0">
+            <StackLayout Spacing="0"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All">
                 <common:OurNavigationMenu></common:OurNavigationMenu>
+                <SearchBar Margin="15, 0, 15, 5"
+                    Placeholder="Vyhledávat"
+                    PlaceholderColor="{x:Static colors:ColorPalette.TextColor}"
+                    HorizontalTextAlignment="Start"
+                    FontSize="Medium"
+                    TextColor="{x:Static colors:ColorPalette.TextColor}"
+                    FontAttributes="Italic" />
                 <ScrollView>
                     <StackLayout x:Name="Channels" BindableLayout.ItemsSource="{Binding Channels}" Margin="5,5,5,0">
                         <BindableLayout.ItemTemplate>
@@ -26,10 +35,11 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding ChannelName}" TextColor="{x:Static colors:ColorPalette.TextColor}" FontSize="Medium" VerticalTextAlignment="Center"/>
 
-                                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Text="Zobrazit" CornerRadius="5" 
+                                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1"
+                                            Text="Zobrazit" Padding="20,10,20,10" Margin="5,5,5,5"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ChatChannelsViewModel}}, Path=ChatChannelTapped}"
                                             CommandParameter="{Binding .}"/>
-                                
+
                                     <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="1"
 											    Text="Archivovat" Padding="20,10,20,10" Margin="5,5,5,5"
 											    BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
@@ -57,17 +67,29 @@
                 </ScrollView>
                 <StackLayout IsVisible="{Binding CanCreateChannels}">
                     <Entry x:Name="Entry" Margin="20, 20, 20, 0" Text="{Binding ChannelName, Mode=TwoWay}"></Entry>
-                    <Button Text="Vytvořit Nový Kanál" Margin="20, 10, 20, 10" CornerRadius="5" Command="{Binding ChannelCreatedCommand}"></Button>
+                    <Button Text="Vytvořit Nový Kanál" Margin="20, 10, 20, 10" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.PrimaryColor}" HorizontalOptions="End" Command="{Binding ChannelCreatedCommand}"></Button>
                 </StackLayout>
             </StackLayout>
             <StackLayout
-				x:Name="aiLayout"
+                Focused="DialogBackground_Focused"
+				x:Name="DialogBackground"
 				IsVisible="{Binding DisplayRenameDialog}"
 				AbsoluteLayout.LayoutBounds="0,0,1,1"
 				AbsoluteLayout.LayoutFlags="All"
+				BackgroundColor="Black"
+                Opacity="0.5">
+            </StackLayout>
+            <StackLayout
+				x:Name="Dialog"
+				IsVisible="{Binding DisplayRenameDialog}"
+                AbsoluteLayout.LayoutBounds="0.5, 0.5"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
 				BackgroundColor="White">
-                <Entry x:Name="EntryDialog" Margin="20, 20, 20, 0" Text="{Binding ChannelNewName, Mode=TwoWay}"></Entry>
-                <Button Text="Přejmenovat Kanál" Margin="20, 10, 20, 10" WidthRequest="250" AnchorX="1" CornerRadius="5" Command="{Binding ChannelSetNewNameCommand}"></Button>
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0" Text="Předchozí Jméno:" TextColor="{x:Static colors:ColorPalette.TextColor}" FontAttributes="Bold" FontSize="Small" VerticalTextAlignment="Center"/>
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0" Text="{Binding PreviousChannelName}" TextColor="{x:Static colors:ColorPalette.TextColor}" FontSize="Small" VerticalTextAlignment="Center"/>
+                <Entry x:Name="EntryDialog" Margin="20, 10, 20, 5" Text="{Binding ChannelNewName, Mode=TwoWay}"></Entry>
+                <Button Text="Přejmenovat Kanál" Margin="20, 0, 20, 0" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.PrimaryColor}" HorizontalOptions="End" AnchorX="1" Command="{Binding ChannelSetNewNameCommand}"></Button>
+                <Button Text="Zrušit" Margin="20, 0, 20, 10" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" HorizontalOptions="End" AnchorX="1" Command="{Binding HideRenameDialogCommand}"></Button>
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>

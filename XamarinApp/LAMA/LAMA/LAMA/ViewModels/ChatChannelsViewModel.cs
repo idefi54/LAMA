@@ -22,6 +22,7 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command RestoreChannelCommand { get; }
         public Xamarin.Forms.Command RenameChannelCommand { get; }
         public Xamarin.Forms.Command ChannelSetNewNameCommand { get; }
+        public Xamarin.Forms.Command HideRenameDialogCommand { get; }
 
         private bool _displayRenameDialog = false;
         public bool DisplayRenameDialog 
@@ -35,6 +36,13 @@ namespace LAMA.ViewModels
         {
             get { return _channelNewName; }
             set { SetProperty(ref _channelNewName, value); }
+        }
+
+        private string _previousChannelName;
+        public string PreviousChannelName
+        {
+            get { return _previousChannelName; }
+            set { SetProperty(ref _previousChannelName, value); }
         }
 
         public Command<object> ChatChannelTapped { get; private set; }
@@ -80,6 +88,7 @@ namespace LAMA.ViewModels
             RestoreChannelCommand = new Command<object>(RestoreChannel);
             RenameChannelCommand = new Command<object>(RenameChannel);
             ChannelSetNewNameCommand = new Command<object>(SetNewChannelName);
+            HideRenameDialogCommand = new Xamarin.Forms.Command<object>(HideRenameDialog);
 
             Navigation = navigation;
 
@@ -93,6 +102,11 @@ namespace LAMA.ViewModels
             if (LocalStorage.cpID == 0) CanCreateChannels = true;
             else CanCreateChannels = false;
             SQLEvents.dataChanged += PropagateChanged;
+        }
+
+        private void HideRenameDialog(object obj)
+        {
+            DisplayRenameDialog = false;
         }
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
@@ -165,14 +179,16 @@ namespace LAMA.ViewModels
             }
 
             string result = "testName";
+            ChatChannelsItemViewModel chatChannel = (ChatChannelsItemViewModel)obj;
+            selectedChannelID = Channels.IndexOf(chatChannel);
+            PreviousChannelName = chatChannel.ChannelName;
             if (Device.RuntimePlatform == Device.WPF)
             {
-                selectedChannelID = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
                 DisplayRenameDialog = true;
             }
             else
             {
-                result = await App.Current.MainPage.DisplayPromptAsync("Nové Jméno", "Jaké má být nové jméno kanálu?");
+                result = await App.Current.MainPage.DisplayPromptAsync("Nové Jméno", $"Jaké má být nové jméno kanálu (předchozí jméno: {PreviousChannelName})?");
                 if (InputChecking.CheckInput(result, "Nové Jméno", 50))
                 {
                     string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
@@ -190,7 +206,7 @@ namespace LAMA.ViewModels
             }
         }
 
-        private async void SetNewChannelName(object obj)
+        private void SetNewChannelName(object obj)
         {
             if (InputChecking.CheckInput(ChannelNewName, "Nové Jméno", 50))
             {
