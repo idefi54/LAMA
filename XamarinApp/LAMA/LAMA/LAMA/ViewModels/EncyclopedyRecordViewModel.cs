@@ -85,11 +85,11 @@ namespace LAMA.ViewModels
         }
         async void onCreateSave()
         {
-            bool textValid = InputChecking.CheckInput(record.FullText, "Plný Text", 5000);
+            bool textValid = InputChecking.CheckInput(_Text, "Plný Text", 5000);
             if (!textValid) return;
-            bool nameValid = InputChecking.CheckInput(record.Name, "Název Stránky", 100);
+            bool nameValid = InputChecking.CheckInput(_Name, "Název Stránky", 100);
             if (!nameValid) return;
-            bool TLDRValid = InputChecking.CheckInput(record.TLDR, "Shrnutí", 500, true);
+            bool TLDRValid = InputChecking.CheckInput(_TLDR, "Shrnutí", 500, true);
             if (!TLDRValid) return;
 
             var list = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList;
