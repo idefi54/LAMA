@@ -104,9 +104,9 @@
 	<FlyoutItem Title="Seznam Aktivit" Icon="icon_feed.png">
 		<ShellContent Route="ActivityListPage" ContentTemplate="{DataTemplate local:ActivityListPage}" />
 	</FlyoutItem>
-    <FlyoutItem Title="TestPage" Icon="icon_about.png">
+    <!--<FlyoutItem Title="TestPage" Icon="icon_about.png">
         <ShellContent Route="TestPage" ContentTemplate="{DataTemplate local:TestPage}" />
-    </FlyoutItem>
+    </FlyoutItem>-->
     <FlyoutItem Title="Chat">
         <ShellContent Route="ChatChannels" ContentTemplate="{DataTemplate local:ChatChannels}" />
     </FlyoutItem>

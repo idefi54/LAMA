@@ -47,6 +47,8 @@ namespace LAMA.ViewModels
             if (!cpNameValid) return;
             bool cpNickValid = InputChecking.CheckInput(_nick, "Přezdívka CP", 50);
             if (!cpNickValid) return;
+            bool passwordValid = _password != null && _password.Trim().Length >= 5 && InputChecking.CheckInput(_password, "Heslo", 100);
+            if (!passwordValid) return;
             bool cpRolesValid = InputChecking.CheckInput(_roles, "Role", 200, true);
             if (!cpRolesValid) return;
             bool cpPhoneValid = InputChecking.CheckInput(_phone, "Telefon", 20, true);

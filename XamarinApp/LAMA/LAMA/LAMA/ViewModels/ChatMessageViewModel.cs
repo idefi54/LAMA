@@ -14,7 +14,7 @@ namespace LAMA.ViewModels
 
         public ChatMessage ChatMessage => chatMessage;
 
-        public string Name => chatMessage == null ? "" : chatMessage.from;
+        public string Name => chatMessage == null ? "" : DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(chatMessage.from).name;
 
         public string Text => chatMessage == null ? "" : chatMessage.message;
 
@@ -22,10 +22,10 @@ namespace LAMA.ViewModels
 
         public bool ReceivedByServer => chatMessage == null ? false : chatMessage.receivedByServer;
 
-        public Xamarin.Forms.Color HeaderColor => chatMessage.from == LocalStorage.clientName ? Themes.ColorPalette.MyMessageColor : Themes.ColorPalette.OtherMessageColor;
+        public Xamarin.Forms.Color HeaderColor => chatMessage.from == LocalStorage.cpID ? Themes.ColorPalette.MyMessageColor : Themes.ColorPalette.OtherMessageColor;
 
-        public Thickness Margin => chatMessage.from == LocalStorage.clientName ? new Thickness(100, 10, 20, 10) : new Thickness(20, 10, 100, 10);
-       
+        public Thickness Margin => chatMessage.from == LocalStorage.cpID ? new Thickness(100, 10, 20, 10) : new Thickness(20, 10, 100, 10);
+        
         public ChatMessageViewModel(ChatMessage chatMessage)
         {
             this.chatMessage = chatMessage;
