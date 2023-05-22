@@ -30,8 +30,9 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
 
                                     <Label Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontSize="Small" />
@@ -79,8 +80,7 @@
                     <StackLayout x:Name="ArchivedCPList" BindableLayout.ItemsSource="{Binding ArchivedCPList}"  Margin="5,5,5,0" IsVisible="{Binding ShowArchived}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
-
-                                <Grid Padding="5" Margin="5" >
+                                <Grid Padding="5" Margin="5">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
@@ -88,8 +88,9 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontSize="Small" />
                                     <Label Grid.Row="0" Grid.Column="2" Text="{Binding Nick}" FontSize="Small" />
