@@ -113,9 +113,6 @@ namespace LAMA.ViewModels
             OnCancelFilter();
             var item = (InventoryItem)deleted;
 
-            if (!CheckExistence(item.ID).Result)
-                return;
-
             ItemList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
             OnFilter();
