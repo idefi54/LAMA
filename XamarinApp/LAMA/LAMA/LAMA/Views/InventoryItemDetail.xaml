@@ -45,44 +45,51 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
-                <Label Text="Detailní zapůjčení"
+				
+                <Label Text="Detailní zapůjčení/vrácení"
+					   IsVisible="{Binding ManageInventory}"
 					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
+					   VerticalTextAlignment="End"/>
+				
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Jméno"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
-                    <Picker Title="Jméno " ItemsSource="{Binding CPNames}" SelectedIndex="{Binding BorrowerSelected}" HorizontalOptions="Start" IsVisible="{Binding ManageInventory}">
-                    </Picker>
-                </StackLayout>
+                           IsVisible="{Binding ManageInventory}"
+					       HorizontalTextAlignment="Start"
+					       VerticalTextAlignment="End"/>
+					<Button Text="{Binding CPName}"
+							IsVisible="{Binding ManageInventory}"
+							HorizontalOptions="Start"
+							WidthRequest="100"
+							Command="{Binding SelectCP}"/>
+				</StackLayout>
+				
                 <StackLayout Orientation="Horizontal">
                     <Label Text="Kolik"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
-                    <Entry Text="{Binding HowManyBorrow}" Placeholder="0" FontSize="Medium" IsVisible="{Binding ManageInventory}"/>
+						   IsVisible="{Binding ManageInventory}"
+					       HorizontalTextAlignment="Start"
+					       VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding HowManyChange}"
+						   IsVisible="{Binding ManageInventory}"
+						   FontSize="Medium"
+						   WidthRequest="100"/>
                 </StackLayout>
-                <Button Text="Půjčit" Command="{Binding DetailedBorrowCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding ManageInventory}"></Button>
-                
-                <Label Text="Detailní vrácení"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Jméno"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
-                    <Picker Title="Jméno" ItemsSource="{Binding CPNames}" SelectedIndex="{Binding ReturnerSelected}"  HorizontalOptions="Start" IsVisible="{Binding ManageInventory}">
-                        
-                    </Picker>
-                </StackLayout>
-                <StackLayout Orientation="Horizontal">
-                    <Label Text="Kolik"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" IsVisible="{Binding ManageInventory}"/>
-                    <Entry Text="{Binding HowManyReturn}" Placeholder="0" FontSize="Medium" IsVisible="{Binding ManageInventory}"/>
-                </StackLayout>
-                <Button Text="Vrátit" Command="{Binding DetailedReturnCommand}" IsVisible="{Binding ManageInventory}" HorizontalOptions="FillAndExpand" ></Button>
-
-            </StackLayout>
+				
+				<StackLayout Orientation="Horizontal">
+					<Button IsVisible="{Binding ManageInventory}"
+							Text="Vzít"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.BorrowColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedBorrowCommand}"/>
+					<Button IsVisible="{Binding ManageInventory}"
+							Text="Vrátit"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedReturnCommand}"/>
+				</StackLayout>
+				
+			</StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>
