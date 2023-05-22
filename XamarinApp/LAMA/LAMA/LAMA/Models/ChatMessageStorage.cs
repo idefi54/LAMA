@@ -10,7 +10,7 @@ namespace LAMA.Models
 
         [PrimaryKey]
         public long ID { get; set; }
-        public string from { get; set; }
+        public long from { get; set; }
         public int channel { get; set; }
         public string message { get; set; }
         
@@ -27,7 +27,7 @@ namespace LAMA.Models
         {
 
             ID = Helpers.readLong(input[0]);
-            from = input[1];
+            from = Helpers.readLong(input[1]);
             channel = Helpers.readInt(input[2]);
             message = input[3];
             sentAt = Helpers.readLong(input[4]);
@@ -35,7 +35,7 @@ namespace LAMA.Models
         }
         public string[] getStrings()
         {
-            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
+            return new string[] { ID.ToString(), from.ToString(), channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
         }
         public long getID()
         {
