@@ -89,9 +89,25 @@
 				BackgroundColor="White">
                 <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0" Text="Předchozí Jméno:" TextColor="{x:Static colors:ColorPalette.TextColor}" FontAttributes="Bold" FontSize="Small" VerticalTextAlignment="Center"/>
                 <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0" Text="{Binding PreviousChannelName}" TextColor="{x:Static colors:ColorPalette.TextColor}" FontSize="Small" VerticalTextAlignment="Center"/>
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0" Text="Nové Jméno:" TextColor="{x:Static colors:ColorPalette.TextColor}" FontAttributes="Bold" FontSize="Small" VerticalTextAlignment="Center"/>
                 <Entry x:Name="EntryDialog" Margin="20, 10, 20, 5" Text="{Binding ChannelNewName, Mode=TwoWay}"></Entry>
                 <Button Text="Přejmenovat Kanál" Margin="20, 0, 20, 0" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.PrimaryColor}" HorizontalOptions="End" AnchorX="1" Command="{Binding ChannelSetNewNameCommand}"></Button>
                 <Button Text="Zrušit" Margin="20, 0, 20, 10" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.DeleteButtonColor}" HorizontalOptions="End" AnchorX="1" Command="{Binding HideRenameDialogCommand}"></Button>
+            </StackLayout>
+            <StackLayout
+				x:Name="WaitingBackground"
+				IsVisible="{Binding IsBusy}"
+				AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All"
+				BackgroundColor="Black"
+                Opacity="0.5">
+            </StackLayout>
+            <StackLayout
+                x:Name="Waiting"
+                IsVisible="{Binding IsBusy}"
+                AbsoluteLayout.LayoutBounds="0.5, 0.5"
+                AbsoluteLayout.LayoutFlags="PositionProportional">
+                <ActivityIndicator IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>
