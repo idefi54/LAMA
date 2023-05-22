@@ -247,6 +247,15 @@ namespace LAMA.Models
                     takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
             }
         }
+        public void SetCapacity(int newCap)
+        {
+            if (newCap < taken)
+                throw new Exception("setting wrong capacity");
+            else if (newCap == taken)
+                free = 0;
+            else
+                free = newCap - taken;
+        }
 
 
         public event EventHandler<int> IGotUpdated;

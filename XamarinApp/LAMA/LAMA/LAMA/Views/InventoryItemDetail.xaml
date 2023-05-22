@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:colors="clr-namespace:LAMA.Themes"
              x:Class="LAMA.Views.InventoryItemDetail"
-			 Title="Detaily Předmětu"
              xmlns:forms="clr-namespace:LAMA.Forms">
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Smazat" Command="{Binding DeleteCommand}" IsVisible="{Binding ManageInventory}" />
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding ManageInventory}" />
     </ContentPage.ToolbarItems>
 
 

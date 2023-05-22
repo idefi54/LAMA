@@ -33,6 +33,7 @@ namespace LAMA.ViewModels
         public Command DetailedReturnCommand { get; private set; }
         public Command SelectCP { get; private set; }
         public Command DeleteCommand { get; private set; }
+        public Command EditCommand { get; private set; }
         public string CPName { get { return _CPName; } set { SetProperty(ref _CPName, value); } }
         private CP selectedCP;
 
@@ -58,12 +59,44 @@ namespace LAMA.ViewModels
             DetailedReturnCommand = new Command(OnReturn);
             SelectCP = new Command(OnSelectCP);
             DeleteCommand = new Command(onDelete);
+            EditCommand = new Command(OnEdit);
+
+            _item.IGotUpdated += onItemUpdated;
 
             SetProperty(ref _howManyChange, 0);
             selectedCP = DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0];
             CPName = selectedCP.name;
         }
 
+        private void onItemUpdated(object sender, int i)
+        {
+            switch(i)
+            {
+                default:
+                    return;
+                case 1:
+                    Name = _item.name;
+                    break;
+                case 2:
+                    Description = _item.description;
+                    break;
+                case 3:
+                    NumBorrowed = _item.taken.ToString();
+                    break;
+                case 4: 
+                    NumFree = _item.free.ToString();
+                    break;
+                case 5:
+                    writeBorrowedBy();
+                    break;
+            }
+
+        }
+
+        private async void OnEdit()
+        {
+            await _navigation.PushAsync(new InventoryItemDetailEditView(_item));
+        }
         private async void OnSelectCP(object obj)
         {
             CPSelectionPage page = new CPSelectionPage(_displayName);
@@ -130,12 +163,16 @@ namespace LAMA.ViewModels
 
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             StringBuilder output = new StringBuilder();
+            bool first = true;
             foreach(var a in this._item.takenBy)
             {
                 output.Append(CPList.getByID(a.first).nick);
                 output.Append(": ");
                 output.Append(a.second.ToString());
-                output.Append(", ");
+                if(!first)
+                    output.Append(", ");
+                else
+                    first = false;
             }
 
             BorrowedBy = output.ToString();

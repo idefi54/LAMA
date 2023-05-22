@@ -2,8 +2,18 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CreateInventoryItemView"
-			 Title="Nový předmět">
+			 Title="Nový předmět"
+             xmlns:forms="clr-namespace:LAMA.Forms">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
+        <forms:BindableToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
+    </ContentPage.ToolbarItems>
+
+
     <ContentPage.Content>
+        
+
         <ScrollView>
             <StackLayout Padding="15" >
                 <Label Text="Název předmětu"
@@ -20,11 +30,6 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
                 <Entry Text="{Binding Free}" Placeholder="0" FontSize="Medium" />
-
-                <StackLayout Orientation="Horizontal">
-                    <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-                    <Button Text="Vytvořit" Command="{Binding CreateCommand}" HorizontalOptions="FillAndExpand"></Button>
-                </StackLayout>
 
             </StackLayout>
         </ScrollView>
