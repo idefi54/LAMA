@@ -5,13 +5,13 @@
              x:Class="LAMA.Views.InventoryView"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              xmlns:common="clr-namespace:LAMA.Views"
-             xmlns:colors="clr-namespace:LAMA.Themes"
-			 Title="Inventář">
+             xmlns:colors="clr-namespace:LAMA.Themes">
+	<!--Title="Inventář"-->
 
     <ContentPage.ToolbarItems>
         
         <forms:BindableToolbarItem Text="Řazení a filtr" Command="{Binding ShowDropdownCommand}"/>
-        <forms:BindableToolbarItem Text="Přidat předmět" Command="{Binding AddItemCommand}" IsVisible ="{Binding CanChangeItems}"/>
+        <forms:BindableToolbarItem Text="Nový předmět" Command="{Binding AddItemCommand}" IsVisible ="{Binding CanChangeItems}"/>
     </ContentPage.ToolbarItems>
 
 

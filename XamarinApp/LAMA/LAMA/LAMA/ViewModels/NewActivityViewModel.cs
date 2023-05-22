@@ -249,7 +249,7 @@ namespace LAMA.ViewModels
 					InventoryItem invItem = DatabaseHolder<InventoryItem,InventoryItemStorage>.Instance.rememberedList.getByID(item.first);
 					Items.Add(new ItemItemViewModel(invItem, item.second));
 				}
-				foreach(int id in larpActivity.prerequisiteIDs)
+				foreach(long id in larpActivity.prerequisiteIDs)
 				{
 					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
 				}

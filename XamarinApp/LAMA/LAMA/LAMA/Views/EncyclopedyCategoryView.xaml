@@ -8,8 +8,8 @@
              xmlns:common="clr-namespace:LAMA.Views">
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Přidat Kategorii" Command="{Binding AddCategoryCommand}" IsVisible="{Binding CanCreate}"/>
-        <forms:BindableToolbarItem Text="Přidat Stránku" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanCreate}"/>
+        <forms:BindableToolbarItem Text="Nová Kategorie" Command="{Binding AddCategoryCommand}" IsVisible="{Binding CanCreate}"/>
+        <forms:BindableToolbarItem Text="Nová Stránka" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanCreate}"/>
         <forms:BindableToolbarItem Text="Upravit" Command="{Binding Edit}" IsVisible="{Binding CanEdit}"/>
     </ContentPage.ToolbarItems>
 

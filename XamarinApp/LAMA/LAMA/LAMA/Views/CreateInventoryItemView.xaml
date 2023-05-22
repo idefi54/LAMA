@@ -2,8 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CreateInventoryItemView"
-			 Title="Nový předmět"
              xmlns:forms="clr-namespace:LAMA.Forms">
+			 <!--Title="Nový předmět"-->
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
