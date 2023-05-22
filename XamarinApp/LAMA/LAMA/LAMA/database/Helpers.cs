@@ -138,7 +138,14 @@ namespace LAMA
         {
             if (input == null)
                 return 0;
-            
+            skipWhiteSpace(input, ref offset);
+            bool negative = false;
+            if(input[offset] == '-')
+            {
+                negative = true;
+                ++offset;
+            }
+
             long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
             skipWhiteSpace(input, ref offset);
@@ -149,8 +156,12 @@ namespace LAMA
                 long secondPart = readLong(input, ref offset);
                 offset1 = offset - offset1;
                 if (firstPart < 0)
-                    secondPart *= -1;
-                return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+                    firstPart *= -1;
+
+                if(negative)
+                    return -1*( (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1));
+                else 
+                    return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
                 
             }
             else
