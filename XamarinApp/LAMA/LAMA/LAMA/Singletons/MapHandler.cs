@@ -385,7 +385,7 @@ namespace LAMA.Singletons
             _polylineAddition = false;
             _polylinePin.IsVisible = false;
             // TODO - save things
-            PolylineFlush();
+            PolylineFlush(_activeMapView);
             //foreach (long id in _roadPolyLines.Keys)
             //    SavePolyline(id);
 
@@ -848,10 +848,15 @@ namespace LAMA.Singletons
         /// <summary>
         /// Fulshes the polyline buffer into the internal data.
         /// </summary>
-        public void PolylineFlush()
+        public void PolylineFlush(MapView view = null)
         {
             foreach (var polyline in _polylineBuffer)
+            {
+                view?.Drawables.Remove(polyline);
                 SavePolyline(polyline);
+            }
+
+            _polylineBuffer.Clear();
         }
 
         public void PolylineDeletion() { _polylineDeletion = true; }

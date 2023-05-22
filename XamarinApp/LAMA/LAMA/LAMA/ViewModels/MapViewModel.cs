@@ -36,7 +36,7 @@ namespace LAMA.ViewModels
             set
             {
                 SetProperty(ref _editing, value, nameof(Editing));
-                if (!value) MapHandler.Instance.PolylineFlush();
+                if (!value) MapHandler.Instance.PolylineFlush(_getMapView());
             }
         }
 
