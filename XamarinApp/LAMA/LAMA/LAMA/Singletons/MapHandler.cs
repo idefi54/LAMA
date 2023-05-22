@@ -1077,11 +1077,11 @@ namespace LAMA.Singletons
                 toRemove.Clear();
             }
 
-            Func<(int, int)?> getRemoveIndex = () =>
+            Func<(long, int)?> getRemoveIndex = () =>
             {
                 foreach (var kvp in _roadPolyLines)
                 {
-                    int id = (int)kvp.Key;
+                    long id = kvp.Key;
                     Polyline polyline = kvp.Value;
 
                     for (int i = 0; i < polyline.Positions.Count; i++)
@@ -1097,10 +1097,10 @@ namespace LAMA.Singletons
                 return null;
             };
 
-            (int, int)? roadToRemove = getRemoveIndex();
+            (long, int)? roadToRemove = getRemoveIndex();
             if (roadToRemove == null) return;
 
-            (int rID, int rIndex) = roadToRemove.Value;
+            (long rID, int rIndex) = roadToRemove.Value;
             var rememberedList = DatabaseHolder<Road, RoadStorage>.Instance.rememberedList;
             var road = rememberedList.getByID(rID);
 
