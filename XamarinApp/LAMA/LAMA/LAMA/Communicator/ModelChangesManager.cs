@@ -73,6 +73,23 @@ namespace LAMA.Communicator
             {
                 RemoveRoleResult(Int64.Parse(messageParts[2]), Int32.Parse(messageParts[3]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
             }
+            if (messageParts[1] == "ChannelCreated" && server)
+            {
+                ChannelCreated(messageParts[2], Int32.Parse(messageParts[3]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelCreatedResult" && !server)
+            {
+                if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ChannelCreatedResult(Int32.Parse(messageParts[2]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelModified" && server)
+            {
+                ChannelModified(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelModifiedResult" && !server)
+            {
+                ChannelModifiedResult(Int32.Parse(messageParts[2]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
             if (messageParts[1] == "ItemCreated")
             {
                 Debug.WriteLine("ItemCreated");
@@ -140,6 +157,44 @@ namespace LAMA.Communicator
             {
                 Debug.WriteLine("Invoke Role Received");
                 DisplayActivityViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
+            }
+        }
+
+        public void ChannelModified(string channelName, int channelID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool modified = ChatChannelsViewModel.TryModifyChannel(channelID, channelName);
+                communicator.SendCommand(new Command($"ChannelModifiedResult{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(modified)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    channelName + SpecialCharacters.messageSeparator + "ChannelModified",
+                    clientID));
+            }
+        }
+
+        public void ChannelCreated(string channelName, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool channelCreated = ChatChannelsViewModel.TryAddChannel(channelName);
+                communicator.SendCommand(new Command($"ChannelCreatedResult{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(channelCreated)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    channelName + SpecialCharacters.messageSeparator + "ChannelCreated",
+                    clientID));
+            }
+        }
+
+        public void ChannelModifiedResult(int response, string command, Socket current)
+        {
+            ChatChannelsViewModel.InvokeChannelModifiedResult(response == 1);
+        }
+
+        public void ChannelCreatedResult(int response, string command, Socket current)
+        {
+            if (!testing && !server)
+            {
+                Debug.WriteLine("Invoke Role Received");
+                ChatChannelsViewModel.InvokeChannelCreatedResult(response == 1);
             }
         }
 
@@ -1022,6 +1077,20 @@ namespace LAMA.Communicator
             string command = "RemoveRole" + SpecialCharacters.messagePartSeparator.ToString() + activityID + SpecialCharacters.messagePartSeparator + LocalStorage.cpID + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
             if (!testing && !server)
                 communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + SpecialCharacters.messageSeparator + "RoleRemoved"));
+        }
+
+        internal void OnChannelModified(int index, string newName)
+        {
+            string command = "ChannelModified" + SpecialCharacters.messagePartSeparator + newName + SpecialCharacters.messagePartSeparator + index + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), newName + SpecialCharacters.messageSeparator + index + SpecialCharacters.messageSeparator + "ChannelModified"));
+        }
+
+        internal void OnChannelCreated(string channelName)
+        {
+            string command = "ChannelCreated" + SpecialCharacters.messagePartSeparator.ToString() + channelName + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), channelName + SpecialCharacters.messageSeparator + "ChannelCreated"));
         }
     }
 }

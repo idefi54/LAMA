@@ -49,15 +49,15 @@ namespace LAMA.ViewModels
             archived = channel[0] == Communicator.SpecialCharacters.archivedChannelIndicator;
             if (archived) _channelName = channel.Substring(1);
             else _channelName = channel;
-            _canArchive = CommunicationInfo.Instance.IsServer && !archived;
-            _canRestore = CommunicationInfo.Instance.IsServer && archived;
+            _canArchive = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && !archived;
+            _canRestore = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && archived;
             _isVisible = CanBeVisible();
-            _canRename = CommunicationInfo.Instance.IsServer;
+            _canRename = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
         }
 
         public bool CanBeVisible()
         {
-            return CommunicationInfo.Instance.IsServer || !archived;
+            return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) || !archived;
         }
     }
 }

@@ -204,7 +204,8 @@ namespace LAMA.Communicator
                         messageParts[j] = messageParts[j].Remove(messageParts[j].Length - 1);
                     }
                 }
-                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations" || messageParts[1] == "ReceiveRole" || messageParts[1] == "RemoveRoleResult")
+                if (messageParts[1] == "Rollback" || messageParts[1] == "DataUpdated" || messageParts[1] == "ItemCreated" || messageParts[1] == "ItemDeleted" || messageParts[1] == "CPLocations" 
+                    || messageParts[1] == "ReceiveRole" || messageParts[1] == "RemoveRoleResult" || messageParts[1] == "ChannelCreatedResult" || messageParts[1] == "ChannelModifiedResult")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -655,6 +656,8 @@ namespace LAMA.Communicator
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
                 DisplayActivityViewModel.roleRequested += modelChangesManager.OnRoleRequested;
                 DisplayActivityViewModel.roleRemoved += modelChangesManager.OnRoleRemoved;
+                ChatChannelsViewModel.channelCreated += modelChangesManager.OnChannelCreated;
+                ChatChannelsViewModel.channelModified += modelChangesManager.OnChannelModified;
                 logger.LogWrite("Initialization finished");
             }
         }

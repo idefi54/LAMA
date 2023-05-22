@@ -9,9 +9,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
+using static LAMA.ViewModels.DisplayActivityViewModel;
 
 namespace LAMA.ViewModels
 {
@@ -56,18 +59,105 @@ namespace LAMA.ViewModels
         public bool CanCreateChannels { get; set; }
         private int selectedChannelID;
 
+        public delegate void ChannelModifiedDelegate(int channelID, string name);
+        public static event ChannelModifiedDelegate channelModified;
+        public delegate void ChannelModifiedResultDelegate(bool wasModified);
+        public static event ChannelModifiedResultDelegate channelModifiedResult;
+
+        public delegate void ChannelCreatedDelegate(string name);
+        public static event ChannelCreatedDelegate channelCreated;
+        public delegate void ChannelCreatedResultDelegate(bool wasCreated);
+        public static event ChannelCreatedResultDelegate channelCreatedResult;
+
+        public static void InvokeChannelModified(int channelID, string name)
+        {
+            channelModified?.Invoke(channelID, name);
+        }
+
+        public static void InvokeChannelModifiedResult(bool wasModified)
+        {
+            channelModifiedResult?.Invoke(wasModified);
+        }
+
+        public static void InvokeChannelCreated(string name)
+        {
+            channelCreated?.Invoke(name);
+        }
+
+        public static void InvokeChannelCreatedResult(bool wasCreated)
+        {
+            channelCreatedResult?.Invoke(wasCreated);
+        }
+
+        public static bool TryAddChannel(string channelName)
+        {
+            if (CommunicationInfo.Instance.IsServer)
+            {
+                LarpEvent.ChatChannels.Add(channelName);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool TryModifyChannel(int id, string name)
+        {
+            if (CommunicationInfo.Instance.IsServer && LarpEvent.ChatChannels.Count > id && id >= 0)
+            {
+                LarpEvent.ChatChannels[id] = name;
+                return true;
+            }
+            return false;
+        }
+
         public TrulyObservableCollection<ChatChannelsItemViewModel> Channels { get; }
 
         INavigation Navigation;
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        private void OnChannelCreated()
+        private async void OnChannelCreated()
         {
             bool inputValid = InputChecking.CheckInput(ChannelName, "Jméno kanálu", 50);
             if (inputValid)
             {
-                LarpEvent.ChatChannels.Add(ChannelName);
+                if (CommunicationInfo.Instance.IsServer)
+                {
+                    LarpEvent.ChatChannels.Add(ChannelName);
+                }
+                else
+                {
+                    string name = ChannelName;
+                    InvokeChannelCreated(name);
+                    AutoResetEvent waitHandle = new AutoResetEvent(false);
+                    IsBusy = true;
+                    bool success = false;
+                    ChannelCreatedResultDelegate ourDelegate = delegate (bool modifiedSuccessfully)
+                    {
+                        success = modifiedSuccessfully;
+                        waitHandle.Set();  // signal that the finished event was raised
+                    };
+
+                    channelCreatedResult += ourDelegate;
+                    bool receivedSignal = await Task.Run(() => waitHandle.WaitOne(5000));
+                    channelCreatedResult -= ourDelegate;
+                    if (!receivedSignal)
+                    {
+                        IsBusy = false;
+                        await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Server na požadavek vytvo5en9 kanálu neodpověděl, zkontrolujte prosím své připojení.", "OK");
+                        return;
+                    }
+                    else if (!success)
+                    {
+                        IsBusy = false;
+                        await App.Current.MainPage.DisplayAlert("Tvorba Zamítnuta", "Server odmítl vytvoření kanálu", "OK");
+                        return;
+                    }
+                }
+                var Toast = DependencyService.Get<ToastInterface>();
+                IsBusy = false;
+                if (Toast != null)
+                    Toast.DoTheThing("Tvorba kanálu " + ChannelName + " proběhla úspěšně.");
+                else await App.Current.MainPage.DisplayAlert("Tvorba Kanálu", "Tvorba kanálu " + ChannelName + " proběhla úspěšně.", "OK");
                 ChannelName = "";
                 OnPropertyChanged("ChannelName");
             }
@@ -99,7 +189,7 @@ namespace LAMA.ViewModels
                 Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
             }
 
-            if (LocalStorage.cpID == 0) CanCreateChannels = true;
+            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanCreateChannels = true;
             else CanCreateChannels = false;
             SQLEvents.dataChanged += PropagateChanged;
         }
@@ -150,7 +240,49 @@ namespace LAMA.ViewModels
 
             string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
             int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
-            LarpEvent.ChatChannels[index] = SpecialCharacters.archivedChannelIndicator + channelName;
+            ChannelModified(SpecialCharacters.archivedChannelIndicator + channelName, index);
+        }
+
+        public async void ChannelModified(string channelName, int index)
+        {
+            string originalName = LarpEvent.ChatChannels[index];
+            if (CommunicationInfo.Instance.IsServer)
+            {
+                LarpEvent.ChatChannels[index] = channelName;
+            }
+            else
+            {
+                InvokeChannelModified(index, channelName);
+                AutoResetEvent waitHandle = new AutoResetEvent(false);
+                IsBusy = true;
+                bool success = false;
+                ChannelModifiedResultDelegate ourDelegate = delegate (bool modifiedSuccessfully)
+                {
+                    success = modifiedSuccessfully;
+                    waitHandle.Set();  // signal that the finished event was raised
+                };
+
+                channelModifiedResult += ourDelegate;
+                bool receivedSignal = await Task.Run(() => waitHandle.WaitOne(5000));
+                channelModifiedResult -= ourDelegate;
+                if (!receivedSignal)
+                {
+                    IsBusy = false;
+                    await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Server na požadavek změny kanálu neodpověděl, zkontrolujte prosím své připojení.", "OK");
+                    return;
+                }
+                else if (!success)
+                {
+                    IsBusy = false;
+                    await App.Current.MainPage.DisplayAlert("Změna Zamítnuta", "Server odmítl změnu kanálu", "OK");
+                    return;
+                }
+            }
+            var Toast = DependencyService.Get<ToastInterface>();
+            IsBusy = false;
+            if (Toast != null)
+                Toast.DoTheThing("Změna kanálu " + originalName + " proběhla úspěšně.");
+            else await App.Current.MainPage.DisplayAlert("Změna Kanálu", "Změna kanálu " + originalName + " proběhla úspěšně.", "OK");
             LarpEvent.ChatChannels.InvokeDataChanged();
         }
 
@@ -165,8 +297,7 @@ namespace LAMA.ViewModels
 
             string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
             int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
-            LarpEvent.ChatChannels[index] = channelName;
-            LarpEvent.ChatChannels.InvokeDataChanged();
+            ChannelModified(channelName, index);
         }
 
         private async void RenameChannel(object obj)
@@ -178,14 +309,14 @@ namespace LAMA.ViewModels
                 return;
             }
 
-            string result = "testName";
+            //string result = "testName";
             ChatChannelsItemViewModel chatChannel = (ChatChannelsItemViewModel)obj;
             selectedChannelID = Channels.IndexOf(chatChannel);
             PreviousChannelName = chatChannel.ChannelName;
-            if (Device.RuntimePlatform == Device.WPF)
-            {
+            //if (Device.RuntimePlatform == Device.WPF)
+            //{
                 DisplayRenameDialog = true;
-            }
+            /*}
             else
             {
                 result = await App.Current.MainPage.DisplayPromptAsync("Nové Jméno", $"Jaké má být nové jméno kanálu (předchozí jméno: {PreviousChannelName})?");
@@ -204,6 +335,7 @@ namespace LAMA.ViewModels
                     LarpEvent.ChatChannels.InvokeDataChanged();
                 }
             }
+            */
         }
 
         private void SetNewChannelName(object obj)
@@ -211,16 +343,11 @@ namespace LAMA.ViewModels
             if (InputChecking.CheckInput(ChannelNewName, "Nové Jméno", 50))
             {
                 string channelName = LarpEvent.ChatChannels[selectedChannelID];
-                if (channelName[0] == SpecialCharacters.archivedChannelIndicator)
-                {
-                    LarpEvent.ChatChannels[selectedChannelID] = SpecialCharacters.archivedChannelIndicator + ChannelNewName;
-                }
-                else
-                {
-                    LarpEvent.ChatChannels[selectedChannelID] = ChannelNewName;
-                }
-                LarpEvent.ChatChannels.InvokeDataChanged();
                 DisplayRenameDialog = false;
+                if (channelName[0] == SpecialCharacters.archivedChannelIndicator)
+                    ChannelModified(SpecialCharacters.archivedChannelIndicator + ChannelNewName, selectedChannelID);
+                else
+                    ChannelModified(ChannelNewName, selectedChannelID);
             }
         }
 
