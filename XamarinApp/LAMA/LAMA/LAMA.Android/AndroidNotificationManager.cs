@@ -10,6 +10,9 @@ using AndroidApp = Android.App.Application;
 [assembly: Dependency(typeof(LAMA.Droid.AndroidNotificationManager))]
 namespace LAMA.Droid
 {
+    /// <summary>
+    /// THIS SHOULD NOT BE USED.
+    /// </summary>
     public class AndroidNotificationManager : Services.INotificationManager
     {
         const string channelId = "default";
@@ -116,6 +119,12 @@ namespace LAMA.Droid
             double epochDiff = (new DateTime(1970, 1, 1) - DateTime.MinValue).TotalSeconds;
             long utcAlarmTime = utcTime.AddSeconds(-epochDiff).Ticks / 10000;
             return utcAlarmTime; // milliseconds
+        }
+
+        public void Cancel()
+        {
+            var notifications = manager.GetActiveNotifications();
+            manager.CancelAll();
         }
     }
 }
