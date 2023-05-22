@@ -25,11 +25,16 @@ namespace LAMA.Droid
 
             var pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent);
 
+            var actionIntent = new Intent(context, typeof(AlarmHandler));
+            actionIntent.SetAction("KILL");
+            var actionPendingIntent = PendingIntent.GetBroadcast(context, 1, actionIntent, PendingIntentFlags.UpdateCurrent);
+
             var notificationBuilder = new NotificationCompat.Builder(context, foregroundChannelId)
                 .SetContentTitle("Location tracking")
                 .SetContentText("Your location is being tracked.")
                 .SetSmallIcon(Resource.Drawable.xamarin_logo)
                 .SetOngoing(true)
+                .AddAction(Resource.Drawable.mtrl_ic_cancel, "KILL", actionPendingIntent)
                 .SetContentIntent(pendingIntent);
 
             if (global::Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.O)
