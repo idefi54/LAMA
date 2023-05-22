@@ -329,7 +329,7 @@ namespace LAMA.ViewModels
 
         async void onAddChildCategory()
         {
-            if (SelectedCategoryIndex < 0)
+            if (SelectedCategoryIndex < 0 || AddableCategoryIndexes.Count == 0)
                 return;
             this.category.ChildCategories.Add(AddableCategoryIndexes[SelectedCategoryIndex]);
             AddableCategoryIndexes.RemoveAt(SelectedRecordIndex);
@@ -337,7 +337,7 @@ namespace LAMA.ViewModels
         }
         async void onAddChildRecord()
         {
-            if (SelectedRecordIndex < 0)
+            if (SelectedRecordIndex < 0 || AddableCategoryIndexes.Count == 0)
                 return;
             this.category.Records.Add(EncyclopedyOrphanage.ParentlessRecords[SelectedRecordIndex].ID);
             _recordNames.RemoveAt(SelectedRecordIndex);
