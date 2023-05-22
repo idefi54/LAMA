@@ -8,8 +8,8 @@
              mc:Ignorable="d"
              x:Class="LAMA.Views.ClientChooseServerPage"
 			 Shell.NavBarIsVisible="False"
-			 Shell.FlyoutBehavior="Disabled"
-			 Title="Přihlásit se">
+			 Shell.FlyoutBehavior="Disabled">
+	<!--Title="Přihlásit se"-->
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="ContentPage">

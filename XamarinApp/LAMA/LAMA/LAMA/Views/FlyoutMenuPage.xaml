@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:LAMA.ViewModels"
              xmlns:pages="clr-namespace:LAMA.Views"
-             x:Class="LAMA.Views.FlyoutMenuPage"
-             Title="Flyout Menu">
+             x:Class="LAMA.Views.FlyoutMenuPage">
+	<!--Title="Flyout Menu"-->
     <StackLayout>
         <ListView>
             <ListView.ItemsSource>

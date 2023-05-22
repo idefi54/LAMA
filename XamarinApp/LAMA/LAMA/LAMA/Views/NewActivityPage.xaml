@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.NewActivityPage"
 			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
-             Title="{Binding Title}"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
 			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
+	    <!--Title="{Binding Title}"-->
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>

@@ -5,8 +5,8 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
 			 xmlns:themes="clr-namespace:LAMA.Themes"
              x:Class="LAMA.Views.ActivityListPage"
-			 x:Name="ActivitiesPage"
-			 Title="Seznam Aktivit">
+			 x:Name="ActivitiesPage">
+	<!--Title="Seznam Aktivit"-->
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Řadit" Command="{Binding SortCommand}"/>

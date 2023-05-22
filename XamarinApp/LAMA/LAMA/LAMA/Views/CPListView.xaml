@@ -9,7 +9,7 @@
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Řadit a filtrovat" Command="{Binding ShowOrderAndFilter}"/>
-        <forms:BindableToolbarItem Text="Přidat CP" Command="{Binding AddCPCommand}" IsVisible="{Binding CanAddCP}" />
+        <forms:BindableToolbarItem Text="Nové CP" Command="{Binding AddCPCommand}" IsVisible="{Binding CanAddCP}" />
     </ContentPage.ToolbarItems>
 
 

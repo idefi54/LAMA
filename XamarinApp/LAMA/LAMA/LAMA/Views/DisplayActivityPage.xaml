@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.DisplayActivityPage"
 			 xmlns:mapsui="clr-namespace:Mapsui.UI.Forms;assembly=Mapsui.UI.Forms"
-             Title="Zobrazení Aktivity"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
              xmlns:forms="clr-namespace:LAMA.Forms"
 			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels">
+             <!--Title="Zobrazení Aktivity"-->
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}"/>
