@@ -1,14 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.CPDetailsEditView"
-             xmlns:forms="clr-namespace:LAMA.Forms"
-             xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
-
-    <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}" IsVisible ="{Binding CanChangeCPs}"/>
-    </ContentPage.ToolbarItems>
-
+             x:Class="LAMA.Views.CPDetailsEditView">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
@@ -21,9 +14,7 @@
                 <Label Text="Přezdívka"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
-                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
-
-
+                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsVisible="{Binding CanChangeCPs}" IsReadOnly="True"/>
 
                 <Label Text="Role"
 					   HorizontalTextAlignment="Start"
@@ -50,35 +41,31 @@
 					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
                 <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
+                <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
 
-				<Label Text="Pravomoce" 
-                       HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-				<Label Text="{Binding Permissions}" 
-                       HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"
-					   IsVisible="{Binding CanChangePermissions, Converter={Converters:InverseBoolConverter}}"/>
 
-				<StackLayout x:Name="PermissionList" BindableLayout.ItemsSource="{Binding PermissionList}"
-							 Margin="5,5,5,0" IsVisible="{Binding CanChangePermissions}">
-                    <BindableLayout.ItemTemplate>
-						<DataTemplate>
-							<Grid Padding="5" Margin="5" >
-								<Grid.RowDefinitions>
-									<RowDefinition Height="auto" />
-								</Grid.RowDefinitions>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="auto" />
-									<ColumnDefinition Width="auto" />
-								</Grid.ColumnDefinitions>
 
-								<Label Text="{Binding Name}" Grid.Column="0"/>
-								<CheckBox Grid.Column="1" IsChecked="{Binding Checked}" IsVisible="{Binding CanChange}"/>
+                <ListView x:Name="PermissionList" ItemsSource="{Binding PermissionList}" SelectionMode="None" Margin="5,5,5,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="5" Margin="5" >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-							</Grid>
-						</DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
+                                    <Label Text="{Binding Name}" Grid.Column="0"/>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding Checked}" IsEnabled="{Binding CanChange}"/>
+
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 
 
             </StackLayout>
