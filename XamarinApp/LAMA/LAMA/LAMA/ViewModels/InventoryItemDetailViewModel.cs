@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Services;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 namespace LAMA.ViewModels
 {
-    internal class InventoryItemDetailViewModel:BaseViewModel
+    internal class InventoryItemDetailViewModel : BaseViewModel
     {
 
         InventoryItem _item;
@@ -19,14 +20,8 @@ namespace LAMA.ViewModels
         int _numFree;
         string _borrowedBy;
 
-        int _borrowName;
-        int _howManyBorrow;
-        int _returnName;
-        int _returnNum;
-
-        List<string> _CPNames = new List<string>();
-        Dictionary<long, string> CPs = new Dictionary<long, string>();
-        Dictionary<string, long> CPIDs = new Dictionary<string, long>();
+        int _howManyChange;
+        string _CPName;
 
         public string Name { get { return _name; } private set { SetProperty(ref _name, value); } }
         public string Description { get { return _description; } private set { SetProperty(ref _description, value); } }
@@ -36,25 +31,21 @@ namespace LAMA.ViewModels
         public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
+        public Command SelectCP { get; private set; }
         public Command DeleteCommand { get; private set; }
+        public string CPName { get { return _CPName; } set { SetProperty(ref _CPName, value); } }
+        private CP selectedCP;
 
-        public List<string> CPNames { get { return _CPNames; } set { SetProperty(ref _CPNames, value); } }
-        public int BorrowerSelected { get { return _borrowName; } set { SetProperty(ref _borrowName, value); } }
-        public string HowManyBorrow { get { return _howManyBorrow.ToString(); } set { SetProperty(ref _howManyBorrow, Helpers.readInt(value)); } }
-        public int ReturnerSelected { get { return _returnName; } set { SetProperty(ref _returnName, value); } }
-        public string HowManyReturn { get { return _returnNum.ToString(); } set { SetProperty(ref _returnNum, Helpers.readInt(value)); } }
-        //Name, Description, NumBorrowed, NumFree, BorrowedBy
+        public string HowManyChange { get { return _howManyChange.ToString(); } set { SetProperty(ref _howManyChange, Helpers.readInt(value)); } }
+        
 
-        //DetailedBorrowCommand, DetailedReturnCommand
-        //BorrowerName, HowManyBorrow
-        //ReturnerName, HowManyReturn
-
-        INavigation Navigation;
+        INavigation _navigation;
+        IMessageService _messageService;
         public InventoryItemDetailViewModel(INavigation navigation, InventoryItem item)
         {
             _item = item;
-            Navigation = navigation;
-
+            _navigation = navigation;
+            _messageService = DependencyService.Get<IMessageService>();
 
             _name = item.name;
             _description = item.description;
@@ -65,47 +56,70 @@ namespace LAMA.ViewModels
             
             DetailedBorrowCommand = new Command(OnBorrow);
             DetailedReturnCommand = new Command(OnReturn);
+            SelectCP = new Command(OnSelectCP);
             DeleteCommand = new Command(onDelete);
-            var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
-            for (int i =0; i< CPList.Count; ++i)
+            SetProperty(ref _howManyChange, 0);
+            selectedCP = DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0];
+            CPName = selectedCP.name;
+        }
+
+        private async void OnSelectCP(object obj)
+        {
+            CPSelectionPage page = new CPSelectionPage(_displayName);
+            await _navigation.PushAsync(page);
+
+
+            void _displayName(CP cp)
             {
-                var CP = CPList[i];
-                CPs.Add(CP.ID, CP.nick);
-                CPIDs.Add(CP.nick, CP.ID);
-                CPNames.Add(CP.nick);
+                if (cp != null)
+                {
+                    CPName = cp.name;
+                }
             }
         }
-        public void OnBorrow()
+
+        public async void OnBorrow()
         {
             if (!CheckExistence().Result)
                 return;
 
-            if (_howManyBorrow < 1)
+            if (_howManyChange < 1)
                 return;
 
-            _item.Borrow(_howManyBorrow, CPIDs[CPNames[_borrowName]]);
+            if (selectedCP == null)
+            {
+                await _messageService.ShowAlertAsync("Nebylo vybráno žádné CP.", "Nečekaná chyba");
+                return;
+            }
+
+            _item.Borrow(_howManyChange, selectedCP.ID);
             NumBorrowed = _item.taken.ToString();
             NumFree = _item.free.ToString();
 
-            SetProperty(ref _howManyBorrow, 0);
-            SetProperty(ref _borrowName, 0);
+            HowManyChange = "0";
             writeBorrowedBy();
         }
-        public void OnReturn()
+
+        public async void OnReturn()
         {
             if (!CheckExistence().Result)
                 return;
 
-            if (_returnNum < 1)
+            if (_howManyChange < 1)
                 return;
 
-            _item.Return(_returnNum, CPIDs[CPNames[ _returnName]]);
+            if (selectedCP == null)
+            {
+                await _messageService.ShowAlertAsync("Nebylo vybráno žádné CP.", "Nečekaná chyba");
+                return;
+            }
+
+            _item.Return(_howManyChange, selectedCP.ID);
             NumBorrowed = _item.taken.ToString();
             NumFree = _item.free.ToString();
 
-            SetProperty(ref _returnNum, 0);
-            SetProperty(ref _returnName, 0);
+            HowManyChange = "0";
             writeBorrowedBy();
         }
 
@@ -113,7 +127,6 @@ namespace LAMA.ViewModels
         {
             SetProperty(ref _numBorrowed, _item.taken);
             SetProperty(ref _numFree, _item.free);
-
 
             var CPList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             StringBuilder output = new StringBuilder();
@@ -125,7 +138,6 @@ namespace LAMA.ViewModels
                 output.Append(", ");
             }
 
-
             BorrowedBy = output.ToString();
         }
         async void onDelete()
@@ -134,7 +146,7 @@ namespace LAMA.ViewModels
                 return;
 
             DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.removeByID(_item.ID);
-            await Navigation.PopAsync();
+            await _navigation.PopAsync();
         }
 
         private async Task<bool> CheckExistence()
@@ -147,7 +159,7 @@ namespace LAMA.ViewModels
                     .ShowAlertAsync(
                         "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán. Nyní budete navráceni zpět do seznamu předmětů.",
                         "Předmět neexistuje");
-                await Navigation.PopAsync();
+                await _navigation.PopAsync();
                 IsBusy = false;
                 return false;
             }

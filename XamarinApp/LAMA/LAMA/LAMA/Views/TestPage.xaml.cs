@@ -131,6 +131,38 @@ namespace LAMA.Views
 
             }
         }
+
+        void OnPopulateCPs(object sender, EventArgs args)
+        {
+            for (int id = 1000; id < 1010; id++)
+            {
+                var user = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(id);
+                if (user == null)
+                {
+                    user = new CP(id, "Steve " + id, "spartan-"+id, new EventList<string>() { "greenTeam","Officer"}, "", "", "", "");
+                    DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(user);
+                }
+            }
+        }
+
+        async void OnCPSelector(object sender, EventArgs args)
+        {
+            CPSelectionPage page = new CPSelectionPage(_displayName);
+            await Navigation.PushAsync(page);
+
+
+            void _displayName(CP cp)
+            {
+
+                if (cp != null)
+                    _ = DisplayAlert("CP", cp.name, "OK");
+                else
+                    _ = DisplayAlert("Problem", "Something went wrong and no cp is present.", "BUMMER");
+
+
+            }
+        }
+
         void OnResetDatabase(object sender, EventArgs args)
         {
             SQLConnectionWrapper.ResetDatabase();
