@@ -33,6 +33,7 @@ namespace LAMA.ViewModels
         public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
 
         INavigation Navigation;
+        IMessageService messageService;
 
         long maxId = 0;
 
@@ -45,6 +46,7 @@ namespace LAMA.ViewModels
         public InventoryViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            messageService = DependencyService.Get<Services.IMessageService>();
             ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
 
             var inventoryItems = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
@@ -161,8 +163,7 @@ namespace LAMA.ViewModels
 
             if (itemDeleted)
             {
-                await DependencyService.Get<Services.IMessageService>()
-                    .ShowAlertAsync(
+                await messageService.ShowAlertAsync(
                         "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán.",
                         "Předmět neexistuje");
                 IsBusy = false;
