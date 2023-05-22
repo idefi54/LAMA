@@ -148,7 +148,10 @@ namespace LAMA
                 int offset1 = offset;
                 long secondPart = readLong(input, ref offset);
                 offset1 = offset - offset1;
+                if (firstPart < 0)
+                    secondPart *= -1;
                 return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+                
             }
             else
                 return firstPart;
