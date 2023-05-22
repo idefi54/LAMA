@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:themes="clr-namespace:LAMA.Themes"
+             x:Class="LAMA.Views.CPSelectionPage">
+    <ContentPage.Content>
+        <StackLayout>
+			<Frame BackgroundColor="LightBlue"
+				   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Label Grid.Column="0" Text="Hledat:"/>
+					<Entry Grid.Column="1" Text="{Binding FilterViewModel.SearchText}"/>
+				</Grid>
+			</Frame>
+
+			<ListView ItemsSource="{Binding FilteredCPList}" SelectedItem="{Binding SelectedCP}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<StackLayout>
+								<Label Text="{Binding FullIdentifier}"/>
+								<StackLayout Orientation="Horizontal">
+									<Label Text="   " FontSize="Micro"/>
+									<Label Text="{Binding Roles}" FontSize="Micro" TextColor="{x:Static themes:ColorPalette.MicroTextColor}"/>
+								</StackLayout>
+							</StackLayout>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+			
+            <!--<StackLayout x:Name="CPList" BindableLayout.ItemsSource="{Binding FilteredCPList}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}"/>
+                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding Nick}"/>
+                            <Button Grid.Row="0" Grid.Column="0"
+								Command="{Binding Path=BindingContext.SelectCP, Source={x:Reference Name=CPist}}"
+                                CommandParameter="{Binding .}"/>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>-->
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -40,6 +40,8 @@
 				<Button Text="Image Example" Clicked="OnImageExample"/>
                 <Button Text="Icon Selection" Clicked="OnIconSelection"/>
 				<Button Text="Test Prompt" Clicked="OnTestPrompt"/>
+				<Button Text="Populate CPs" Clicked="OnPopulateCPs"/>
+                <Button Text="CPSelector" Clicked="OnCPSelector"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
