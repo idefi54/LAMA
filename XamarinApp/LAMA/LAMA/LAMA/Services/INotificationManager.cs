@@ -14,5 +14,6 @@ namespace LAMA.Services
         void Initialize();
         void SendNotification(string title, string message, DateTime? notifyTime = null);
         void ReceiveNotification(string title, string message);
+        void Cancel();
     }
 }

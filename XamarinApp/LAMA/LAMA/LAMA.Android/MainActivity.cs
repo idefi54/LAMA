@@ -12,6 +12,7 @@ using AndroidX.AppCompat.App;
 using Bitmap = Android.Graphics.Bitmap;
 using Color = Android.Graphics.Color;
 using System.IO;
+using Xamarin.Essentials;
 
 namespace LAMA.Droid
 {
@@ -32,15 +33,7 @@ namespace LAMA.Droid
             serviceIntent = new Intent(this, typeof(AndroidLocationService));
             SetServiceMethods();
 
-            //if (Build.VERSION.SdkInt >= BuildVersionCodes.M && !Android.Provider.Settings.CanDrawOverlays(this))
-            //{
-            //    var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission);
-            //    intent.SetFlags(ActivityFlags.NewTask);
-            //    this.StartActivity(intent);
-            //}
-
             LoadApplication(new App());
-            CreateNotificationFromIntent(Intent);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -50,27 +43,12 @@ namespace LAMA.Droid
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        protected override void OnNewIntent(Intent intent)
-        {
-            CreateNotificationFromIntent(intent);
-        }
-
-        void CreateNotificationFromIntent(Intent intent)
-        {
-            if (intent?.Extras != null)
-            {
-                string title = intent.GetStringExtra(AndroidNotificationManager.TitleKey);
-                string message = intent.GetStringExtra(AndroidNotificationManager.MessageKey);
-                DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
-            }
-        }
-
         void SetServiceMethods()
         {
             MessagingCenter.Subscribe<StartServiceMessage>(this, "ServiceStarted",
                 (StartServiceMessage message) =>
                 {
-                    if (!IsServiceRunning(typeof(AndroidLocationService)))
+                    if (!GetLocationService.IsRunning)
                     {
                         if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
                             StartForegroundService(serviceIntent);
@@ -82,15 +60,23 @@ namespace LAMA.Droid
             MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped",
                 (StopServiceMessage message) =>
                 {
-                    if (IsServiceRunning(typeof(AndroidLocationService)))
+                    System.Diagnostics.Debug.WriteLine("WTF");
+                    if (GetLocationService.IsRunning)
+                    {
                         StopService(serviceIntent);
+                        GetLocationService.Stop();
+                        Context context = global::Android.App.Application.Context;
+                    }
+                    
                 });
+
+            
         }
 
         private bool IsServiceRunning(System.Type cls)
         {
             ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
-            /*/
+            //*/
             foreach (var service in manager.GetRunningServices(int.MinValue))
             {
                 if (service.Service.ClassName.Equals(Java.Lang.Class.FromType(cls).CanonicalName))

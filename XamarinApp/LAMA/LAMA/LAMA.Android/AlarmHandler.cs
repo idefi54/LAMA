@@ -1,4 +1,6 @@
 ﻿using Android.Content;
+using LAMA.Services;
+using System.Diagnostics;
 
 namespace LAMA.Droid
 {
@@ -7,13 +9,15 @@ namespace LAMA.Droid
     {
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent?.Extras != null)
-            {
-                string title = intent.GetStringExtra(AndroidNotificationManager.TitleKey);
-                string message = intent.GetStringExtra(AndroidNotificationManager.MessageKey);
 
-                AndroidNotificationManager manager = AndroidNotificationManager.Instance ?? new AndroidNotificationManager();
-                manager.Show(title, message);
+            Debug.WriteLine("RECIEVED");
+
+            if (intent.Action == "KILL")
+            {
+                Debug.WriteLine("KILL BUTTON PRESSED");
+
+                GetLocationService.Stop();
+                context.StopService(new Intent(context, typeof(AndroidLocationService)));
             }
         }
     }

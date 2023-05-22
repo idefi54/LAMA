@@ -270,7 +270,7 @@ namespace LAMA.Views
             }
             if (Device.RuntimePlatform == Device.Android)
             {
-                if (!Preferences.Get("LocationServiceRunning", false))
+                if (!GetLocationService.IsRunning)
                     StartService();
                 else
                     StopService();
@@ -306,14 +306,14 @@ namespace LAMA.Views
         {
             var startServiceMessage = new StartServiceMessage();
             MessagingCenter.Send(startServiceMessage, "ServiceStarted");
-            Preferences.Set("LocationServiceRunning", true);
+            //Preferences.Set(GetLocationService.SERVICE_RUNNING, true);
         }
 
         private void StopService()
         {
             var stopServiceMessage = new StopServiceMessage();
             MessagingCenter.Send(stopServiceMessage, "ServiceStopped");
-            Preferences.Set("LocationServiceRunning", false);
+            //Preferences.Set(GetLocationService.SERVICE_RUNNING, false);
         }
 
     }

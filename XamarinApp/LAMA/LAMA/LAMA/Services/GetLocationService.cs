@@ -10,18 +10,25 @@ namespace LAMA.Services
 {
     public class GetLocationService
     {
-        readonly bool stopping = false;
+        /// <summary>
+        /// Stops all GetLocationServices from running.
+        /// </summary>
+        public static void Stop() => _running = false;
+        public static bool IsRunning => _running;
+        public const string SERVICE_RUNNING = "LocationServiceRunning";
+        private static bool _running = false;
 
         public async Task Run(CancellationToken token)
         {
+            _running = true;
             await Task.Run(async () =>
             {
-                while (!stopping)
+                while (_running)
                 {
-                    token.ThrowIfCancellationRequested();
+                    //token.ThrowIfCancellationRequested();
                     try
                     {
-                        await Task.Delay(30_000);
+                        await Task.Delay(3_000);
 
                         var request = new GeolocationRequest(GeolocationAccuracy.High);
                         var location = await Geolocation.GetLocationAsync(request);
