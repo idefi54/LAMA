@@ -3,34 +3,57 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CreateCPView">
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-            <!--
-            <Label Text="Welcome to Xamarin.Forms!"
-                    VerticalOptions="CenterAndExpand" 
-                    HorizontalOptions="CenterAndExpand" />
+        <AbsoluteLayout>
+            <StackLayout
+                Spacing="0"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All">
+                <ScrollView>
+                    <StackLayout>
+                        <!--
+                        <Label Text="Welcome to Xamarin.Forms!"
+                            VerticalOptions="CenterAndExpand" 
+                            HorizontalOptions="CenterAndExpand" />
 
-                <Label Text="Poznámky"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Entry Text="{Binding Notes}" FontSize="Medium" />
-                <Button Text="Uložit změny" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
-                -->
+                        <Label Text="Poznámky"
+					           HorizontalTextAlignment="Start"
+					           VerticalTextAlignment="End"/>
+                        <Entry Text="{Binding Notes}" FontSize="Medium" />
+                        <Button Text="Uložit změny" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                        -->
 
 
-                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
-                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
-                <Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
-                <Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
-                <Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
-                <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
-                <Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
+                        <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
+                        <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
+                        <Entry Text="{Binding Password}" Placeholder="Heslo" FontSize="Medium" IsPassword="true" />
+                        <Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
+                        <Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
+                        <Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
+                        <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
+                        <Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
-                <StackLayout Orientation="Horizontal">
-                    <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-                    <Button Text="Vytvořit" Command="{Binding CreateCommand}" HorizontalOptions="FillAndExpand"></Button>
-                </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
+                            <Button Text="Vytvořit" Command="{Binding CreateCommand}" HorizontalOptions="FillAndExpand"></Button>
+                        </StackLayout>
+                    </StackLayout>
+                </ScrollView>
             </StackLayout>
-        </ScrollView>
+            <StackLayout
+				x:Name="WaitingBackground"
+				IsVisible="{Binding IsBusy}"
+				AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All"
+				BackgroundColor="Black"
+                Opacity="0.5">
+            </StackLayout>
+            <StackLayout
+                x:Name="Waiting"
+                IsVisible="{Binding IsBusy}"
+                AbsoluteLayout.LayoutBounds="0.5, 0.5"
+                AbsoluteLayout.LayoutFlags="PositionProportional">
+                <ActivityIndicator IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+            </StackLayout>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
