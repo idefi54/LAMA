@@ -18,6 +18,8 @@ namespace LAMA.ViewModels
         public string Name { get { return name; } set { SetProperty(ref name, value); } }
         string nick;
         public string Nick { get { return nick; } set { SetProperty(ref nick, value); } }
+        string password;
+        public string Password { get { return password; } set { SetProperty(ref password, value); } }
         string roles;
         public string Roles { get { return roles; } set { SetProperty(ref roles, value); } }
         string phone;
