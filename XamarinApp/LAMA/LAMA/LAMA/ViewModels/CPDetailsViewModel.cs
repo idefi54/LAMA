@@ -50,6 +50,7 @@ namespace LAMA.ViewModels
         public Command Archive { get; }
         public Command Unarchive { get; }
         public Command DeleteCommand { get; private set; }
+        public Command CancelCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> CurrentPermissions { get; } = new ObservableCollection<string>();
         //int permissionToAdd;
@@ -98,8 +99,12 @@ namespace LAMA.ViewModels
             SQLEvents.dataChanged += gotChanged;
             Archive = new Command(onArchive);
             Unarchive = new Command(onUnarchive);
+            CancelCommand = new Command(onCancel);
         }
-
+        private void onCancel()
+        {
+            navigation.PopAsync();
+        }
 
         public void onArchive()
         {

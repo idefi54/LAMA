@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LAMA.Views.CPDetailsEditView">
+             x:Class="LAMA.Views.CPDetailsEditView"
+             xmlns:forms="clr-namespace:LAMA.Forms">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
+        <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
+    </ContentPage.ToolbarItems>
+    
+    
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
@@ -40,9 +48,6 @@
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanChangeCPs}"/>
                 <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
-
-                <Button Text="Uložit" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand" IsVisible="{Binding CanChangeCPs}"></Button>
-
 
 
                 <ListView x:Name="PermissionList" ItemsSource="{Binding PermissionList}" SelectionMode="None" Margin="5,5,5,0">
