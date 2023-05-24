@@ -25,8 +25,12 @@ namespace LAMA.Views
         {
             _shiftHeld = false;
             _keyboard = DependencyService.Get<IKeyboardService>();
-            _keyboard.OnKeyDown += OnKeyDown;
-            _keyboard.OnKeyUp += OnKeyUp;
+            if (_keyboard != null)
+            {
+                _keyboard.OnKeyDown += OnKeyDown;
+                _keyboard.OnKeyUp += OnKeyUp;
+            }
+
             InitializeComponent();
 
             chatViewModel = new ChatViewModel(Navigation, channelName, this);
