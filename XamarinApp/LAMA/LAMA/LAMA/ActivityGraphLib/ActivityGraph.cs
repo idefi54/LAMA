@@ -335,7 +335,7 @@ namespace LAMA.ActivityGraphLib
 
             // Indicator for adding activities
             paint.Color = SKColors.Green;
-            if (Mode == EditingMode.Create)
+            if (Mode == EditingMode.Create && EditMode)
             {
                 float height = ActivityButton.DEFAULT_HEIGHT * (Height * (1 - ActivityButton.DEFAULT_HEIGHT));
                 float hour = MinuteWidth * 60 * Zoom;
@@ -501,15 +501,15 @@ namespace LAMA.ActivityGraphLib
         {
             var aRect = new SKRect(
                 a.X,
-                a.Y - OffsetY,
+                a.Y,
                 a.X + a.Width,
-                a.Y - OffsetY + a.Height * Zoom);
+                a.Y + a.Height * Zoom);
 
             var bRect = new SKRect(
                 b.X,
-                b.Y - OffsetY,
+                b.Y,
                 b.X + b.Width,
-                b.Y - OffsetY + b.Height * Zoom);
+                b.Y + b.Height * Zoom);
 
             DrawConnection(canvas, aRect.MidX, aRect.MidY, bRect.MidX, bRect.MidY, color);
         }
@@ -526,9 +526,9 @@ namespace LAMA.ActivityGraphLib
         {
             var aRect = new SKRect(
                 a.X,
-                a.Y - OffsetY,
+                a.Y,
                 a.X + a.Width,
-                a.Y - OffsetY + a.Height * Zoom);
+                a.Y + a.Height * Zoom);
 
             DrawConnection(canvas, aRect.MidX, aRect.MidY, toX, toY, color);
         }
