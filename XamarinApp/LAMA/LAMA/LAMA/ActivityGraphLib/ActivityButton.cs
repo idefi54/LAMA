@@ -21,6 +21,8 @@ namespace LAMA.ActivityGraphLib
         private EditState _editState;
 
         private ActivityGraph _graph;
+        private float _offsetX;
+        private float _offsetY;
 
         public LarpActivity Activity;
         public const float DEFAULT_HEIGHT = 0.05f;
@@ -187,8 +189,8 @@ namespace LAMA.ActivityGraphLib
             using (var paint = new SKPaint())
                 if (_editState == EditState.Move)
                 {
-                    float mX = mouseX - Width / 2;
-                    float mY = mouseY - Height / 2;
+                    float mX = mouseX - _offsetX;
+                    float mY = mouseY - _offsetY;
 
                     paint.IsAntialias = true;
                     paint.Color = SKColors.Orange.WithAlpha(125);
@@ -220,20 +222,20 @@ namespace LAMA.ActivityGraphLib
         /// <param name="y">In pixel coordinates.</param>
         public void ClickEdit(float x, float y)
         {
-            float xRel = x - X;
-            float yRel = y - Y;
+            _offsetX = x - X;
+            _offsetY = y - Y;
 
             _editState = EditState.Move;
             if (_graph.Mode == ActivityGraph.EditingMode.Connect) _editState = EditState.Connect;
             if (_graph.Mode == ActivityGraph.EditingMode.Disconnect) _editState = EditState.Disconnect;
 
             // Clicked inside of the button - no adjusting width
-            if (yRel < 0 || yRel > Height * _graph.Zoom || xRel < -_sideWidth || xRel > Width + _sideWidth)
+            if (_offsetY < 0 || _offsetY > Height * _graph.Zoom || _offsetX < -_sideWidth || _offsetX > Width + _sideWidth)
                 return;
 
             // Adjusting width
-            if (xRel < 0) _editState = EditState.Left;
-            if (xRel > Width) _editState = EditState.Right;
+            if (_offsetX < 0) _editState = EditState.Left;
+            if (_offsetX > Width) _editState = EditState.Right;
         }
 
         /// <summary>
@@ -270,7 +272,7 @@ namespace LAMA.ActivityGraphLib
             if (_editState == EditState.Move)
             {
                 // X -> time
-                DateTime newTime = _graph.ToLocalTime(x - Width / 2);
+                DateTime newTime = _graph.ToLocalTime(x - _offsetX);
                 newTime = new DateTime(
                     newTime.Year,
                     newTime.Month,
@@ -284,7 +286,7 @@ namespace LAMA.ActivityGraphLib
                 Activity.day = newTime.Day;
 
                 // Y
-                y = (y - Height / 2) / _graph.Zoom;
+                y = (y - _offsetY) / _graph.Zoom;
                 Activity.GraphY = (y - _graph.OffsetY / _graph.Zoom) / (_graph.Height - Height);
             }
 
