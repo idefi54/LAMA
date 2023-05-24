@@ -335,7 +335,7 @@ namespace LAMA.ActivityGraphLib
 
             // Indicator for adding activities
             paint.Color = SKColors.Green;
-            if (Mode == EditingMode.Create)
+            if (Mode == EditingMode.Create && EditMode)
             {
                 float height = ActivityButton.DEFAULT_HEIGHT * (Height * (1 - ActivityButton.DEFAULT_HEIGHT));
                 float hour = MinuteWidth * 60 * Zoom;

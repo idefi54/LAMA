@@ -110,7 +110,7 @@ namespace LAMA.Views
                 }
 
                 // Create new activity -> redirect to NewActivtyPage
-                if (_graph.Mode == ActivityGraph.EditingMode.Create)
+                if (_graph.Mode == ActivityGraph.EditingMode.Create && _graph.EditMode)
                 {
                     var time = _graph.ToLocalTime(px);
                     _touchActions.Remove(args.Id);
