@@ -31,17 +31,14 @@ namespace LAMA.ViewModels
             get => _currentIconIndex;
             set
             {
-                _currentIconIndex = value;
+                SetProperty(ref _currentIconIndex, value);
                 CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
             }
         }
         private ImageSource _currentIcon;
         public ImageSource CurrentIcon
         {
-            get
-            {
-                return _currentIcon;
-            }
+            get => _currentIcon;
             set
             {
                 SetProperty(ref _currentIcon, value);
