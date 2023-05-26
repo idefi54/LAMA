@@ -95,7 +95,7 @@
             <StackLayout
 				x:Name="WaitingBackground"
 				IsVisible="{Binding IsBusy}"
-				AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutBounds="0,0.2,3,3"
 				AbsoluteLayout.LayoutFlags="All"
 				BackgroundColor="Black"
                 Opacity="0.5">
