@@ -6,7 +6,6 @@
 			 <!--Title="Nový předmět"-->
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
         <forms:BindableToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
     </ContentPage.ToolbarItems>
 

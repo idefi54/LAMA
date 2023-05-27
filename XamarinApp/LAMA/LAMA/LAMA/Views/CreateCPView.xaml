@@ -2,7 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CreateCPView">
-    <ContentPage.Content>
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout
                 Spacing="0"
@@ -32,10 +36,6 @@
                         <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
                         <Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
-                        <StackLayout Orientation="Horizontal">
-                            <Button Text="Zpět" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand"></Button>
-                            <Button Text="Vytvořit" Command="{Binding CreateCommand}" HorizontalOptions="FillAndExpand"></Button>
-                        </StackLayout>
                     </StackLayout>
                 </ScrollView>
             </StackLayout>

@@ -4,10 +4,6 @@
              xmlns:forms="clr-namespace:LAMA.Forms"
              x:Class="LAMA.Views.LarpEventView"
              xmlns:common="clr-namespace:LAMA.Views">
-    <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Zpět" Command="{Binding BackCommand}" IsVisible="{Binding CanChangeLarpEvent}"/>
-        
-    </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
         <StackLayout>

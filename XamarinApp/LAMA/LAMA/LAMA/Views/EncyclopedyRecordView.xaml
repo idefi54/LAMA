@@ -7,7 +7,6 @@
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Nová Stránka" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanChangeEncyclopedy}" />
         <forms:BindableToolbarItem Text="Upravit" Command="{Binding Edit}" IsVisible="{Binding CanChangeEncyclopedy}"/>
-        <forms:BindableToolbarItem Text="Zpět" Command="{Binding Return}" IsVisible="{Binding CanChangeEncyclopedy}"/>
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
