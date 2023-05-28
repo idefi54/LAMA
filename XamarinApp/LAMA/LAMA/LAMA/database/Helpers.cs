@@ -202,6 +202,18 @@ namespace LAMA
             return new Pair<int, int>(first, second);
         }
 
+        public static Pair<long, long> readLongPair(string input)
+        {
+            if (input == null)
+                return new Pair<long, long>(0, 0);
+            int i = 0;
+            skipNonDigits(input, ref i);
+            long first = readLong(input, ref i);
+            skipNonDigits(input, ref i);
+            long second = readLong(input, ref i);
+            return new Pair<long, long>(first, second);
+        }
+
         public static EventList<Pair<long, long>> readLongPairField(string input)
         {
             EventList<Pair<long, long>> output = new EventList<Pair<long, long>>();
