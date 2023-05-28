@@ -79,7 +79,7 @@
 					   BackgroundColor="Yellow" TextColor="Black"
 					   Padding="10"
 					   Text="Seznam je filtrovaný"/>
-                <ListView x:Name="LarpActivityList" ItemsSource="{Binding FilteredLarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0">
+                <ListView x:Name="LarpActivityList" ItemsSource="{Binding FilteredLarpActivityListItems}" SelectionMode="None" Margin="5,5,5,0" HasUnevenRows="True">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
