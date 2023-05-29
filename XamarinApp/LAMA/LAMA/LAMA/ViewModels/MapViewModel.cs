@@ -5,6 +5,7 @@ using LAMA.Services;
 using LAMA.Views;
 using Xamarin.Essentials;
 using LAMA.Singletons;
+using LAMA.Models;
 
 namespace LAMA.ViewModels
 {
@@ -25,6 +26,9 @@ namespace LAMA.ViewModels
 
         private bool _canRemoveBounds;
         public bool CanRemoveBounds { get => _canRemoveBounds; set => SetProperty(ref _canRemoveBounds, value); }
+
+        private bool _canEditMap;
+        public bool CanEditMap { get => _canEditMap; set => SetProperty(ref _canEditMap, value); }
 
         public Command FilterDropdown { get; private set; }
         public Command SaveHome { get; private set; }
@@ -51,7 +55,8 @@ namespace LAMA.ViewModels
             SaveHome = new Command(HandleSaveHome);
             SetGlobalBounds = new Command(HandleSetGlobalBounds);
             RemoveGlobalBounds = new Command(HandleRemoveGlobalBounds);
-            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits;
+            CanEditMap = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap) && Device.RuntimePlatform == Device.WPF;
+            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits && CanEditMap;
 
             _getMapView = getMapView;
             _keyboard = DependencyService.Get<IKeyboardService>();
@@ -70,7 +75,7 @@ namespace LAMA.ViewModels
             if (larpEvent == null)
                 return;
 
-            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits;
+            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits && CanEditMap;
         }
 
         public void HandleFilterDropdown()

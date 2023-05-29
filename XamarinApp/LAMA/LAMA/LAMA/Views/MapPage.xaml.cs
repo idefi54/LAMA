@@ -92,11 +92,6 @@ namespace LAMA.Views
             base.OnAppearing();
             disappearing = false;
 
-            bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
-            EditLabel.IsVisible = canEdit;
-            EditSwitch.IsVisible = canEdit;
-            SetGlobalBoundsButton.IsVisible = canEdit;
-
             // Handle permissions and location
             if (Device.RuntimePlatform != Device.WPF)
             {
