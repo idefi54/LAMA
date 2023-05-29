@@ -50,27 +50,25 @@
                 <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanChangeCPs}"/>
 
 
-                <ListView x:Name="PermissionList" ItemsSource="{Binding PermissionList}" SelectionMode="None" Margin="5,5,5,0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Grid Padding="5" Margin="5" >
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
-                                    </Grid.ColumnDefinitions>
+                <StackLayout Orientation="Vertical" x:Name="PermissionList" BindableLayout.ItemsSource="{Binding PermissionList}" Margin="5,5,5,0">
+                    <BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<Grid Padding="5" Margin="5" >
+								<Grid.RowDefinitions>
+									<RowDefinition Height="auto" />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="120" />
+									<ColumnDefinition Width="auto" />
+								</Grid.ColumnDefinitions>
 
-                                    <Label Text="{Binding Name}" Grid.Column="0"/>
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding Checked}" IsEnabled="{Binding CanChange}"/>
+								<Label Text="{Binding Name}" Grid.Column="0"/>
+								<CheckBox Grid.Column="1" IsChecked="{Binding Checked}" IsEnabled="{Binding CanChange}"/>
 
-                                </Grid>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+							</Grid>
+						</DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
                 
 
             </StackLayout>
