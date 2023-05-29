@@ -80,7 +80,7 @@ namespace LAMA.Extensions
 
         public static byte[] GetIconByteArray(this LarpActivity activity)
         {
-            string resourcePath = IconLibrary.GetIconsByLarpActivityStatus(activity.status);
+            string resourcePath = IconLibrary.GetIconsByClass<LarpActivity>()[activity.IconIndex];
             Color color = GetColor(activity);
 
             return IconLibrary.GetByteArrayFromResourcePath(resourcePath, color);
