@@ -45,7 +45,7 @@ namespace LAMA.Models
             roles = input[12];
             registrationByRole = input[13];
             graphY = input[14];
-            IconIndex = Helpers.readInt( input[15]);
+            IconIndex = Helpers.readInt(input[15]);
         }
         public string[] getStrings()
         {
