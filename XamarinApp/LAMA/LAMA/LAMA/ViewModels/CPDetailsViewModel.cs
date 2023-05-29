@@ -6,6 +6,7 @@ using LAMA.Models;
 using Newtonsoft.Json;
 using LAMA.Views;
 using System.Collections.ObjectModel;
+using LAMA.Services;
 
 namespace LAMA.ViewModels
 {
@@ -63,8 +64,12 @@ namespace LAMA.ViewModels
         ObservableCollection<PermissionViewModel> _permissionList = new ObservableCollection<PermissionViewModel>();
         public ObservableCollection<PermissionViewModel> PermissionList { get { return _permissionList; } }
 
+        private IMessageService messageService;
+
         public CPDetailsViewModel(INavigation navigation, CP cp)
         {
+            messageService = DependencyService.Get<IMessageService>();
+
             SetProperty(ref _CanArchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived);
             SetProperty(ref _CanUnarchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived);
 
@@ -108,6 +113,9 @@ namespace LAMA.ViewModels
 
         public void onArchive()
         {
+            if (!messageService.ShowConfirmationAsync("Opravdu chcete archivovat toto CP? Nikdo kromě lidí s pravomocí archivovat nebude schopen CP vidět a nebude možné se do daného CP přihlásit.", "Opravdu archivovat?").Result)
+                return;
+
             cp.IsArchived = true;
             //SetProperty(ref _CanArchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived);
             //SetProperty(ref _CanUnarchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived);

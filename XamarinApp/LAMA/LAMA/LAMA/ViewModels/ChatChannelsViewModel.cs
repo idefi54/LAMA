@@ -1,6 +1,7 @@
 ﻿using BruTile;
 using LAMA.Communicator;
 using LAMA.Models;
+using LAMA.Services;
 using LAMA.Singletons;
 using LAMA.Views;
 using System;
@@ -170,8 +171,12 @@ namespace LAMA.ViewModels
                 handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private IMessageService messageService;
+
         public ChatChannelsViewModel(INavigation navigation)
         {
+            messageService = DependencyService.Get<IMessageService>();
+
             ChannelCreatedCommand = new Xamarin.Forms.Command(OnChannelCreated);
             ChatChannelTapped = new Command<object>(DisplayChannel);
             ArchiveChannelCommand = new Command<object>(ArchiveChannel);
@@ -237,6 +242,10 @@ namespace LAMA.ViewModels
                     + "\nActual: " + obj.GetType().Name, "OK");
                 return;
             }
+
+
+            if (!messageService.ShowConfirmationAsync("Opravdu chcete archivovat tento kanál? Nikdo kromě lidí s pravomocí archivovat nebude schopen kanál vidět.", "Opravdu archivovat?").Result)
+                return;
 
             string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
             int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
