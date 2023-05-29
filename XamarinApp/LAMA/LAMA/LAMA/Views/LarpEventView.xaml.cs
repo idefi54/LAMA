@@ -17,6 +17,17 @@ namespace LAMA.Views
         {
             InitializeComponent();
             BindingContext = new LarpEventViewModel(Navigation);
+            SaveButton.BackgroundColor = Color.DarkGray;
+        }
+
+        private void Changed(object sender, EventArgs e)
+        {
+            SaveButton.BackgroundColor = Color.Green;
+        }
+
+        private void Saved(object sender, EventArgs e)
+        {
+            SaveButton.BackgroundColor = Color.DarkGray;
         }
     }
 }
