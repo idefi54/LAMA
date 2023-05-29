@@ -23,15 +23,13 @@
                     <Label Text="{Binding Name}"/>
                     <Label Text="{Binding Description}"/>
 
-                    <Label Text="Kategorie
-                       "/>
+                    <Label Text="Kategorie"/>
                     <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding Categories}" Margin="5,5,5,0">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
 
                                 <Grid Padding="5" Margin="5" >
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
@@ -40,14 +38,14 @@
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" VerticalOptions="Center" />
 
                                     <OnPlatform x:TypeArguments="View">
                                         <OnPlatform.Platforms>
                                             <On Platform="WPF">
-                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
-												Command="{Binding Path=BindingContext.OpenCategoryDetailsCommand, Source={x:Reference Name=CategoryList}}"
-												CommandParameter="{Binding .}"/>
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="1" MinimumHeightRequest="40" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                    Command="{Binding Path=BindingContext.OpenCategoryDetailsCommand, Source={x:Reference Name=CategoryList}}"
+                                                    CommandParameter="{Binding .}"/>
                                             </On>
 
                                             <On Platform="Android">
@@ -76,8 +74,7 @@
                         </BindableLayout.ItemTemplate>
                     </StackLayout>
 
-                    <Label Text="Stránky
-                       "/>
+                    <Label Text="Stránky"/>
                     <StackLayout x:Name="RecordList" BindableLayout.ItemsSource="{Binding Records}" Margin="5,5,5,0">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
@@ -99,9 +96,9 @@
                                     <OnPlatform x:TypeArguments="View">
                                         <OnPlatform.Platforms>
                                             <On Platform="WPF">
-                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
-												Command="{Binding Path=BindingContext.OpenRecordDetailsCommand, Source={x:Reference Name=RecordList}}"
-												CommandParameter="{Binding .}"/>
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" HeightRequest="40" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                    Command="{Binding Path=BindingContext.OpenRecordDetailsCommand, Source={x:Reference Name=RecordList}}"
+                                                    CommandParameter="{Binding .}"/>
                                             </On>
 
                                             <On Platform="Android">

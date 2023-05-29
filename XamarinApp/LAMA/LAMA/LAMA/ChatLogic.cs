@@ -53,7 +53,7 @@ namespace LAMA
         {
             // just save the sent message and the remembered list does the rest by itself
             database.add(new Models.ChatMessage( 
-                DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(LocalStorage.cpID).name, 
+                LocalStorage.cpID, 
                 channelID, message,DateTimeOffset.Now.ToUnixTimeMilliseconds(), LocalStorage.cpID == 0));
         }
 

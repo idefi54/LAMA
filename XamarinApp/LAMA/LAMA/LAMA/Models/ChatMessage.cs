@@ -123,9 +123,9 @@ namespace LAMA.Models
 
         public ChatMessage()
         { }
-        public ChatMessage(string from, int channel, string message, long sentAt, bool receivedByServer)
+        public ChatMessage(long from, int channel, string message, long sentAt, bool receivedByServer)
         {
-            _from = Helpers.readLong(from);
+            _from = from;
             _channel = channel;
             _message = message;
             _sentAt = sentAt;

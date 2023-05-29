@@ -337,10 +337,9 @@ namespace LAMA.ViewModels
 		private async void OnSignUp()
 		{
 			IsBusy = true;
-			if (isRegistered)
+            if (isRegistered)
             {
 				UnregisterAsync();
-                IsBusy = false;
                 return;
 			}
 
@@ -422,6 +421,10 @@ namespace LAMA.ViewModels
                 }
 			}
 			isRegistered = IsRegistered();
+            if (Device.WPF == Device.RuntimePlatform)
+            {
+                NavigationPage.SetHasNavigationBar(App.Current.MainPage, true);
+            }
             IsBusy = false;
         }
 
@@ -433,13 +436,14 @@ namespace LAMA.ViewModels
 		private async void UnregisterAsync()
 		{
 			IsBusy = true;
-			bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
+
+            bool activityDeleted = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(_activity.ID) == default(LarpActivity);
 
 			if (activityDeleted)
 			{
 				await _messageService.ShowAlertAsync("Vypadá to, že se snažíte odhlásit z aktivity, která mezitím byla smazána. Nyní budete navráceni zpět do seznamu aktivit.", "Aktivita neexistuje");
 				await Navigation.PopAsync();
-				IsBusy = false;
+                IsBusy = false;
 				return;
 			}
 
@@ -497,7 +501,7 @@ namespace LAMA.ViewModels
 				}
             }
 			isRegistered = IsRegistered();
-			IsBusy = false;
+            IsBusy = false;
         }
 
         private async void UpdateActivity(LarpActivityDTO larpActivityDTO)

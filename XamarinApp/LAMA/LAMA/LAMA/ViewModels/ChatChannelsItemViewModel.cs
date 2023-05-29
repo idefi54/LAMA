@@ -42,7 +42,7 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _canRename, value); }
         }
 
-        private bool archived;
+        public bool archived;
 
         public ChatChannelsItemViewModel(string channel)
         {
