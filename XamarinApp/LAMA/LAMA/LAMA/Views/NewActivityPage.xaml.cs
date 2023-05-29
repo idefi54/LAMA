@@ -35,6 +35,7 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
+            (BindingContext as NewActivityViewModel).OnAppearing();
 
             MapHandler mapHandler = MapHandler.Instance;
             (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsLayout);
@@ -54,6 +55,7 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            (BindingContext as NewActivityViewModel).OnDisappearing();
             MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
         }

@@ -34,7 +34,7 @@ namespace LAMA.ViewModels
 
 		public string Id { get { return _id; } set { SetProperty(ref _id, value); } }
 		public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
-		public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
+        public string Description { get { return _description; } set { SetProperty(ref _description, value); } }
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public int TypeIndex { get { return _typeIndex; } set { SetProperty(ref _typeIndex, value); } }
 
@@ -43,7 +43,8 @@ namespace LAMA.ViewModels
 		public ObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public List<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
-		public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
+
+        public string Location { get { return _location; } set { SetProperty(ref _location, value); } }
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList, value); } }
 
@@ -303,6 +304,18 @@ namespace LAMA.ViewModels
 
 			IconChange = new Command(OnIconChange);
 		}
+
+		internal void OnAppearing()
+		{
+			if(_icons != null)
+				CurrentIconIndex = CurrentIconIndex;
+		}
+		internal void OnDisappearing()
+		{
+			if (_icons != null)
+				CurrentIconIndex = CurrentIconIndex;
+		}
+
 
 		public async void OnSetStartTimeDate()
 		{

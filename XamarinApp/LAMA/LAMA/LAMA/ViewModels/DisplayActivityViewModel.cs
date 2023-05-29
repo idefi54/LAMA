@@ -257,12 +257,18 @@ namespace LAMA.ViewModels
         {
 			SQLEvents.dataChanged += PropagateChanged;
 			SQLEvents.dataDeleted += PropagateDeleted;
+
+			if(_activity != null)
+				CurrentIconIndex = _activity.IconIndex;
 		}
 
 		public void OnDisappearing()
         {
 			SQLEvents.dataChanged -= PropagateChanged;
 			SQLEvents.dataDeleted -= PropagateDeleted;
+
+			if(_activity != null)
+				CurrentIconIndex = _activity.IconIndex;
 		}
 
 		private void PropagateChanged(Serializable changed, int changedAttributeIndex)
