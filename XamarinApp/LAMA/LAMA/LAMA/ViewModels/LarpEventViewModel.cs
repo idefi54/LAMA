@@ -66,13 +66,23 @@ namespace LAMA.ViewModels
         async void OnSetStartDay()
         {
             var start = await CalendarPage.ShowCalendarPage(navigation);
-            if (start > _endDay) start = _endDay;
+            if (start > _endDay)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba", "Začátek musí být po konci!", "OK");
+                return;
+            }; 
+            
             SetStart(start);
         }
         async void OnSetEndDay()
         {
             var end = await CalendarPage.ShowCalendarPage(navigation);
-            if (end < _startDay) end = _startDay;
+            if (end < _startDay)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba", "Konec musí být před začátkem!", "OK");
+                return;
+            };
+
             SetEnd(end);
         }
 
