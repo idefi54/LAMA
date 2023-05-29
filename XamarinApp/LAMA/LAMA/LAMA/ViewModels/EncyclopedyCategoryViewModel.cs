@@ -27,7 +27,7 @@ namespace LAMA.ViewModels
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
         public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } }
-        public bool CanCreate { get { return CanChangeEncyclopedy && category == null; } }
+        public bool CanCreate { get { return CanChangeEncyclopedy; } }
         public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
@@ -89,7 +89,8 @@ namespace LAMA.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation)
+        EncyclopedyCategory parent;
+        public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation, EncyclopedyCategory parent = null)
         {
             this.category = category;
             this.Navigation = navigation;
@@ -160,7 +161,7 @@ namespace LAMA.ViewModels
 
             if(category != null)
                 category.IGotUpdated += onUpdated;
-
+            this.parent = parent;
         }
 
         void onUpdated(object sender, int index)
@@ -261,9 +262,14 @@ namespace LAMA.ViewModels
             if (!categoryNameValid) return;
             bool categoryDescriptionValid = InputChecking.CheckInput(Description, "Popis Kategorie", 1000);
             if (!categoryDescriptionValid) return;
+            
             var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
             var newCategory = new EncyclopedyCategory(list.nextID(), Name, Description);
             list.add(newCategory);
+
+            if (parent != null)
+                parent.ChildCategories.Add(newCategory.ID);
+
             await Navigation.PopAsync();
         }
         async void onEdit()
@@ -320,14 +326,14 @@ namespace LAMA.ViewModels
 
         async void onAddCategory()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyCategoryView());
+            await Navigation.PushAsync(new CreateEncyclopedyCategoryView(this.category));
         }
         async void onAddRecord()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyRecordView());
+            await Navigation.PushAsync(new CreateEncyclopedyRecordView(this.category));
         }
 
-        async void onAddChildCategory()
+        void onAddChildCategory()
         {
             if (SelectedCategoryIndex < 0 || AddableCategoryIndexes.Count == 0)
                 return;

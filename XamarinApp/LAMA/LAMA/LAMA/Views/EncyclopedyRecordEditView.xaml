@@ -13,19 +13,18 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="15" >
-                <Label Text="{Binding Name}"
+                
+                <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding TLDR}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-                <Label Text="{Binding Text}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
-
-
                 <Entry Text="{Binding Name}" Placeholder="Název" FontSize="Medium" />
+                <Label Text="TLDR"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
                 <Entry Text="{Binding TLDR}" Placeholder="Shrnutí" FontSize="Medium" />
+                <Label Text="Plný text"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
                 <Editor Text="{Binding Text}" Placeholder="Plný text" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
 
             </StackLayout>

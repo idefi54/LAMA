@@ -28,8 +28,11 @@ namespace LAMA.ViewModels
         public Xamarin.Forms.Command Return { get; private set; }
         public Xamarin.Forms.Command Create { get; private set; }
         public Xamarin.Forms.Command Save { get; private set; }
-        public EncyclopedyRecordViewModel(EncyclopedyRecord record, INavigation navigation)
+
+        EncyclopedyCategory parent;
+        public EncyclopedyRecordViewModel(EncyclopedyRecord record, INavigation navigation, EncyclopedyCategory parent = null)
         {
+            this.parent = parent;
             Navigation = navigation;
             this.record = record;
             if (record != null)
@@ -73,7 +76,20 @@ namespace LAMA.ViewModels
         }
         void onCreate()
         {
-            Navigation.PushAsync(new CreateEncyclopedyRecordView());
+            EncyclopedyCategory recordParent = null;
+            if (record != null)
+            {
+                var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    if (list[i].Records.Find(o => o == record.ID) != 0)
+                    {
+                        recordParent = list[i];
+                        break;
+                    }
+                }
+            }
+            Navigation.PushAsync(new CreateEncyclopedyRecordView(recordParent));
         }
         void onEdit()
         {
@@ -93,7 +109,10 @@ namespace LAMA.ViewModels
             if (!TLDRValid) return;
 
             var list = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList;
-            list.add(new EncyclopedyRecord(list.nextID(), _Name, _TLDR, _Text));
+            var newRecord = new EncyclopedyRecord(list.nextID(), _Name, _TLDR, _Text);
+            list.add(newRecord);
+            if (parent != null)
+                parent.Records.Add(newRecord.ID);
             await Navigation.PopAsync();
         }
         async void onSave()
