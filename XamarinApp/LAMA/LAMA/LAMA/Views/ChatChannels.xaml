@@ -65,8 +65,8 @@
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </StackLayout>
-                        <Label Text="Archivované Kanály:" FontSize="Medium"/>
-                        <StackLayout x:Name="ArchivedChannels" BindableLayout.ItemsSource="{Binding ArchivedChannels}" Margin="5,5,5,0">
+                        <Label IsVisible="{Binding CanManageChat}" Text="Archivované Kanály:" FontSize="Medium"/>
+                        <StackLayout IsVisible="{Binding CanManageChat}" x:Name="ArchivedChannels" BindableLayout.ItemsSource="{Binding ArchivedChannels}" Margin="5,5,5,0">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Padding="5" Margin="5" IsVisible="{Binding IsVisible}">
@@ -113,7 +113,7 @@
                         </StackLayout>
                     </StackLayout>
                 </ScrollView>
-                <StackLayout IsVisible="{Binding CanCreateChannels}">
+                <StackLayout IsVisible="{Binding CanManageChat}">
                     <Entry x:Name="Entry" Margin="20, 20, 20, 0" Text="{Binding ChannelName, Mode=TwoWay}"></Entry>
                     <Button Text="Vytvořit Nový Kanál" Margin="20, 10, 20, 10" Padding="20,10,20,10" BackgroundColor="{x:Static colors:ColorPalette.PrimaryColor}" HorizontalOptions="End" Command="{Binding ChannelCreatedCommand}"></Button>
                 </StackLayout>

@@ -57,7 +57,7 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _channelName, value); }
         }
 
-        public bool CanCreateChannels { get; set; }
+        public bool CanManageChat { get; set; }
         private int selectedChannelID;
 
         public delegate void ChannelModifiedDelegate(int channelID, string name);
@@ -203,8 +203,8 @@ namespace LAMA.ViewModels
                 }
             }
 
-            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanCreateChannels = true;
-            else CanCreateChannels = false;
+            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanManageChat = true;
+            else CanManageChat = false;
             SQLEvents.dataChanged += PropagateChanged;
         }
 
