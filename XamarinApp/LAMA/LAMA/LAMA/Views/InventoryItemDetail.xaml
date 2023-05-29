@@ -87,6 +87,13 @@
 							BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}"
 							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 							Command="{Binding DetailedReturnCommand}"/>
+                    <Button IsVisible="{Binding ManageInventory}"
+							Text="Smazat záznam o zapůjčení"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedDeleteCommand}"/>
+                    
 				</StackLayout>
 				
 			</StackLayout>

@@ -31,6 +31,7 @@ namespace LAMA.ViewModels
         public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
+        public Command DetailedDeleteCommand { get; private set; }
         public Command SelectCP { get; private set; }
         public Command DeleteCommand { get; private set; }
         public Command EditCommand { get; private set; }
@@ -57,6 +58,7 @@ namespace LAMA.ViewModels
             
             DetailedBorrowCommand = new Command(OnBorrow);
             DetailedReturnCommand = new Command(OnReturn);
+            DetailedDeleteCommand = new Command(OnDeleteBorrow);
             SelectCP = new Command(OnSelectCP);
             DeleteCommand = new Command(onDelete);
             EditCommand = new Command(OnEdit);
@@ -156,7 +158,20 @@ namespace LAMA.ViewModels
             HowManyChange = "0";
             writeBorrowedBy();
         }
+        async void OnDeleteBorrow()
+        {
+            if (_howManyChange < 1)
+                return;
 
+            if (selectedCP == null)
+            {
+                await _messageService.ShowAlertAsync("Nebylo vybráno žádné CP.", "Nečekaná chyba");
+                return;
+            }
+            _item.AlreadyReturned(_howManyChange, selectedCP.ID);
+            writeBorrowedBy();
+            HowManyChange="0";
+        }
         private void writeBorrowedBy()
         {
             SetProperty(ref _numBorrowed, _item.taken);
