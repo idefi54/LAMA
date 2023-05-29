@@ -57,7 +57,7 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _channelName, value); }
         }
 
-        public bool CanCreateChannels { get; set; }
+        public bool CanManageChat { get; set; }
         private int selectedChannelID;
 
         public delegate void ChannelModifiedDelegate(int channelID, string name);
@@ -111,6 +111,7 @@ namespace LAMA.ViewModels
         }
 
         public TrulyObservableCollection<ChatChannelsItemViewModel> Channels { get; }
+        public TrulyObservableCollection<ChatChannelsItemViewModel> ArchivedChannels { get; }
 
         INavigation Navigation;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -188,14 +189,22 @@ namespace LAMA.ViewModels
             Navigation = navigation;
 
             Channels = new TrulyObservableCollection<ChatChannelsItemViewModel>();
+            ArchivedChannels = new TrulyObservableCollection<ChatChannelsItemViewModel>();
 
             for (int i = 0; i < LarpEvent.ChatChannels.Count; i++)
             {
-                Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                if (LarpEvent.ChatChannels[i][0] == SpecialCharacters.archivedChannelIndicator)
+                {
+                    ArchivedChannels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                }
+                else
+                {
+                    Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                }
             }
 
-            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanCreateChannels = true;
-            else CanCreateChannels = false;
+            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanManageChat = true;
+            else CanManageChat = false;
             SQLEvents.dataChanged += PropagateChanged;
         }
 
@@ -213,12 +222,25 @@ namespace LAMA.ViewModels
             {
                 Channels.Remove(Channels[i]);
             }
+            for (int i = ArchivedChannels.Count - 1; i >= 0; i--)
+            {
+                ArchivedChannels.Remove(ArchivedChannels[i]);
+            }
+
             for (int i = 0; i < LarpEvent.ChatChannels.Count; i++)
             {
-                Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                if (LarpEvent.ChatChannels[i][0] == SpecialCharacters.archivedChannelIndicator)
+                {
+                    ArchivedChannels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                }
+                else
+                {
+                    Channels.Add(new ChatChannelsItemViewModel(LarpEvent.ChatChannels[i]));
+                }
             }
 
             Channels.Refresh();
+            ArchivedChannels.Refresh();
         }
 
         private async void DisplayChannel(object obj)
@@ -243,18 +265,22 @@ namespace LAMA.ViewModels
                 return;
             }
 
-
-            if (!messageService.ShowConfirmationAsync("Opravdu chcete archivovat tento kanál? Nikdo kromě lidí s pravomocí archivovat nebude schopen kanál vidět.", "Opravdu archivovat?").Result)
+            bool result = await messageService.ShowConfirmationAsync("Opravdu chcete archivovat tento kanál? Nikdo kromě lidí s pravomocí archivovat nebude schopen kanál vidět.", "Opravdu archivovat?");
+            if (!result)
                 return;
-
-            string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
-            int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
+            
+            ChatChannelsItemViewModel channel = ((ChatChannelsItemViewModel)obj);
+            string channelName = channel.ChannelName;
+            int index = LarpEvent.ChatChannels.IndexOf(channelName);
             ChannelModified(SpecialCharacters.archivedChannelIndicator + channelName, index);
         }
 
         public async void ChannelModified(string channelName, int index)
         {
+            Debug.WriteLine($"Index: {index}");
+            Debug.WriteLine($"{channelName}");
             string originalName = LarpEvent.ChatChannels[index];
+            if (originalName[0] == SpecialCharacters.archivedChannelIndicator) originalName = originalName.Substring(1);
             if (CommunicationInfo.Instance.IsServer)
             {
                 LarpEvent.ChatChannels[index] = channelName;
@@ -304,8 +330,9 @@ namespace LAMA.ViewModels
                 return;
             }
 
-            string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
-            int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
+            ChatChannelsItemViewModel channel = ((ChatChannelsItemViewModel)obj);
+            string channelName = channel.ChannelName;
+            int index = LarpEvent.ChatChannels.IndexOf(SpecialCharacters.archivedChannelIndicator + channelName);
             ChannelModified(channelName, index);
         }
 
@@ -319,9 +346,11 @@ namespace LAMA.ViewModels
             }
 
             //string result = "testName";
-            ChatChannelsItemViewModel chatChannel = (ChatChannelsItemViewModel)obj;
-            selectedChannelID = Channels.IndexOf(chatChannel);
-            PreviousChannelName = chatChannel.ChannelName;
+            ChatChannelsItemViewModel channel = (ChatChannelsItemViewModel)obj;
+            string channelName = channel.ChannelName;
+            Debug.WriteLine((channel.archived ? SpecialCharacters.archivedChannelIndicator.ToString() : "") + channelName);
+            selectedChannelID = LarpEvent.ChatChannels.IndexOf((channel.archived ? SpecialCharacters.archivedChannelIndicator.ToString() : "") + channelName);
+            PreviousChannelName = channel.ChannelName;
             //if (Device.RuntimePlatform == Device.WPF)
             //{
                 DisplayRenameDialog = true;
@@ -373,6 +402,14 @@ namespace LAMA.ViewModels
 
             TrulyObservableCollection<ChatChannelsItemViewModel> _filteredList = new TrulyObservableCollection<ChatChannelsItemViewModel>();
             foreach (ChatChannelsItemViewModel channel in Channels)
+            {
+                if (filterCheck(channel) && !channel.IsVisible && channel.CanBeVisible())
+                    channel.IsVisible = true;
+                else if (!filterCheck(channel) && channel.IsVisible)
+                    channel.IsVisible = false;
+            }
+
+            foreach (ChatChannelsItemViewModel channel in ArchivedChannels)
             {
                 if (filterCheck(channel) && !channel.IsVisible && channel.CanBeVisible())
                     channel.IsVisible = true;
