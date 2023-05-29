@@ -35,7 +35,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
-                                <Grid Padding="5" Margin="5">
+								<Grid Padding="5" Margin="5" BackgroundColor="{x:Static colors:ColorPalette.InteractableColor}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="30" />
                                         <RowDefinition Height="auto" />
