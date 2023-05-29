@@ -10,11 +10,19 @@ namespace LAMA.ViewModels
 {
     internal class LarpEventViewModel:BaseViewModel
     {
-        string _startDay = string.Empty;
-        public string StartDay { get { return _startDay; } set { SetProperty(ref _startDay, value); } }
-        string _endDay = string.Empty;
-        public string EndDay { get { return _endDay; } set { SetProperty(ref _endDay, value); } }
+        DateTime _startDay;
+        private string _startDayString;
+        public string StartDay { get { return _startDay.ToShortDateString(); } set { SetProperty(ref _startDayString, value); } }
 
+        DateTime _endDay;
+        private string _endDayString;
+        public string EndDay { get { return _endDay.ToShortDateString(); } set { SetProperty(ref _endDayString, value); } }
+
+        string _name = string.Empty;
+        public string Name { get { return _name; } set { SetProperty(ref _name, value);} }
+
+        string _serverName = string.Empty;
+        public string ServerName { get { return _serverName; } set { SetProperty(ref _serverName, value); } }
 
         public string NewChannel { get; set; }
         public bool CanChangeLarpEvent { get { return LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.ManageEvent); } }
@@ -23,6 +31,7 @@ namespace LAMA.ViewModels
 
         public Command SetStartDay { get; set; }
         public Command SetEndDay { get; set; }
+        public Command SaveChanges { get; set; }
 
         INavigation navigation;
         public LarpEventViewModel(INavigation navigation)
@@ -40,10 +49,13 @@ namespace LAMA.ViewModels
 
             SetStartDay = new Command(OnSetStartDay);
             SetEndDay = new Command(OnSetEndDay);
-
-            StartDay = LarpEvent.Days.first.DateTime.ToShortDateString();
-            EndDay = LarpEvent.Days.second.DateTime.ToShortDateString();
             BackCommand = new Command(onBack);
+            SaveChanges = new Command(OnSaveChanges);
+
+            ServerName = LocalStorage.serverName;
+            Name = LarpEvent.Name;
+            SetStart(LarpEvent.Days.first);
+            SetEnd(LarpEvent.Days.second);
         }
 
         async void onBack()
@@ -53,15 +65,43 @@ namespace LAMA.ViewModels
 
         async void OnSetStartDay()
         {
-            var time = await CalendarPage.ShowCalendarPage(navigation);
-            LarpEvent.Days = new Pair<DateTimeOffset, DateTimeOffset>(time, LarpEvent.Days.second);
-            StartDay = time.ToShortDateString();
+            var start = await CalendarPage.ShowCalendarPage(navigation);
+            if (start > _endDay)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba", "Začátek musí být po konci!", "OK");
+                return;
+            }; 
+            
+            SetStart(start);
         }
         async void OnSetEndDay()
         {
-            var time = await CalendarPage.ShowCalendarPage(navigation);
-            LarpEvent.Days = new Pair<DateTimeOffset, DateTimeOffset>(LarpEvent.Days.first, time);
+            var end = await CalendarPage.ShowCalendarPage(navigation);
+            if (end < _startDay)
+            {
+                await App.Current.MainPage.DisplayAlert("Chyba", "Konec musí být před začátkem!", "OK");
+                return;
+            };
+
+            SetEnd(end);
+        }
+
+        void OnSaveChanges()
+        {
+            LarpEvent.Name = Name;
+            LarpEvent.Days = new Pair<DateTime, DateTime>(_startDay, _endDay);
+        }
+
+        private void SetStart(DateTime time)
+        {
+            _startDay = time;
+            StartDay = time.ToShortDateString();
+        }
+        private void SetEnd(DateTime time)
+        {
+            _endDay = time;
             EndDay = time.ToShortDateString();
         }
+
     }
 }

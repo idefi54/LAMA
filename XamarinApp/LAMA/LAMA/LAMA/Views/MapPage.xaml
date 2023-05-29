@@ -46,6 +46,15 @@
                         Command="{Binding SetGlobalBounds}"
                         />
 
+                    <Button
+                        x:Name="RemoveGlobalBoundsButton"
+                        Text="Zrušit omezení"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Command="{Binding RemoveGlobalBounds}"
+                        IsVisible="{Binding CanRemoveBounds}"
+                        />
+                    
                     <Label x:Name="EditLabel" Text="Edit" VerticalOptions="Center" HorizontalOptions="Center"/>
                     <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}" HorizontalOptions="Center" VerticalOptions="Center"/>
 

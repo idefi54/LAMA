@@ -64,12 +64,12 @@ namespace LAMA.Singletons
         private bool _polylineDeletion;
         private MapView _activeMapView;
         private Polyline _limitsVisual;
-        private bool _isGlobalPanLimits =>
+        public bool IsGlobalPanLimits =>
             !double.IsInfinity(LarpEvent.minX)
             && !double.IsInfinity(LarpEvent.maxX)
             && !double.IsInfinity(LarpEvent.minY)
             && !double.IsInfinity(LarpEvent.maxY);
-        private bool _isGlobalZoomLimits => LarpEvent.maxZoom != -1 && LarpEvent.minZoom != -1;
+        public bool IsGlobalZoomLimits => LarpEvent.maxZoom != -1 && LarpEvent.minZoom != -1;
         #endregion
 
         /// <summary>
@@ -277,6 +277,16 @@ namespace LAMA.Singletons
             LarpEvent.minZoom = 0;
             LarpEvent.maxZoom = zoom;
         }
+
+        public static void RemoveGlobalBounds()
+        {
+            LarpEvent.minX = float.PositiveInfinity;
+            LarpEvent.maxX = float.NegativeInfinity;
+            LarpEvent.minY = float.PositiveInfinity;
+            LarpEvent.maxY = float.NegativeInfinity;
+            LarpEvent.minZoom = -1;
+            LarpEvent.maxZoom = -1;
+        }
         #endregion
 
         #region GENERAL MAPVIEW HANDLING
@@ -404,10 +414,10 @@ namespace LAMA.Singletons
             Zoom(view);
 
             bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
-            if (isClient && _isGlobalPanLimits)
+            if (isClient && IsGlobalPanLimits)
                 SetPanLimits(view, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
 
-            if (isClient && _isGlobalZoomLimits)
+            if (isClient && IsGlobalZoomLimits)
             {
                 SetZoomLimits(view, LarpEvent.minZoom, LarpEvent.maxZoom);
                 Zoom(view, LarpEvent.maxZoom);
@@ -466,7 +476,7 @@ namespace LAMA.Singletons
                     view.Drawables.Add(polyline);
             }
 
-            if (_isGlobalPanLimits)
+            if (IsGlobalPanLimits)
             {
                 MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
                 MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
@@ -1152,10 +1162,10 @@ namespace LAMA.Singletons
             if (changed is LarpEvent && _activeMapView != null)
             {
                 bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
-                if (isClient && _isGlobalPanLimits)
+                if (isClient && IsGlobalPanLimits)
                     SetPanLimits(_activeMapView, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
 
-                if (isClient && _isGlobalZoomLimits)
+                if (isClient && IsGlobalZoomLimits)
                 {
                     SetZoomLimits(_activeMapView, LarpEvent.minZoom, LarpEvent.maxZoom);
                     Zoom(_activeMapView, LarpEvent.maxZoom);
@@ -1164,11 +1174,15 @@ namespace LAMA.Singletons
                 MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
                 MPoint botRight = SphericalMercator.ToLonLat(LarpEvent.maxX, LarpEvent.maxY);
                 _limitsVisual.Positions.Clear();
-                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
-                _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
-                _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
-                _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
-                _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+
+                if (IsGlobalPanLimits)
+                {
+                    _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                    _limitsVisual.Positions.Add(new Position(topLeft.Y, botRight.X));
+                    _limitsVisual.Positions.Add(new Position(botRight.Y, botRight.X));
+                    _limitsVisual.Positions.Add(new Position(botRight.Y, topLeft.X));
+                    _limitsVisual.Positions.Add(new Position(topLeft.Y, topLeft.X));
+                }
             }
 
             if (changed is LarpActivity activity)

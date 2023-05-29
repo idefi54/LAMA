@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using LAMA.Extensions;
 using SQLite;
 namespace LAMA.Singletons
 {
@@ -78,18 +79,19 @@ namespace LAMA.Singletons
         /// <summary>
         /// remember start and end day
         /// </summary>
-        public static Pair<DateTimeOffset, DateTimeOffset> Days
+        public static Pair<DateTime, DateTime> Days
         {
             get
             {
 
-                var times =  Helpers.readIntPair(Instance.days);
-                return new Pair<DateTimeOffset, DateTimeOffset>(DateTimeOffset.FromUnixTimeMilliseconds(times.first), DateTimeOffset.FromUnixTimeMilliseconds(times.second));
+                var times =  Helpers.readLongPair(Instance.days);
+                return new Pair<DateTime, DateTime>(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(times.first), DateTimeExtension.UnixTimeStampMillisecondsToDateTime(times.second));
             }
 
             set 
             {
-                Instance.days = value.ToString();
+                var unixPair = new Pair<long, long>(value.first.ToUnixTimeMilliseconds(), value.second.ToUnixTimeMilliseconds());
+                Instance.days = unixPair.ToString();
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
                 SQLEvents.invokeChanged(instance, 1);
             }
