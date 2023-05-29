@@ -17,26 +17,38 @@ namespace LAMA.ViewModels
 
         string name= "";
         public string Name { get { return name; } set { SetProperty(ref name, value); } }
+
         string nick;
         public string Nick { get { return nick; } set { SetProperty(ref nick, value); } }
+
         string password;
         public string Password { get { return password; } set { SetProperty(ref password, value); } }
+
         string roles;
         public string Roles { get { return roles; } set { SetProperty(ref roles, value); } }
+
+        ObservableCollection<string> roleList;
+        public ObservableCollection<string> RoleList { get { return roleList; } set { SetProperty(ref roleList, value); } }
+
         string phone;
         public string Phone 
         { 
             get { return phone; }
             set { SetProperty(ref phone, value); }
         }
+
         string facebook;
         public string Facebook { get { return facebook; } set { SetProperty(ref facebook, value); } }
+
         string discord;
         public string Discord { get { return discord; } set { SetProperty(ref discord, value); } }
+
         string _notes;
         public string Notes { get { return _notes; } set { SetProperty(ref _notes, value); } }
+
         string permissions;
         public string Permissions { get{ return permissions; } set { SetProperty(ref permissions, value); } }
+
         public bool CanDeleteCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
         public bool CanEditDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID== LocalStorage.cpID; } set { } }
         public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
@@ -44,6 +56,7 @@ namespace LAMA.ViewModels
         public bool CanArchiveCP { get { return _CanArchiveCP; } set { SetProperty(ref _CanArchiveCP, value); } }
         bool _CanUnarchiveCP = false;
         public bool CanUnarchiveCP { get { return _CanUnarchiveCP; } set { SetProperty(ref _CanUnarchiveCP, value); } }
+
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
         //public Command AddPermissionCommand { get; private set; }
@@ -111,9 +124,10 @@ namespace LAMA.ViewModels
             navigation.PopAsync();
         }
 
-        public void onArchive()
+        public async void onArchive()
         {
-            if (!messageService.ShowConfirmationAsync("Opravdu chcete archivovat toto CP? Nikdo kromě lidí s pravomocí archivovat nebude schopen CP vidět a nebude možné se do daného CP přihlásit.", "Opravdu archivovat?").Result)
+            bool result = await messageService.ShowConfirmationAsync("Opravdu chcete archivovat toto CP? Nikdo kromě lidí s pravomocí archivovat nebude schopen CP vidět a nebude možné se do daného CP přihlásit.", "Opravdu archivovat?");
+            if (!result)
                 return;
 
             cp.IsArchived = true;
