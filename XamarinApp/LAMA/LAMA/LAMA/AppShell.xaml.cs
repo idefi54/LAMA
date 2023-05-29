@@ -13,8 +13,8 @@ namespace LAMA
 {
     public partial class AppShell : Xamarin.Forms.Shell
     {
-        const string STOP = "Stop Location Tracking";
-        const string START = "Start Location Tracking";
+        const string STOP = "Stop Background Location Tracking";
+        const string START = "Start Background Location Tracking";
 
         public AppShell()
         {
@@ -24,6 +24,9 @@ namespace LAMA
                 GetLocationService.IsRunning
                 ? START
                 : STOP;
+
+            MessagingCenter.Subscribe(this, "ServiceStarted", (StartServiceMessage message) => LocationTracking.Text = STOP);
+            MessagingCenter.Subscribe(this, "ServiceStopped", (StopServiceMessage message) => LocationTracking.Text = START);
         }
 
         private void OnLocationTrackingClicked(object sender, EventArgs e)

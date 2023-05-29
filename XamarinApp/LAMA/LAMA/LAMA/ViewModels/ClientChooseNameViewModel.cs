@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using LAMA.Services;
 
 namespace LAMA.ViewModels
 {
@@ -173,7 +174,9 @@ namespace LAMA.ViewModels
             }
             else
             {
-                await Shell.Current.GoToAsync($"//ChatChannels");
+                await Shell.Current.GoToAsync($"//MapPage");
+                var startServiceMessage = new StartServiceMessage();
+                MessagingCenter.Send(startServiceMessage, "ServiceStarted");
             }
         }
     }

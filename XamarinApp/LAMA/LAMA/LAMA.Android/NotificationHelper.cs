@@ -31,7 +31,7 @@ namespace LAMA.Droid
 
             var notificationBuilder = new NotificationCompat.Builder(context, foregroundChannelId)
                 .SetContentTitle("Location tracking")
-                .SetContentText("Your location is being tracked.")
+                .SetContentText("Location is tracked in the background.")
                 .SetSmallIcon(Resource.Drawable.xamarin_logo)
                 .SetOngoing(true)
                 .AddAction(Resource.Drawable.mtrl_ic_cancel, "KILL", actionPendingIntent)

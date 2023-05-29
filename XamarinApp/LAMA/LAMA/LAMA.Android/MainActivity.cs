@@ -22,7 +22,7 @@ namespace LAMA.Droid
         Intent serviceIntent;
         private const int RequestCode = 5469;
 
-        protected async override void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
             base.OnCreate(savedInstanceState);
@@ -71,20 +71,6 @@ namespace LAMA.Droid
                 });
 
             
-        }
-
-        private bool IsServiceRunning(System.Type cls)
-        {
-            ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
-            //*/
-            foreach (var service in manager.GetRunningServices(int.MinValue))
-            {
-                if (service.Service.ClassName.Equals(Java.Lang.Class.FromType(cls).CanonicalName))
-                    return true;
-            }
-            //*/
-
-            return false;
         }
     }
 }
