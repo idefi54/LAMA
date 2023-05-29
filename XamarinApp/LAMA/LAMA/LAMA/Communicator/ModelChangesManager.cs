@@ -244,15 +244,8 @@ namespace LAMA.Communicator
 
             if (attributesIgnoreChange.ContainsKey(attributeID))
             {
-                if (updateTime - attributesIgnoreChange[attributeID] > 10)
-                {
-                    attributesIgnoreChange.Remove(attributeID);
-                }
-                else
-                {
-                    attributesIgnoreChange.Remove(attributeID);
-                    return;
-                }
+                attributesIgnoreChange.Remove(attributeID);
+                return;
             }
 
             if (!attributesCache.containsKey(attributeID))

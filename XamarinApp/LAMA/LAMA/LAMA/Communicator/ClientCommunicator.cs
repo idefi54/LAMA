@@ -265,9 +265,14 @@ namespace LAMA.Communicator
         /// <param name="cpId"></param>
         private void ReceiveID(int clientId, int cpId)
         {
-            LocalStorage.clientID = clientId;
-            LocalStorage.cpID = cpId;
-            RequestUpdate();
+            if (LocalStorage.clientID == -1)
+            {
+                LocalStorage.clientID = clientId;
+            }
+            if (LocalStorage.cpID == -1) {
+                LocalStorage.cpID = cpId;
+                RequestUpdate();
+            }
             Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
         }
 
@@ -283,8 +288,11 @@ namespace LAMA.Communicator
         /// <param name="clientId"></param>
         private void ClientRefused(int clientId, string message)
         {
-            loggedIn = false;
-            LocalStorage.clientID = clientId;
+            if (LocalStorage.clientID == -1)
+            {
+                loggedIn = false;
+                LocalStorage.clientID = clientId;
+            }
             clientRefusedMessage = message;
         }
 
@@ -414,7 +422,11 @@ namespace LAMA.Communicator
         /// <param name="isNew">is this a new CP or a CP, that already exists on the server</param>
         public void LoginAsCP(string cpName, string password, bool isNew = true)
         {
-            LocalStorage.clientName = cpName;
+            if (LocalStorage.cpID == -1)
+            {
+                LocalStorage.clientName = cpName;
+            }
+            clientRefusedMessage = "";
             if (isNew)
             {
                 SendCommand(new Command(
@@ -638,6 +650,7 @@ namespace LAMA.Communicator
                 _port = int.Parse(array[1]);
                 LocalStorage.serverName = serverName;
                 LocalStorage.clientID = -1;
+                LocalStorage.cpID = -1;
                 InitSocket();
 
                 //Periodically try to connect to the LARP server
@@ -747,6 +760,7 @@ namespace LAMA.Communicator
                 LocalStorage.clientName = clientName;
                 LocalStorage.serverName = serverName;
                 LocalStorage.clientID = -1;
+                LocalStorage.cpID = -1;
                 InitSocket();
                 //Periodically try to connect to the server
                 Connect();

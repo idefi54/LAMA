@@ -59,7 +59,6 @@ namespace LAMA.Views
 
         protected void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            Debug.WriteLine("OnTextChanged");
             string oldText;
             if (e.OldTextValue == null) oldText = "";
             else oldText = e.OldTextValue;
