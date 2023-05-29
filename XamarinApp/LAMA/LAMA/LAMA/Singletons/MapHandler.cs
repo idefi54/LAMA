@@ -1164,11 +1164,17 @@ namespace LAMA.Singletons
                 bool isClient = LocalStorage.cpID != 0 || LocalStorage.clientID != 0;
                 if (isClient && IsGlobalPanLimits)
                     SetPanLimits(_activeMapView, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
+                else if (!IsGlobalPanLimits)
+                    SetPanLimits(_activeMapView, _activeMapView.Map.Envelope.Bottom, _activeMapView.Map.Envelope.Left, _activeMapView.Map.Envelope.Top, _activeMapView.Map.Envelope.Right);
+                
 
                 if (isClient && IsGlobalZoomLimits)
                 {
                     SetZoomLimits(_activeMapView, LarpEvent.minZoom, LarpEvent.maxZoom);
                     Zoom(_activeMapView, LarpEvent.maxZoom);
+                } else if (!IsGlobalZoomLimits)
+                {
+                    SetZoomLimits(_activeMapView, _activeMapView.Map.Resolutions[_activeMapView.Map.Resolutions.Count - 1], _activeMapView.Map.Resolutions[2]);
                 }
 
                 MPoint topLeft = SphericalMercator.ToLonLat(LarpEvent.minX, LarpEvent.minY);
