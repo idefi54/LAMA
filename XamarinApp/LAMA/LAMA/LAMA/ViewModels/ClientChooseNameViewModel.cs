@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using LAMA.Singletons;
 
 namespace LAMA.ViewModels
 {
@@ -14,6 +15,8 @@ namespace LAMA.ViewModels
     {
         private ClientCommunicator communicator;
         public Xamarin.Forms.Command LoginCommand { get; }
+
+        public Xamarin.Forms.Command Back { get; }
 
         private bool _loginEnabled;
         public bool LoginEnabled
@@ -41,9 +44,36 @@ namespace LAMA.ViewModels
         {
             this.communicator = communicator;
             LoginCommand = new Xamarin.Forms.Command(OnLoginClicked);
+            Back = new Xamarin.Forms.Command(OnGoBack);
             CreatingCP = false;
             LoginEnabled = true;
             isNew = newClient;
+        }
+
+        private async void OnGoBack(object obj)
+        {
+            bool result = await Application.Current.MainPage.DisplayAlert("Návrat", "Opravdu se chcete vrátit na výběr serveru (bude nutné opětovné zadání hesla)?", "Ano", "Ne");
+            if (result)
+            {
+                string serverName = CommunicationInfo.Instance.ServerName;
+                CommunicationInfo.Instance.Communicator = null;
+                CommunicationInfo.Instance.ServerName = "";
+                if (Device.RuntimePlatform == Device.WPF)
+                {
+
+                    App.Current.MainPage = new NavigationPage(new ChooseClientServerPage())
+                    {
+                        BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                        BarBackgroundColor = ColorPalette.PrimaryColor
+                    };
+                    await App.Current.MainPage.Navigation.PushAsync(new ClientChooseServerPage(serverName));
+                    //await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync($"//ClientChooseServerPage?serverName={serverName}");
+                }
+            }
         }
 
 
