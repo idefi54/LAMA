@@ -29,6 +29,7 @@ namespace LAMA.ViewModels
         public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } }
         public bool CanCreate { get { return CanChangeEncyclopedy; } }
         public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
+        public bool IsRoot { get { return category == null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
 
