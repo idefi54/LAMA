@@ -107,7 +107,8 @@ namespace LAMA.ViewModels
             {
                 if (cp != null)
                 {
-                    CPName = cp.name;
+                    selectedCP = cp;
+                    CPName = selectedCP.name;
                 }
             }
         }
