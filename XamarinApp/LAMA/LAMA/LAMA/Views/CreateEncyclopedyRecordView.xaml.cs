@@ -1,4 +1,5 @@
-﻿using LAMA.ViewModels;
+﻿using LAMA.Models;
+using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace LAMA.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CreateEncyclopedyRecordView : ContentPage
     {
-        public CreateEncyclopedyRecordView()
+        public CreateEncyclopedyRecordView(EncyclopedyCategory parent)
         {
             InitializeComponent();
-            BindingContext = new EncyclopedyRecordViewModel(null, Navigation);
+            BindingContext = new EncyclopedyRecordViewModel(null, Navigation, parent);
         }
     }
 }

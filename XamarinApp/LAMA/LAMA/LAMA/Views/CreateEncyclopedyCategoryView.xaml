@@ -11,7 +11,9 @@
     <ContentPage.Content>
         <StackLayout>
 
+            <Label Text="Jméno"/>
             <Entry Text="{Binding Name}" Placeholder="Název" FontSize="Medium" />
+            <Label Text="Popis"/>
             <Entry Text="{Binding Description}" Placeholder="Popis" FontSize="Medium" />
 
 

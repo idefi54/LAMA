@@ -20,6 +20,7 @@ namespace LAMA.Themes
         public static Color MyMessageColor = Color.LightSkyBlue;
         public static Color OtherMessageColor = Color.LightGray;
 
+        public static Color InteractableColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 
         
         public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.White;
