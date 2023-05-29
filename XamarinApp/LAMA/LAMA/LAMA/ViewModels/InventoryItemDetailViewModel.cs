@@ -182,13 +182,15 @@ namespace LAMA.ViewModels
             bool first = true;
             foreach(var a in this._item.takenBy)
             {
-                output.Append(CPList.getByID(a.first).nick);
-                output.Append(": ");
-                output.Append(a.second.ToString());
-                if(!first)
+                if (!first)
                     output.Append(", ");
                 else
                     first = false;
+
+                output.Append(CPList.getByID(a.first).nick);
+                output.Append(": ");
+                output.Append(a.second.ToString());
+                
             }
 
             BorrowedBy = output.ToString();

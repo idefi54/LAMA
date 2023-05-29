@@ -67,14 +67,11 @@ namespace LAMA
             else
             {
                 StringBuilder output = new StringBuilder();
-                bool first = true;
                 for (int i = 0; i < Count; ++i)
                 {
-                    if (!first)
+                    if (i != 0)
                         output.Append(", ");
 
-                    if (first)
-                        first = false;
                     output.Append(this[i].ToString());
 
                 }
