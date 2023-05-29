@@ -462,6 +462,7 @@ namespace LAMA.ViewModels
 		public void SaveDependency(LarpActivity activity)
 		{
 			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
+			CurrentIconIndex = CurrentIconIndex;
 		}
 
 		private async void OnIconChange()
