@@ -104,6 +104,9 @@ namespace LAMA.ViewModels
                 POI.Name = name;
                 POI.description = description;
                 POI.Icon = CurrentIconIndex;
+
+                (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
+                POI.Coordinates = new Pair<double, double>(lon, lat);
             }
             else
             {
