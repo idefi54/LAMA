@@ -265,10 +265,10 @@ namespace LAMA.ViewModels
                 return;
             }
 
-
-            if (!messageService.ShowConfirmationAsync("Opravdu chcete archivovat tento kanál? Nikdo kromě lidí s pravomocí spravovat chat nebude schopen kanál vidět.", "Opravdu archivovat?").Result)
+            bool result = await messageService.ShowConfirmationAsync("Opravdu chcete archivovat tento kanál? Nikdo kromě lidí s pravomocí archivovat nebude schopen kanál vidět.", "Opravdu archivovat?");
+            if (!result)
                 return;
-
+            
             ChatChannelsItemViewModel channel = ((ChatChannelsItemViewModel)obj);
             string channelName = channel.ChannelName;
             int index = LarpEvent.ChatChannels.IndexOf(channelName);
