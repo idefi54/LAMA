@@ -145,7 +145,7 @@ namespace LAMA.ViewModels
                     if (!receivedSignal)
                     {
                         IsBusy = false;
-                        await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Server na požadavek vytvo5en9 kanálu neodpověděl, zkontrolujte prosím své připojení.", "OK");
+                        await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Server na požadavek vytvoření kanálu neodpověděl, zkontrolujte prosím své připojení.", "OK");
                         return;
                     }
                     else if (!success)

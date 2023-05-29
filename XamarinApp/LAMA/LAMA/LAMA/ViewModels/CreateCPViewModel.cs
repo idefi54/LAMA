@@ -123,7 +123,7 @@ namespace LAMA.ViewModels
                 }
                 catch (Communicator.ClientRefusedException)
                 {
-                    await App.Current.MainPage.DisplayAlert("Odmítnutí Serveru", "Server odmítl požadavek na vytvoření klienta.", "OK");
+                    await App.Current.MainPage.DisplayAlert("Odmítnutí Serveru", "Server odmítl požadavek na vytvoření klienta (existující klient).", "OK");
                     IsBusy = false;
                     return;
                 }
