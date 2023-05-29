@@ -406,7 +406,7 @@ namespace LAMA.Models
         }
         
         static string[] attributeNames = { "ID", "name", "description", "preparationNeeded", "eventType", "prerequisiteIDs",
-            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole", "GraphY" };
+            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole", "GraphY", "Icon" };
         public string[] getAttributeNames()
         {
             return attributeNames;
