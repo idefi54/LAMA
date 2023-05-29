@@ -9,6 +9,9 @@
 			 Shell.NavBarIsVisible="False"
 			 Shell.FlyoutBehavior="Disabled">
 	<!--Title="Přihlásit se"-->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Zpět" Command="{Binding Back}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout  Spacing="0">
             <ScrollView>

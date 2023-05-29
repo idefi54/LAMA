@@ -50,7 +50,7 @@ namespace LAMA.ViewModels
         private string _errorLabel;
         public string ErrorLabel { get { return _errorLabel; } set { SetProperty(ref _errorLabel, value); } }
 
-        public ClientChooseServerViewModel()
+        public ClientChooseServerViewModel(string serverName = "")
         {
             LoginCommand = new Xamarin.Forms.Command(OnLoginClicked);
             FakeLoginCommand = new Xamarin.Forms.Command(OnFakeLoginClicked);
@@ -60,6 +60,7 @@ namespace LAMA.ViewModels
             LoginEnabled = true;
             FakeLoginEnabled = true;
             DatabaseEnabled = true;
+            ClientServerName = serverName;
         }
 
         private void OnChangeDatabaseName()
