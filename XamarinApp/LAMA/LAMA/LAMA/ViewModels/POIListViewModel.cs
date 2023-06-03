@@ -14,9 +14,10 @@ namespace LAMA.ViewModels
     {
         INavigation navigation;
 
-        public bool CanChange { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI); } }
+        private bool _canChange;
+        public bool CanChange { get => _canChange; set => SetProperty(ref _canChange, value); }
         TrulyObservableCollection<POIViewModel> _PointsOfInterest = new TrulyObservableCollection<POIViewModel>();
-        public TrulyObservableCollection<POIViewModel> PointsOfInterest { get { return _PointsOfInterest; } set { _PointsOfInterest = value; } }
+        public TrulyObservableCollection<POIViewModel> PointsOfInterest { get { return _PointsOfInterest; } set { SetProperty(ref _PointsOfInterest, value); } }
 
         public Command Create { get; set; }
         public Command<object> OpenDetails { get; set; }
@@ -36,8 +37,19 @@ namespace LAMA.ViewModels
             }
 
 
+            CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
             SQLEvents.created += onCreated;
             SQLEvents.dataDeleted += onDeleted;
+            SQLEvents.dataChanged += onChanged;
+        }
+
+        private void onChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
+
+            if (changed is PointOfInterest poi)
+                PointsOfInterest = _PointsOfInterest;
         }
 
         void onCreated(Serializable created)

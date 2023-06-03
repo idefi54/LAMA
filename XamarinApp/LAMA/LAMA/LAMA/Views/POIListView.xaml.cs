@@ -18,12 +18,5 @@ namespace LAMA.Views
             InitializeComponent();
             BindingContext = new POIListViewModel(Navigation);
         }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            // This fixes a bug of disappearing icons.
-            BindingContext = new POIListViewModel(Navigation);
-        }
     }
 }

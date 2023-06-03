@@ -103,17 +103,19 @@ namespace LAMA.Themes
 
         public static ImageSource GetImageSourceFromResourcePath(string resourcePath, XColor? color = null)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(resourcePath);
+            return ImageSource.FromStream(() =>
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var stream = assembly.GetManifestResourceStream(resourcePath);
 
-            if (color != null)
-                stream = DependencyService.Get<IPicturePainter>().ColorImage(
-                    stream,
-                    (byte)(color.Value.R * 255),
-                    (byte)(color.Value.G * 255),
-                    (byte)(color.Value.B * 255));
-
-            return ImageSource.FromStream(() => stream);
+                if (color != null)
+                    stream = DependencyService.Get<IPicturePainter>().ColorImage(
+                        stream,
+                        (byte)(color.Value.R * 255),
+                        (byte)(color.Value.G * 255),
+                        (byte)(color.Value.B * 255));
+                return stream;
+            });
         }
 
         public static byte[] GetByteArrayFromResourcePath(string resourcePath, XColor? color = null)

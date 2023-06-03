@@ -203,8 +203,7 @@ namespace LAMA.ViewModels
                 }
             }
 
-            if (LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat)) CanManageChat = true;
-            else CanManageChat = false;
+            CanManageChat = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
             SQLEvents.dataChanged += PropagateChanged;
         }
 
@@ -215,6 +214,9 @@ namespace LAMA.ViewModels
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                CanManageChat = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
+
             if (changed == null || changed.GetType() != typeof(LarpEvent) || changedAttributeIndex != 3)
                 return;
 

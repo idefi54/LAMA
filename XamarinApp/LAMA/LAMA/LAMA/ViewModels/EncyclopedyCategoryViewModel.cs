@@ -26,9 +26,16 @@ namespace LAMA.ViewModels
         public string Name { get { return name; } set{ SetProperty(ref name, value);} }
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
-        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } }
-        public bool CanCreate { get { return CanChangeEncyclopedy; } }
-        public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
+        private bool _canChangeEncyclopedy;
+        public bool CanChangeEncyclopedy { get => _canChangeEncyclopedy; set => SetProperty(ref _canChangeEncyclopedy, value); }
+
+        private bool _canCreate;
+        public bool CanCreate { get => _canCreate; set => SetProperty(ref _canCreate, value); }
+
+        private bool _canEdit;
+        public bool CanEdit { get => _canEdit; set => SetProperty(ref _canEdit, value); }
+
+
         public bool IsRoot { get { return category == null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
@@ -88,7 +95,7 @@ namespace LAMA.ViewModels
         public int SelectedRecordIndex { get { return _SelectedRecordIndex; } set { SetProperty(ref _SelectedRecordIndex, value); } }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         EncyclopedyCategory parent;
         public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation, EncyclopedyCategory parent = null)
@@ -97,6 +104,19 @@ namespace LAMA.ViewModels
             this.Navigation = navigation;
             Categories = new TrulyObservableCollection<EncyclopedyCategoryViewModel>();
             Records = new TrulyObservableCollection<EncyclopedyRecordViewModel>();
+
+            CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+            CanCreate = CanChangeEncyclopedy;
+            CanEdit = CanChangeEncyclopedy && category != null;
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                {
+                    CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+                    CanCreate = CanChangeEncyclopedy;
+                    CanEdit = CanChangeEncyclopedy && category != null;
+                }
+            };
 
 
             OpenRecordDetailsCommand = new Command<object>(onOpenRecord);
@@ -167,21 +187,20 @@ namespace LAMA.ViewModels
 
         void onUpdated(object sender, int index)
         {
-            string propName = string.Empty;
+            var category = sender as EncyclopedyCategory;
 
             switch(index)
             {
                 case 1:
-                    propName = nameof(Name);
+                    Name = category.Name;
                     break;
                 case 2:
-                    propName = nameof(Description);
+                    Description = category.Description;
                     break;
                 default:
                     return;
 
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
 
@@ -195,7 +214,6 @@ namespace LAMA.ViewModels
             {
                 Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Categories)));
         }
         void OnMyRecordsChanged()
         {
@@ -205,7 +223,6 @@ namespace LAMA.ViewModels
             {
                 Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Records)));
         }
         void OnCategoriesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
