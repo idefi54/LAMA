@@ -5,7 +5,6 @@
              xmlns:forms="clr-namespace:LAMA.Forms">
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
         <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
     </ContentPage.ToolbarItems>
     

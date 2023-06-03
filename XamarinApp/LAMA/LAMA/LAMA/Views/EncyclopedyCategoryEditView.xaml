@@ -7,7 +7,6 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Uložit" Command="{Binding Save}"/>
         <ToolbarItem Text="Smazat" Command="{Binding Delete}"/>
-        <ToolbarItem Text="Zrušit" Command="{Binding Cancel}"/>
     </ContentPage.ToolbarItems>
 
 

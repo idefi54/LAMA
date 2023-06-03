@@ -5,7 +5,6 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Uložit" Command="{Binding Create}"/>
-        <ToolbarItem Text="Zrušit" Command="{Binding Cancel}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
