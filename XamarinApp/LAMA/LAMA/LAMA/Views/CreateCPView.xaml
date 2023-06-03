@@ -27,16 +27,24 @@
                         -->
 
 
+                        <Label Text="Jméno" FontSize="Medium" />
                         <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
-                        <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
-                        <Entry Text="{Binding Password}" Placeholder="Heslo" FontSize="Medium" IsPassword="true" />
-                        <Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
-                        <Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
-                        <Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
-                        <Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
-                        <Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
-
-                    </StackLayout>
+						<Label Text="Přezdívka" FontSize="Medium" />
+						<Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
+						<Label Text="Heslo" FontSize="Medium" />
+						<Entry Text="{Binding Password}" Placeholder="Heslo" FontSize="Medium" IsPassword="true" />
+						<Label Text="Role oddělené čárkou" FontSize="Medium" />
+						<Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
+						<Label Text="Telefon" FontSize="Medium" />
+						<Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
+						<Label Text="Facebook" FontSize="Medium" />
+						<Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
+						<Label Text="Discord" FontSize="Medium" />
+						<Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
+						<Label Text="Poznámky" FontSize="Medium" />
+						<Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
+						
+					</StackLayout>
                 </ScrollView>
             </StackLayout>
             <StackLayout
