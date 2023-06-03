@@ -49,11 +49,18 @@ namespace LAMA.ViewModels
         string permissions;
         public string Permissions { get{ return permissions; } set { SetProperty(ref permissions, value); } }
 
-        public bool CanDeleteCP { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
-        public bool CanEditDetails { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID == LocalStorage.cp.ID; } set { } }
-        public bool CanChangePermissions { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID==0; } set { } }
+        private bool _canDeleteCP = false;
+        public bool CanDeleteCP { get => _canDeleteCP; set => SetProperty(ref _canDeleteCP, value); }
+
+        private bool _canEditDetails = false;
+        public bool CanEditDetails { get => _canEditDetails; set => SetProperty(ref _canEditDetails, value); }
+
+        private bool _canChangePermissions = false;
+        public bool CanChangePermissions { get => _canChangePermissions; set => SetProperty(ref _canChangePermissions, value); }
+
         bool _CanArchiveCP = false;
         public bool CanArchiveCP { get { return _CanArchiveCP; } set { SetProperty(ref _CanArchiveCP, value); } }
+
         bool _CanUnarchiveCP = false;
         public bool CanUnarchiveCP { get { return _CanUnarchiveCP; } set { SetProperty(ref _CanUnarchiveCP, value); } }
 
@@ -101,12 +108,16 @@ namespace LAMA.ViewModels
             discord = cp.discord;
             _notes = cp.notes;
             permissions = cp.permissions.ToReadableString();
-            
+            CanDeleteCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
+            CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID == LocalStorage.cp.ID;
+            CanChangePermissions = LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID == 0;
+            CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
+            CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
 
             foreach (CP.PermissionType perm in Enum.GetValues(typeof(CP.PermissionType)))
             {
                 PermissionList.Add(new PermissionViewModel(perm.ToString(), cp.permissions.Contains(perm), 
-                    CanChangePermissions && 
+                    () => CanChangePermissions && 
                     //also don't allow to change my own permission to change permissions
                     !(cp.ID==LocalStorage.cpID && perm == CP.PermissionType.SetPermission), 
                     perm));
@@ -246,25 +257,30 @@ namespace LAMA.ViewModels
 
         void gotChanged(Serializable obj, int index)
         {
-            if (obj.GetType() != typeof(CP))
-                return;
-            CP cp = (CP)obj;
-            if (cp.ID != this.cp.ID)
-                return;
-            //"ID", "name", "nick", "roles", "phone", "facebook",
-            //"discord", "location", "notes", "permissions", "password"
-            switch (index)
-            {
-                case 1: Name = cp.name; break;
-                case 2: Nick = cp.nick; break;
-                case 3: Roles = cp.roles.ToReadableString(); break;
-                case 4: Phone = cp.phone; break;
-                case 5: Facebook = cp.facebook; break;
-                case 6: Discord = cp.discord; break;
-                case 8: Notes = cp.notes; break;
-                case 9: Permissions = cp.permissions.ToReadableString(); break;
-            }
+            var cp = obj as CP;
+            if (cp == null) return;
 
+            if (cp.ID == this.cp.ID)
+                switch (index)
+                {
+                    case 1: Name = cp.name; break;
+                    case 2: Nick = cp.nick; break;
+                    case 3: Roles = cp.roles.ToReadableString(); break;
+                    case 4: Phone = cp.phone; break;
+                    case 5: Facebook = cp.facebook; break;
+                    case 6: Discord = cp.discord; break;
+                    case 8: Notes = cp.notes; break;
+                    case 9: Permissions = cp.permissions.ToReadableString(); break;
+                }
+
+            if (cp.ID == LocalStorage.cpID)
+            {
+                CanDeleteCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
+                CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || this.cp.ID == LocalStorage.cp.ID;
+                CanChangePermissions = LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID == 0;
+                CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
+                CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
+            }
         }
      }
 }

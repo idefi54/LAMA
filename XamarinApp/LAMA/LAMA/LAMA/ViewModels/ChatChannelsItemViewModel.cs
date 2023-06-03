@@ -49,10 +49,23 @@ namespace LAMA.ViewModels
             archived = channel[0] == Communicator.SpecialCharacters.archivedChannelIndicator;
             if (archived) _channelName = channel.Substring(1);
             else _channelName = channel;
-            _canArchive = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && !archived;
-            _canRestore = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && archived;
-            _isVisible = CanBeVisible();
-            _canRename = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
+            CanArchive = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && !archived;
+            CanRestore = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && archived;
+            IsVisible = CanBeVisible();
+            CanRename = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
+
+            SQLEvents.dataChanged += SQLEvents_dataChanged;
+        }
+
+        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+            {
+                CanArchive = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && !archived;
+                CanRestore = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat) && archived;
+                IsVisible = CanBeVisible();
+                CanRename = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageChat);
+            }
         }
 
         public bool CanBeVisible()

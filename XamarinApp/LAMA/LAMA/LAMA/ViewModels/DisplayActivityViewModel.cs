@@ -173,6 +173,7 @@ namespace LAMA.ViewModels
 		LarpActivity _activity;
 
 
+		public Command OptionsCommand { get; }
 		public Command SignUpCommand { get; }
 		public Command ShowOnGraphCommand { get; }
 		public Command EditCommand { get; }
@@ -201,11 +202,11 @@ namespace LAMA.ViewModels
 
 			isRegistered = IsRegistered();
 
-			SignUpCommand = new Xamarin.Forms.Command(OnSignUp);
-			ShowOnGraphCommand = new Xamarin.Forms.Command(OnShowOnGraph);
-			EditCommand = new Xamarin.Forms.Command(OnEdit);
-			StatusCommand = new Xamarin.Forms.Command(OnStatusAsync);
-
+			OptionsCommand = new Command(OnOptions);
+			SignUpCommand = new Command(OnSignUp);
+			ShowOnGraphCommand = new Command(OnShowOnGraph);
+			EditCommand = new Command(OnEdit);
+			StatusCommand = new Command(OnStatusAsync);
 			IconChange = new Command(OnIconChange);
 		}
 
@@ -329,6 +330,28 @@ namespace LAMA.ViewModels
 				Status = _activity.status.ToFriendlyString();
             }
 		}
+
+		private async void OnOptions()
+		{
+			const string ShowOnGraph = "Zobrazit na Grafu";
+			const string ChangeStatus = "Změnit stav";
+			const string Edit = "Upravit";
+
+			var options = new List<string>();
+            options.Add(ShowOnGraph);
+			options.Add(SignUpText);
+			if (CanChangeActivity) options.Add(ChangeStatus);
+			if (CanChangeActivity) options.Add(Edit);
+
+            int? selectionResult = await _messageService.ShowSelectionAsync("Možnosti:", options);
+			if (!selectionResult.HasValue) return;
+
+			string selectedString = options[selectionResult.Value];
+			if (selectedString == ShowOnGraph) OnShowOnGraph();
+			if (selectedString == SignUpText) OnSignUp();
+			if (selectedString == ChangeStatus) OnStatusAsync();
+			if (selectedString == Edit) OnEdit();
+        }
 
 		private async void OnEdit()
 		{

@@ -17,7 +17,9 @@ namespace LAMA.ViewModels
         public string Detail { get { return _item != null ? Item.description : ""; } }
         public string Borrowed { get { return _item != null ? Item.taken.ToString() : ""; } }
         public string Free { get { return _item != null ? Item.free.ToString() : ""; } }
-        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
+
+        private bool _canChangeItems;
+        public bool CanChangeItems { get => _canChangeItems; set => SetProperty(ref _canChangeItems, value); }
 
 
         public bool ShowReturnButton { get { return Item.taken > 0; } }
@@ -31,6 +33,13 @@ namespace LAMA.ViewModels
         {
             _item = item;
             item.IGotUpdated += onChange;
+            CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                    CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+            };
+
         }
         public event PropertyChangedEventHandler PropertyChanged;
         void onChange(object sender, int index)

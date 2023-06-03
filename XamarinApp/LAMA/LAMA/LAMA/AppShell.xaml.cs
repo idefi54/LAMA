@@ -76,5 +76,42 @@ namespace LAMA
                 }
             }
         }
+
+        private async void OpenActivityList(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+            Shell.Current.FlyoutIsPresented = false;
+        }
+        private async void OpenChat(object sender, EventArgs e)
+        {
+            Routing.RegisterRoute("//monkeydetails", typeof(ActivityListPage));
+            await Shell.Current.GoToAsync("//monkeydetails");
+            ContentPage page;
+
+
+            //await Navigation.PushAsync(new ActivityListPage());
+            //Shell.Current.FlyoutIsPresented = false;
+            
+        }
+        private async void OpenActivityGraph(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+        }
+        private async void OpenEncyclopedia(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+        }
+        private async void OpenCPList(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+        }
+        private async void OpenInventory(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+        }
+        private async void OpenPOIList(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ActivityListPage());
+        }
     }
 }

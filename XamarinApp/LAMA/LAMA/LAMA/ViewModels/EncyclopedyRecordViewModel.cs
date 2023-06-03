@@ -21,7 +21,8 @@ namespace LAMA.ViewModels
         public string Text { get { return _Text; }  set { SetProperty(ref _Text, value); } }
         string _TLDR = "";
         public string TLDR { get { return _TLDR; } set { SetProperty(ref _TLDR, value); } }
-        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
+        private bool _canChangeEncyclopedy;
+        public bool CanChangeEncyclopedy { get => _canChangeEncyclopedy; set => SetProperty(ref _canChangeEncyclopedy, value); }
 
         public Xamarin.Forms.Command AddRecordCommand { get; private set; }
         public Xamarin.Forms.Command Edit { get; private set; }
@@ -47,32 +48,33 @@ namespace LAMA.ViewModels
             Return = new Command(onReturn);
             Create = new Command(onCreateSave);
             Save = new Command(onSave);
-
-
-            
+            CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+            SQLEvents.dataChanged += SQLEvents_dataChanged;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void SQLEvents_dataChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+        }
 
         void onUpdated(object sender, int index)
         {
-            string propName = String.Empty;
+            var record = sender as EncyclopedyRecord;
             switch(index)
             {
                 default: 
                     return;
                 case 1:
-                    propName = nameof(Name);
+                    Name = record.Name;
                     break;
                 case 2:
-                    propName = nameof(TLDR);
+                    TLDR = record.TLDR;
                     break;
                 case 3:
-                    propName = nameof(Text);
+                    Text = record.FullText;
                     break;
             }
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
         void onCreate()
         {

@@ -50,7 +50,9 @@ namespace LAMA.ViewModels
         public Command Edit { get; set; }
         public Command IconChange { get; set; }
         public Command Delete { get; set; }
-        public bool CanChange { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI); } }
+
+        private bool _canChange;
+        public bool CanChange { get => _canChange; set => SetProperty(ref _canChange, value); }
         public POIViewModel(INavigation navigation, PointOfInterest POI)
         {
             this.navigation = navigation;
@@ -72,6 +74,12 @@ namespace LAMA.ViewModels
             Edit = new Command(onEdit);
             IconChange = new Command(onIconChange);
             Delete = new Command(onDelete);
+            CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                    CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
+            };
         }
 
         private void onPOIChanged(object sender, int e)
@@ -102,7 +110,7 @@ namespace LAMA.ViewModels
             if (POI != null)
             {
                 POI.Name = name;
-                POI.description = description;
+                POI.Description = description;
                 POI.Icon = CurrentIconIndex;
 
                 (double lon, double lat) = MapHandler.Instance.GetSelectionPin();

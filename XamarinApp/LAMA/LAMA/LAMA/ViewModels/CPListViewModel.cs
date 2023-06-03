@@ -22,7 +22,9 @@ namespace LAMA.ViewModels
 
         Dictionary<long, CPViewModel> IDToViewModel = new Dictionary<long, CPViewModel>();
         public Command<object> OpenDetailCommand { get; private set; }
-        public bool CanAddCP { get {return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
+
+        private bool _canAddCP;
+        public bool CanAddCP { get => _canAddCP; set => SetProperty(ref _canAddCP, value); }
 
         string _filterText = string.Empty;
         public string FilterText { get { return _filterText; } set { SetProperty(ref _filterText, value); OnFilter(); } }
@@ -46,7 +48,14 @@ namespace LAMA.ViewModels
             OrderByName = new Command(OnOrderByName);
             OrderByNick = new Command(OnOrderByNick);
             ShowOrderAndFilter = new Command(OnShowOrderAndFilter);
+            SQLEvents.dataChanged += PermissionsChanged;
             LoadCPs();
+        }
+
+        private void PermissionsChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
         }
 
         void LoadCPs()

@@ -1,4 +1,5 @@
-﻿using LAMA.Singletons;
+﻿using LAMA.Models;
+using LAMA.Singletons;
 using LAMA.Views;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,9 @@ namespace LAMA.ViewModels
         public string ServerName { get { return _serverName; } set { SetProperty(ref _serverName, value); } }
 
         public string NewChannel { get; set; }
-        public bool CanChangeLarpEvent { get { return LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.ManageEvent); } }
+
+        private bool _canChangeLarpEvent;
+        public bool CanChangeLarpEvent { get => _canChangeLarpEvent; set => SetProperty(ref _canChangeLarpEvent, value); }
         public bool CanNotChangeLarpEvent { get { return !CanChangeLarpEvent; } }
         public Command BackCommand { get; set; }
 
@@ -37,7 +40,7 @@ namespace LAMA.ViewModels
         public LarpEventViewModel(INavigation navigation)
         {
             this.navigation = navigation;
-            
+            CanChangeLarpEvent = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.ManageEvent);
 
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < LarpEvent.ChatChannels.Count; ++i)
@@ -56,6 +59,11 @@ namespace LAMA.ViewModels
             Name = LarpEvent.Name;
             SetStart(LarpEvent.Days.first);
             SetEnd(LarpEvent.Days.second);
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                    CanChangeLarpEvent = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.ManageEvent);
+            };
         }
 
         async void onBack()

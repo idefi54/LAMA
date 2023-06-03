@@ -32,7 +32,8 @@ namespace LAMA.ViewModels
 
         INavigation Navigation;
 
-        public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+        private bool _canChangeActivity;
+        public bool CanChangeActivity { get => _canChangeActivity; set => SetProperty(ref _canChangeActivity, value); }
 
         private bool _showSortDropdown;
         public bool ShowSortDropdown { get { return _showSortDropdown; } set { SetProperty(ref _showSortDropdown, value); } }
@@ -114,7 +115,7 @@ namespace LAMA.ViewModels
             SortCommand = new Command(ToggleSort);
             FilterCommand = new Command(ToggleFilter);
 
-
+            CanChangeActivity = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
             SQLEvents.created += PropagateCreated;
             SQLEvents.dataChanged += PropagateChanged;
             SQLEvents.dataDeleted += PropagateDeleted;
@@ -141,6 +142,9 @@ namespace LAMA.ViewModels
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID)
+                CanChangeActivity = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
             if (changed == null || changed.GetType() != typeof(LarpActivity))
                 return;
 

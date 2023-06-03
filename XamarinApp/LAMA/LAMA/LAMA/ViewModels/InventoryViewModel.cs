@@ -30,7 +30,8 @@ namespace LAMA.ViewModels
         public Command<object> ReturnItem { get; private set; }
         public Command<object> OpenDetailCommand { get; private set; }
 
-        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
+        private bool _canChangeItems;
+        public bool CanChangeItems { get => _canChangeItems; set => SetProperty(ref _canChangeItems, value); }
 
         INavigation Navigation;
         IMessageService messageService;
@@ -48,6 +49,7 @@ namespace LAMA.ViewModels
             Navigation = navigation;
             messageService = DependencyService.Get<Services.IMessageService>();
             ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
+            CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
 
             var inventoryItems = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
             for (int i = 0; i < inventoryItems.Count; ++i) 
@@ -86,7 +88,10 @@ namespace LAMA.ViewModels
         }
         private void OnChange(Serializable changed, int index)
         {
-            if(changed.GetType() != typeof(InventoryItem))
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && index == 9)
+                CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+
+            if (changed.GetType() != typeof(InventoryItem))
             {
                 return;
             }            

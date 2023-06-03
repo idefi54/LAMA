@@ -28,7 +28,9 @@ namespace LAMA.ViewModels
         public string NumBorrowed { get { return _numBorrowed.ToString(); } private set { SetProperty(ref _numBorrowed, Helpers.readInt( value)); } }
         public string NumFree { get { return _numFree.ToString(); } private set { SetProperty(ref _numFree, Helpers.readInt(value)); } }
         public string BorrowedBy { get { return _borrowedBy; } private set { SetProperty(ref _borrowedBy, value); } }
-        public bool ManageInventory { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory); } set { } }
+
+        private bool _manageInventory;
+        public bool ManageInventory { get => _manageInventory; set => SetProperty(ref _manageInventory, value); }
         public Command DetailedBorrowCommand { get; private set; }
         public Command DetailedReturnCommand { get; private set; }
         public Command DetailedDeleteCommand { get; private set; }
@@ -68,6 +70,12 @@ namespace LAMA.ViewModels
             SetProperty(ref _howManyChange, 0);
             selectedCP = DatabaseHolder<CP, CPStorage>.Instance.rememberedList[0];
             CPName = selectedCP.name;
+            ManageInventory = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                    ManageInventory = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+            };
         }
 
         private void onItemUpdated(object sender, int i)
