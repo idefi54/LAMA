@@ -178,8 +178,11 @@ namespace LAMA.ViewModels
             if (!cpNameValid) return;
             bool cpNickValid = InputChecking.CheckInput(nick, "Přezdívka CP", 50);
             if (!cpNickValid) return;
-            bool cpRolesValid = InputChecking.CheckInput(roles, "Role", 200, true);
-            if (!cpRolesValid) return;
+            foreach (CPRoleItemViewModel roleItem in RoleList)
+            {
+                bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, "Role", 50, true);
+                if (!cpRolesValid) return;
+            }
             bool cpPhoneValid = InputChecking.CheckInput(phone, "Telefon", 20, true);
             if (!cpPhoneValid) return;
             bool cpFacebookValid = InputChecking.CheckInput(facebook, "Facebook", 100, true);

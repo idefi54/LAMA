@@ -2,7 +2,9 @@
 using LAMA.Singletons;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -28,13 +30,31 @@ namespace LAMA.ViewModels
         public string Discord { get { return _discord; } set { SetProperty(ref _discord, value); } }
         public string Notes { get { return _notes; } set { SetProperty(ref _notes, value); } }
 
+        ObservableCollection<CPRoleItemViewModel> roleList;
+        public ObservableCollection<CPRoleItemViewModel> RoleList { get { return roleList; } set { SetProperty(ref roleList, value); } }
+
+        public Command AddRole { get; }
 
         public CreateCPViewModel(INavigation navigation)
         {
             this.navigation = navigation;
 
+            roleList = new ObservableCollection<CPRoleItemViewModel>();
+
             CancelCommand = new Command(OnCancel);
             CreateCommand = new Command(OnSave);
+            AddRole = new Command(AddRoleItem);
+        }
+
+        private void AddRoleItem()
+        {
+            RoleList.Add(new CPRoleItemViewModel("role", RemoveRoleItem));
+        }
+
+        private void RemoveRoleItem(CPRoleItemViewModel roleItem)
+        {
+            if (RoleList.Contains(roleItem))
+                RoleList.Remove(roleItem);
         }
 
         void OnCancel()
@@ -49,8 +69,11 @@ namespace LAMA.ViewModels
             if (!cpNickValid) return;
             bool passwordValid = _password != null && _password.Trim().Length >= 5 && InputChecking.CheckInput(_password, "Heslo", 100);
             if (!passwordValid) return;
-            bool cpRolesValid = InputChecking.CheckInput(_roles, "Role", 200, true);
-            if (!cpRolesValid) return;
+            foreach(CPRoleItemViewModel roleItem in RoleList)
+			{
+                bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, "Role", 50, true);
+                if (!cpRolesValid) return;
+			}
             bool cpPhoneValid = InputChecking.CheckInput(_phone, "Telefon", 20, true);
             if (!cpPhoneValid) return;
             bool cpFacebookValid = InputChecking.CheckInput(_facebook, "Facebook", 100, true);
@@ -63,7 +86,9 @@ namespace LAMA.ViewModels
             IsBusy = true;
             var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
 
-            var toAdd = new CP(list.nextID(), _name, _nick, Helpers.readStringField(_roles), _phone, _facebook, _discord, _notes);
+            EventList<string> roles = new EventList<string>(RoleList.Select(x => x.RoleName).ToList());
+
+            var toAdd = new CP(list.nextID(), _name, _nick, roles, _phone, _facebook, _discord, _notes);
             var cpRememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             bool found = false;
             for (int i = 0; i < cpRememberedList.Count; i++)

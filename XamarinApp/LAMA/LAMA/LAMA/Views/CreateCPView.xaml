@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:common="clr-namespace:LAMA.Views"
              x:Class="LAMA.Views.CreateCPView">
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
@@ -34,7 +35,16 @@
 						<Label Text="Heslo" FontSize="Medium" />
 						<Entry Text="{Binding Password}" Placeholder="Heslo" FontSize="Medium" IsPassword="true" />
 						<Label Text="Role oddělené čárkou" FontSize="Medium" />
-						<Entry Text="{Binding Roles}" Placeholder="Role oddělené čárkou" FontSize="Medium" />
+
+						<StackLayout BindableLayout.ItemsSource="{Binding RoleList}">
+							<BindableLayout.ItemTemplate>
+								<DataTemplate>
+									<common:CPRoleItemView/>
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</StackLayout>
+						<Button Text="Nová role" Command="{Binding AddRole}"/>
+						
 						<Label Text="Telefon" FontSize="Medium" />
 						<Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
 						<Label Text="Facebook" FontSize="Medium" />
