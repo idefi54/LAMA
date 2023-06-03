@@ -128,9 +128,9 @@
     </FlyoutItem>
 
 
-    <!--<FlyoutItem Title="LARP Event">-->
-    <!--    <ShellContent Route="" ContentTemplate="{DataTemplate local:}" />-->
-    <!--</FlyoutItem>-->
+    <FlyoutItem Title="LARP Event">
+        <ShellContent Route="LarpEventView" ContentTemplate="{DataTemplate local:LarpEventView}" />
+    </FlyoutItem>
 
     <FlyoutItem Title="Points of Interest">
         <ShellContent Route="POIListView" ContentTemplate="{DataTemplate local:POIListView}" />
