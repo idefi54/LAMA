@@ -11,10 +11,7 @@
              <!--Title="Zobrazení Aktivity"-->
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Na Grafu" Command="{Binding ShowOnGraphCommand}"/>
-        <ToolbarItem Text="{Binding SignUpText}" Command="{Binding SignUpCommand}"/>
-        <forms:BindableToolbarItem Text="Změnit stav" Command="{Binding StatusCommand}" IsVisible="{Binding CanChangeActivity}"/>
-        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanChangeActivity}"/>
+        <ToolbarItem Text="Možnosti" Command="{Binding OptionsCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
