@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using LAMA.Views;
 using System.Collections.ObjectModel;
 using LAMA.Services;
+using System.Linq;
 
 namespace LAMA.ViewModels
 {
@@ -27,8 +28,8 @@ namespace LAMA.ViewModels
         string roles;
         public string Roles { get { return roles; } set { SetProperty(ref roles, value); } }
 
-        ObservableCollection<string> roleList;
-        public ObservableCollection<string> RoleList { get { return roleList; } set { SetProperty(ref roleList, value); } }
+        ObservableCollection<CPRoleItemViewModel> roleList;
+        public ObservableCollection<CPRoleItemViewModel> RoleList { get { return roleList; } set { SetProperty(ref roleList, value); } }
 
         string phone;
         public string Phone 
@@ -70,6 +71,7 @@ namespace LAMA.ViewModels
         //public Command RemovePermissionCommand { get; private set; }
         public Command Archive { get; }
         public Command Unarchive { get; }
+        public Command AddRole { get; }
         public Command DeleteCommand { get; private set; }
         public Command CancelCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
@@ -108,6 +110,9 @@ namespace LAMA.ViewModels
             discord = cp.discord;
             _notes = cp.notes;
             permissions = cp.permissions.ToReadableString();
+            
+            roleList = new ObservableCollection<CPRoleItemViewModel>(cp.roles.Select(x => new CPRoleItemViewModel(x, RemoveRoleItem)));
+            
             CanDeleteCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
             CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID == LocalStorage.cp.ID;
             CanChangePermissions = LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID == 0;
@@ -129,7 +134,20 @@ namespace LAMA.ViewModels
             Archive = new Command(onArchive);
             Unarchive = new Command(onUnarchive);
             CancelCommand = new Command(onCancel);
+            AddRole = new Command(AddRoleItem);
         }
+
+        private void AddRoleItem()
+		{
+            RoleList.Add(new CPRoleItemViewModel("role", RemoveRoleItem));
+		}
+
+        private void RemoveRoleItem(CPRoleItemViewModel roleItem)
+		{
+            if(RoleList.Contains(roleItem))
+                RoleList.Remove(roleItem);
+		}
+
         private void onCancel()
         {
             navigation.PopAsync();
@@ -175,7 +193,7 @@ namespace LAMA.ViewModels
                 cp.name = name;
             if (cp.nick != nick)
                 cp.nick = nick;
-            cp.roles.Update(Helpers.readStringField(roles));
+            cp.roles.Update(RoleList.Select(x => x.RoleName).ToList());
             if (cp.phone != phone)
                 cp.phone = phone;
             if (cp.facebook != facebook)

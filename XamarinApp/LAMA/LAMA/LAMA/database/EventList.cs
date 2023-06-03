@@ -119,12 +119,12 @@ namespace LAMA
             dataChanged?.Invoke();
         }
 
-        public void Update(EventList<T> otherOne)
+        public void Update(List<T> otherOne)
         {
             
-            for(int i = 0; i< otherOne.Count; ++i)
+            for (int i = 0; i < otherOne.Count; ++i)
             {
-                if (Count < i)
+                if (i < Count)
                 {
                     if (this[i].Equals(otherOne[i]))
                         continue;
@@ -134,6 +134,11 @@ namespace LAMA
                 else
                     base.Add(otherOne[i]);
             }
+			for (int i = Count - 1; i >= otherOne.Count; i--)
+			{
+                base.RemoveAt(i);
+			}
+
             dataChanged?.Invoke();
         }
     }
