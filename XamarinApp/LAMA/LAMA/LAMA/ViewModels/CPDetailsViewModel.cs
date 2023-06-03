@@ -178,9 +178,10 @@ namespace LAMA.ViewModels
             if (!cpNameValid) return;
             bool cpNickValid = InputChecking.CheckInput(nick, "Přezdívka CP", 50);
             if (!cpNickValid) return;
-            foreach (CPRoleItemViewModel roleItem in RoleList)
+			for (int i = 0; i < RoleList.Count; i++)
             {
-                bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, "Role", 50, true);
+				CPRoleItemViewModel roleItem = RoleList[i];
+				bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, (i + 1) + ". Role", 50, false);
                 if (!cpRolesValid) return;
             }
             bool cpPhoneValid = InputChecking.CheckInput(phone, "Telefon", 20, true);

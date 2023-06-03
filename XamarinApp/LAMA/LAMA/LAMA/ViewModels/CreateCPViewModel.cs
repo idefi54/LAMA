@@ -19,10 +19,9 @@ namespace LAMA.ViewModels
         public Command CancelCommand { get; private set; }
         public Command CreateCommand { get; private set; }
 
-        string _name, _nick, _password, _roles, _phone, _facebook, _discord, _notes;
+        string _name, _nick, _password, _phone, _facebook, _discord, _notes;
 
         public string Name { get { return _name; } set { SetProperty(ref _name, value); } }
-        public string Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
         public string Nick { get { return _nick; } set { SetProperty(ref _nick, value); } }
         public string Password { get { return _password; } set { SetProperty(ref _password, value); } }
         public string Phone { get { return _phone; } set { SetProperty(ref _phone, value); } }
@@ -69,11 +68,12 @@ namespace LAMA.ViewModels
             if (!cpNickValid) return;
             bool passwordValid = _password != null && _password.Trim().Length >= 5 && InputChecking.CheckInput(_password, "Heslo", 100);
             if (!passwordValid) return;
-            foreach(CPRoleItemViewModel roleItem in RoleList)
-			{
-                bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, "Role", 50, true);
+            for (int i = 0; i < RoleList.Count; i++)
+            {
+                CPRoleItemViewModel roleItem = RoleList[i];
+                bool cpRolesValid = InputChecking.CheckInput(roleItem.RoleName, (i + 1) + ". Role", 50, false);
                 if (!cpRolesValid) return;
-			}
+            }
             bool cpPhoneValid = InputChecking.CheckInput(_phone, "Telefon", 20, true);
             if (!cpPhoneValid) return;
             bool cpFacebookValid = InputChecking.CheckInput(_facebook, "Facebook", 100, true);
