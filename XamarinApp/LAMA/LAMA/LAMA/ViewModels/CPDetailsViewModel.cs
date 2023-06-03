@@ -117,7 +117,7 @@ namespace LAMA.ViewModels
             foreach (CP.PermissionType perm in Enum.GetValues(typeof(CP.PermissionType)))
             {
                 PermissionList.Add(new PermissionViewModel(perm.ToString(), cp.permissions.Contains(perm), 
-                    CanChangePermissions && 
+                    () => CanChangePermissions && 
                     //also don't allow to change my own permission to change permissions
                     !(cp.ID==LocalStorage.cpID && perm == CP.PermissionType.SetPermission), 
                     perm));

@@ -115,7 +115,7 @@ namespace LAMA.ViewModels
             SortCommand = new Command(ToggleSort);
             FilterCommand = new Command(ToggleFilter);
 
-
+            CanChangeActivity = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
             SQLEvents.created += PropagateCreated;
             SQLEvents.dataChanged += PropagateChanged;
             SQLEvents.dataDeleted += PropagateDeleted;
