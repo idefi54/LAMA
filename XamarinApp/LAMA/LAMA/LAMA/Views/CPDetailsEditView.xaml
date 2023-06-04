@@ -2,10 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LAMA.Views.CPDetailsEditView"
+			 xmlns:local="clr-namespace:LAMA"
+             xmlns:common="clr-namespace:LAMA.Views"
              xmlns:forms="clr-namespace:LAMA.Forms">
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding CancelCommand}"/>
         <forms:BindableToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
     </ContentPage.ToolbarItems>
     
@@ -27,9 +28,16 @@
                 <Label Text="Role"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Roles}" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
-                
-                <Label Text="Telefon"
+				<StackLayout BindableLayout.ItemsSource="{Binding RoleList}" IsVisible="{Binding CanEditDetails}">
+					<BindableLayout.ItemTemplate>
+						<DataTemplate>
+							<common:CPRoleItemView/>
+						</DataTemplate>
+					</BindableLayout.ItemTemplate>
+				</StackLayout>
+				<Button Text="Nová role" Command="{Binding AddRole}" IsVisible="{Binding CanEditDetails}"/>
+
+				<Label Text="Telefon"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
                 <Entry Text="{Binding Phone}" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>

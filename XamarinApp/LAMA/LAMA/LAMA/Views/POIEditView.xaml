@@ -7,7 +7,6 @@
 
     <ContentPage.ToolbarItems>
         <forms:BindableToolbarItem Text="Uložit" Command="{Binding Save}" />
-        <forms:BindableToolbarItem Text="Zrušit" Command="{Binding Cancel}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
