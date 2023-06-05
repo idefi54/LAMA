@@ -8,6 +8,7 @@ using System.Windows;
 
 using Key = System.Windows.Input.Key;
 using LAMA.ViewModels;
+using LAMA.Models;
 
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
@@ -23,8 +24,11 @@ namespace LAMA.UWP
             public EditViewModel()
             {
                 EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
-                LocalStorage.cp.permissions.dataChanged +=
-                    () => EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+                SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+                {
+                    if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                        EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+                };
             }
         }
 

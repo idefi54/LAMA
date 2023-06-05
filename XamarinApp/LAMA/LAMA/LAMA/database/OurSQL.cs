@@ -13,7 +13,7 @@ namespace LAMA
 {
 
 
-    class SQLEvents
+    public class SQLEvents
     {
         public delegate void DataChangedDelegate(Serializable changed, int changedAttributeIndex);
         public delegate void CreatedDelegate(Serializable created);

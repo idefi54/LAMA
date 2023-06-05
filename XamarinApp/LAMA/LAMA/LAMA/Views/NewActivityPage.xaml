@@ -8,185 +8,189 @@
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
 			 xmlns:themes="clr-namespace:LAMA.Themes"
 			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters">
-	    <!--Title="{Binding Title}"-->
+    <!--Title="{Binding Title}"-->
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Uložit" Command="{Binding SaveCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-                <StackLayout x:Name="DetailsLayout" Padding="15,15,30,15" >
-                    <Label Text="Název aktivity"
+        <AbsoluteLayout>
+            <ScrollView
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All">
+                <StackLayout>
+                    <StackLayout x:Name="DetailsLayout" Padding="15,15,30,15" >
+                        <Label Text="Název aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Entry Text="{Binding Name}" Placeholder="Název aktivity" FontSize="Medium" />
+                        <Entry Text="{Binding Name}" Placeholder="Název aktivity" FontSize="Medium" />
 
 
 
-                    <Label Text="Popis aktivity"
+                        <Label Text="Popis aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Editor Text="{Binding Description}" Placeholder="Popis aktivity" AutoSize="TextChanges" FontSize="Medium" Margin="0" />
+                        <Editor Text="{Binding Description}" Placeholder="Popis aktivity" AutoSize="TextChanges" FontSize="Medium" Margin="0" />
 
 
-                    <Label Text="Typ aktivity"
+                        <Label Text="Typ aktivity"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Picker Title="Typ aktivity" HorizontalOptions="Start"
+                        <Picker Title="Typ aktivity" HorizontalOptions="Start"
 						ItemsSource="{Binding TypeList}" SelectedIndex="{Binding TypeIndex}" SelectedItem="{Binding Type}"/>
-					
-					<StackLayout Orientation="Horizontal">
-						<Label
+
+                        <StackLayout Orientation="Horizontal">
+                            <Label
                             Text="Změnit ikonu:"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"/>
-						<ImageButton
+                            <ImageButton
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
                             WidthRequest="40"
                             HeightRequest="40"
                             Source="{Binding CurrentIcon, Mode=TwoWay}"
                             Command="{Binding IconChange}"/>
-					</StackLayout>
+                        </StackLayout>
 
-					<Label Text="Časové rozmezí"
+                        <Label Text="Časové rozmezí"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
-                    <Grid Padding="0,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                        <Grid Padding="0,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
-                        <OnPlatform x:TypeArguments="View">
-                            <On Platform="iOS">
-                                <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
-                            </On>
-                            <On Platform="Android">
-                                <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
-                            </On>
-                            <On Platform="UWP">
-                                <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
-                            </On>
-                            <On Platform="WPF">
-                                <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                                    <Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
-                                    <Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
-                                </StackLayout>
-                            </On>
-                        </OnPlatform>
-                        <Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDateString}" Command="{Binding SetStartTimeDateCommand}"/>
+                            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Text="Začátek" HorizontalOptions="Start" VerticalOptions="End"/>
+                            <OnPlatform x:TypeArguments="View">
+                                <On Platform="iOS">
+                                    <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+                                </On>
+                                <On Platform="Android">
+                                    <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+                                </On>
+                                <On Platform="UWP">
+                                    <TimePicker Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+                                </On>
+                                <On Platform="WPF">
+                                    <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                                        <Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding StartTimeStringHourSelected}"/>
+                                        <Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding StartTimeStringMinuteSelected}"/>
+                                    </StackLayout>
+                                </On>
+                            </OnPlatform>
+                            <Button Grid.Row="1" Grid.Column="1" HorizontalOptions="Start" Text="{Binding StartDateString}" Command="{Binding SetStartTimeDateCommand}"/>
 
-                        <Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
-                        <OnPlatform x:TypeArguments="View">
-                            <On Platform="iOS">
-                                <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
-                            </On>
-                            <On Platform="Android">
-                                <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
-                            </On>
-                            <On Platform="UWP">
-                                <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
-                            </On>
-                            <On Platform="WPF">
-                                <StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
-                                    <Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding EndTimeStringHourSelected}"/>
-                                    <Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding EndTimeStringMinuteSelected}"/>
-                                </StackLayout>
-                            </On>
-                        </OnPlatform>
-                        <Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDateString}" Command="{Binding SetEndTimeDateCommand}"/>
-                    </Grid>
+                            <Label Grid.Row="2" Grid.Column="0" Text="Konec" HorizontalOptions="Start" VerticalOptions="End"/>
+                            <OnPlatform x:TypeArguments="View">
+                                <On Platform="iOS">
+                                    <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding StartTime}"/>
+                                </On>
+                                <On Platform="Android">
+                                    <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+                                </On>
+                                <On Platform="UWP">
+                                    <TimePicker Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Time="{Binding EndTime}"/>
+                                </On>
+                                <On Platform="WPF">
+                                    <StackLayout Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+                                        <Picker WidthRequest="50" ItemsSource="{Binding TimeStringHourOptions}" SelectedItem="{Binding EndTimeStringHourSelected}"/>
+                                        <Picker WidthRequest="50" ItemsSource="{Binding TimeStringMinuteOptions}" SelectedItem="{Binding EndTimeStringMinuteSelected}"/>
+                                    </StackLayout>
+                                </On>
+                            </OnPlatform>
+                            <Button Grid.Row="3" Grid.Column="1" HorizontalOptions="Start" Text="{Binding EndDateString}" Command="{Binding SetEndTimeDateCommand}"/>
+                        </Grid>
 
 
-                    <Label Text="Role"
+                        <Label Text="Role"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <StackLayout x:Name="RoleList" BindableLayout.ItemsSource="{Binding Roles}" Margin="0,0,0,20">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <StackLayout Orientation="Horizontal">
-                                    <Entry IsVisible="{Binding Editable}" IsEnabled="{Binding Editable}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
-                                    <Label IsVisible="{Binding Editable, Converter={Converters:InverseBoolConverter}}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
-                                    <Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding MaxCount}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-                                    <Button Text="-" Padding="5"
+                        <StackLayout x:Name="RoleList" BindableLayout.ItemsSource="{Binding Roles}" Margin="0,0,0,20">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Entry IsVisible="{Binding Editable}" IsEnabled="{Binding Editable}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+                                        <Label IsVisible="{Binding Editable, Converter={Converters:InverseBoolConverter}}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+                                        <Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding MaxCount}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+                                        <Button Text="-" Padding="5"
 										Command="{Binding Path=BindingContext.RemoveRole, Source={x:Reference Name=RoleList}}"
 										CommandParameter="{Binding .}"/>
-                                </StackLayout>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
 
-                    <Button Text="+" HorizontalOptions="Start" Command="{Binding AddNewRole}"></Button>
+                        <Button Text="+" HorizontalOptions="Start" Command="{Binding AddNewRole}"></Button>
 
 
-                    <Label Text="Závislost na aktivitách"
+                        <Label Text="Závislost na aktivitách"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <StackLayout x:Name="DependencyList" BindableLayout.ItemsSource="{Binding Dependencies}" Margin="0,0,0,20">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Grid HorizontalOptions="Fill">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="100" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Text="{Binding Name}"/>
-                                    <Button Grid.Column="2" Text="Odebrat"
+                        <StackLayout x:Name="DependencyList" BindableLayout.ItemsSource="{Binding Dependencies}" Margin="0,0,0,20">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalOptions="Fill">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Text="{Binding Name}"/>
+                                        <Button Grid.Column="2" Text="Odebrat"
 										Command="{Binding Path=BindingContext.RemoveDependencyCommand, Source={x:Reference Name=DependencyList}}"
 										CommandParameter="{Binding .}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                    <Button Text="Přidat závislost" HorizontalOptions="Start" Command="{Binding AddDependencyCommand}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                        <Button Text="Přidat závislost" HorizontalOptions="Start" Command="{Binding AddDependencyCommand}"/>
 
-                    <Label Text="Potřebná příprava"
+                        <Label Text="Potřebná příprava"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Editor AutoSize="TextChanges" Text="{Binding Preparations}" Placeholder="Potřebná příprava" FontSize="Medium" Margin="0" MinimumHeightRequest="300"/>
+                        <Editor AutoSize="TextChanges" Text="{Binding Preparations}" Placeholder="Potřebná příprava" FontSize="Medium" Margin="0" MinimumHeightRequest="300"/>
 
 
-                    <Label Text="Vybavení"
+                        <Label Text="Vybavení"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <StackLayout x:Name="ItemList" BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <StackLayout Orientation="Horizontal">
-                                    <Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
-                                    <Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding Count}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
-                                    <Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding MaxCount}"/>
-                                    <Button Text="Odebrat" Padding="5"
+                        <StackLayout x:Name="ItemList" BindableLayout.ItemsSource="{Binding Items}" Margin="0,0,0,20">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Name}"/>
+                                        <Entry VerticalOptions="FillAndExpand" HorizontalOptions="End" Text="{Binding Count}" Keyboard="Numeric" MinimumWidthRequest="100" WidthRequest="100"/>
+                                        <Label VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding MaxCount}"/>
+                                        <Button Text="Odebrat" Padding="5"
 										Command="{Binding Path=BindingContext.RemoveItem, Source={x:Reference Name=ItemList}}"
 										CommandParameter="{Binding .}"/>
-                                </StackLayout>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                    <Button Text="Přidat předmět" HorizontalOptions="Start" Command="{Binding AddNewItem}"/>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                        <Button Text="Přidat předmět" HorizontalOptions="Start" Command="{Binding AddNewItem}"/>
 
 
-                    <Label Text="Lokace"
+                        <Label Text="Lokace"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
 
+                    </StackLayout>
+                    <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
                 </StackLayout>
-                <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-            </StackLayout>
-        </ScrollView>
+            </ScrollView>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
