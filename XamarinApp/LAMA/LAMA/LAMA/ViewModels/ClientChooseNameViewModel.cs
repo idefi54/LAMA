@@ -114,7 +114,7 @@ namespace LAMA.ViewModels
                         timer += 0.5f;
                         if (timer > 10.0f)
                         {
-                            throw new TimeoutException("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
+                            throw new TimeoutException("Nepodařilo se vytvořit CP klienta. Zkuste se přihlásit znovu.");
                         }
                     }
                 }
@@ -150,11 +150,11 @@ namespace LAMA.ViewModels
             {
                 bool choseToCreateNewCP = false;
                 if (isNew) {
-                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem už existuje, zvolte prosím jiné jméno", "OK");
+                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s touto přezdívkou už existuje, zvolte prosím jiné jméno", "OK");
                 } 
                 else if (communicator.clientRefusedMessage == "Client")
                 {
-                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Neexistující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit?", "Ano", "Ne");
+                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Neexistující CP", "CP s touto přezdívkou neexistuje, chcete ho vytvořit?", "Ano", "Ne");
                 }
                 else
                 {
