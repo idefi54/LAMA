@@ -41,6 +41,7 @@ namespace LAMA.Views
                 mapHandler.RemoveActivity(id, _mapView);
                 mapHandler.SetSelectionPin(lon, lat);
                 MapHandler.CenterOn(_mapView, lon, lat);
+                base.OnAppearing();
             }
         }
 

@@ -65,10 +65,10 @@ namespace LAMA.Singletons
         private MapView _activeMapView;
         private Polyline _limitsVisual;
         public bool IsGlobalPanLimits =>
-            !double.IsInfinity(LarpEvent.minX)
-            && !double.IsInfinity(LarpEvent.maxX)
-            && !double.IsInfinity(LarpEvent.minY)
-            && !double.IsInfinity(LarpEvent.maxY);
+            LarpEvent.minX != 0
+            || LarpEvent.maxX != 0
+            || LarpEvent.minY != 0
+            || LarpEvent.maxY != 0;
         public bool IsGlobalZoomLimits => LarpEvent.maxZoom != -1 && LarpEvent.minZoom != -1;
         #endregion
 
@@ -280,10 +280,10 @@ namespace LAMA.Singletons
 
         public static void RemoveGlobalBounds()
         {
-            LarpEvent.minX = float.PositiveInfinity;
-            LarpEvent.maxX = float.NegativeInfinity;
-            LarpEvent.minY = float.PositiveInfinity;
-            LarpEvent.maxY = float.NegativeInfinity;
+            LarpEvent.minX = 0;
+            LarpEvent.maxX = 0;
+            LarpEvent.minY = 0;
+            LarpEvent.maxY = 0;
             LarpEvent.minZoom = -1;
             LarpEvent.maxZoom = -1;
         }
@@ -328,17 +328,17 @@ namespace LAMA.Singletons
                     if (b.Text == HIDE)
                     {
                         hidableView.IsVisible = true;
-                        button.Text = EXPAND;
                         view.HeightRequest = heightRequest;
-                        view.HorizontalOptions = LayoutOptions.Fill;
-                        view.VerticalOptions = LayoutOptions.Fill;
+                        view.HorizontalOptions = horizontalOptions;
+                        view.VerticalOptions = verticalOptions;
+                        button.Text = EXPAND;
                     } else
                     {
                         hidableView.IsVisible = false;
-                        button.Text = HIDE;
-                        view.HeightRequest = -1;
+                        //view.HeightRequest = Application.Current.MainPage.Height;
                         view.HorizontalOptions = LayoutOptions.FillAndExpand;
                         view.VerticalOptions = LayoutOptions.FillAndExpand;
+                        button.Text = HIDE;
                     }
                 };
 
@@ -409,7 +409,7 @@ namespace LAMA.Singletons
         /// <param name="activity"></param>
         public void ReloadMapView(MapView view)
         {
-            SetPanLimits(view, view.Map.Envelope.Bottom, view.Map.Envelope.Left, view.Map.Envelope.Top, view.Map.Envelope.Right);
+            SetPanLimits(view, view.Map.Envelope.Left, view.Map.Envelope.Bottom, view.Map.Envelope.Right, view.Map.Envelope.Top);
             SetZoomLimits(view, view.Map.Resolutions[view.Map.Resolutions.Count - 1], view.Map.Resolutions[2]);
             Zoom(view);
 
@@ -1165,7 +1165,7 @@ namespace LAMA.Singletons
                 if (isClient && IsGlobalPanLimits)
                     SetPanLimits(_activeMapView, LarpEvent.minX, LarpEvent.minY, LarpEvent.maxX, LarpEvent.maxY);
                 else if (!IsGlobalPanLimits)
-                    SetPanLimits(_activeMapView, _activeMapView.Map.Envelope.Bottom, _activeMapView.Map.Envelope.Left, _activeMapView.Map.Envelope.Top, _activeMapView.Map.Envelope.Right);
+                    SetPanLimits(_activeMapView, _activeMapView.Map.Envelope.Left, _activeMapView.Map.Envelope.Bottom, _activeMapView.Map.Envelope.Right, _activeMapView.Map.Envelope.Top);
                 
 
                 if (isClient && IsGlobalZoomLimits)
