@@ -396,7 +396,13 @@ namespace LAMA.Singletons
         public void MapDataSave()
         {
             _polylineAddition = false;
-            _polylinePin.IsVisible = false;
+            try
+            {
+                _polylinePin.IsVisible = false;
+            } catch(NullReferenceException ex)
+            {
+                Debug.WriteLine(ex);
+            }
             // TODO - save things
             PolylineFlush(_activeMapView);
             //foreach (long id in _roadPolyLines.Keys)
