@@ -98,7 +98,7 @@
     -->
 
 
-    <FlyoutItem Title="Map">
+    <FlyoutItem Title="Mapa">
 		<ShellContent Route="MapPage" ContentTemplate="{DataTemplate local:MapPage}" />
 	</FlyoutItem>
 	<FlyoutItem Title="Seznam Aktivit" Icon="icon_feed.png">
@@ -111,7 +111,7 @@
         <ShellContent Route="ChatChannels" ContentTemplate="{DataTemplate local:ChatChannels}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Activity Graph" Icon="icon_about.png">
+    <FlyoutItem Title="Graf Aktivit" Icon="icon_about.png">
         <ShellContent Route="ActivityGraphPage" ContentTemplate="{DataTemplate local:ActivityGraphPage}" />
     </FlyoutItem>
 
@@ -128,15 +128,15 @@
     </FlyoutItem>
 
 
-    <FlyoutItem Title="LARP Event">
+    <FlyoutItem Title="LARP Událost">
         <ShellContent Route="LarpEventView" ContentTemplate="{DataTemplate local:LarpEventView}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Points of Interest">
+    <FlyoutItem Title="Lokace">
         <ShellContent Route="POIListView" ContentTemplate="{DataTemplate local:POIListView}" />
     </FlyoutItem>
 
-    <MenuItem x:Name="LocationTracking" Text="StopLocationTracking" StyleClass="MenuItemLayoutStyle" Clicked="OnLocationTrackingClicked"/>
+    <MenuItem x:Name="LocationTracking" Text="Zastavit sledování pozice na pozadí." StyleClass="MenuItemLayoutStyle" Clicked="OnLocationTrackingClicked"/>
 
     <!-- When the Flyout is visible this will be a menu item you can tie a click behavior to  -->
     <MenuItem Text="Logout" StyleClass="MenuItemLayoutStyle" Clicked="OnLogoutClicked">

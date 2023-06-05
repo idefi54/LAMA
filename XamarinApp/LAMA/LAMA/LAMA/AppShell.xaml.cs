@@ -13,8 +13,8 @@ namespace LAMA
 {
     public partial class AppShell : Xamarin.Forms.Shell
     {
-        const string STOP = "Stop Background Location Tracking";
-        const string START = "Start Background Location Tracking";
+        const string STOP = "Zastavit sledování pozice na pozadí";
+        const string START = "Spustit sledování pozice na pozadí";
 
         public AppShell()
         {

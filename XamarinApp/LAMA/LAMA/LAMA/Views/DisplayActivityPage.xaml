@@ -19,7 +19,7 @@
             <StackLayout Spacing="0"
                 AbsoluteLayout.LayoutBounds="0,0,1,1"
 				AbsoluteLayout.LayoutFlags="All">
-                <ScrollView>
+                <ScrollView x:Name="ScrollView">
                     <StackLayout>
                         <StackLayout x:Name="DetailsLayout"  Padding="30,15,30,15" >
                             <Label Text="Název aktivity"

@@ -291,7 +291,14 @@ namespace LAMA.Singletons
 
         #region GENERAL MAPVIEW HANDLING
 
-        public async Task<(MapView, Button)> CreateAndAddMapView(Layout<View> layout, LayoutOptions horizontalOptions, LayoutOptions verticalOptions, double heightRequest, Layout<View> hidableView = null)
+        public async Task<(MapView, Button)> CreateAndAddMapView(
+            Layout<View> layout,
+            LayoutOptions horizontalOptions,
+            LayoutOptions verticalOptions,
+            double heightRequest,
+            Layout<View> hidableView = null,
+            string expandText = "Zvěčit mapu",
+            string hideText = "Zmenšit mapu")
         {
             var activityIndicator = new ActivityIndicator
             {
@@ -313,32 +320,28 @@ namespace LAMA.Singletons
                 BackgroundColor = XColor.Gray
             };
 
-            const string EXPAND = "Expand Map";
-            const string HIDE = "Hide Map";
-
             Button button = null;
             if (hidableView != null)
             {
                 button = new Button();
-                button.Text = EXPAND;
+                button.Text = expandText;
                 button.Clicked += (object sender, EventArgs args) =>
                 {
                     var b = (Button)sender;
 
-                    if (b.Text == HIDE)
+                    if (b.Text == hideText)
                     {
                         hidableView.IsVisible = true;
                         view.HeightRequest = heightRequest;
                         view.HorizontalOptions = horizontalOptions;
                         view.VerticalOptions = verticalOptions;
-                        button.Text = EXPAND;
+                        button.Text = expandText;
                     } else
                     {
                         hidableView.IsVisible = false;
-                        //view.HeightRequest = Application.Current.MainPage.Height;
                         view.HorizontalOptions = LayoutOptions.FillAndExpand;
                         view.VerticalOptions = LayoutOptions.FillAndExpand;
-                        button.Text = HIDE;
+                        button.Text = hideText;
                     }
                 };
 

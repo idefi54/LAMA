@@ -26,7 +26,7 @@
                     <Label
                         Grid.Row="1" Grid.Column="0"
                         VerticalOptions="Center"
-                        Text="Jméno Eventu:"
+                        Text="Jméno Události:"
                         FontAttributes="Bold"
                         FontSize="Medium"/>
                     <Label
