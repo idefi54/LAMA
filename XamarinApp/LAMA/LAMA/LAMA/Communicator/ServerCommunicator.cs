@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace LAMA.Communicator
 {
     public class ServerCommunicator : Communicator
-    {       
+    {
         public DebugLogger logger;
         public DebugLogger Logger
         {
@@ -70,8 +70,12 @@ namespace LAMA.Communicator
             if (server != null) server.Abort();
             if (tokenLocationSending != null)
             {
-                tokenLocationSending.Cancel();
-                tokenLocationSending.Dispose();
+                try
+                {
+                    tokenLocationSending.Cancel();
+                    tokenLocationSending.Dispose();
+                }
+                catch (ObjectDisposedException) { }
             }
             clientSockets = new Dictionary<int, Socket>();
         }
@@ -312,14 +316,14 @@ namespace LAMA.Communicator
                         THIS.SendUpdate(current, Int32.Parse(messageParts[2]), Int64.Parse(messageParts[0]));
                     }));
                 }
-                if (messageParts[1] == "GiveID")
+                if (messageParts[1] == "RequestID")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
                         THIS.GiveNewClientID(current, messageParts[2], messageParts[3], Int32.Parse(messageParts[4]));
                     }));
                 }
-                if (messageParts[1] == "GiveIDExisting")
+                if (messageParts[1] == "RequestIDExisting")
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
@@ -369,33 +373,13 @@ namespace LAMA.Communicator
         /// <exception cref="NotAnIPAddressException"></exception>
         /// <exception cref="CantConnectToCentralServerException"></exception>
         /// <exception cref="CantConnectToDatabaseException"></exception>
-        /// <exception cref="WrongCreadintialsException"></exception>
+        /// <exception cref="WrongCredentialsException"></exception>
         public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)
         {
+            CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
-
-            /*
-            Debug.WriteLine("Compression testing");
-            byte[] compressed = CompressionManager.Encode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬");
-            Debug.WriteLine($"compressed length {compressed.Length}");
-            string decompressed = CompressionManager.Decode(compressed);
-            Debug.WriteLine(decompressed);
-            byte[] encrypted = Encryption.HuffmanCompressAESEncode($"⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬⸬{Separators.messageSeparator}", CompressionManager);
-            string decrypted = Encryption.AESDecryptHuffmanDecompress(encrypted, CompressionManager);
-            Debug.WriteLine("Uncompressed");
-            Debug.WriteLine(decrypted);
-            */
-
-            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
-            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
-            //Debug.WriteLine("Compression testing end");
-            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             logger = new DebugLogger(false);
-            LarpEvent.Name = name;
-            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
-            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
             Debug.WriteLine("Created client, loaded dictionaries");
@@ -448,7 +432,7 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "serverExists")
                 {
-                    throw new WrongCreadintialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
+                    throw new WrongCredentialsException("Server s tímto jménem už existuje, zvolte jiné jméno.");
                 }
             }
             else
@@ -473,21 +457,25 @@ namespace LAMA.Communicator
                 }
                 else if (responseString == "credintials")
                 {
-                    throw new WrongCreadintialsException("Špatné heslo, nebo neexistující server.");
+                    throw new WrongCredentialsException("Špatné heslo, nebo neexistující server.");
                 }
                 else if (responseString == "password")
                 {
-                    throw new WrongCreadintialsException("password.");
+                    throw new WrongCredentialsException("password.");
                 }
             }
-            Debug.WriteLine("No exceptions");
-            //Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
-            //Debug.WriteLine(Encoding.UTF8.GetString(Encoding.UTF8.GetBytes("Testovací český string žščřť")) + "\n");
-            //byte[] encrypted = Encryption.EncryptStringToBytes_Aes("ItemCreated;LAMA.Models.ChatMessage;2675274417265¦Klient¦0¦Hello¦1675274417265");
-            //byte[] encrypted = Encoding.UTF8.GetBytes(Encryption.EncryptAES("Testovací český string žščřť"));
-            //Debug.WriteLine($"Decrypted AES: {Encryption.DecryptStringFromBytes_Aes(encrypted)} \n");
 
-            //maxClientID = 0;
+            Debug.WriteLine("No exceptions");
+
+            CommunicationInfo.Instance.Communicator = this;
+            CommunicationInfo.Instance.ServerName = name;
+            CommunicationInfo.Instance.IsServer = true;
+
+            if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
+            LarpEvent.Name = name;
+            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
+
             IPAddress ipAddress;
             IPAddress.TryParse(IP, out ipAddress);
             if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
@@ -528,9 +516,12 @@ namespace LAMA.Communicator
             //Server should have all permissions
             PermissionsManager.GiveAllPermissions();
             Debug.WriteLine("Initialization finished");
+        }
 
-            CommunicationInfo.Instance.Communicator = this;
-            CommunicationInfo.Instance.ServerName = name;
+        private bool checkNgrokAddressFormat(string address)
+        {
+            Regex regex = new Regex("tcp://.*\\.tcp\\..*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
+            return regex.IsMatch(address);
         }
 
         /// <summary>
@@ -545,11 +536,13 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
         public ServerCommunicator(string name, string IP, int port, string password, string adminPassword, string nick, bool newServer)
         {
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
         }
 
@@ -564,11 +557,15 @@ namespace LAMA.Communicator
         /// <param name="newServer">Is this a new or an existing server</param>
         /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
         /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCreadintialsException">Wrong password used for existing server</exception>
+        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
         /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
         /// <exception cref="WrongPortException">Port number not in the valid range</exception>
+        /// <exception cref="PasswordTooShortException">The password is too short</exception>
+        /// <exception cref="WrongNgrokAddressFormatException">The ngrok endpoint supplied isn't in a correct format</exception>
         public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)
         {
+            if (!checkNgrokAddressFormat(ngrokAddress)) throw new WrongNgrokAddressFormatException();
+            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
             Debug.WriteLine(addresses[0]);
@@ -674,8 +671,8 @@ namespace LAMA.Communicator
             }
             if (cpID == -1)
             {
-                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(), 
-                    clientName, clientName, new EventList<string> {}, "", "", "", "");
+                CP cp = new Models.CP(DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID(),
+                    clientName, clientName, new EventList<string> { }, "", "", "", "");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                 cpID = cp.ID;
                 cp.password = Encryption.EncryptPassword(password);

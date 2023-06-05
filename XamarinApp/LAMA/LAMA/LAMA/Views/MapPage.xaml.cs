@@ -113,7 +113,7 @@ namespace LAMA.Views
             if (!locationAvailable && MapHandler.Instance.CurrentLocation == null)
             {
                 await DisplayAlert("Lokace není přístupná",
-                    "Prosíme, zapnite si lokaci anebo zadejte domovskou lokaci.", "OK");
+                    "Prosíme, zapněte si lokaci nebo zadejte domovskou lokaci.", "OK");
             }
 
             // Handle the fucking map

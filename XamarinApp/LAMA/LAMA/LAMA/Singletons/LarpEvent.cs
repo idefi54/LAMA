@@ -207,7 +207,7 @@ namespace LAMA.Singletons
             {
                 if (output.Length > 0)
                 {
-                    output.Append("," + day.ToUnixTimeMilliseconds());
+                    output.Append(Helpers.separator + day.ToUnixTimeMilliseconds());
                 }
                 else
                 {
@@ -224,7 +224,7 @@ namespace LAMA.Singletons
             {
                 if (output.Length > 0)
                 {
-                    output.Append("," + channel);
+                    output.Append(Helpers.separator + channel);
                 }
                 else
                 {
