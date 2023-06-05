@@ -64,17 +64,17 @@
                                         <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="1" Text="{Binding Borrowed}" FontSize="Small" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
                                     </Grid>
 
-                                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Vzít" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.BorrowColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+                                    <Button Grid.Row="0" Grid.Column="2" Text="Vzít" HeightRequest="60" MinimumHeightRequest="60"  Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.BorrowColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 										    Command="{Binding Path=BindingContext.BorrowItem, Source={x:Reference Name=ItemList}}"
-										    CommandParameter="{Binding .}"/>
-                                    <Button Grid.Row="2" Grid.Column="2" HeightRequest="60" MinimumHeightRequest="60" Text="Vrátit" Padding="20,10,20,10" Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+										    CommandParameter="{Binding .}" />
+                                    <Button Grid.Row="1" Grid.Column="2" HeightRequest="60" MinimumHeightRequest="60" Text="Vrátit"  Margin="5,5,5,5" BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}" TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
 										    Command="{Binding Path=BindingContext.ReturnItem, Source={x:Reference Name=ItemList}}"
-										    CommandParameter="{Binding .}"/>
+										    CommandParameter="{Binding .}" />
 
                                     <OnPlatform x:TypeArguments="View">
                                         <OnPlatform.Platforms>
                                             <On Platform="WPF">
-                                                <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                <Button Grid.Row="2" Grid.Column="2" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
 												Command="{Binding Path=BindingContext.OpenDetailCommand, Source={x:Reference Name=ItemList}}"
 												CommandParameter="{Binding .}"/>
                                             </On>

@@ -623,7 +623,7 @@ namespace LAMA.Communicator
             {
                 //Add password testing
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].nick == clientName)
                 {
                     passwordCorrect = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password);
                     if (passwordCorrect)
@@ -669,7 +669,7 @@ namespace LAMA.Communicator
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
                 if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i] != null &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].nick == clientName)
                 {
                     cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
                     SendCommand(new Command($"ClientRefused{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}Client with this name already exists", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
