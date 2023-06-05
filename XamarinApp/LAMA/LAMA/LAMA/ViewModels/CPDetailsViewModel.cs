@@ -112,7 +112,7 @@ namespace LAMA.ViewModels
             facebook = cp.facebook;
             discord = cp.discord;
             _notes = cp.notes;
-            permissions = cp.permissions.ToReadableString();
+            permissions = cp.PermissionsToReadableString();
             
             roleList = new ObservableCollection<CPRoleItemViewModel>(cp.roles.Select(x => new CPRoleItemViewModel(x, RemoveRoleItem, cp.ID)));
             
