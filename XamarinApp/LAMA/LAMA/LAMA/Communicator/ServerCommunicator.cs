@@ -522,7 +522,9 @@ namespace LAMA.Communicator
 
         private bool checkNgrokAddressFormat(string address)
         {
-            Regex regex = new Regex("tcp://.*\\.tcp\\..*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
+            Regex regex = new Regex("tcp://.*\\.tcp.*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
+            Debug.WriteLine(address);
+    
             return regex.IsMatch(address);
         }
 

@@ -120,7 +120,7 @@ namespace LAMA.ViewModels
             catch (CantConnectToCentralServerException)
             {
                 isNewServer = false;
-                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
+                await App.Current.MainPage.DisplayAlert("Připojení k Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
                 return;
             }
             catch (WrongNgrokAddressFormatException)
@@ -133,10 +133,12 @@ namespace LAMA.ViewModels
             {
                 if (isNewServer)
                 {
+                    isNewServer = false;
                     await App.Current.MainPage.DisplayAlert("Jméno Serveru", "Server s tímto jménem už existuje. Zvolte jiné jméno, nebo se přihlašte jako existující server.", "OK");
                 }
                 else if (e.Message == "password")
                 {
+                    isNewServer = false;
                     await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Zadali jste špatné heslo.", "OK");
                 }
                 else
@@ -149,6 +151,7 @@ namespace LAMA.ViewModels
             }
             catch (Exception e)
             {
+                isNewServer = false;
                 ErrorLabel = e.ToString();
                 return;
             }
