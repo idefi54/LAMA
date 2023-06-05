@@ -626,15 +626,18 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].name == clientName)
                 {
                     passwordCorrect = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].password == Encryption.EncryptPassword(password);
-                    cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
-                    string command = $"GiveID{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}{cpID}";
-                    lock (ServerCommunicator.socketsLock)
+                    if (passwordCorrect)
                     {
-                        clientSockets[clientID] = current;
+                        cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i].ID;
+                        string command = $"GiveID{SpecialCharacters.messagePartSeparator}{clientID}{SpecialCharacters.messagePartSeparator}{cpID}";
+                        lock (ServerCommunicator.socketsLock)
+                        {
+                            clientSockets[clientID] = current;
+                        }
+                        SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                        SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
+                        return;
                     }
-                    SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
-                    SendCommand(new Command("Connected", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "None", clientID));
-                    return;
                 }
             }
             lock (ServerCommunicator.socketsLock)
