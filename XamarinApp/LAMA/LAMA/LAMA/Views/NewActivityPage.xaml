@@ -17,6 +17,7 @@
     <ContentPage.Content>
         <AbsoluteLayout>
             <ScrollView
+                x:Name="ScrollView"
                 AbsoluteLayout.LayoutBounds="0,0,1,1"
 				AbsoluteLayout.LayoutFlags="All">
                 <StackLayout>

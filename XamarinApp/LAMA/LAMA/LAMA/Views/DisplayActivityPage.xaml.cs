@@ -29,7 +29,19 @@ namespace LAMA.Views
             (BindingContext as DisplayActivityViewModel).OnAppearing();
 
             MapHandler mapHandler = MapHandler.Instance;
-            (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsLayout);
+            string expandText = "Zvěčit mapu";
+            string hideText = "Zmenšit mapu";
+            (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(
+                MapLayout,
+                LayoutOptions.Fill,
+                LayoutOptions.Fill,
+                300,
+                DetailsLayout,
+                expandText,
+                hideText);
+
+            _expandButton.Clicked += (object sender, System.EventArgs e) => ScrollView.InputTransparent = ((Button)sender).Text == hideText;
+
             mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: false);
 
             if (_activity != null)
