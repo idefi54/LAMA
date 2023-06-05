@@ -125,7 +125,7 @@ namespace LAMA.ViewModels
 
             foreach (CP.PermissionType perm in Enum.GetValues(typeof(CP.PermissionType)))
             {
-                PermissionList.Add(new PermissionViewModel(perm.ToString(), cp.permissions.Contains(perm), 
+                PermissionList.Add(new PermissionViewModel(CP.permissionsCzech[perm], cp.permissions.Contains(perm), 
                     () => CanChangePermissions && 
                     //also don't allow to change my own permission to change permissions
                     !(cp.ID==LocalStorage.cpID && perm == CP.PermissionType.SetPermission), 
@@ -296,7 +296,7 @@ namespace LAMA.ViewModels
                     case 5: Facebook = cp.facebook; break;
                     case 6: Discord = cp.discord; break;
                     case 8: Notes = cp.notes; break;
-                    case 9: Permissions = cp.permissions.ToReadableString(); break;
+                    case 9: Permissions = cp.PermissionsToReadableString(); break;
                 }
 
             if (cp.ID == LocalStorage.cpID)

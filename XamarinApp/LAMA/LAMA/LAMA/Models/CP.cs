@@ -9,6 +9,19 @@ namespace LAMA.Models
 {
     public class CP : Serializable
     {
+        public static Dictionary<PermissionType, string> permissionsCzech = new Dictionary<PermissionType, string>
+        {
+            { PermissionType.SetPermission, "Nastavovat Práva" },
+            { PermissionType.ChangeCP, "Upravovat CP" },
+            { PermissionType.ChangeEncyclopedy, "Upravovat Encyklopedii" },
+            { PermissionType.ManageInventory, "Spravovat Inventář" },
+            { PermissionType.ChangeActivity, "Upravovat Aktivity" },
+            { PermissionType.ChangePOI, "Spravovat Lokace" },
+            { PermissionType.EditMap, "Editovat Mapu" },
+            { PermissionType.ManageEvent, "Spravovat Událost" },
+            { PermissionType.ManageChat, "Administrátor Chatu" },
+            { PermissionType.EditGraph, "Upravovat Graf Aktivit" }
+        };
         public enum Status { ready, onBreak, onActivity};
 
         public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI, EditMap, ManageEvent, ManageChat,
@@ -96,6 +109,27 @@ namespace LAMA.Models
             _discord = discord;
             _notes = notes;
         }
+
+        public string PermissionsToReadableString()
+        {
+            if (permissions.Count == 0)
+                return string.Empty;
+            else
+            {
+                StringBuilder output = new StringBuilder();
+                for (int i = 0; i < permissions.Count; ++i)
+                {
+                    if (i != 0)
+                        output.Append(", ");
+
+                    output.Append(permissionsCzech[permissions[i]]);
+
+                }
+                return output.ToString();
+            }
+        }
+
+
         public void updateWhole(string name, string nick, string phone, string facebook, string discord, string notes)
         {
             if (name != _name)
