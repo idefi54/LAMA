@@ -9,7 +9,7 @@
 
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Nový PoI" Command="{Binding Create}" IsVisible ="{Binding CanChange}"/>
+        <forms:BindableToolbarItem Text="Nová Lokace" Command="{Binding Create}" IsVisible ="{Binding CanChange}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

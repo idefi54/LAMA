@@ -13,7 +13,7 @@
                     <local:FlyoutPageItemViewModel Title="Seznam Aktivit" TargetPage="{x:Type pages:ActivityListPage}" />
                     <local:FlyoutPageItemViewModel Title="TestPage" TargetPage="{x:Type pages:TestPage}" />
                     <local:FlyoutPageItemViewModel Title="Chat" TargetPage="{x:Type pages:ChatChannels}" />
-                    <local:FlyoutPageItemViewModel Title="Activity Graph" TargetPage="{x:Type pages:ActivityGraphPage}" />
+                    <local:FlyoutPageItemViewModel Title="Graf Aktivit" TargetPage="{x:Type pages:ActivityGraphPage}" />
                 </x:Array>
             </ListView.ItemsSource>
             <ListView.ItemTemplate>

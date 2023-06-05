@@ -95,8 +95,8 @@ namespace LAMA.ViewModels
             }
 
             bool result = await App.Current.MainPage.DisplayAlert(
-                "Smazat Point of Interest",
-                $"Opravdu chcete smazat Point of interest {poiViewModel.Name}?",
+                "Smazat Lokaci",
+                $"Opravdu chcete smazat lokaci {poiViewModel.Name}?",
                 "Smazat", "Zrušit");
 
             if (!result)

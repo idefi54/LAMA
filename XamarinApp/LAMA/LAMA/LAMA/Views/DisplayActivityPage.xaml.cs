@@ -29,7 +29,7 @@ namespace LAMA.Views
             (BindingContext as DisplayActivityViewModel).OnAppearing();
 
             MapHandler mapHandler = MapHandler.Instance;
-            string expandText = "Zvěčit mapu";
+            string expandText = "Zvětšit mapu";
             string hideText = "Zmenšit mapu";
             (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(
                 MapLayout,
