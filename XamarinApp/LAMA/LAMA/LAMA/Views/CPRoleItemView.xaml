@@ -9,9 +9,9 @@
 				<ColumnDefinition Width="auto"/>
 			</Grid.ColumnDefinitions>
             <Entry Grid.Column="0"
-				Text="{Binding RoleName}" />
+				Text="{Binding RoleName}" IsEnabled="{Binding CanChangeDetails}"/>
 		    <Button Grid.Column="1"
-				Text="Smazat" Command="{Binding RemoveRole}"/>
+				Text="Smazat" Command="{Binding RemoveRole}" IsVisible="{Binding CanChangeDetails}"/>
 	    </Grid>
     </ContentView.Content>
 </ContentView>

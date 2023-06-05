@@ -56,6 +56,9 @@ namespace LAMA.ViewModels
         private bool _canEditDetails = false;
         public bool CanEditDetails { get => _canEditDetails; set => SetProperty(ref _canEditDetails, value); }
 
+        private bool _canEdit = false;
+        public bool CanEdit { get => _canEdit; set => SetProperty(ref _canEdit, value); }
+
         private bool _canChangePermissions = false;
         public bool CanChangePermissions { get => _canChangePermissions; set => SetProperty(ref _canChangePermissions, value); }
 
@@ -111,10 +114,11 @@ namespace LAMA.ViewModels
             _notes = cp.notes;
             permissions = cp.permissions.ToReadableString();
             
-            roleList = new ObservableCollection<CPRoleItemViewModel>(cp.roles.Select(x => new CPRoleItemViewModel(x, RemoveRoleItem)));
+            roleList = new ObservableCollection<CPRoleItemViewModel>(cp.roles.Select(x => new CPRoleItemViewModel(x, RemoveRoleItem, cp.ID)));
             
             CanDeleteCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
-            CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID == LocalStorage.cp.ID;
+            CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || cp.ID == LocalStorage.cp.ID;
+            CanEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || cp.ID == LocalStorage.cp.ID;
             CanChangePermissions = LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID == 0;
             CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
             CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
@@ -139,7 +143,7 @@ namespace LAMA.ViewModels
 
         private void AddRoleItem()
 		{
-            RoleList.Add(new CPRoleItemViewModel("role", RemoveRoleItem));
+            RoleList.Add(new CPRoleItemViewModel("role", RemoveRoleItem, cp.ID));
 		}
 
         private void RemoveRoleItem(CPRoleItemViewModel roleItem)
@@ -298,7 +302,8 @@ namespace LAMA.ViewModels
             if (cp.ID == LocalStorage.cpID)
             {
                 CanDeleteCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
-                CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || this.cp.ID == LocalStorage.cp.ID;
+                CanEditDetails = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || this.cp.ID == LocalStorage.cp.ID;
+                CanEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) || LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || this.cp.ID == LocalStorage.cp.ID;
                 CanChangePermissions = LocalStorage.cp.permissions.Contains(CP.PermissionType.SetPermission) || LocalStorage.cpID == 0;
                 CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
                 CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;

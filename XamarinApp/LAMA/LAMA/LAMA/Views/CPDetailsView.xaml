@@ -8,7 +8,7 @@
 
 
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanEditDetails}"/>
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanEdit}"/>
         <forms:BindableToolbarItem Text="Archivovat" Command="{Binding Archive}" IsVisible="{Binding CanArchiveCP}" />
         <forms:BindableToolbarItem Text="Odarchivovat" Command="{Binding Unarchive}" IsVisible="{Binding CanUnarchiveCP}" />
     </ContentPage.ToolbarItems>

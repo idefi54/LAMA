@@ -18,12 +18,12 @@
                 <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
+                <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" IsEnabled="{Binding CanEditDetails}"/>
 
                 <Label Text="Přezdívka"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsVisible="{Binding CanEditDetails}" IsReadOnly="True"/>
+                <Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" IsReadOnly="True"/>
 
                 <Label Text="Role"
 					   HorizontalTextAlignment="Start"
@@ -40,22 +40,22 @@
 				<Label Text="Telefon"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Phone}" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
+                <Entry Text="{Binding Phone}" FontSize="Medium" IsEnabled="{Binding CanEditDetails}"/>
 
                 <Label Text="Facebook"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Facebook}" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
+                <Entry Text="{Binding Facebook}" FontSize="Medium" IsEnabled="{Binding CanEditDetails}"/>
 
                 <Label Text="Discord"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Entry Text="{Binding Discord}" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
+                <Entry Text="{Binding Discord}" FontSize="Medium" IsEnabled="{Binding CanEditDetails}"/>
 
                 <Label Text="Poznámky"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" IsVisible="{Binding CanEditDetails}"/>
-                <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsVisible="{Binding CanEditDetails}"/>
+                <Editor Text="{Binding Notes}" AutoSize="TextChanges" Margin="0" FontSize="Medium" IsEnabled="{Binding CanEditDetails}"/>
 
 
                 <StackLayout Orientation="Vertical" x:Name="PermissionList" BindableLayout.ItemsSource="{Binding PermissionList}" Margin="5,5,5,0">
