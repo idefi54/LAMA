@@ -297,7 +297,7 @@ namespace LAMA.Singletons
             LayoutOptions verticalOptions,
             double heightRequest,
             Layout<View> hidableView = null,
-            string expandText = "Zvěčit mapu",
+            string expandText = "Zvětšit mapu",
             string hideText = "Zmenšit mapu")
         {
             var activityIndicator = new ActivityIndicator
