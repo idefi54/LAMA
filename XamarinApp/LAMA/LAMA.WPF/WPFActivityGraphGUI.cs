@@ -124,35 +124,32 @@ namespace LAMA.UWP
                 calendarButton.FontAttributes = FontAttributes.Bold;
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
-                calendarButton.Clicked += async (object sender, EventArgs args) => {
+                calendarButton.Clicked += async (object sender, EventArgs args) =>
+                {
                     graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation, graph.TimeOffset);
                 };
                 grid.Children.Add(calendarButton, 2, 0);
             }
 
-            // Edit control
-            if (LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph))
-            {
-                var editStack = new StackLayout();
-                editStack.Orientation = StackOrientation.Horizontal;
+            var editStack = new StackLayout();
+            editStack.Orientation = StackOrientation.Horizontal;
 
-                var editLabel = new Label();
-                editLabel.Text = "Edit:";
-                editLabel.VerticalOptions = LayoutOptions.Center;
-                editLabel.HorizontalOptions = LayoutOptions.Center;
-                editStack.Children.Add(editLabel);
+            var editLabel = new Label();
+            editLabel.Text = "Edit:";
+            editLabel.VerticalOptions = LayoutOptions.Center;
+            editLabel.HorizontalOptions = LayoutOptions.Center;
+            editStack.Children.Add(editLabel);
 
-                var editSwitch = new Switch();
-                editSwitch.IsToggled = false;
-                editSwitch.VerticalOptions = LayoutOptions.Center;
-                editSwitch.HorizontalOptions = LayoutOptions.End;
-                editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
-                editStack.Children.Add(editSwitch);
-                grid.Children.Add(editStack, 3, 0);
+            var editSwitch = new Switch();
+            editSwitch.IsToggled = false;
+            editSwitch.VerticalOptions = LayoutOptions.Center;
+            editSwitch.HorizontalOptions = LayoutOptions.End;
+            editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
+            editStack.Children.Add(editSwitch);
+            grid.Children.Add(editStack, 3, 0);
 
-                editStack.BindingContext = new EditViewModel();
-                editStack.SetBinding(View.IsVisibleProperty, "EditVisible");
-            }
+            editStack.BindingContext = new EditViewModel();
+            editStack.SetBinding(View.IsVisibleProperty, "EditVisible");
 
             return grid;
         }
