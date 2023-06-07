@@ -37,7 +37,13 @@ namespace LAMA.Views
         {
             base.OnAppearing();
             var mapHandler = MapHandler.Instance;
-            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsView);
+            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(
+                layout: MapLayout,
+                horizontalOptions: LayoutOptions.Fill,
+                verticalOptions: LayoutOptions.Fill,
+                heightRequest: 300,
+                hidableView: DetailsView);
+
             mapHandler.MapViewSetup(_mapView, showSelection:true);
 
             if (_poi != null)

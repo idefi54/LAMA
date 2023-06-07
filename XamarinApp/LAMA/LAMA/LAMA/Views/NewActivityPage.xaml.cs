@@ -49,7 +49,10 @@ namespace LAMA.Views
                 expandText,
                 hideText);
 
-            _expandButton.Clicked += (object sender, System.EventArgs e) => ScrollView.InputTransparent = ((Button)sender).Text == hideText;
+            if (Device.RuntimePlatform == Device.Android)
+                _expandButton.Clicked += (object sender, System.EventArgs e)
+                    => ScrollView.InputTransparent = ((Button)sender).Text == hideText;
+
             mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: true);
 
             if (Activity != null)

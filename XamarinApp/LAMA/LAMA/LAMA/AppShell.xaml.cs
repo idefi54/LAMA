@@ -1,4 +1,5 @@
 ﻿using LAMA.Communicator;
+using LAMA.Models;
 using LAMA.Services;
 using LAMA.Singletons;
 using LAMA.ViewModels;
@@ -27,6 +28,20 @@ namespace LAMA
 
             MessagingCenter.Subscribe(this, "ServiceStarted", (StartServiceMessage message) => LocationTracking.Text = STOP);
             MessagingCenter.Subscribe(this, "ServiceStopped", (StopServiceMessage message) => LocationTracking.Text = START);
+
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                MessagingCenter.Subscribe<LocationMessage>(this, "Location",
+                    message =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            var cpList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
+                            cpList.getByID(LocalStorage.cpID).location = new Pair<double, double>(message.Longitude, message.Latitude);
+
+                        });
+                    });
+            }
         }
 
         private void OnLocationTrackingClicked(object sender, EventArgs e)
@@ -69,8 +84,7 @@ namespace LAMA
                 if (Device.RuntimePlatform == Device.WPF)
                 {
                     await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
-                }
-                else
+                } else
                 {
                     await Shell.Current.GoToAsync("//ClientChooseServerPage");
                 }
@@ -91,7 +105,7 @@ namespace LAMA
 
             //await Navigation.PushAsync(new ActivityListPage());
             //Shell.Current.FlyoutIsPresented = false;
-            
+
         }
         private async void OpenActivityGraph(object sender, EventArgs e)
         {

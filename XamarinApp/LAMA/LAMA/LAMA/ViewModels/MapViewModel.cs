@@ -60,13 +60,13 @@ namespace LAMA.ViewModels
 
             _getMapView = getMapView;
             _keyboard = DependencyService.Get<IKeyboardService>();
+            SQLEvents.dataChanged += BoundsChanged;
 
             if (_keyboard == null)
                 return;
 
             _keyboard.OnKeyDown += OnKeyDown;
             _keyboard.OnKeyUp += OnKeyUp;
-            SQLEvents.dataChanged += BoundsChanged;
         }
 
         private void BoundsChanged(Serializable changed, int changedAttributeIndex)

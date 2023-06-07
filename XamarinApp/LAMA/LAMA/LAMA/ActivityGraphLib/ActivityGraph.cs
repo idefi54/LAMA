@@ -75,7 +75,7 @@ namespace LAMA.ActivityGraphLib
         public enum EditingMode { None, Create, Connect, Disconnect }
         public EditingMode Mode { get; set; }
 
-        public ActivityButton DraggedButton { get; set; } = null;
+        public ActivityButton SelectedButton { get; set; } = null;
 
 
         /// <summary>
