@@ -1,8 +1,5 @@
-﻿using Mapsui;
-using Mapsui.Geometries;
-using Mapsui.Layers;
+﻿using Mapsui.Geometries;
 using Mapsui.Providers;
-using Mapsui.Styles;
 using Mapsui.UI.Forms;
 using Mapsui.Utilities;
 using Mapsui.Projection;
@@ -12,18 +9,13 @@ using System.Diagnostics;
 using Xamarin.Essentials;
 using System.Threading.Tasks;
 using LAMA.Models;
-
-using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 using XColor = Xamarin.Forms.Color;
 using MColor = Mapsui.Styles.Color;
 using XPoint = Xamarin.Forms.Point;
 using MPoint = Mapsui.Geometries.Point;
-using ActivityStatus = LAMA.Models.LarpActivity.Status;
-using SkiaSharp.Views.Forms;
 using Xamarin.Forms;
 using System.Reflection;
 using System.IO;
-using LAMA.Singletons;
 using LAMA.Themes;
 using LAMA.Extensions;
 
@@ -48,9 +40,6 @@ namespace LAMA.Singletons
         private Pin _polylinePin;
         private const float _pinScale = 0.7f;
         private static XColor _highlightColor = XColor.FromHex("3A0E80");
-
-        // IDs
-        private ulong _alertID;
 
         // Double clicking
         private Stopwatch _stopwatch;
@@ -137,7 +126,6 @@ namespace LAMA.Singletons
             _limitsVisual.StrokeColor = XColor.Red;
             _limitsVisual.StrokeWidth = 2;
 
-            _alertID = 0;
             _stopwatch = new Stopwatch();
             _stopwatch.Start();
             _time = 0;
@@ -539,26 +527,6 @@ namespace LAMA.Singletons
 
         #region ADDING AND REMOVING ENTITIES
         /// <summary>
-        /// Symbols are background things that are non-clickable.
-        /// Has very wide variety of what to show on the map, not only icons.
-        /// Not usable right now and might remove later.
-        /// </summary>
-        /// <param name="lon"></param>
-        /// <param name="lat"></param>
-        /// <param name="styles"></param>
-        public void AddSymbol(double lon, double lat, IEnumerable<IStyle> styles = null)
-        {
-            var feature = new Feature();
-            var point = SphericalMercator.FromLonLat(lon, lat);
-            feature.Geometry = point;
-            if (styles != null)
-                foreach (var style in styles)
-                    feature.Styles.Add(style);
-
-            _symbols.Add(feature);
-        }
-
-        /// <summary>
         /// Adds a general pin to the internal data.
         /// Also adds the pin to a MapView if specfied.
         /// </summary>
@@ -667,31 +635,6 @@ namespace LAMA.Singletons
         }
 
         /// <summary>
-        /// Adds an alert to the internal data.
-        /// Also adds a pin to a MapView if specified.
-        /// </summary>
-        /// <param name="lon"></param>
-        /// <param name="lat"></param>
-        /// <param name="text"></param>
-        /// <param name="view"></param>
-        /// <returns>Returns alert id, if you want to remove it later.</returns>
-        public ulong AddAlert(double lon, double lat, string text, MapView view = null)
-        {
-            Pin p = CreatePin(lon, lat, "important");
-            PinSetIcon(p, "LAMA.Resources.Icons.message_2_exp-1");
-            p.Callout.Title = text;
-            p.Color = XColor.Red;
-            p.Callout.Color = XColor.Red;
-            _alertPins[_alertID] = p;
-
-            if (view != null && IsFilteredIn(EntityType.Alerts))
-                view.Pins.Add(p);
-
-            //p.Scale = _pinScale;
-            return _alertID++;
-        }
-
-        /// <summary>
         /// Removes the Road from the internal data.
         /// Immediately removes from MapView, if specified.
         /// </summary>
@@ -719,21 +662,6 @@ namespace LAMA.Singletons
 
             view?.Pins.Remove(_activityPins[activityID]);
             _activityPins.Remove(activityID);
-        }
-
-        /// <summary>
-        /// Removes the Alert from the internal data.
-        /// Also removes it from a MapView if specified.
-        /// </summary>
-        /// <param name="alertID"></param>
-        /// <param name="view"></param>
-        public void RemoveAlert(ulong alertID, MapView view = null)
-        {
-            if (!_alertPins.ContainsKey(alertID))
-                return;
-
-            view?.Pins.Remove(_alertPins[alertID]);
-            _alertPins.Remove(alertID);
         }
 
         /// <summary>
@@ -908,33 +836,10 @@ namespace LAMA.Singletons
         #endregion
 
         #region PRIVATE METHODS
-        private MemoryLayer CreateMarkersLayer()
-        {
-            string path = "LAMA.marker.png";
-            var assembly = typeof(MapHandler).Assembly;
-            var image = assembly.GetManifestResourceStream(path);
-            var TestBitmapID = BitmapRegistry.Instance.Register(image);
-            var bitmapHeight = 175;
-
-            var style = new SymbolStyle
-            {
-                SymbolScale = 0.0,
-                SymbolOffset = new Offset(0, bitmapHeight * 0.5)
-            };
-
-            return new MemoryLayer
-            {
-                Name = "markers",
-                IsMapInfoLayer = true,
-                DataSource = new MemoryProvider(_symbols),
-                Style = style
-            };
-        }
         private Mapsui.Map CreateMap()
         {
             var map = new Mapsui.Map();
             map.Layers.Add(OpenStreetMap.CreateTileLayer());
-            //map.Layers.Add(CreateMarkersLayer());
 
             return map;
         }
@@ -954,7 +859,6 @@ namespace LAMA.Singletons
             p.Callout.SubtitleFontAttributes = FontAttributes.Italic;
             p.Callout.SubtitleFontSize = p.Callout.TitleFontSize * 0.7f;
 
-            //if (view != null) p.Scale = 0.7f; // Scale setter can throw null exception - WHY THE ACTUAL FRICK
             return p;
         }
 
