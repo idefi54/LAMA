@@ -22,9 +22,18 @@ namespace LAMA.Models
             { PermissionType.ManageChat, "Administrátor Chatu" },
             { PermissionType.EditGraph, "Upravovat Graf Aktivit" }
         };
-        public enum Status { ready, onBreak, onActivity};
-
-        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI, EditMap, ManageEvent, ManageChat,
+        
+        public enum PermissionType
+        {
+            SetPermission,
+            ChangeCP,
+            ChangeEncyclopedy,
+            ManageInventory,
+            ChangeActivity,
+            ChangePOI,
+            EditMap,
+            ManageEvent,
+            ManageChat,
             EditGraph
         }
 
@@ -273,7 +282,6 @@ namespace LAMA.Models
         {
             IGotUpdated?.Invoke(this, index);
         }
-
 
         public void MakeMeAdmin()
         {
