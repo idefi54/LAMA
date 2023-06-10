@@ -12,13 +12,7 @@ namespace LAMA.ViewModels
 {
     internal class ServerLoginViewModel : BaseViewModel
     {
-        public Xamarin.Forms.Command DatabaseNameCommand { get; }
         public Xamarin.Forms.Command ServerLoginCommand { get; }
-
-        public string DatabaseName { get; set; }
-        private string _databaseNameDisplay;
-        public string DatabaseNameDisplay { get { return _databaseNameDisplay; } set { SetProperty(ref _databaseNameDisplay, value); } }
-
 
         public string ServerName { get; set; }
         public string ServerNgrokEndpoint { get; set; }
@@ -38,19 +32,7 @@ namespace LAMA.ViewModels
         public ServerLoginViewModel(bool newServer)
         {
             ServerLoginCommand = new Xamarin.Forms.Command(OnServerLoginClicked);
-            DatabaseNameCommand = new Xamarin.Forms.Command(OnChangeDatabaseName);
-            DatabaseNameDisplay = $"Database Name: {SQLConnectionWrapper.databaseName}";
-            //isNewServer = newServer;
             isNewServer = false;
-        }
-
-        private void OnChangeDatabaseName()
-        {
-            SQLConnectionWrapper.databaseName = DatabaseName;
-            if (SQLConnectionWrapper.connection == null)
-            {
-                DatabaseNameDisplay = $"Database Name: {DatabaseName}";
-            }
         }
 
         private async void OnServerLoginClicked(object obj)

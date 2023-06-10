@@ -54,17 +54,6 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
-    /// <summary>
-    /// Server with this name doesn't exist (no such server specified in the database table)
-    /// </summary>
-    public class NonExistentServerException : Exception
-    {
-        public NonExistentServerException() { }
-        public NonExistentServerException(string message)
-            : base(message) { }
-        public NonExistentServerException(string message, Exception inner)
-            : base(message, inner) { }
-    }
 
     /// <summary>
     /// Unable to connect to the central (remote) server - probably problem with connection

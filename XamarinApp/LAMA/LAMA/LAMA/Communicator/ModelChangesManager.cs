@@ -276,7 +276,6 @@ namespace LAMA.Communicator
         public void DataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
             string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute;
-            if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
 
             Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (objectType == "LAMA.Singletons.LarpEvent" && !attributesCache.containsKey(attributeID))
@@ -389,7 +388,6 @@ namespace LAMA.Communicator
         public void RollbackDataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command)
         {
             string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute;
-            if (!testing) communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (attributesCache.containsKey(attributeID))
             {
                 attributesCache.getByKey(attributeID).value = value;
@@ -464,7 +462,6 @@ namespace LAMA.Communicator
 
             if (objectIgnoreCreation == objectCacheID)
             {
-                communicator.Logger.LogWrite("Ignore Creation: " + objectIgnoreCreation);
                 objectIgnoreCreation = "";
                 return;
             }
@@ -473,7 +470,6 @@ namespace LAMA.Communicator
             string[] attributes = changed.getAttributes();
             string command = "ItemCreated" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + String.Join(SpecialCharacters.attributesSeparator.ToString(), attributes);
 
-            communicator.Logger.LogWrite($"OnItemCreated: {command}");
             if (!objectsCache.containsKey(objectCacheID) || (objectsCache.getByKey(objectCacheID).command.StartsWith("ItemDeleted") && testing))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
@@ -499,7 +495,6 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
-            if (!testing) communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
@@ -726,7 +721,6 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         private void ItemCreatedSendRollback(string objectID, Socket current)
         {
-            communicator.Logger.LogWrite($"ItemCreatedSendRollback: {objectID}");
             string rollbackCommand = "Rollback;";
             rollbackCommand += objectsCache.getByKey(objectID).command;
             try
@@ -748,7 +742,6 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
-            if (!testing) communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
@@ -961,8 +954,6 @@ namespace LAMA.Communicator
                 return;
             }
 
-            communicator.Logger.LogWrite($"OnItemDeleted: {objectCacheID}");
-
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
             string command = "ItemDeleted" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
@@ -988,7 +979,6 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void ItemDeleted(string objectType, long objectID, long updateTime, string command)
         {
-            if (!testing) communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
             string objectCacheID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
             if (objectsCache.containsKey(objectCacheID))
             {

@@ -7,7 +7,6 @@ namespace LAMA.Communicator
     interface Communicator
     {
         long LastUpdate { get; set; }
-        DebugLogger Logger { get; }
         Compression CompressionManager { get; set; }
         void SendCommand(Command command);
 

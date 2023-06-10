@@ -19,11 +19,6 @@ namespace LAMA.Communicator
 {
     public class ServerCommunicator : Communicator
     {
-        public DebugLogger logger;
-        public DebugLogger Logger
-        {
-            get { return logger; }
-        }
         public Compression CompressionManager { get; set; }
 
         public long LastUpdate
@@ -36,7 +31,7 @@ namespace LAMA.Communicator
         static Socket serverSocket;
         private Thread server;
         private static ServerCommunicator THIS;
-        private Timer timer;
+        private Timer broadcastTimer;
         CancellationTokenSource tokenLocationSending;
 
         private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
@@ -66,7 +61,7 @@ namespace LAMA.Communicator
                 //serverSocket.Disconnect(true);
                 serverSocket.Dispose();
             }
-            if (timer != null) timer.Dispose();
+            if (broadcastTimer != null) broadcastTimer.Dispose();
             if (server != null) server.Abort();
             if (tokenLocationSending != null)
             {
@@ -89,7 +84,7 @@ namespace LAMA.Communicator
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
             Debug.WriteLine("BeginAccept");
 
-            timer = new System.Threading.Timer((e) =>
+            broadcastTimer = new System.Threading.Timer((e) =>
             {
                 ProcessBroadcast();
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
@@ -131,7 +126,7 @@ namespace LAMA.Communicator
                 {
                     if (commandsToBroadcast.Count > 0)
                     {
-                        currentCommand = commandsToBroadcast.Dequeue();
+                        Command currentCommand = commandsToBroadcast.Dequeue();
                     }
                     else
                     {
@@ -140,7 +135,6 @@ namespace LAMA.Communicator
                 }
                 if (currentCommand != null)
                 {
-                    logger.LogWrite($"Sending: {currentCommand.command}");
                     Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode(CompressionManager);
                     Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
@@ -164,10 +158,6 @@ namespace LAMA.Communicator
                                         Debug.WriteLine("Socket exception ProcessBroadcast");
                                         client.Close();
                                         socketsToRemove.Add(entry.Key);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        logger.LogWrite(ex.Message);
                                     }
                                 }
                                 else
@@ -193,10 +183,6 @@ namespace LAMA.Communicator
                                     client.Close();
                                     socketsToRemove.Add(currentCommand.receiverID);
                                 }
-                                catch (Exception ex)
-                                {
-                                    logger.LogWrite(ex.Message);
-                                }
                             }
                             else
                             {
@@ -206,11 +192,9 @@ namespace LAMA.Communicator
                         }
                         foreach (int i in socketsToRemove)
                         {
-                            logger.LogWrite($"Removing From Client Sockets: {i}");
                             clientSockets.Remove(i);
                         }
                     }
-                    logger.LogWrite($"Finished Sending: {currentCommand.command}");
                 }
             }
         }
@@ -221,7 +205,6 @@ namespace LAMA.Communicator
         /// <param name="AR"></param>
         private static void AcceptCallback(IAsyncResult AR)
         {
-            THIS.logger.LogWrite("accepting");
             Debug.WriteLine("accepting");
             try
             {
@@ -234,7 +217,6 @@ namespace LAMA.Communicator
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.logger.LogWrite("Client socket exception");
                         Debug.WriteLine("Client socket exception AcceptCallback");
                     }));
                     lock (ServerCommunicator.socketsLock)
@@ -292,7 +274,6 @@ namespace LAMA.Communicator
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
-                THIS.logger.LogWrite($"Message Received: {message}");
                 Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
@@ -381,7 +362,6 @@ namespace LAMA.Communicator
             CommunicationInfo.Instance.Communicator = this;
             CompressionManager = new Compression();
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
-            logger = new DebugLogger(false);
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
             Debug.WriteLine("Created client, loaded dictionaries");
@@ -419,7 +399,6 @@ namespace LAMA.Communicator
                     var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/startserver.php", content);
                     responseString = response.Result.Content.ReadAsStringAsync().Result;
                     Debug.WriteLine(responseString);
-                    logger.LogWrite(responseString);
                 }
                 catch (HttpRequestException)
                 {
@@ -444,7 +423,6 @@ namespace LAMA.Communicator
                     var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/existingserver.php", content);
                     responseString = response.Result.Content.ReadAsStringAsync().Result;
                     Debug.WriteLine(responseString);
-                    logger.LogWrite(responseString);
                 }
                 catch (HttpRequestException)
                 {
@@ -532,28 +510,6 @@ namespace LAMA.Communicator
         /// Create new ServerCommunicator - used to communicate with the clients
         /// </summary>
         /// <param name="name">Name of the server</param>
-        /// <param name="IP"></param>
-        /// <param name="port"></param>
-        /// <param name="password">Server password</param>
-        /// <param name="adminPassword">Server administrator password</param>
-        /// <param name="nick">Personal nick</param>
-        /// <param name="newServer">Is this a new or an existing server</param>
-        /// <exception cref="CantConnectToCentralServerException">Can't connect to the central server</exception>
-        /// <exception cref="CantConnectToDatabaseException">Connecting to database failed</exception>
-        /// <exception cref="WrongCredentialsException">Wrong password used for existing server</exception>
-        /// <exception cref="NotAnIPAddressException">Invalid IP address format</exception>
-        /// <exception cref="WrongPortException">Port number not in the valid range</exception>
-        /// <exception cref="PasswordTooShortException">The password is too short</exception>
-        public ServerCommunicator(string name, string IP, int port, string password, string adminPassword, string nick, bool newServer)
-        {
-            if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
-            initServerCommunicator(name, IP, port, port, password, adminPassword, nick, newServer);
-        }
-
-        /// <summary>
-        /// Create new ServerCommunicator - used to communicate with the clients
-        /// </summary>
-        /// <param name="name">Name of the server</param>
         /// <param name="ngrokAddress"></param>
         /// <param name="password">Server password</param>
         /// <param name="adminPassword">Server administrator password</param>
@@ -574,21 +530,6 @@ namespace LAMA.Communicator
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
             Debug.WriteLine(addresses[0]);
             initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password, adminPassword, nick, newServer);
-        }
-
-        /// <summary>
-        /// Insert command to the command queue (commands from this queue are sent automatically)
-        /// </summary>
-        /// <param name="commandText"></param>
-        /// <param name="objectID"></param>
-        private void SendCommand(string commandText, string objectID)
-        {
-            long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            Command command = new Command(commandText, time, objectID);
-            lock (ServerCommunicator.commandsLock)
-            {
-                commandsToBroadcast.Enqueue(command);
-            }
         }
 
         /// <summary>
@@ -704,7 +645,6 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         private void NewClientConnected(int id, Socket current)
         {
-            logger.LogWrite($"New Client Connected: {id}");
             lock (ServerCommunicator.socketsLock)
             {
                 clientSockets[id] = current;
@@ -720,7 +660,6 @@ namespace LAMA.Communicator
         /// <param name="lastUpdateTime">The last time this client was updated</param>
         public void SendUpdate(Socket current, int id, long lastUpdateTime)
         {
-            logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
             for (int i = 0; i < objectsCache.Count; i++)
             {
                 Command entry = objectsCache[i];
@@ -738,52 +677,6 @@ namespace LAMA.Communicator
                     string value = entry.value;
                     string[] keyParts = entry.key.Split(SpecialCharacters.messagePartSeparator);
                     string command = "DataUpdated" + SpecialCharacters.messagePartSeparator + keyParts[0] + SpecialCharacters.messagePartSeparator + keyParts[1] + SpecialCharacters.messagePartSeparator + keyParts[2] + SpecialCharacters.messagePartSeparator + value;
-                    SendCommand(new Command(command, entry.time, entry.key, id));
-                }
-            }
-            SendCommand(new Command("UpdateFinished", DateTimeOffset.Now.ToUnixTimeMilliseconds(), "update", id));
-        }
-
-        /// <summary>
-        /// Send information to a client about all the changes since a certain time
-        /// </summary>
-        /// <param name="current"></param>
-        /// <param name="id">Client id</param>
-        /// <param name="lastUpdateTime">The last time this client was updated</param>
-        public void SendUpdateAlt(Socket current, int id, long lastUpdateTime)
-        {
-            logger.LogWrite($"Sending Update: {id} | {lastUpdateTime}");
-            for (int i = 0; i < objectsCache.Count; i++)
-            {
-                Command entry = objectsCache[i];
-                string[] keyParts = entry.key.Split(SpecialCharacters.messageSeparator);
-                string objectType = keyParts[0];
-                long ID = Int64.Parse(keyParts[1]);
-                if (entry.time > lastUpdateTime)
-                {
-                    Serializable serializable;
-                    if (objectType == "LAMA.Models.LarpActivity") serializable = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(ID);
-                    else if (objectType == "LAMA.Models.CP") serializable = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(ID);
-                    else if (objectType == "LAMA.Models.InventoryItem") serializable = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(ID);
-                    else if (objectType == "LAMA.Models.ChatMessage") serializable = DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.getByID(ID);
-                    else if (objectType == "LAMA.Models.EncyclopedyCategory") serializable = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(ID);
-                    else if (objectType == "LAMA.Models.EncyclopedyRecord") serializable = DatabaseHolder<EncyclopedyRecord, EncyclopedyRecordStorage>.Instance.rememberedList.getByID(ID);
-                    else continue;
-                    string[] attributes = serializable.getAttributes();
-                    string command = "ItemCreated" + SpecialCharacters.messageSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + String.Join(SpecialCharacters.attributesSeparator.ToString(), attributes);
-                    SendCommand(new Command(command, entry.time, entry.getKey(), id));
-                }
-            }
-
-            for (int i = 0; i < attributesCache.Count; i++)
-            {
-                TimeValue entry = attributesCache[i];
-                string[] keyParts = entry.key.Split(SpecialCharacters.messageSeparator);
-                Command creationEntry = objectsCache.getByKey(keyParts[0] + SpecialCharacters.messageSeparator.ToString() + keyParts[1]);
-                if (entry.time > lastUpdateTime && entry.time > creationEntry.time && !(creationEntry.time > lastUpdateTime))
-                {
-                    string value = entry.value;
-                    string command = "DataUpdated" + SpecialCharacters.messageSeparator.ToString() + keyParts[0] + SpecialCharacters.messageSeparator.ToString() + keyParts[1] + SpecialCharacters.messageSeparator.ToString() + keyParts[2] + SpecialCharacters.messageSeparator.ToString() + value;
                     SendCommand(new Command(command, entry.time, entry.key, id));
                 }
             }
