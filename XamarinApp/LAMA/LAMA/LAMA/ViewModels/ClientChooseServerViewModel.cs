@@ -13,9 +13,7 @@ namespace LAMA.ViewModels
 {
     public class ClientChooseServerViewModel : BaseViewModel
     {
-        public Xamarin.Forms.Command DatabaseNameCommand { get; }
         public Xamarin.Forms.Command LoginCommand { get; }
-        public Xamarin.Forms.Command FakeLoginCommand { get; }
         
         private bool _loginEnabled;
         public bool LoginEnabled { 
@@ -23,17 +21,6 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _loginEnabled, value); } 
         }
 
-        private bool _fakeLoginEnabled;
-        public bool FakeLoginEnabled { 
-            get { return _fakeLoginEnabled; } 
-            set { SetProperty(ref _fakeLoginEnabled, value); } 
-        }
-
-        private bool _databaseEnabled;
-        public bool DatabaseEnabled { 
-            get { return _databaseEnabled; } 
-            set { SetProperty(ref _databaseEnabled, value); } 
-        }
         private bool _tryingToConnect;
         public bool TryingToConnect
         {
@@ -41,9 +28,6 @@ namespace LAMA.ViewModels
             set { SetProperty(ref _tryingToConnect, value); }
         }
 
-        public string DatabaseName { get; set; }
-        private string _databaseNameDisplay;
-        public string DatabaseNameDisplay { get { return _databaseNameDisplay; } set { SetProperty(ref _databaseNameDisplay, value); } }
         public string ClientServerName { get; set; }
         public string ClientPassword { get; set; } 
 
@@ -53,23 +37,9 @@ namespace LAMA.ViewModels
         public ClientChooseServerViewModel(string serverName = "")
         {
             LoginCommand = new Xamarin.Forms.Command(OnLoginClicked);
-            FakeLoginCommand = new Xamarin.Forms.Command(OnFakeLoginClicked);
-            DatabaseNameCommand = new Xamarin.Forms.Command(OnChangeDatabaseName);
-            DatabaseNameDisplay = $"Database Name: {SQLConnectionWrapper.databaseName}";
             TryingToConnect = false;
             LoginEnabled = true;
-            FakeLoginEnabled = true;
-            DatabaseEnabled = true;
             ClientServerName = serverName;
-        }
-
-        private void OnChangeDatabaseName()
-        {
-            SQLConnectionWrapper.databaseName = DatabaseName;
-            if (SQLConnectionWrapper.connection == null)
-            {
-                DatabaseNameDisplay = $"Database Name: {DatabaseName}";
-            }
         }
 
 
@@ -79,8 +49,6 @@ namespace LAMA.ViewModels
             string serverName = ClientServerName;
             TryingToConnect = true;
             LoginEnabled = false;
-            FakeLoginEnabled = false;
-            DatabaseEnabled = false;
 
             //možnost vybrat
             try
@@ -131,8 +99,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (EntryTooLongException e)
@@ -140,8 +106,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (CantConnectToCentralServerException)
@@ -149,8 +113,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Nepodařilo se připojit k seznamu existujících serverů. Zkontrolujte své připojení a pokuste se přihlásit znovu.", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (CantConnectToDatabaseException)
@@ -158,8 +120,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Chyba Připojení", "Nepodařilo se připojit k databázi existujících serverů. Zkuste opakovat zadání později.", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (WrongCredentialsException)
@@ -167,8 +127,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Chybné Přihlašovací Údaje", "Server neexistuje, nebo jste zadali špatné heslo.", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (ServerConnectionRefusedException)
@@ -176,8 +134,6 @@ namespace LAMA.ViewModels
                 await App.Current.MainPage.DisplayAlert("Server Odmítl Připojení", "Server odmítl připojení, zkuste se znovu přihlásit později.", "OK");
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
             }
             catch (Exception e)
@@ -188,22 +144,7 @@ namespace LAMA.ViewModels
                 ErrorLabel = e.ToString();
                 TryingToConnect = false;
                 LoginEnabled = true;
-                FakeLoginEnabled = true;
-                DatabaseEnabled = true;
                 return;
-            }
-        }
-
-        private async void OnFakeLoginClicked(object obj)
-        {
-            if (Device.RuntimePlatform == Device.WPF)
-            {
-                await App.Current.MainPage.Navigation.PushAsync(new TestPage());
-            }
-            else
-            {
-                // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-                await Shell.Current.GoToAsync($"//{nameof(TestPage)}");
             }
         }
     }
