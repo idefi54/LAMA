@@ -78,7 +78,6 @@ namespace LAMA.Communicator
             }
 
             BitArray bits = new BitArray(encodedSource.ToArray());
-            //Debug.WriteLine("[{0}]", string.Join(", ", bits));
             byte[] result = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(result, 0);
             return result;

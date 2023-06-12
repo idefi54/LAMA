@@ -53,7 +53,7 @@ namespace LAMA.Communicator
         private static ClientCommunicator THIS;
         //Memory
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
-        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
+        private RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache;
         private ModelChangesManager modelChangesManager;
         static Random rd = new Random();
 
@@ -71,7 +71,6 @@ namespace LAMA.Communicator
         {
             if (s != null)
             {
-                //s.Disconnect(true);
                 s.Dispose();
             }
             if (connectionTimer != null) connectionTimer.Dispose();
@@ -91,7 +90,6 @@ namespace LAMA.Communicator
         /// </summary>
         private void ProcessBroadcast()
         {
-            //Debug.WriteLine(DatabaseHolder<CP, CPStorage>.Instance.rememberedList.Count);
             lock (socketLock)
             {
                 if (s.Connected)
@@ -107,9 +105,7 @@ namespace LAMA.Communicator
                                 commandsToBroadcast.Enqueue(currentCommand);
                                 break;
                             }
-                            Debug.WriteLine($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode(CompressionManager);
-                            Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                             try
                             {
                                 s.Send(data);
@@ -173,21 +169,18 @@ namespace LAMA.Communicator
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
-                    Debug.WriteLine("Socket exception receive data");
                     current.Close();
                     return;
                 }
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"Message string received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
             string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(SpecialCharacters.messageSeparator);
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
                 message = message.Trim('\0');
-                Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
@@ -265,12 +258,10 @@ namespace LAMA.Communicator
                 LocalStorage.cpID = cpId;
                 RequestUpdate();
             }
-            Debug.WriteLine($"clientID: {clientId}, cpID: {cpId}");
         }
 
         private void UpdateFinished()
         {
-            Debug.WriteLine("UpdateFinished");
             loggedIn = true;
         }
         
@@ -312,7 +303,6 @@ namespace LAMA.Communicator
                 }
                 catch (Exception ex) when(ex is SocketException || ex is ObjectDisposedException)
                 {
-                    Debug.WriteLine("Exception StartListening");
                     s.Close();
                     return;
                 }
@@ -439,7 +429,6 @@ namespace LAMA.Communicator
         /// </summary>
         private void Connected()
         {
-            Debug.WriteLine("Connected");
             if (LocalStorage.clientID != -1 )
                 _connected = true;
                 THIS.wasUpdated = true;
@@ -503,7 +492,6 @@ namespace LAMA.Communicator
         public ClientCommunicator(string serverName, string password)
         {
             CompressionManager = new Compression();
-            Debug.WriteLine("client communicator");
             _connected = false;
 
 
@@ -543,7 +531,7 @@ namespace LAMA.Communicator
 
                 //if (serverName != LarpEvent.Name && LarpEvent.Name != null) SQLConnectionWrapper.ResetDatabase();
                 LarpEvent.Name = serverName;
-                attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+                attributesCache = DatabaseHolderStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage>.Instance.rememberedDictionary;
                 objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
                 if (objectsCache.getByKey("CommandQueueLength") == null)
                 {

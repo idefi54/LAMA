@@ -12,7 +12,7 @@ namespace LAMAtest
         private LAMA.Communicator.ModelChangesManager InitModelChangesManager()
         {
             RememberedStringDictionary<LAMA.Communicator.Command, LAMA.Communicator.CommandStorage> objectsCache = LAMA.DatabaseHolderStringDictionary<LAMA.Communicator.Command, LAMA.Communicator.CommandStorage>.Instance.rememberedDictionary;
-            RememberedStringDictionary<LAMA.Communicator.TimeValue, LAMA.Communicator.TimeValueStorage> attributesCache = LAMA.DatabaseHolderStringDictionary<LAMA.Communicator.TimeValue, LAMA.Communicator.TimeValueStorage>.Instance.rememberedDictionary;
+            RememberedStringDictionary<LAMA.Communicator.ModelPropertyChangeInfo, LAMA.Communicator.ModelPropertyChangeInfoStorage> attributesCache = LAMA.DatabaseHolderStringDictionary<LAMA.Communicator.ModelPropertyChangeInfo, LAMA.Communicator.ModelPropertyChangeInfoStorage>.Instance.rememberedDictionary;
             LAMA.Communicator.ModelChangesManager manager = new LAMA.Communicator.ModelChangesManager(null, objectsCache, attributesCache, false, true);
             return manager;
         }

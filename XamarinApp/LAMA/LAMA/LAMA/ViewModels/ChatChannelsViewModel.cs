@@ -279,8 +279,6 @@ namespace LAMA.ViewModels
 
         public async void ChannelModified(string channelName, int index)
         {
-            Debug.WriteLine($"Index: {index}");
-            Debug.WriteLine($"{channelName}");
             string originalName = LarpEvent.ChatChannels[index];
             if (originalName[0] == SpecialCharacters.archivedChannelIndicator) originalName = originalName.Substring(1);
             if (CommunicationInfo.Instance.IsServer)
@@ -347,35 +345,11 @@ namespace LAMA.ViewModels
                 return;
             }
 
-            //string result = "testName";
             ChatChannelsItemViewModel channel = (ChatChannelsItemViewModel)obj;
             string channelName = channel.ChannelName;
-            Debug.WriteLine((channel.archived ? SpecialCharacters.archivedChannelIndicator.ToString() : "") + channelName);
             selectedChannelID = LarpEvent.ChatChannels.IndexOf((channel.archived ? SpecialCharacters.archivedChannelIndicator.ToString() : "") + channelName);
             PreviousChannelName = channel.ChannelName;
-            //if (Device.RuntimePlatform == Device.WPF)
-            //{
-                DisplayRenameDialog = true;
-            /*}
-            else
-            {
-                result = await App.Current.MainPage.DisplayPromptAsync("Nové Jméno", $"Jaké má být nové jméno kanálu (předchozí jméno: {PreviousChannelName})?");
-                if (InputChecking.CheckInput(result, "Nové Jméno", 50))
-                {
-                    string channelName = ((ChatChannelsItemViewModel)obj).ChannelName;
-                    int index = Channels.IndexOf(((ChatChannelsItemViewModel)obj));
-                    if (channelName[0] == SpecialCharacters.archivedChannelIndicator)
-                    {
-                        LarpEvent.ChatChannels[index] = SpecialCharacters.archivedChannelIndicator + result;
-                    }
-                    else
-                    {
-                        LarpEvent.ChatChannels[index] = result;
-                    }
-                    LarpEvent.ChatChannels.InvokeDataChanged();
-                }
-            }
-            */
+            DisplayRenameDialog = true;
         }
 
         private void SetNewChannelName(object obj)

@@ -85,15 +85,15 @@ namespace LAMA.ViewModels
             //možnost vybrat
             try
             {
+                //serverName - jméno toho serveru (identifikátor)
+                //heslo serveru
+                //clentName
                 if (serverName == null || serverName.Trim() == "") throw new EntryMissingException("Jméno Serveru");
                 if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
                 if (serverName.Length > 100) throw new EntryTooLongException(100, "Jméno Serveru");
                 if (password.Length > 100) throw new EntryTooLongException(100, "Heslo");
 
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
-                //serverName - jméno toho serveru (identifikátor)
-                //heslo serveru
-                //clentName
                 ClientCommunicator communicator = new ClientCommunicator(serverName, password);
                 float timer = 0.0f;
                 while (true)
@@ -123,10 +123,7 @@ namespace LAMA.ViewModels
                 }
                 else
                 {
-                    //ClientLoginTypePage.InitPage(communicator);
                     await Shell.Current.Navigation.PushAsync(new ClientChooseNamePage(communicator, false));
-                    //await Shell.Current.GoToAsync($"{nameof(ClientLoginTypePage)}?communicator={communicator}");
-                    //await Shell.Current.GoToAsync($"//{nameof(ClientLoginTypePage)}");
                 }
             }
             catch (EntryMissingException e)
@@ -195,14 +192,6 @@ namespace LAMA.ViewModels
                 DatabaseEnabled = true;
                 return;
             }
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            //App.Current.MainPage = new NavigationPage(new ClientChooseNamePage(communicator));
-            /*
-            else
-            {
-                await Shell.Current.GoToAsync($"//{nameof(ClientChooseNamePage)}");
-            }
-            */
         }
 
         private async void OnFakeLoginClicked(object obj)

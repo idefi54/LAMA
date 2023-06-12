@@ -17,7 +17,7 @@ namespace LAMA.Communicator
     {
         private Communicator communicator;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
-        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
+        private RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache;
         private bool server;
         private bool testing;
         private string objectIgnoreCreation = "";
@@ -32,7 +32,7 @@ namespace LAMA.Communicator
         /// <param name="attributesCache"></param>
         /// <param name="server">Is this server or client</param>
         /// <param name="testing">Is this manager used for testing, or in the application itself</param>
-        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool testing = false)
+        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache, bool server = false, bool testing = false)
         {
             this.server = server;
             this.testing = testing;
@@ -48,7 +48,6 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         public void ProcessCommand(string command, Socket current)
         {
-            Debug.WriteLine($"Command: {command}");
             string[] messageParts = command.Split(SpecialCharacters.messagePartSeparator);
             //Some attribute got updated
             if (messageParts[1] == "DataUpdated")
@@ -155,8 +154,7 @@ namespace LAMA.Communicator
         {
             if (!testing && !server)
             {
-                Debug.WriteLine("Invoke Role Received");
-                ActivityDetailsViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
+                DisplayActivityViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
             }
         }
 
@@ -193,7 +191,6 @@ namespace LAMA.Communicator
         {
             if (!testing && !server)
             {
-                Debug.WriteLine("Invoke Role Received");
                 ChatChannelsViewModel.InvokeChannelCreatedResult(response == 1);
             }
         }
@@ -216,7 +213,6 @@ namespace LAMA.Communicator
 
         public void SendCPLocations()
         {
-            Debug.WriteLine($"Server Location: {DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0).getAttribute(7)}");
             List<string> cpStrings = new List<string>();
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
@@ -239,7 +235,6 @@ namespace LAMA.Communicator
             string objectType = changed.GetType().ToString();
             string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + attributeIndex;
 
-            Debug.WriteLine($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             if (attributesIgnoreChange.ContainsKey(attributeID))
@@ -250,7 +245,7 @@ namespace LAMA.Communicator
 
             if (!attributesCache.containsKey(attributeID))
             {
-                attributesCache.add(new TimeValue(updateTime, changed.getAttribute(attributeIndex), attributeID));
+                attributesCache.add(new ModelPropertyChangeInfo(updateTime, changed.getAttribute(attributeIndex), attributeID));
             }
             else
             {
@@ -277,10 +272,9 @@ namespace LAMA.Communicator
         {
             string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute;
 
-            Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (objectType == "LAMA.Singletons.LarpEvent" && !attributesCache.containsKey(attributeID))
             {
-                attributesCache.add(new TimeValue(updateTime, value, attributeID));
+                attributesCache.add(new ModelPropertyChangeInfo(updateTime, value, attributeID));
             }
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
@@ -458,7 +452,6 @@ namespace LAMA.Communicator
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
             string objectCacheID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
-            Debug.WriteLine($"ItemCreated: {objectType}");
 
             if (objectIgnoreCreation == objectCacheID)
             {
@@ -475,12 +468,8 @@ namespace LAMA.Communicator
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                    attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributes[i], objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                 }
-            }
-            else
-            {
-                Debug.WriteLine(objectsCache.getByKey(objectCacheID).command);
             }
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
         }
@@ -498,7 +487,6 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                Debug.WriteLine(serializedObject);
                 string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 activity.buildFromStrings(attributtes);
@@ -514,10 +502,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.add(activity);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -540,10 +526,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -566,17 +550,14 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.add(ii);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
 
             if (objectType == "LAMA.Models.ChatMessage")
             {
-                Debug.WriteLine("LAMA.Models.ChatMessage");
                 Models.ChatMessage cm = new Models.ChatMessage();
                 string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
@@ -600,10 +581,8 @@ namespace LAMA.Communicator
                     }
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -626,10 +605,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.add(cm);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -652,10 +629,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.add(er);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -678,10 +653,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.add(pi);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -705,10 +678,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.add(road);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }

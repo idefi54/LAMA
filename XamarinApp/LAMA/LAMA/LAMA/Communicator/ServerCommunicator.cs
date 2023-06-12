@@ -34,7 +34,7 @@ namespace LAMA.Communicator
         private Timer broadcastTimer;
         CancellationTokenSource tokenLocationSending;
 
-        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
+        private RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
 
         private static object socketsLock = new object();
@@ -80,9 +80,7 @@ namespace LAMA.Communicator
         /// </summary>
         private async void StartServer()
         {
-            Debug.WriteLine("Starting Server");
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            Debug.WriteLine("BeginAccept");
 
             broadcastTimer = new System.Threading.Timer((e) =>
             {
@@ -135,9 +133,7 @@ namespace LAMA.Communicator
                 }
                 if (currentCommand != null)
                 {
-                    Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode(CompressionManager);
-                    Debug.WriteLine($"{Encryption.AESDecryptHuffmanDecompress(data, CompressionManager)}");
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
                     {
@@ -155,7 +151,6 @@ namespace LAMA.Communicator
                                     }
                                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                                     {
-                                        Debug.WriteLine("Socket exception ProcessBroadcast");
                                         client.Close();
                                         socketsToRemove.Add(entry.Key);
                                     }
@@ -179,7 +174,6 @@ namespace LAMA.Communicator
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                                 {
-                                    Debug.WriteLine("Socket exception ProcessBroadcast2");
                                     client.Close();
                                     socketsToRemove.Add(currentCommand.receiverID);
                                 }
@@ -205,7 +199,6 @@ namespace LAMA.Communicator
         /// <param name="AR"></param>
         private static void AcceptCallback(IAsyncResult AR)
         {
-            Debug.WriteLine("accepting");
             try
             {
                 Socket socket = serverSocket.EndAccept(AR);
@@ -215,10 +208,6 @@ namespace LAMA.Communicator
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                 {
-                    Device.BeginInvokeOnMainThread(new Action(() =>
-                    {
-                        Debug.WriteLine("Client socket exception AcceptCallback");
-                    }));
                     lock (ServerCommunicator.socketsLock)
                     {
                         socket.Close();
@@ -250,13 +239,11 @@ namespace LAMA.Communicator
                 received = current.EndReceive(AR);
                 if (received == 0)
                 {
-                    Debug.WriteLine("SocketException ReceiveData");
                     throw new SocketException();
                 }
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                Debug.WriteLine("SocketException ReceiveData");
                 lock (ServerCommunicator.socketsLock)
                 {
                     current.Close();
@@ -269,12 +256,10 @@ namespace LAMA.Communicator
             }
             byte[] data = new byte[received];
             Array.Copy(buffer, data, received);
-            Debug.WriteLine($"Message String Received: {Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager)}");
             string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(SpecialCharacters.messageSeparator);
             for (int i = 0; i < messages.Length - 1; i++)
             {
                 string message = messages[i];
-                Debug.WriteLine($"Message Received: {message}");
                 string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
                 {
@@ -327,7 +312,6 @@ namespace LAMA.Communicator
             }
             catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
             {
-                Debug.WriteLine("Second Socket Exception");
                 lock (ServerCommunicator.socketsLock)
                 {
                     current.Close();
@@ -364,7 +348,6 @@ namespace LAMA.Communicator
             Encryption.SetAESKey(password + name + "abcdefghijklmnopqrstu123456789qwertzuiop");
             HttpClient client = new HttpClient();
             Regex nameRegex = new Regex(@"^[\w\s_\-]{1,50}$", RegexOptions.IgnoreCase);
-            Debug.WriteLine("Created client, loaded dictionaries");
             if (!nameRegex.IsMatch(name))
             {
                 throw new WrongNameFormatException("Name can only contain numbers, letters, spaces, - and _. It also must contain at most 50 characters");
@@ -378,8 +361,6 @@ namespace LAMA.Communicator
             {
                 throw new NotAnIPAddressException("Invalid IP address format");
             }
-            Debug.WriteLine(Encryption.EncryptPassword(password));
-            Debug.WriteLine(Encryption.EncryptPassword(adminPassword));
             var values = new Dictionary<string, string>
             {
                 { "name", "\"" + name + "\"" },
@@ -398,11 +379,9 @@ namespace LAMA.Communicator
                 {
                     var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/startserver.php", content);
                     responseString = response.Result.Content.ReadAsStringAsync().Result;
-                    Debug.WriteLine(responseString);
                 }
                 catch (HttpRequestException)
                 {
-                    Debug.WriteLine("Can not connect to the central server check your internet connection");
                     throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
                 }
 
@@ -422,11 +401,9 @@ namespace LAMA.Communicator
                 {
                     var response = client.PostAsync("https://koblizekwebdesign.cz/LAMA/existingserver.php", content);
                     responseString = response.Result.Content.ReadAsStringAsync().Result;
-                    Debug.WriteLine(responseString);
                 }
                 catch (HttpRequestException)
                 {
-                    Debug.WriteLine("Can not connect to the central server check your internet connection");
                     throw new CantConnectToCentralServerException("Nepodařilo se připojit k centrálnímu serveru, zkontrolujte si prosím vaše internetové připojení.");
                 }
 
@@ -445,15 +422,12 @@ namespace LAMA.Communicator
                 }
             }
 
-            Debug.WriteLine("No exceptions");
-
             CommunicationInfo.Instance.Communicator = this;
             CommunicationInfo.Instance.ServerName = name;
             CommunicationInfo.Instance.IsServer = true;
 
-            //if (LarpEvent.Name != null && name != LarpEvent.Name) { Debug.WriteLine(LarpEvent.Name); SQLConnectionWrapper.ResetDatabase(); }
             LarpEvent.Name = name;
-            attributesCache = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            attributesCache = DatabaseHolderStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage>.Instance.rememberedDictionary;
             objectsCache = DatabaseHolderStringDictionary<Command, CommandStorage>.Instance.rememberedDictionary;
 
             IPAddress ipAddress;
@@ -467,16 +441,13 @@ namespace LAMA.Communicator
             {
                 serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 serverSocket.Bind(new IPEndPoint(IPAddress.Any, 42222));
-                Debug.WriteLine("IPv4");
             }
             serverSocket.Listen(64);
             server = new Thread(StartServer);
             server.Start();
             THIS = this;
-            Debug.WriteLine("Server started");
             modelChangesManager = new ModelChangesManager(this, objectsCache, attributesCache, true);
 
-            Debug.WriteLine("Subscribing to events");
             SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
             SQLEvents.created += modelChangesManager.OnItemCreated;
             SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
@@ -487,21 +458,17 @@ namespace LAMA.Communicator
             LocalStorage.clientID = 0;
             if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0) == null)
             {
-                //long cpID = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.nextID();
-                //Debug.WriteLine($"cpID = {cpID}");
                 DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(
                     new Models.CP(0,
                     nick, nick, new EventList<string> { "server", "org" }, "", "", "", ""));
             }
             //Server should have all permissions
             PermissionsManager.GiveAllPermissions();
-            Debug.WriteLine("Initialization finished");
         }
 
         private bool checkNgrokAddressFormat(string address)
         {
             Regex regex = new Regex("tcp://.*\\.tcp.*\\.ngrok\\.io:[0-9]+", RegexOptions.IgnoreCase);
-            Debug.WriteLine(address);
     
             return regex.IsMatch(address);
         }
@@ -528,7 +495,6 @@ namespace LAMA.Communicator
             if (password.Length < 5 || adminPassword.Length < 5) throw new PasswordTooShortException();
             string[] addressParts = ngrokAddress.Split(':');
             IPAddress[] addresses = Dns.GetHostAddresses(addressParts[1].Trim('/'));
-            Debug.WriteLine(addresses[0]);
             initServerCommunicator(name, addresses[0].ToString(), 42222, Int32.Parse(addressParts[2]), password, adminPassword, nick, newServer);
         }
 
@@ -600,7 +566,6 @@ namespace LAMA.Communicator
         /// <param name="clientID"></param>
         private void GiveNewClientID(Socket current, string clientName, string password, int clientID)
         {
-            Debug.WriteLine("GiveNewClientID");
             if (clientID == -1)
             {
                 LocalStorage.MaxClientID += 1;
@@ -671,7 +636,7 @@ namespace LAMA.Communicator
 
             for (int i = 0; i < attributesCache.Count; i++)
             {
-                TimeValue entry = attributesCache[i];
+                ModelPropertyChangeInfo entry = attributesCache[i];
                 if (entry.time > lastUpdateTime)
                 {
                     string value = entry.value;

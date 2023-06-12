@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
-    public class TimeValue : SerializableDictionaryItem
+    public class ModelPropertyChangeInfo : SerializableDictionaryItem
     {
         private string _key;
         public string key { get { return _key; } }
@@ -36,7 +36,7 @@ namespace LAMA.Communicator
         /// </summary>
         /// <param name="init">Value of the attribute</param>
         /// <param name="key">Unique identifier</param>
-        public TimeValue(string init, string key)
+        public ModelPropertyChangeInfo(string init, string key)
         {
             string[] initParts = init.Split(';');
             _time = Int64.Parse(initParts[0]);
@@ -50,20 +50,20 @@ namespace LAMA.Communicator
         /// <param name="initTime">Last time the attribute was changed in unix time format</param>
         /// <param name="initValue">Value of the attribute</param>
         /// <param name="key">Unique identifier</param>
-        public TimeValue(long initTime, string initValue, string key)
+        public ModelPropertyChangeInfo(long initTime, string initValue, string key)
         {
             _time = initTime;
             _value = initValue;
             _key = key;
         }
 
-        public TimeValue() {}
+        public ModelPropertyChangeInfo() {}
 
         static string[] attributes = new string[] { "key", "time", "value" };
 
         void updateValue(int index, string newVal)
         {
-            var list = DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.Instance.rememberedDictionary;
+            var list = DatabaseHolderStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage>.Instance.rememberedDictionary;
             list.sqlConnection.changeData(index, newVal, this);
         }
 

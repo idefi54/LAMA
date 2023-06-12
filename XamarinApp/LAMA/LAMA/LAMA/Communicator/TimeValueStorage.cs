@@ -4,12 +4,8 @@ using System.Text;
 using SQLite;
 namespace LAMA.Communicator
 {
-    internal class TimeValueStorage: Database.DictionaryStorageInterface
+    internal class ModelPropertyChangeInfoStorage: Database.DictionaryStorageInterface
     {
-        /*
-         _key = input[0];
-            _time = Int64.Parse(input[1]);
-            _value = input[2];*/
         [PrimaryKey]
         public string key { get; set; }
         public Int64 time { get; set; }
