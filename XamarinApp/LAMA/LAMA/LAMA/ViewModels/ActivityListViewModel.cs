@@ -200,7 +200,7 @@ namespace LAMA.ViewModels
 
             LarpActivity activity = activityViewModel.LarpActivity;
 
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            await Navigation.PushAsync(new ActivityDetailsPage(activity));
         }
 
         private async void RemoveActivity(object obj)

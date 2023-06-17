@@ -89,7 +89,7 @@ namespace LAMA.Views
         async void OnDisplayActivity(object sender, EventArgs args)
         {
             //await Shell.Current.GoToAsync($"//{nameof(DisplayActivityPage)}");
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            await Navigation.PushAsync(new ActivityDetailsPage(activity));
         }
 
         async void OnNewActivity(object sender, EventArgs args)
