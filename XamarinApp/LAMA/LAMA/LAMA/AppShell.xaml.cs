@@ -20,7 +20,7 @@ namespace LAMA
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(DisplayActivityPage), typeof(DisplayActivityPage));
+            Routing.RegisterRoute(nameof(ActivityDetailsPage), typeof(ActivityDetailsPage));
             LocationTracking.Text =
                 GetLocationService.IsRunning
                 ? START

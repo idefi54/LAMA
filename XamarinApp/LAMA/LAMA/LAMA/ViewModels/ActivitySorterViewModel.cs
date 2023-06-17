@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// Part of <see cref="ActivityListViewModel"/> that takes care of sorting of ListView items.
+    /// </summary>
     public class ActivitySorterViewModel : BaseViewModel
     {
         private const string NAME_STRING = "Jméno";
@@ -28,15 +31,31 @@ namespace LAMA.ViewModels
         private string _sortFreeSpotsString;
         public string SortFreeSpotsString { get { return _sortFreeSpotsString; } set { SetProperty(ref _sortFreeSpotsString, value); } }
 
+        /// <summary>
+        /// Adds a new comparer for names to the CompositeComparer.
+        /// </summary>
         public Command SortNameCommand { get; }
+        /// <summary>
+        /// Adds a new comparer for starting time to the CompositeComparer.
+        /// </summary>
         public Command SortStartCommand { get; }
+        /// <summary>
+        /// Adds a new comparer for the number of signed up people to the CompositeComparer.
+        /// </summary>
         public Command SortPeopleCommand { get; }
+        /// <summary>
+        /// Adds a new comparer for the number of free spots still available in the activity to the CompositeComparer.
+        /// </summary>
         public Command SortFreeSpotsCommand { get; }
 
         private TrulyObservableCollection<ActivityListItemViewModel> _activityList;
 
         private CompositeComparer<ActivityListItemViewModel> _comparator;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activityList">Collection whose content will be sorted.</param>
         public ActivitySorterViewModel(TrulyObservableCollection<ActivityListItemViewModel> activityList)
         {
             _activityList = activityList;

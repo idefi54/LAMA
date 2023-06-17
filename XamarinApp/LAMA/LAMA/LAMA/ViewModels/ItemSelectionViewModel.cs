@@ -9,13 +9,22 @@ namespace LAMA.ViewModels
 {
     public class ItemSelectionViewModel : BaseViewModel
     {
-        public InventoryItem Item;
+        /// <summary>
+        /// Exposed selected activity.
+        /// </summary>
+        public InventoryItem Item { get; private set; }
 
         private Action<InventoryItem> _callback;
 
+        /// <summary>
+        /// Collection of ItemSelectionItemViewModel displayed in ListView. It is populated in the constructor by activities that can pass the filter.
+        /// </summary>
         public ObservableCollection<ItemSelectionItemViewModel> ItemsListItems { get; }
 
         private ItemSelectionItemViewModel _selectedItem;
+        /// <summary>
+        /// When selecting one of the activities this saves the selection and closes the page.
+        /// </summary>
         public ItemSelectionItemViewModel SelectedItem
         {
             get { return _selectedItem; }

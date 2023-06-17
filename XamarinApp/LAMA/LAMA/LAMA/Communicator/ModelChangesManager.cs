@@ -126,7 +126,7 @@ namespace LAMA.Communicator
         {
             if (server)
             {
-                bool gotRole = DisplayActivityViewModel.TryGetRole(activityID, roleRequested, cpID);
+                bool gotRole = ActivityDetailsViewModel.TryGetRole(activityID, roleRequested, cpID);
                 communicator.SendCommand(new Command($"ReceiveRole{SpecialCharacters.messagePartSeparator}{activityID}{SpecialCharacters.messagePartSeparator}{roleRequested}{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(gotRole)}", 
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(), 
                     activityID + SpecialCharacters.messageSeparator + roleRequested, 
@@ -138,7 +138,7 @@ namespace LAMA.Communicator
         {
             if (server)
             {
-                bool roleRemoved = DisplayActivityViewModel.TryRemoveRoles(activityID, cpID);
+                bool roleRemoved = ActivityDetailsViewModel.TryRemoveRoles(activityID, cpID);
                 communicator.SendCommand(new Command($"RemoveRoleResult{SpecialCharacters.messagePartSeparator}{activityID}{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(roleRemoved)}",
                     DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                     activityID + SpecialCharacters.messageSeparator + "RemoveRole",
@@ -148,7 +148,7 @@ namespace LAMA.Communicator
 
         public void RemoveRoleResult(long activityID, int response, string command, Socket current)
         {
-            DisplayActivityViewModel.InvokeRoleRemovedResult(activityID, response == 1);
+            ActivityDetailsViewModel.InvokeRoleRemovedResult(activityID, response == 1);
         }
 
         public void ReceiveRole(long activityID, string roleRequested, int response, string command, Socket current)
@@ -156,7 +156,7 @@ namespace LAMA.Communicator
             if (!testing && !server)
             {
                 Debug.WriteLine("Invoke Role Received");
-                DisplayActivityViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
+                ActivityDetailsViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
             }
         }
 

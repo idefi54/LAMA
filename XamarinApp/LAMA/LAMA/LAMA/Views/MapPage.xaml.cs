@@ -152,7 +152,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
                 LarpActivity activity = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new DisplayActivityPage(activity));
+                await Navigation.PushAsync(new ActivityDetailsPage(activity));
             }
 
             if (e.Pin.Label == "POI")

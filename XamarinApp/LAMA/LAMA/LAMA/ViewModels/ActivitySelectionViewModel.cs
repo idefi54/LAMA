@@ -8,15 +8,26 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// ViewModel for <see cref="LAMA.Views.ActivitySelectionPage"/>
+    /// </summary>
     public class ActivitySelectionViewModel
     {
-        public LarpActivity Activity;
+        /// <summary>
+        /// Exposed selected activity.
+        /// </summary>
+        public LarpActivity Activity { get; private set; }
 
         private Action<LarpActivity> _callback;
-
+        /// <summary>
+        ///  List of activities displayed in ListView. It is populated in the constructor by activities that can pass the filter.
+        /// </summary>
         public ObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
 
         private ActivityListItemViewModel _selectedItem;
+        /// <summary>
+        /// When selecting one of the activities this saves the selection and closes the page.
+        /// </summary>
         public ActivityListItemViewModel SelectedItem { get { return _selectedItem; } set
             {
                 if (value == null)

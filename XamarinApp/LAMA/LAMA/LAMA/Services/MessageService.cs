@@ -16,6 +16,9 @@ namespace LAMA.Services
 
     }
 
+    /// <summary>
+    /// Serves as a shortcut system for Xamarin display methods, so they could be used without needing ViewModel to access pages.
+    /// </summary>
     public class MessageService : IMessageService
     {
         public async Task ShowAlertAsync(string message, string title = "LAMA")

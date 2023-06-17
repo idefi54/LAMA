@@ -6,7 +6,10 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
-    public class LarpActivityShortItemViewModel : BaseViewModel
+    /// <summary>
+    /// Lightweight version of <see cref="ActivityListItemViewModel"/>
+    /// </summary>
+    public class ActivityShortItemViewModel : BaseViewModel
     {
 
         LarpActivity _larpActivity;
@@ -15,7 +18,7 @@ namespace LAMA.ViewModels
 
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + _larpActivity.eventType.ToShortString();
 
-        public LarpActivityShortItemViewModel(LarpActivity activity)
+        public ActivityShortItemViewModel(LarpActivity activity)
         {
             _larpActivity = activity;
         }

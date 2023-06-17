@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using static LAMA.ViewModels.DisplayActivityViewModel;
+using static LAMA.ViewModels.ActivityDetailsViewModel;
 
 namespace LAMA.ViewModels
 {

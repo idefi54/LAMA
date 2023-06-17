@@ -10,22 +10,39 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityListItemViewModel : BaseViewModel
     {
 
         LarpActivity _larpActivity;
-
+        /// <summary>
+        /// The activity it is displaying.
+        /// </summary>
         public LarpActivity LarpActivity => _larpActivity;
 
+        /// <summary>
+        /// Name of the activity along with the designation if it’s preparation or normal activity.
+        /// </summary>
         public string Name => _larpActivity == null ? "" : _larpActivity.name + " " + _larpActivity.eventType.ToShortString();
 
+        /// <summary>
+        /// Relative time to the start of the activity in readable format.
+        /// </summary>
         public string Detail => _larpActivity == null ? "" : TimeFormat(_larpActivity.start);
 
+        /// <summary>
+        /// How many people are registered and what is the total number of role positions.
+        /// </summary>
         public string Participation => _larpActivity == null ? "?/?" : ParticipationFormat();
 
         private bool _showDeleteButton;
         public bool ShowDeleteButton { get { return _showDeleteButton; } set { SetProperty(ref _showDeleteButton, value, nameof(ShowDeleteButton)); } }
 
+        /// <summary>
+        /// Color based on the status of the activity.
+        /// </summary>
         public Color Color => _larpActivity.GetColor(0.2f);
 
         public void SetName(string name)
@@ -90,6 +107,10 @@ namespace LAMA.ViewModels
             OnPropertyChanged(nameof(Name));
 
             OnPropertyChanged(nameof(Detail));
+
+            OnPropertyChanged(nameof(Participation));
+
+            OnPropertyChanged(nameof(Color));
         }
     }
 }
