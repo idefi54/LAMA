@@ -10,7 +10,11 @@ using LAMA.Themes;
 
 namespace LAMA.ActivityGraphLib
 {
-
+    /// <summary>
+    /// Represents Activity on the graph with duration as start.
+    /// Horizontal attributes X and Width represent start and duration.
+    /// Vertical attributes are purely for visual clarity.
+    /// </summary>
     public class ActivityButton
     {
         private float _sideWidth = 10;
@@ -27,9 +31,18 @@ namespace LAMA.ActivityGraphLib
         public LarpActivity Activity;
         public const float DEFAULT_HEIGHT = 0.05f;
 
+        /// <summary>
+        /// Represents start of the activity.
+        /// </summary>
         public float X { get; private set; }
         public float Y { get; private set; }
+        /// <summary>
+        /// Represents duration.
+        /// </summary>
         public float Width { get; private set; }
+        /// <summary>
+        /// Percentual of Graph Height.
+        /// </summary>
         public float Height => DEFAULT_HEIGHT * (_graph.Height * (1 - DEFAULT_HEIGHT));
 
         public ActivityButton(LarpActivity activity, ActivityGraph activityGraph, INavigation navigation)
@@ -313,6 +326,11 @@ namespace LAMA.ActivityGraphLib
         /// <param name="y">In Pixel coordinates.</param>
         public void MoveY(float y) => Activity.GraphY = y - _graph.OffsetY;
 
+        /// <summary>
+        /// Bounds on the canvas. Is wider when editing, with added bars on sides.
+        /// </summary>
+        /// <param name="editMode"></param>
+        /// <returns></returns>
         public SKRect GetHitbox(bool editMode)
         {
             if (!editMode)
@@ -326,6 +344,11 @@ namespace LAMA.ActivityGraphLib
                 );
         }
 
+        /// <summary>
+        /// Preparation is round.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private int GetCornerRadius(LarpActivity.EventType type)
         {
             if (type == LarpActivity.EventType.preparation)

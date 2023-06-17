@@ -73,6 +73,9 @@ namespace LAMA.ActivityGraphLib
         public Layout<View> DateView { get; set; }
 
         public enum EditingMode { None, Create, Connect, Disconnect }
+        /// <summary>
+        /// If <see cref="EditMode"/> is True, this specifies if it is special.
+        /// </summary>
         public EditingMode Mode { get; set; }
 
         public ActivityButton SelectedButton { get; set; } = null;
@@ -467,6 +470,10 @@ namespace LAMA.ActivityGraphLib
             return button;
         }
 
+        /// <summary>
+        /// Removes ActivityButton to be removed from the graph.
+        /// </summary>
+        /// <param name="button"></param>
         public void RemoveActivity(ActivityButton button)
         {
             ActivityButtons.Remove(button);
