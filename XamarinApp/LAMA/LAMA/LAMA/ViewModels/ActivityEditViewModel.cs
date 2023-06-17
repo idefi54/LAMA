@@ -51,7 +51,7 @@ namespace LAMA.ViewModels
 
 		public List<string> TypeList { get { return _typeList; } set { SetProperty(ref _typeList, value); } }
 
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+		public TrulyObservableCollection<ActivityShortItemViewModel> Dependencies { get; }
 
 		#region Time
 
@@ -202,7 +202,7 @@ namespace LAMA.ViewModels
 		/// <summary>
 		/// Removes from the list the LarpActivityShortItemViewModel it receives.
 		/// </summary>
-		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
+		public Command<ActivityShortItemViewModel> RemoveDependencyCommand { get; }
 		/// <summary>
 		/// Adds new RoleItemViewModel to the list.
 		/// </summary>
@@ -234,7 +234,7 @@ namespace LAMA.ViewModels
 		{
 			_messageService = DependencyService.Get<IMessageService>();
 
-			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+			Dependencies = new TrulyObservableCollection<ActivityShortItemViewModel>();
 			larpActivity = activity;
 			MapHandler.Instance.SetSelectionPin(0, 0);
 
@@ -286,7 +286,7 @@ namespace LAMA.ViewModels
 				}
 				foreach(long id in larpActivity.prerequisiteIDs)
 				{
-					Dependencies.Add(new LarpActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
+					Dependencies.Add(new ActivityShortItemViewModel(DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id)));
 				}
 			}
 			else
@@ -327,7 +327,7 @@ namespace LAMA.ViewModels
 			Type = ((LarpActivity.EventType)TypeIndex).ToString();
 
 			AddDependencyCommand = new Command(OnAddDependency);
-			RemoveDependencyCommand = new Command<LarpActivityShortItemViewModel>(OnRemoveDependency);
+			RemoveDependencyCommand = new Command<ActivityShortItemViewModel>(OnRemoveDependency);
 			AddNewRole = new Command(OnAddNewRole);
 			RemoveRole = new Command<RoleItemViewModel>(OnRemoveRole);
 			AddNewItem = new Command(OnAddNewItem);
@@ -486,7 +486,7 @@ namespace LAMA.ViewModels
 				));
 		}
 
-		private void OnRemoveDependency(LarpActivityShortItemViewModel obj)
+		private void OnRemoveDependency(ActivityShortItemViewModel obj)
 		{
 			if (obj == null)
 				return;
@@ -495,7 +495,7 @@ namespace LAMA.ViewModels
 
 		public void SaveDependency(LarpActivity activity)
 		{
-			Dependencies.Add(new LarpActivityShortItemViewModel(activity));
+			Dependencies.Add(new ActivityShortItemViewModel(activity));
 			CurrentIconIndex = CurrentIconIndex;
 		}
 
@@ -534,7 +534,7 @@ namespace LAMA.ViewModels
 			
 			var dependencies = new EventList<long>();
 			
-			foreach(LarpActivityShortItemViewModel item in Dependencies)
+			foreach(ActivityShortItemViewModel item in Dependencies)
 			{
 				dependencies.Add(item.LarpActivity.ID);
 			}

@@ -162,7 +162,7 @@ namespace LAMA.ViewModels
 		/// <summary>
 		/// Collection of LarpActivityShortItemViewModel representing the list of possible roles.
 		/// </summary>
-		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
+		public TrulyObservableCollection<ActivityShortItemViewModel> Dependencies { get; }
 
 
 		private bool _isRegistered;
@@ -221,7 +221,7 @@ namespace LAMA.ViewModels
 			_messageService = DependencyService.Get<Services.IMessageService>();
 			Navigation = navigation;
 
-			Dependencies = new TrulyObservableCollection<LarpActivityShortItemViewModel>();
+			Dependencies = new TrulyObservableCollection<ActivityShortItemViewModel>();
 			_roles = new TrulyObservableCollection<RoleItemViewModel>();
 			_items = new TrulyObservableCollection<ItemItemViewModel>();
 
@@ -265,7 +265,7 @@ namespace LAMA.ViewModels
 			foreach (var id in _activity.prerequisiteIDs)
 			{
 				LarpActivity larpActivity = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.getByID(id);
-				Dependencies.Add(new LarpActivityShortItemViewModel(larpActivity));
+				Dependencies.Add(new ActivityShortItemViewModel(larpActivity));
 			}
 
 			foreach (Pair<string, int> item in _activity.roles)
