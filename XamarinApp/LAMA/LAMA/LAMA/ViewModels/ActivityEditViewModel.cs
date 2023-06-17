@@ -18,7 +18,7 @@ using LAMA.Themes;
 namespace LAMA.ViewModels
 {
 	/// <summary>
-	/// ViewModel for <see cref="NewActivityPage"/>
+	/// ViewModel for <see cref="ActivityEditPage"/>
 	/// </summary>
 	public class ActivityEditViewModel : BaseViewModel
 	{

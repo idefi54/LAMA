@@ -386,7 +386,7 @@ namespace LAMA.ViewModels
 
 		private async void OnEdit()
 		{
-			await Navigation.PushAsync(new NewActivityPage(UpdateActivity,_activity));
+			await Navigation.PushAsync(new ActivityEditPage(UpdateActivity,_activity));
 		}
 
 		private async void OnIconChange()
