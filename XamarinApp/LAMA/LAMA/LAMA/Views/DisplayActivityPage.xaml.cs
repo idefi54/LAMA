@@ -19,14 +19,14 @@ namespace LAMA.Views
         public DisplayActivityPage(LarpActivity activity)
         {
             InitializeComponent();
-            BindingContext = new DisplayActivityViewModel(Navigation,activity);
+            BindingContext = new ActivityDetailsViewModel(Navigation,activity);
             _activity = activity;
         }
 
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            (BindingContext as DisplayActivityViewModel).OnAppearing();
+            (BindingContext as ActivityDetailsViewModel).OnAppearing();
 
             MapHandler mapHandler = MapHandler.Instance;
             string expandText = "Zvětšit mapu";
@@ -62,7 +62,7 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            (BindingContext as DisplayActivityViewModel).OnDisappearing();
+            (BindingContext as ActivityDetailsViewModel).OnDisappearing();
 
             MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;

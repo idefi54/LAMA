@@ -29,13 +29,13 @@ namespace LAMA.Views
         {
             InitializeComponent();
             Activity = activity;
-			BindingContext = new NewActivityViewModel(Navigation, createNewActivity, activity);
+			BindingContext = new ActivityEditViewModel(Navigation, createNewActivity, activity);
 		}
 
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-            (BindingContext as NewActivityViewModel).OnAppearing();
+            (BindingContext as ActivityEditViewModel).OnAppearing();
 
             MapHandler mapHandler = MapHandler.Instance;
             string expandText = "Zvětšit mapu";
@@ -69,7 +69,7 @@ namespace LAMA.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            (BindingContext as NewActivityViewModel).OnDisappearing();
+            (BindingContext as ActivityEditViewModel).OnDisappearing();
             MapHandler.Instance.RemoveMapView(_mapView, MapLayout, _expandButton);
             _mapView = null;
         }
