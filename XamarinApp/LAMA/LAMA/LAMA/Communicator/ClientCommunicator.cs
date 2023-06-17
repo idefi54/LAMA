@@ -667,8 +667,8 @@ namespace LAMA.Communicator
                 SQLEvents.dataChanged += modelChangesManager.OnDataUpdated;
                 SQLEvents.created += modelChangesManager.OnItemCreated;
                 SQLEvents.dataDeleted += modelChangesManager.OnItemDeleted;
-                DisplayActivityViewModel.roleRequested += modelChangesManager.OnRoleRequested;
-                DisplayActivityViewModel.roleRemoved += modelChangesManager.OnRoleRemoved;
+                ActivityDetailsViewModel.roleRequested += modelChangesManager.OnRoleRequested;
+                ActivityDetailsViewModel.roleRemoved += modelChangesManager.OnRoleRemoved;
                 ChatChannelsViewModel.channelCreated += modelChangesManager.OnChannelCreated;
                 ChatChannelsViewModel.channelModified += modelChangesManager.OnChannelModified;
                 logger.LogWrite("Initialization finished");
