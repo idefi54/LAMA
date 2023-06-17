@@ -11,12 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class InventoryView : ContentPage
+    public partial class POIListPage : ContentPage
     {
-        public InventoryView()
+        public POIListPage()
         {
             InitializeComponent();
-            BindingContext = new InventoryViewModel(Navigation);
+            BindingContext = new POIListViewModel(Navigation);
         }
     }
 }

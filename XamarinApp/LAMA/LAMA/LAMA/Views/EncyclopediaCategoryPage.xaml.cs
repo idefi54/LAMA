@@ -11,14 +11,14 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EncyclopedyCategoryView : ContentPage
+    public partial class EncyclopediaCategoryPage : ContentPage
     {
-        public EncyclopedyCategoryView()
+        public EncyclopediaCategoryPage()
         {
             InitializeComponent();
             BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(null, Navigation);
         }
-        public EncyclopedyCategoryView(EncyclopedyCategory category)
+        public EncyclopediaCategoryPage(EncyclopedyCategory category)
         {
             InitializeComponent();
             BindingContext = new LAMA.ViewModels.EncyclopedyCategoryViewModel(category, Navigation);

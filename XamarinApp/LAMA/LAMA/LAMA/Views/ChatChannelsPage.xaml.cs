@@ -11,10 +11,10 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ChatChannels : ContentPage
+    public partial class ChatChannelsPage : ContentPage
     {
         private ChatChannelsViewModel viewModel;
-        public ChatChannels()
+        public ChatChannelsPage()
         {
             InitializeComponent();
             viewModel = new ChatChannelsViewModel(Navigation);

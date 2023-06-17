@@ -130,7 +130,7 @@ namespace LAMA.ViewModels
         }
         async void onEdit()
         {
-            await navigation.PushAsync(new POIEditView(POI));
+            await navigation.PushAsync(new POIEditPage(POI));
         }
         async void onIconChange()
         {

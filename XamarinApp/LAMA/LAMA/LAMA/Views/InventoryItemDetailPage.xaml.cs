@@ -1,6 +1,4 @@
-﻿using LAMA.Models;
-using LAMA.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +10,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EncyclopedyRecordEditView : ContentPage
+    public partial class InventoryItemDetailPage : ContentPage
     {
-        public EncyclopedyRecordEditView(EncyclopedyRecord record)
+        public InventoryItemDetailPage(Models.InventoryItem item)
         {
             InitializeComponent();
-            BindingContext = new EncyclopedyRecordViewModel(record, Navigation);
+            BindingContext = new ViewModels.InventoryItemDetailViewModel(Navigation, item);
         }
     }
 }

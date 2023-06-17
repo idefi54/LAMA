@@ -1,5 +1,4 @@
-﻿using LAMA.Models;
-using LAMA.ViewModels;
+﻿using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EncyclopedyCategoryEditView : ContentPage
+    public partial class CreateInventoryItemPage : ContentPage
     {
-        public EncyclopedyCategoryEditView(EncyclopedyCategory whatToEdit)
+        public CreateInventoryItemPage()
         {
             InitializeComponent();
-            BindingContext = new EncyclopedyCategoryViewModel(whatToEdit, Navigation);
+            BindingContext = new CreateInventoryItemViewModel(Navigation);
         }
     }
 }

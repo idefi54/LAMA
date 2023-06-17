@@ -1,4 +1,5 @@
-﻿using LAMA.ViewModels;
+﻿using LAMA.Models;
+using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class POIListView : ContentPage
+    public partial class InventoryItemEditPage : ContentPage
     {
-        public POIListView()
+        public InventoryItemEditPage(InventoryItem item)
         {
             InitializeComponent();
-            BindingContext = new POIListViewModel(Navigation);
+            BindingContext = new InventoryItemDetailEditViewModel(Navigation, item);
         }
     }
 }

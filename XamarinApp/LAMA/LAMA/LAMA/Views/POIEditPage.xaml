@@ -2,10 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:LAMA.Forms"
-             x:Class="LAMA.Views.POIDetailsView">
+             xmlns:extensions="clr-namespace:LAMA.Extensions"
+             x:Class="LAMA.Views.POIEditPage">
+
     <ContentPage.ToolbarItems>
-        <forms:BindableToolbarItem Text="Změnit" Command="{Binding Edit}" IsVisible="{Binding CanChange}" />
-        <forms:BindableToolbarItem Text="Smazat" Command="{Binding Delete}" IsVisible="{Binding CanChange}" />
+        <forms:BindableToolbarItem Text="Uložit" Command="{Binding Save}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -13,34 +14,34 @@
             <StackLayout
                 AbsoluteLayout.LayoutBounds="0,0,1,1"
 				AbsoluteLayout.LayoutFlags="All">
-                <StackLayout x:Name="DetailsView">
+                <StackLayout x:Name="DetailsLayout">
                     <Label Text="Jméno"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End"/>
-                    <Label Text="{Binding Name}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding Name}" FontSize="Medium" />
 
                     <Label Text="Popis"
 					   HorizontalTextAlignment="Start"
 					   VerticalTextAlignment="End" />
-                    <Label Text="{Binding Description}"
-					   HorizontalTextAlignment="Start"
-					   VerticalTextAlignment="End" />
+                    <Entry Text="{Binding Description}" FontSize="Medium" />
+
 
                     <StackLayout Orientation="Horizontal">
-                        <Label Text="Ikona:"
+                        <Label
+                    Text="Změnit ikonu:"
                     HorizontalOptions="Start"
                     VerticalOptions="Center"/>
-
-                        <Image Source="{Binding CurrentIcon, Mode=TwoWay}"
-                       HeightRequest="40"
-                       WidthRequest="40"
-                       HorizontalOptions="Start"
-                       VerticalOptions="Center"/>
+                        <ImageButton
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    Source="{Binding CurrentIcon, Mode=TwoWay}"
+                    Command="{Binding IconChange}"/>
                     </StackLayout>
                 </StackLayout>
-                <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+
+                <StackLayout x:Name="MapLayout" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>

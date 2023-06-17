@@ -71,7 +71,7 @@ namespace LAMA.ViewModels
 
         private void OnGoToChat(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new ChatChannels())
+            App.Current.MainPage = new NavigationPage(new ChatChannelsPage())
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor
@@ -91,7 +91,7 @@ namespace LAMA.ViewModels
 
         private void OnGoToEncyclopedy(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new EncyclopedyCategoryView(null))
+            App.Current.MainPage = new NavigationPage(new EncyclopediaCategoryPage(null))
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor
@@ -110,7 +110,7 @@ namespace LAMA.ViewModels
         }
         private void OnGoToInventory(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new InventoryView())
+            App.Current.MainPage = new NavigationPage(new InventoryPage())
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor
@@ -119,7 +119,7 @@ namespace LAMA.ViewModels
         }
         private void OnGoToLarpEvent(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new LarpEventView())
+            App.Current.MainPage = new NavigationPage(new LarpEventPage())
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor
@@ -129,7 +129,7 @@ namespace LAMA.ViewModels
         }
         private void OnGoToPOI(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new POIListView())
+            App.Current.MainPage = new NavigationPage(new POIListPage())
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor

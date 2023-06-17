@@ -12,12 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EncyclopedyRecordView : ContentPage
+    public partial class EncyclopediaCategoryEditPage : ContentPage
     {
-        public EncyclopedyRecordView(EncyclopedyRecord record)
+        public EncyclopediaCategoryEditPage(EncyclopedyCategory whatToEdit)
         {
             InitializeComponent();
-            BindingContext = new EncyclopedyRecordViewModel(record, Navigation);
+            BindingContext = new EncyclopedyCategoryViewModel(whatToEdit, Navigation);
         }
     }
 }

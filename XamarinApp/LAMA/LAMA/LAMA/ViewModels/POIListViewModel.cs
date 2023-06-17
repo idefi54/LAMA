@@ -72,11 +72,11 @@ namespace LAMA.ViewModels
 
         async void onCreate()
         {
-            await navigation.PushAsync(new POIEditView());
+            await navigation.PushAsync(new POIEditPage());
         }
         async void onOpenDetails(object sender)
         {
-            await navigation.PushAsync(new POIDetailsView((sender as POIViewModel).POI));
+            await navigation.PushAsync(new POIDetailsPage((sender as POIViewModel).POI));
         }
         async void onRemove(object sender)
         {

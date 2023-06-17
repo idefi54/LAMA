@@ -95,7 +95,7 @@ namespace LAMA.ViewModels
         }
         void onEdit()
         {
-            Navigation.PushAsync(new EncyclopedyRecordEditView(record));
+            Navigation.PushAsync(new EncyclopediaRecordEditPage(record));
         }
         async void onReturn()
         {

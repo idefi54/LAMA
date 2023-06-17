@@ -1,5 +1,5 @@
 ﻿using LAMA.Models;
- using LAMA.Services;
+using LAMA.Services;
 using LAMA.Singletons;
 using LAMA.ViewModels;
 using Mapsui.UI.Forms;
@@ -15,18 +15,18 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class POIEditView : ContentPage
+    public partial class POIDetailsPage : ContentPage
     {
-        MapView _mapView;
         PointOfInterest _poi;
+        private MapView _mapView;
         private Button _expandButton;
 
-        public POIEditView()
+        public POIDetailsPage()
         {
             InitializeComponent();
             BindingContext = new POIViewModel(Navigation, null);
         }
-        public POIEditView(PointOfInterest poi)
+        public POIDetailsPage(PointOfInterest poi)
         {
             InitializeComponent();
             BindingContext = new POIViewModel(Navigation, poi);
@@ -36,17 +36,22 @@ namespace LAMA.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-
             var mapHandler = MapHandler.Instance;
-            (_mapView, _expandButton) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.Fill, LayoutOptions.Fill, 300, DetailsLayout);
-            mapHandler.MapViewSetup(_mapView, showSelection: true, relocateSelection: true);
+            (_mapView, _expandButton)  = await mapHandler.CreateAndAddMapView(
+                layout: MapLayout,
+                horizontalOptions: LayoutOptions.Fill,
+                verticalOptions: LayoutOptions.Fill,
+                heightRequest: 300,
+                hidableView: DetailsView);
+
+            mapHandler.MapViewSetup(_mapView, showSelection:true);
 
             if (_poi != null)
             {
                 long id = _poi.ID;
                 double lon = _poi.Coordinates.first;
                 double lat = _poi.Coordinates.second;
-            
+
                 mapHandler.RemovePointOfInterest(id, _mapView);
                 mapHandler.SetSelectionPin(lon, lat);
                 MapHandler.CenterOn(_mapView, lon, lat);

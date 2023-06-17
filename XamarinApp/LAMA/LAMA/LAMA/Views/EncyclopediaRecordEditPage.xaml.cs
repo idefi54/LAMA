@@ -1,4 +1,5 @@
-﻿using LAMA.ViewModels;
+﻿using LAMA.Models;
+using LAMA.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CreateInventoryItemView : ContentPage
+    public partial class EncyclopediaRecordEditPage : ContentPage
     {
-        public CreateInventoryItemView()
+        public EncyclopediaRecordEditPage(EncyclopedyRecord record)
         {
             InitializeComponent();
-            BindingContext = new CreateInventoryItemViewModel(Navigation);
+            BindingContext = new EncyclopedyRecordViewModel(record, Navigation);
         }
     }
 }

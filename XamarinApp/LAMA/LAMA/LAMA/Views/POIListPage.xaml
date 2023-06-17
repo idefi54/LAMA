@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:LAMA.Forms"
              xmlns:colors="clr-namespace:LAMA.Themes"
-             x:Class="LAMA.Views.POIListView"
+             x:Class="LAMA.Views.POIListPage"
              xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
              xmlns:common="clr-namespace:LAMA.Views">
 

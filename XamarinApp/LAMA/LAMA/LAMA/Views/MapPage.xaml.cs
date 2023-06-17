@@ -160,7 +160,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
                 PointOfInterest pointOfInterest = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new POIDetailsView(pointOfInterest));
+                await Navigation.PushAsync(new POIDetailsPage(pointOfInterest));
             }
 
             if (e.Pin.Label == "CP")

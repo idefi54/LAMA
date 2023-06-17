@@ -103,11 +103,11 @@ namespace LAMA.Views
         }
         async void OnInventory(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new InventoryView());
+            await Navigation.PushAsync(new InventoryPage());
         }
         async void OnEncyclopedy(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new EncyclopedyCategoryView(null));
+            await Navigation.PushAsync(new EncyclopediaCategoryPage(null));
         }
         async void OnCP(object sender, EventArgs args)
         {
@@ -247,7 +247,7 @@ namespace LAMA.Views
         }
         async void OnLarpEvent(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new LarpEventView());
+            await Navigation.PushAsync(new LarpEventPage());
         }
 
         async void OnIconSelection(object sender, EventArgs args)

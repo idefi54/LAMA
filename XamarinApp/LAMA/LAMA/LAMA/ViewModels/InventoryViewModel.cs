@@ -84,7 +84,7 @@ namespace LAMA.ViewModels
             if (!CheckExistence(viewModel.Item.ID).Result)
                 return;
 
-            await Navigation.PushAsync(new InventoryItemDetail(viewModel.Item));
+            await Navigation.PushAsync(new InventoryItemDetailPage(viewModel.Item));
         }
         private void OnChange(Serializable changed, int index)
         {
@@ -156,7 +156,7 @@ namespace LAMA.ViewModels
         }
         private async void OnCreateItem()
         {
-            await Navigation.PushAsync(new CreateInventoryItemView());
+            await Navigation.PushAsync(new CreateInventoryItemPage());
         }
 
         private async Task<bool> CheckExistence(long itemID)

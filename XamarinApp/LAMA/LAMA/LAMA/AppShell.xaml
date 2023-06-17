@@ -108,7 +108,7 @@
         <ShellContent Route="TestPage" ContentTemplate="{DataTemplate local:TestPage}" />
     </FlyoutItem>-->
     <FlyoutItem Title="Chat">
-        <ShellContent Route="ChatChannels" ContentTemplate="{DataTemplate local:ChatChannels}" />
+        <ShellContent Route="ChatChannels" ContentTemplate="{DataTemplate local:ChatChannelsPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Graf Aktivit" Icon="icon_about.png">
@@ -116,7 +116,7 @@
     </FlyoutItem>
 
     <FlyoutItem Title="Encyklopedie">
-        <ShellContent Route="EncyclopedyCategoryView" ContentTemplate="{DataTemplate local:EncyclopedyCategoryView}" />
+        <ShellContent Route="EncyclopedyCategoryView" ContentTemplate="{DataTemplate local:EncyclopediaCategoryPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="CP">
@@ -124,16 +124,16 @@
     </FlyoutItem>
 
     <FlyoutItem Title="Inventář">
-        <ShellContent Route="InventoryView" ContentTemplate="{DataTemplate local:InventoryView}" />
+        <ShellContent Route="InventoryView" ContentTemplate="{DataTemplate local:InventoryPage}" />
     </FlyoutItem>
 
 
     <FlyoutItem Title="LARP Událost">
-        <ShellContent Route="LarpEventView" ContentTemplate="{DataTemplate local:LarpEventView}" />
+        <ShellContent Route="LarpEventView" ContentTemplate="{DataTemplate local:LarpEventPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Lokace">
-        <ShellContent Route="POIListView" ContentTemplate="{DataTemplate local:POIListView}" />
+        <ShellContent Route="POIListView" ContentTemplate="{DataTemplate local:POIListPage}" />
     </FlyoutItem>
 
     <MenuItem x:Name="LocationTracking" Text="Zastavit sledování pozice na pozadí." StyleClass="MenuItemLayoutStyle" Clicked="OnLocationTrackingClicked"/>
@@ -151,7 +151,7 @@
     -->
     <TabBar>
 		<ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
-		<ShellContent Route="NewActivityPage" ContentTemplate="{DataTemplate local:NewActivityPage}" />
+		<ShellContent Route="ActivityEditPage" ContentTemplate="{DataTemplate local:ActivityEditPage}"/>
         <ShellContent Route="ClientChooseServerPage" ContentTemplate="{DataTemplate local:ClientChooseServerPage}"/>
         <ShellContent Route="ClientLoginTypePage" ContentTemplate="{DataTemplate local:ClientLoginTypePage}"/>
         <ShellContent Route="ClientChooseNamePage" ContentTemplate="{DataTemplate local:ClientChooseNamePage}"/>

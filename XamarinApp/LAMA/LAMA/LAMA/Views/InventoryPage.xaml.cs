@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LAMA.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class InventoryItemDetail : ContentPage
+    public partial class InventoryPage : ContentPage
     {
-        public InventoryItemDetail(Models.InventoryItem item)
+        public InventoryPage()
         {
             InitializeComponent();
-            BindingContext = new ViewModels.InventoryItemDetailViewModel(Navigation, item);
+            BindingContext = new InventoryViewModel(Navigation);
         }
     }
 }

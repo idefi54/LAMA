@@ -105,7 +105,7 @@ namespace LAMA.ViewModels
 
         private async void OnEdit()
         {
-            await _navigation.PushAsync(new InventoryItemDetailEditView(_item));
+            await _navigation.PushAsync(new InventoryItemEditPage(_item));
         }
         private async void OnSelectCP(object obj)
         {

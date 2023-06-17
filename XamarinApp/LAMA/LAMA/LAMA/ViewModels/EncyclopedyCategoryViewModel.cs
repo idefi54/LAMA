@@ -293,7 +293,7 @@ namespace LAMA.ViewModels
         async void onEdit()
         {
             if (category != null) 
-                await Navigation.PushAsync(new EncyclopedyCategoryEditView(category));
+                await Navigation.PushAsync(new EncyclopediaCategoryEditPage(category));
         }
         async void onCancel()
         {
@@ -327,7 +327,7 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (EncyclopedyRecordViewModel)obj;
-            await Navigation.PushAsync(new EncyclopedyRecordView(viewModel.record));
+            await Navigation.PushAsync(new EncyclopediaRecordPage(viewModel.record));
         }
         async void onOpenCategory(object obj)
         {
@@ -339,7 +339,7 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (EncyclopedyCategoryViewModel)obj;
-            await Navigation.PushAsync(new EncyclopedyCategoryView(viewModel.category));
+            await Navigation.PushAsync(new EncyclopediaCategoryPage(viewModel.category));
         }
 
         async void onAddCategory()

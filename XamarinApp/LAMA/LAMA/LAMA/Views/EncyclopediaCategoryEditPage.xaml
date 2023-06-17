@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:colors="clr-namespace:LAMA.Themes"
-             x:Class="LAMA.Views.EncyclopedyCategoryEditView">
+             x:Class="LAMA.Views.EncyclopediaCategoryEditPage">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Uložit" Command="{Binding Save}"/>

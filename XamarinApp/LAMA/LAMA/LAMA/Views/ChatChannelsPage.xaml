@@ -2,9 +2,9 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:viewmodel="clr-namespace:LAMA.ViewModels" xmlns:common="clr-namespace:LAMA.Views"
-             x:Class="LAMA.Views.ChatChannels"
+             x:Class="LAMA.Views.ChatChannelsPage"
              xmlns:colors="clr-namespace:LAMA.Themes"
-			 x:Name="ChatChannelsPage">
+			 x:Name="ChatChannels">
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout Spacing="0"

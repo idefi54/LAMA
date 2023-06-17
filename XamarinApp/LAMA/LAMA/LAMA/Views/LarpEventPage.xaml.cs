@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LarpEventView : ContentPage
+    public partial class LarpEventPage : ContentPage
     {
-        public LarpEventView()
+        public LarpEventPage()
         {
             InitializeComponent();
             BindingContext = new LarpEventViewModel(Navigation);

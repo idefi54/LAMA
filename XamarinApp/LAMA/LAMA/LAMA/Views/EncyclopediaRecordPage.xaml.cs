@@ -12,12 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class InventoryItemDetailEditView : ContentPage
+    public partial class EncyclopediaRecordPage : ContentPage
     {
-        public InventoryItemDetailEditView(InventoryItem item)
+        public EncyclopediaRecordPage(EncyclopedyRecord record)
         {
             InitializeComponent();
-            BindingContext = new InventoryItemDetailEditViewModel(Navigation, item);
+            BindingContext = new EncyclopedyRecordViewModel(record, Navigation);
         }
     }
 }
