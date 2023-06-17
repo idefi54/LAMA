@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
+    /// <summary>
+    /// List with attatched events on Add, Remove and Update functions.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class EventList<T> : List<T>
     {
         public delegate void DataChanged();

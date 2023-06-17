@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
+    /// <summary>
+    /// Contains functions for serialization and deserialization of numbers and pairs of numbers...
+    /// </summary>
     class Helpers
     {
 

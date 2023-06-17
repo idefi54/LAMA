@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
-
+    /// <summary>
+    /// A simple pair. Has hashcode and can be used in a dictionary.
+    /// </summary>
+    /// <typeparam name="A"></typeparam>
+    /// <typeparam name="B"></typeparam>
     public struct Pair<A, B>
     {
 
