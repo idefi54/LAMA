@@ -212,7 +212,7 @@ namespace LAMA.ActivityGraphLib
         /// </summary>
         public void Click()
         {
-            _navigation.PushAsync(new DisplayActivityPage(Activity));
+            _navigation.PushAsync(new ActivityDetailsPage(Activity));
         }
 
         /// <summary>
