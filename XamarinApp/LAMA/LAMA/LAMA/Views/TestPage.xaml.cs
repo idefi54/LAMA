@@ -94,12 +94,12 @@ namespace LAMA.Views
 
         async void OnNewActivity(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new NewActivityPage(CreateActivity));
+            await Navigation.PushAsync(new ActivityEditPage(CreateActivity));
         }
 
         async void OnEditActivity(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity, activity));
+            await Navigation.PushAsync(new ActivityEditPage(DummyUpdateActivity, activity));
         }
         async void OnInventory(object sender, EventArgs args)
         {

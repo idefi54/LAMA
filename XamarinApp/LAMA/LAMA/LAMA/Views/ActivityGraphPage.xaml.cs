@@ -125,7 +125,7 @@ namespace LAMA.Views
                     activity.duration = hourMilliseconds;
                     activity.day = time.Day;
 
-                    Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
+                    Navigation.PushAsync(new ActivityEditPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
                         activityDTO.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();

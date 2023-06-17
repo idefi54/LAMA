@@ -236,7 +236,7 @@ namespace LAMA.ViewModels
 
         private async void OnAddActivityListItem(object obj)
         {
-            await Navigation.PushAsync(new NewActivityPage(CreateNewActivity));
+            await Navigation.PushAsync(new ActivityEditPage(CreateNewActivity));
         }
 
         private void CreateNewActivity(LarpActivityDTO larpActivity)
