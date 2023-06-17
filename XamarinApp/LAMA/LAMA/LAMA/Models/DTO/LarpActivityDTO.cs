@@ -6,6 +6,9 @@ using static LAMA.Models.LarpActivity;
 
 namespace LAMA.Models.DTO
 {
+    /// <summary>
+    /// DTO of LarpActivity used in it's creation
+    /// </summary>
     public class LarpActivityDTO
     {
         public long ID {get; set;}

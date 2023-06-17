@@ -23,8 +23,13 @@ using LAMA.Themes;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// Read only viewmodel for activities
+	/// </summary>
     public class DisplayActivityViewModel : BaseViewModel
     {
+		#region registering roles
+
 		public delegate void RoleRequestedDelegate(long activityID, string roleName);
 		public static event RoleRequestedDelegate roleRequested;
         public delegate void RoleReceivedDelegate(long activityID, string roleName, bool wasGivenRole);
@@ -82,7 +87,9 @@ namespace LAMA.ViewModels
 			return true;
         }
 
-        private string _activityName;
+		#endregion
+
+		private string _activityName;
         public string ActivityName { get { return _activityName; } set { SetProperty(ref _activityName, value); } }
 
 
@@ -106,7 +113,13 @@ namespace LAMA.ViewModels
 		public string Type { get { return _type; } set { SetProperty(ref _type, value); } }
 		public string Status { get { return _status; } set { SetProperty(ref _status, value); } }
 		public string DayIndex { get { return _dayIndex; } set { SetProperty(ref _dayIndex, value); } }
+		/// <summary>
+		/// Collection of RoleItemViewModel representing the list of possible roles.
+		/// </summary>
 		public TrulyObservableCollection<RoleItemViewModel> Roles { get { return _roles; } set { SetProperty(ref _roles, value); } }
+		/// <summary>
+		/// Collection of ItemItemViewModel representing the list of possible roles.
+		/// </summary>
 		public TrulyObservableCollection<ItemItemViewModel> Items { get { return _items; } set { SetProperty(ref _items, value); } }
 		public ObservableCollection<string> Equipment { get { return _equipment; } set { SetProperty(ref _equipment, value); } }
 		public string Preparations { get { return _preparations; } set { SetProperty(ref _preparations, value); } }
@@ -146,14 +159,18 @@ namespace LAMA.ViewModels
 
 		#endregion
 
-
+		/// <summary>
+		/// Collection of LarpActivityShortItemViewModel representing the list of possible roles.
+		/// </summary>
 		public TrulyObservableCollection<LarpActivityShortItemViewModel> Dependencies { get; }
 
 
 		private bool _isRegistered;
 		private bool isRegistered { get { return _isRegistered; } set { _isRegistered = value; OnPropertyChanged(nameof(SignUpText)); } }
-		
 
+		/// <summary>
+		/// Display text for signing up or signing out, depending on whether the user is or isn’t registered to one of the roles.
+		/// </summary>
 		public string SignUpText
 		{
 			get
@@ -167,16 +184,30 @@ namespace LAMA.ViewModels
         public bool NotBusy => !IsBusy;
 
         public string StatusCommandText => "Změnit stav";
-		public Command StatusCommand { get; }
 
 
 		LarpActivity _activity;
 
-
+		/// <summary>
+		/// Displays menu containing the other commands.
+		/// </summary>
 		public Command OptionsCommand { get; }
+		/// <summary>
+		/// Signs user to the activity. If more than one role is present, he is given a dialogue window to choose one of them.
+		/// </summary>
 		public Command SignUpCommand { get; }
+		/// <summary>
+		/// Navigates user to the ActivityGraphPage to where the current activity is located.
+		/// </summary>
 		public Command ShowOnGraphCommand { get; }
+		/// <summary>
+		/// Navigates to the NewActivityPage for editing 
+		/// </summary>
 		public Command EditCommand { get; }
+		/// <summary>
+		/// Gives the user a dialogue window for changing the current Status of the activity.
+		/// </summary>
+		public Command StatusCommand { get; }
 
 		public Command IconChange { get; set; }
 

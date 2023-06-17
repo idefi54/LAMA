@@ -7,6 +7,9 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// Duplicate of <see cref="LarpActivity.EventType"/> enum with the addition of Any value.
+	/// </summary>
 	public enum ActivitySearchType
 	{
 		Any = 0,
@@ -14,6 +17,9 @@ namespace LAMA.ViewModels
 		Preparation = 2,
 	}
 
+	/// <summary>
+	/// Whether the user is registered to one of the LarpActivity’s roles or not. Also includes Any value.
+	/// </summary>
 	public enum ActivitySearchRegistration
 	{
 		Any = 0,
@@ -21,6 +27,9 @@ namespace LAMA.ViewModels
 		Unregistered = 2,
 	}
 
+	/// <summary>
+	/// Duplicate of <see cref="LarpActivity.Status"/> enum with the addition of Any value.
+	/// </summary>
 	public enum ActivitySearchStatus
     {
 		Any = 0,
@@ -112,6 +121,9 @@ namespace LAMA.ViewModels
         }
     }
 
+	/// <summary>
+	/// Part of <see cref="ActivityListViewModel"/> that takes care of filtering of ListView items.
+	/// </summary>
     public class ActivityFilterViewModel : BaseViewModel
 	{
 		private bool _isFiltered = false;
@@ -120,9 +132,15 @@ namespace LAMA.ViewModels
 		#region SearchValues
 		
 		private string _searchName;
+		/// <summary>
+		/// Used for searching as substring in the name of the activities. If it is not set it is ignored in the search.
+		/// </summary>
 		public string SearchName { get { return _searchName; } set { SetProperty(ref _searchName, value); ApplyFilter(); } }
 
 		private ActivitySearchType _searchType;
+		/// <summary>
+		/// Index of value in ActivitySearchType enum. If it is set to Any it is ignored in the search.
+		/// </summary>
 		public int SearchTypeIndex
 		{
 			get { return (int)_searchType; }
@@ -130,6 +148,9 @@ namespace LAMA.ViewModels
 		}
 
 		private ActivitySearchRegistration _searchRegistration;
+		/// <summary>
+		/// Index of value in ActivitySearchRegistration enum. If it is set to Any it is ignored in the search.
+		/// </summary>
 		public int SearchRegistrationIndex
 		{
 			get { return (int)_searchRegistration; }
@@ -137,6 +158,9 @@ namespace LAMA.ViewModels
 		}
 
 		private ActivitySearchStatus _searchStatus;
+		/// <summary>
+		/// Index of value in ActivitySearchStatus enum. If it is set to Any it is ignored in the search.
+		/// </summary>
 		public int SearchStatusIndex
         {
 			get { return (int)_searchStatus; }
@@ -163,6 +187,12 @@ namespace LAMA.ViewModels
 		private TrulyObservableCollection<ActivityListItemViewModel> _sourceList;
 		private TrulyObservableCollection<ActivityListItemViewModel> _filteredList;
 
+		/// <summary>
+		/// ViewModel responsible for filtering inside <see cref="ActivityListViewModel"/>
+		/// </summary>
+		/// <param name="sourceList">Collection of every activity.</param>
+		/// <param name="filteredList">Collection that will be containing the filltered subset.</param>
+		/// <param name="applySort">Action for sorting that is run after every filter.</param>
 		public ActivityFilterViewModel(TrulyObservableCollection<ActivityListItemViewModel> sourceList,
 									   TrulyObservableCollection<ActivityListItemViewModel> filteredList,
 									   Action applySort)
