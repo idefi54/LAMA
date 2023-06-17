@@ -302,7 +302,7 @@ namespace LAMA.Communicator
                 {
                     Device.BeginInvokeOnMainThread(new Action(() =>
                     {
-                        THIS.NewClientConnected(Int32.Parse(messageParts[2]), current);
+                        THIS.ClientConnected(Int32.Parse(messageParts[2]), current);
                     }));
                 }
             }
@@ -608,7 +608,7 @@ namespace LAMA.Communicator
         /// </summary>
         /// <param name="id">ID of the connected client</param>
         /// <param name="current"></param>
-        private void NewClientConnected(int id, Socket current)
+        private void ClientConnected(int id, Socket current)
         {
             lock (ServerCommunicator.socketsLock)
             {

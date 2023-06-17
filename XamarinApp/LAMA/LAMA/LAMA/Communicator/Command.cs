@@ -113,7 +113,7 @@ namespace LAMA.Communicator
         }
 
         /// <summary>
-        /// Get encoded representation of the command (using AES algorithm)
+        /// Get encoded representation of the command (using AES algorithm and Huffman coding)
         /// </summary>
         /// <returns></returns>
         public byte[] Encode(Compression compressor)
