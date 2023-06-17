@@ -8,6 +8,9 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// Default Xamarin base for ViewModels.
+    /// </summary>
     public class BaseViewModel : INotifyPropertyChanged
     {
         bool isBusy = false;

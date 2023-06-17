@@ -6,6 +6,9 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// Lightweight version of <see cref="ActivityListItemViewModel"/>
+    /// </summary>
     public class LarpActivityShortItemViewModel : BaseViewModel
     {
 

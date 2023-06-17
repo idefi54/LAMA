@@ -17,6 +17,9 @@ using LAMA.Themes;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// ViewModel for <see cref="NewActivityPage"/>
+	/// </summary>
 	public class NewActivityViewModel : BaseViewModel
 	{
 		private string _id;
@@ -180,22 +183,53 @@ namespace LAMA.ViewModels
 
 		private IMessageService _messageService;
 
+		/// <summary>
+		/// Displays the CalendarPage to select the starting date.
+		/// </summary>
 		public Command SetStartTimeDateCommand { get; }
+		/// <summary>
+		/// Displays the CalendarPage to select the ending date.
+		/// </summary>
 		public Command SetEndTimeDateCommand { get; }
-
-		public Xamarin.Forms.Command SaveCommand { get; }
-		public ICommand CancelCommand { get; }
+		/// <summary>
+		/// Saves the activity using the presented callback action.
+		/// </summary>
+		public Command SaveCommand { get; }
+		/// <summary>
+		/// Adds new LarpActivityShortItemViewModel to the list using ActivitySelectionViewModel.
+		/// </summary>
 		public Command AddDependencyCommand { get; }
+		/// <summary>
+		/// Removes from the list the LarpActivityShortItemViewModel it receives.
+		/// </summary>
 		public Command<LarpActivityShortItemViewModel> RemoveDependencyCommand { get; }
-
+		/// <summary>
+		/// Adds new RoleItemViewModel to the list.
+		/// </summary>
 		public Command AddNewRole { get; }
+		/// <summary>
+		/// Removes from the list the RoleItemViewModel it receives. It also unregisters any CP registered to this role.
+		/// </summary>
 		public Command<RoleItemViewModel> RemoveRole { get; }
-
+		/// <summary>
+		/// Adds new ItemItemViewModel to the list.
+		/// </summary>
 		public Command AddNewItem { get; }
+		/// <summary>
+		/// Removes from the list the ItemItemViewModel it receives.
+		/// </summary>
 		public Command<ItemItemViewModel> RemoveItem { get; }
-
+		/// <summary>
+		/// Set’s CurrentIconIndex using the IconSelectionPage.
+		/// </summary>
 		public Command IconChange { get; set; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="navigation">navigation for interacting with pages</param>
+		/// <param name="createNewActivity">Action that will be run when saving the activity</param>
+		/// <param name="activity">Activity for editing. if null it will act as if creating new activity</param>
 		public NewActivityViewModel(INavigation navigation, Action<LarpActivityDTO> createNewActivity, LarpActivity activity = null)
 		{
 			_messageService = DependencyService.Get<IMessageService>();
@@ -485,19 +519,8 @@ namespace LAMA.ViewModels
 
         private async void OnSave()
         {
-			//Activity newActivity = new Activity()
-			//{
-			//    Id = Guid.NewGuid().ToString(),
-			//    Name = Name,
-			//    Description = Description
-			//};
-
-			//await ActivityDataStore.AddItemAsync(newActivity);
-
 			if(!ValidateSave())
             {
-
-
 				return;
             }
 			(double lon, double lat) = MapHandler.Instance.GetSelectionPin();

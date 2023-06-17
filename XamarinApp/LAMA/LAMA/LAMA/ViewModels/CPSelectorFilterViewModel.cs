@@ -5,10 +5,16 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// Part of the <see cref="CPSelectionViewModel"/> that takes care of the filtering by name
+	/// </summary>
 	public class CPSelectorFilterViewModel : BaseViewModel
 	{
 
 		private string _searchText;
+		/// <summary>
+		/// String that is searched in the CPs. While name and nick are searched if they contain the searched string as a substring, roles need to match perfectly. 
+		/// </summary>
 		public string SearchText { get { return _searchText; } set { SetProperty(ref _searchText, value); ApplyFilter(); } }
 
 

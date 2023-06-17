@@ -6,9 +6,15 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// ViewModel for <see cref="Views.CPSelectionPage"/>
+	/// </summary>
 	public class CPSelectionViewModel : BaseViewModel
 	{
 		private CPSelectItemViewModel _selecedCP;
+		/// <summary>
+		/// The current selected CPSelectItemViewModel in the ListView. In the setter the callback function is run and the page is exited.
+		/// </summary>
 		public CPSelectItemViewModel SelectedCP
 		{
 			get
@@ -28,10 +34,16 @@ namespace LAMA.ViewModels
 
 
 		private TrulyObservableCollection<CPSelectItemViewModel> sourceCPList;
+		/// <summary>
+		/// Collection of filtered CPSelectItemViewModels. It is a subset of internal sourceCPList that contains all the CPs.
+		/// </summary>
 		public TrulyObservableCollection<CPSelectItemViewModel> FilteredCPList { get; }
 
 		private Action<CP> _callback;
 
+		/// <summary>
+		/// CPSelectorFilterViewModel that takes care of searching for specific CPs.
+		/// </summary>
 		public CPSelectorFilterViewModel FilterViewModel { get; }
 
 		public CPSelectionViewModel(Action<CP> callback)
