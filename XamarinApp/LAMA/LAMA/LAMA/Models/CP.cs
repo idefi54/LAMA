@@ -96,8 +96,11 @@ namespace LAMA.Models
         string _password = string.Empty;
         public string password { get { return _password; } set { _password = value; updateValue(10, value); } }
 
-        bool _isArchived = false;
+        /// <summary>
+        /// Hides from CPs that can't edit other CPs.
+        /// </summary>
         public bool IsArchived { get { return _isArchived; } set { _isArchived = value; updateValue(11, value ? "1" : "0") ; } }
+        bool _isArchived = false;
 
         public CP()
         {

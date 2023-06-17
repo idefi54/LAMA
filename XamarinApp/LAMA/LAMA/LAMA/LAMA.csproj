@@ -142,6 +142,30 @@
     <Compile Update="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\CPDetailsPage.xaml.cs">
+      <DependentUpon>CPDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPEditPage.xaml.cs">
+      <DependentUpon>CPEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPEditPage.xaml.cs">
+      <DependentUpon>CPEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPListPage.xaml.cs">
+      <DependentUpon>CPListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CP.xaml.cs">
+      <DependentUpon>CP.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateCPPage.xaml.cs">
+      <DependentUpon>CreateCPPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateEncyclopediaCategoryPage.xaml.cs">
+      <DependentUpon>CreateEncyclopediaCategoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateEncyclopediaRecordPage.xaml.cs">
+      <DependentUpon>CreateEncyclopediaRecordPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\DropdownMenuAboveTestPage.xaml.cs">
       <DependentUpon>DropdownMenuAboveTestPage.xaml</DependentUpon>
     </Compile>
@@ -172,7 +196,7 @@
     <EmbeddedResource Update="Views\ChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPDetailsEditView.xaml">
+    <EmbeddedResource Update="Views\CPEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ChooseClientServerPage.xaml">
@@ -187,25 +211,25 @@
     <EmbeddedResource Update="Views\ClientLoginTypePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPRoleItemView.xaml">
+    <EmbeddedResource Update="Views\CP.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\CPSelectionPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateEncyclopedyCategoryView.xaml">
+    <EmbeddedResource Update="Views\CreateEncyclopediaCategoryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateEncyclopedyRecordView.xaml">
+    <EmbeddedResource Update="Views\CreateEncyclopediaRecordPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPDetailsView.xaml">
+    <EmbeddedResource Update="Views\CPDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPListView.xaml">
+    <EmbeddedResource Update="Views\CPListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateCPView.xaml">
+    <EmbeddedResource Update="Views\CreateCPPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\CreateInventoryItemView.xaml">

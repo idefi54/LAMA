@@ -111,7 +111,7 @@ namespace LAMA.Views
         }
         async void OnCP(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new CPListView());
+            await Navigation.PushAsync(new CPListPage());
         }
 
         async void OnActivitySelector(object sender, EventArgs args)

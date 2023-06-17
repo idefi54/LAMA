@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:common="clr-namespace:LAMA.Views"
-             x:Class="LAMA.Views.CreateCPView">
+             x:Class="LAMA.Views.CreateCPPage">
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
 	</ContentPage.ToolbarItems>

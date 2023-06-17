@@ -111,7 +111,7 @@ namespace LAMA.ViewModels
         }
         async void OnMakeCP()
         {
-            await navigation.PushAsync(new CreateCPView());
+            await navigation.PushAsync(new CreateCPPage());
         }
         async void OnOpenDetail(object obj)
         {
@@ -121,7 +121,7 @@ namespace LAMA.ViewModels
             }
             var cpView = (CPViewModel)obj;
             var cp = cpView.cp;
-            await navigation.PushAsync(new CPDetailsView(cp));
+            await navigation.PushAsync(new CPDetailsPage(cp));
         }
 
 

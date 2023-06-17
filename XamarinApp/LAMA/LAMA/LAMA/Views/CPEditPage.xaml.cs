@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LAMA.Models;
+using LAMA.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +12,13 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CreateCPView : ContentPage
+    public partial class CPEditPage : ContentPage
     {
-        public CreateCPView()
+        public CPEditPage(CP cp)
         {
             InitializeComponent();
-            BindingContext = new ViewModels.CreateCPViewModel(Navigation);
+            BindingContext = new CPDetailsViewModel(Navigation, cp);
+
         }
     }
 }

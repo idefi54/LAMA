@@ -101,7 +101,7 @@ namespace LAMA.ViewModels
 
         private void OnGoToCP(object obj)
         {
-            App.Current.MainPage = new NavigationPage(new CPListView())
+            App.Current.MainPage = new NavigationPage(new CPListPage())
             {
                 BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                 BarBackgroundColor = ColorPalette.PrimaryColor

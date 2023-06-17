@@ -91,7 +91,7 @@ namespace LAMA.ViewModels
                     }
                 }
             }
-            Navigation.PushAsync(new CreateEncyclopedyRecordView(recordParent));
+            Navigation.PushAsync(new CreateEncyclopediaRecordPage(recordParent));
         }
         void onEdit()
         {

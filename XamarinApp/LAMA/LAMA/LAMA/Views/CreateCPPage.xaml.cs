@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LAMA.ViewModels;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CPListView : ContentPage
+    public partial class CreateCPPage : ContentPage
     {
-        public CPListView()
+        public CreateCPPage()
         {
             InitializeComponent();
-            BindingContext = new CPListViewModel(Navigation);
+            BindingContext = new ViewModels.CreateCPViewModel(Navigation);
         }
     }
 }

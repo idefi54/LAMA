@@ -224,7 +224,7 @@ namespace LAMA.ViewModels
 
         void OnEdit()
         {
-            navigation.PushAsync(new CPDetailsEditView(cp));
+            navigation.PushAsync(new CPEditPage(cp));
         }
         /*
         void figureOutPermissions()

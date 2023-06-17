@@ -344,11 +344,11 @@ namespace LAMA.ViewModels
 
         async void onAddCategory()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyCategoryView(this.category));
+            await Navigation.PushAsync(new CreateEncyclopediaCategoryPage(this.category));
         }
         async void onAddRecord()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyRecordView(this.category));
+            await Navigation.PushAsync(new CreateEncyclopediaRecordPage(this.category));
         }
 
         void onAddChildCategory()

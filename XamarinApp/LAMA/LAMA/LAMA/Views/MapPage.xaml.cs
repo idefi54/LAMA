@@ -168,7 +168,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
                 CP cp = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new CPDetailsView(cp));
+                await Navigation.PushAsync(new CPDetailsPage(cp));
             }
 
             e.Handled = true;

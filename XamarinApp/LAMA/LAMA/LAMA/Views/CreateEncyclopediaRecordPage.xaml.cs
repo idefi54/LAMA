@@ -12,9 +12,9 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CreateEncyclopedyRecordView : ContentPage
+    public partial class CreateEncyclopediaRecordPage : ContentPage
     {
-        public CreateEncyclopedyRecordView(EncyclopedyCategory parent)
+        public CreateEncyclopediaRecordPage(EncyclopedyCategory parent)
         {
             InitializeComponent();
             BindingContext = new EncyclopedyRecordViewModel(null, Navigation, parent);

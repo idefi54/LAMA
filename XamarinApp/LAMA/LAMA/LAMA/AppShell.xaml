@@ -120,7 +120,7 @@
     </FlyoutItem>
 
     <FlyoutItem Title="CP">
-        <ShellContent Route="CPListView" ContentTemplate="{DataTemplate local:CPListView}" />
+        <ShellContent Route="CPListPage" ContentTemplate="{DataTemplate local:CPListPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Inventář">

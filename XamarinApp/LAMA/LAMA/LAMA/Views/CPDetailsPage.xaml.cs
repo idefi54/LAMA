@@ -13,12 +13,12 @@ using Xamarin.Forms.Xaml;
 namespace LAMA.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class CPDetailsView : ContentPage
+    public partial class CPDetailsPage : ContentPage
     {
         private MapView _mapView;
         private Button _expandButton;
         private Models.CP _cp;
-        public CPDetailsView(Models.CP cp)
+        public CPDetailsPage(Models.CP cp)
         {
             InitializeComponent();
             BindingContext = new ViewModels.CPDetailsViewModel(Navigation, cp);
