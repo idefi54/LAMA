@@ -120,7 +120,7 @@ namespace LAMA.UWP
             // Calendar Button
             {
                 var calendarButton = new Button();
-                calendarButton.Text = "Calendar";
+                calendarButton.Text = "Kalendář";
                 calendarButton.FontAttributes = FontAttributes.Bold;
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
@@ -135,7 +135,7 @@ namespace LAMA.UWP
             editStack.Orientation = StackOrientation.Horizontal;
 
             var editLabel = new Label();
-            editLabel.Text = "Edit:";
+            editLabel.Text = "Upravit:";
             editLabel.VerticalOptions = LayoutOptions.Center;
             editLabel.HorizontalOptions = LayoutOptions.Center;
             editStack.Children.Add(editLabel);

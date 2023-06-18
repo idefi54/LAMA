@@ -131,20 +131,20 @@ namespace LAMA.ActivityGraphLib
                 //int count = (int)textPaint.BreakText(Activity.name, Width, out float textWidth);
                 //var text = Activity.name.Substring(0, count);
 
-                // Text overflows instead.
                 string text = Activity.name;
-                float textWidth = paint.MeasureText(text);
-
-                float tx = X + Width / 2 - textWidth / 2;
-                float ty = Y + Height * _graph.Zoom * 0.6f;
-
-                // Normal
                 paint.TextSize = Height * _graph.Zoom * 0.4f;
                 paint.IsAntialias = true;
                 paint.FakeBoldText = true;
                 paint.Color = SKColors.Black;
                 paint.Style = SKPaintStyle.Stroke;
                 paint.StrokeWidth = 3f;// * _graph.Zoom;
+
+                // let text overflow
+                float textWidth = paint.MeasureText(text);
+                float tx = Math.Max(X + Width / 2 - textWidth / 2, X);
+                float ty = Y + Height * _graph.Zoom * 0.6f;
+
+                // Outline
                 canvas.DrawText(text, tx, ty, paint);
 
                 // Normal

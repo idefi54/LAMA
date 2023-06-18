@@ -23,20 +23,20 @@ namespace LAMA.Themes
         public static Color InteractableColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 
         
-        public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.White;
-        public static SKColor ActivityGraphReadyToLaunch = SKColors.LightBlue;
-        public static SKColor ActivityGraphLaunched = SKColors.LightGreen;
+        public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.PeachPuff;
+        public static SKColor ActivityGraphReadyToLaunch = SKColors.LightGreen;
+        public static SKColor ActivityGraphLaunched = SKColors.LightBlue;
         public static SKColor ActivityGraphInProgress = SKColors.PeachPuff;
         public static SKColor ActivityGraphCompleted = SKColors.Gray;
         public static SKColor ActivityGraphCancelled = SKColors.Red;
         public static SKColor ActivityGraphDefault = SKColors.White;
 
 
-        public static Color ActivityAwaitingPrerequisites = Color.FromRgb(0.3, 0.3, 0.3);
-        public static Color ActivityReadyToLaunch = Color.DarkBlue;
-        public static Color ActivityLaunched = Color.DarkGreen;
+        public static Color ActivityAwaitingPrerequisites = Color.Orange;
+        public static Color ActivityReadyToLaunch = Color.DarkGreen;
+        public static Color ActivityLaunched = Color.DarkBlue;
         public static Color ActivityInProgress = Color.Orange;
-        public static Color ActivityCompleted = Color.Purple;//Color.FromRgb(0.1, 0.1, 0.1);
+        public static Color ActivityCompleted = Color.FromRgb(0.3, 0.3, 0.3);
         public static Color ActivityCancelled = Color.Red;
         public static Color ActivityDefault = Color.DarkGray;
 
