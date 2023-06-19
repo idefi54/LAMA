@@ -10,6 +10,7 @@ using LAMA.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
 using LAMA.Singletons;
+using LAMA.Extensions;
 
 namespace LAMA.Views
 {
@@ -35,7 +36,7 @@ namespace LAMA.Views
 
                 var label = new Label
                 {
-                    Text = $"{type}:",
+                    Text = $"{type.ToFriendlyString()}:",
                     HorizontalOptions = LayoutOptions.End,
                     VerticalOptions = center,
                     FontAttributes = FontAttributes.Bold,

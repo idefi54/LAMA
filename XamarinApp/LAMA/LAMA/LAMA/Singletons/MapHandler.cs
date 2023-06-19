@@ -27,7 +27,6 @@ namespace LAMA.Singletons
         // Containers
         private List<Feature> _symbols;
         private Dictionary<long, Pin> _activityPins;
-        private Dictionary<ulong, Pin> _alertPins;
         private Dictionary<long, Pin> _cpPins;
         private Dictionary<long, Pin> _pointOfInterestPins;
         private Dictionary<long, Polyline> _roadPolyLines;
@@ -110,7 +109,6 @@ namespace LAMA.Singletons
             _symbols = new List<Feature>();
             _pins = new List<Pin>();
             _activityPins = new Dictionary<long, Pin>();
-            _alertPins = new Dictionary<ulong, Pin>();
             _cpPins = new Dictionary<long, Pin>();
             _pointOfInterestPins = new Dictionary<long, Pin>();
             _roadPolyLines = new Dictionary<long, Polyline>();
@@ -146,10 +144,9 @@ namespace LAMA.Singletons
         {
             Nothing = 0b0,
             Activities = 0b1,
-            Alerts = 0b10,
-            CPs = 0b100,
-            PointsOfIntrest = 0b1000,
-            Polylines = 0b10000
+            CPs = 0b10,
+            PointsOfIntrest = 0b100,
+            Polylines = 0b1000
         }
 
         /// <summary>
@@ -428,7 +425,6 @@ namespace LAMA.Singletons
 
             _activityPins.Clear();
             _cpPins.Clear();
-            _alertPins.Clear();
             _pointOfInterestPins.Clear();
             _roadPolyLines.Clear();
 
@@ -450,10 +446,6 @@ namespace LAMA.Singletons
 
             if (IsFilteredIn(EntityType.Activities))
                 foreach (Pin pin in _activityPins.Values)
-                    view.Pins.Add(pin);
-
-            if (IsFilteredIn(EntityType.Alerts))
-                foreach (Pin pin in _alertPins.Values)
                     view.Pins.Add(pin);
 
             if (IsFilteredIn(EntityType.CPs))
@@ -555,10 +547,10 @@ namespace LAMA.Singletons
             Pin pin = CreatePin(activity.place.first, activity.place.second, "Activity");
             pin.Callout.Title = $"{activity.name}";
             pin.Callout.Subtitle =
-                $"Status: {activity.status}\n"
+                $"Status: {activity.status.ToFriendlyString()}\n"
                 + $"Description: {activity.description}\n"
                 + "\n"
-                + $"Double click to show the activity.";
+                + $"Dvojklikem zobrazte aktivitu.";
 
             PinSetIcon(pin, activity.GetIconByteArray());
             _activityPins[activity.ID] = pin;
