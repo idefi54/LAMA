@@ -1,0 +1,1417 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ActivityDetailsViewModel
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ActivityDetailsViewModel
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LAMA.ViewModels.ActivityDetailsViewModel">
+  
+  
+  <h1 id="LAMA_ViewModels_ActivityDetailsViewModel" data-uid="LAMA.ViewModels.ActivityDetailsViewModel" class="text-break">Class ActivityDetailsViewModel
+  </h1>
+  <div class="markdown level0 summary"><p>Read only viewmodel for activities</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="LAMA.ViewModels.BaseViewModel.html">BaseViewModel</a></div>
+    <div class="level2"><span class="xref">ActivityDetailsViewModel</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="LAMA.ViewModels.BaseViewModel.html#LAMA_ViewModels_BaseViewModel_IsBusy">BaseViewModel.IsBusy</a>
+    </div>
+    <div>
+      <a class="xref" href="LAMA.ViewModels.BaseViewModel.html#LAMA_ViewModels_BaseViewModel_Title">BaseViewModel.Title</a>
+    </div>
+    <div>
+      <a class="xref" href="LAMA.ViewModels.BaseViewModel.html#LAMA_ViewModels_BaseViewModel_SetProperty__1___0____0_System_String_System_Action_">BaseViewModel.SetProperty&lt;T&gt;(T, T, String, Action)</a>
+    </div>
+    <div>
+      <a class="xref" href="LAMA.ViewModels.BaseViewModel.html#LAMA_ViewModels_BaseViewModel_PropertyChanged">BaseViewModel.PropertyChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="LAMA.ViewModels.BaseViewModel.html#LAMA_ViewModels_BaseViewModel_OnPropertyChanged_System_String_">BaseViewModel.OnPropertyChanged(String)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LAMA.ViewModels.html">LAMA.ViewModels</a></h6>
+  <h6><strong>Assembly</strong>: LAMA.dll</h6>
+  <h5 id="LAMA_ViewModels_ActivityDetailsViewModel_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ActivityDetailsViewModel : BaseViewModel, INotifyPropertyChanged</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel__ctor_Xamarin_Forms_INavigation_LAMA_Models_LarpActivity_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.%23ctor(Xamarin.Forms.INavigation%2CLAMA.Models.LarpActivity)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L219">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel__ctor_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.#ctor*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel__ctor_Xamarin_Forms_INavigation_LAMA_Models_LarpActivity_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.#ctor(Xamarin.Forms.INavigation,LAMA.Models.LarpActivity)">ActivityDetailsViewModel(INavigation, LarpActivity)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ActivityDetailsViewModel(INavigation navigation, LarpActivity activity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.INavigation</span></td>
+        <td><span class="parametername">navigation</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Models.LarpActivity.html">LarpActivity</a></td>
+        <td><span class="parametername">activity</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_ActivityName.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.ActivityName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L93">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_ActivityName_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.ActivityName*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_ActivityName" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.ActivityName">ActivityName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ActivityName { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_CanChangeActivity.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.CanChangeActivity%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L182">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_CanChangeActivity_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.CanChangeActivity*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_CanChangeActivity" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.CanChangeActivity">CanChangeActivity</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CanChangeActivity { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_CurrentIcon.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.CurrentIcon%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L148">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_CurrentIcon_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.CurrentIcon*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_CurrentIcon" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.CurrentIcon">CurrentIcon</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImageSource CurrentIcon { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.ImageSource</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_DayIndex.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.DayIndex%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L115">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_DayIndex_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.DayIndex*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_DayIndex" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.DayIndex">DayIndex</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string DayIndex { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Dependencies.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Dependencies%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L165">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Dependencies_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Dependencies*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Dependencies" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Dependencies">Dependencies</h4>
+  <div class="markdown level1 summary"><p>Collection of LarpActivityShortItemViewModel representing the list of possible roles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TrulyObservableCollection&lt;ActivityShortItemViewModel&gt; Dependencies { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Models.TrulyObservableCollection-1.html">TrulyObservableCollection</a>&lt;<a class="xref" href="LAMA.ViewModels.ActivityShortItemViewModel.html">ActivityShortItemViewModel</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Description.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Description%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L112">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Description_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Description*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Description" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Description">Description</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Description { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Duration.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Duration%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L132">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Duration_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Duration*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Duration" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Duration">Duration</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Duration { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_EditCommand.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.EditCommand%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L206">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_EditCommand_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.EditCommand*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_EditCommand" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.EditCommand">EditCommand</h4>
+  <div class="markdown level1 summary"><p>Navigates to the NewActivityPage for editing</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command EditCommand { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_End.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.End%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L131">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_End_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.End*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_End" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.End">End</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string End { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Equipment.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Equipment%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L124">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Equipment_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Equipment*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Equipment" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Equipment">Equipment</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ObservableCollection&lt;string&gt; Equipment { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.ObjectModel.ObservableCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_IconChange.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.IconChange%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L212">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_IconChange_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.IconChange*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_IconChange" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.IconChange">IconChange</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command IconChange { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Items.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Items%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L123">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Items_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Items*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Items" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Items">Items</h4>
+  <div class="markdown level1 summary"><p>Collection of ItemItemViewModel representing the list of possible roles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TrulyObservableCollection&lt;ItemItemViewModel&gt; Items { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Models.TrulyObservableCollection-1.html">TrulyObservableCollection</a>&lt;<a class="xref" href="LAMA.ViewModels.ItemItemViewModel.html">ItemItemViewModel</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Location.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Location%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L126">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Location_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Location*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Location" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Location">Location</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Location { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Name.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Name%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L111">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Name_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Name*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Name" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Name">Name</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_NotBusy.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.NotBusy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L184">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_NotBusy_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.NotBusy*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_NotBusy" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.NotBusy">NotBusy</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotBusy { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_OptionsCommand.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.OptionsCommand%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L194">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_OptionsCommand_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OptionsCommand*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_OptionsCommand" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OptionsCommand">OptionsCommand</h4>
+  <div class="markdown level1 summary"><p>Displays menu containing the other commands.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command OptionsCommand { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Preparations.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Preparations%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L125">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Preparations_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Preparations*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Preparations" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Preparations">Preparations</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Preparations { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Roles.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Roles%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L119">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Roles_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Roles*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Roles" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Roles">Roles</h4>
+  <div class="markdown level1 summary"><p>Collection of RoleItemViewModel representing the list of possible roles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TrulyObservableCollection&lt;RoleItemViewModel&gt; Roles { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Models.TrulyObservableCollection-1.html">TrulyObservableCollection</a>&lt;<a class="xref" href="LAMA.ViewModels.RoleItemViewModel.html">RoleItemViewModel</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_ShowOnGraphCommand.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.ShowOnGraphCommand%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L202">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_ShowOnGraphCommand_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.ShowOnGraphCommand*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_ShowOnGraphCommand" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.ShowOnGraphCommand">ShowOnGraphCommand</h4>
+  <div class="markdown level1 summary"><p>Navigates user to the ActivityGraphPage to where the current activity is located.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command ShowOnGraphCommand { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_SignUpCommand.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.SignUpCommand%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L198">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_SignUpCommand_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.SignUpCommand*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_SignUpCommand" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.SignUpCommand">SignUpCommand</h4>
+  <div class="markdown level1 summary"><p>Signs user to the activity. If more than one role is present, he is given a dialogue window to choose one of them.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command SignUpCommand { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_SignUpText.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.SignUpText%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L174">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_SignUpText_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.SignUpText*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_SignUpText" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.SignUpText">SignUpText</h4>
+  <div class="markdown level1 summary"><p>Display text for signing up or signing out, depending on whether the user is or isn’t registered to one of the roles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string SignUpText { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Start.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Start%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L130">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Start_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Start*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Start" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Start">Start</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Start { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Status.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Status%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L114">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Status_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Status*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Status" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Status">Status</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Status { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_StatusCommand.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.StatusCommand%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L210">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_StatusCommand_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.StatusCommand*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_StatusCommand" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.StatusCommand">StatusCommand</h4>
+  <div class="markdown level1 summary"><p>Gives the user a dialogue window for changing the current Status of the activity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Command StatusCommand { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.Command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_StatusCommandText.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.StatusCommandText%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L186">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_StatusCommandText_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.StatusCommandText*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_StatusCommandText" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.StatusCommandText">StatusCommandText</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string StatusCommandText { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_Type.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.Type%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L113">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_Type_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Type*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_Type" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.Type">Type</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Type { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleReceived_System_Int64_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleReceived(System.Int64%2CSystem.String%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L58">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleReceived_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleReceived*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleReceived_System_Int64_System_String_System_Boolean_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleReceived(System.Int64,System.String,System.Boolean)">InvokeRoleReceived(Int64, String, Boolean)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void InvokeRoleReceived(long activityID, string roleName, bool wasGivenRole)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">roleName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">wasGivenRole</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemoved_System_Int64_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemoved(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L43">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemoved_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemoved*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemoved_System_Int64_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemoved(System.Int64)">InvokeRoleRemoved(Int64)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void InvokeRoleRemoved(long activityID)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemovedResult_System_Int64_System_Boolean_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemovedResult(System.Int64%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L48">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemovedResult_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemovedResult*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRemovedResult_System_Int64_System_Boolean_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRemovedResult(System.Int64,System.Boolean)">InvokeRoleRemovedResult(Int64, Boolean)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void InvokeRoleRemovedResult(long activityID, bool wasRemoved)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">wasRemoved</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRequested_System_Int64_System_String_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRequested(System.Int64%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L53">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRequested_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRequested*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_InvokeRoleRequested_System_Int64_System_String_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.InvokeRoleRequested(System.Int64,System.String)">InvokeRoleRequested(Int64, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void InvokeRoleRequested(long activityID, string roleName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">roleName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_OnAppearing.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.OnAppearing%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L288">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_OnAppearing_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OnAppearing*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_OnAppearing" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OnAppearing">OnAppearing()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnAppearing()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_OnDisappearing.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.OnDisappearing%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L297">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_OnDisappearing_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OnDisappearing*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_OnDisappearing" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.OnDisappearing">OnDisappearing()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnDisappearing()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_TryGetRole_System_Int64_System_String_System_Int64_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.TryGetRole(System.Int64%2CSystem.String%2CSystem.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L64">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_TryGetRole_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.TryGetRole*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_TryGetRole_System_Int64_System_String_System_Int64_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.TryGetRole(System.Int64,System.String,System.Int64)">TryGetRole(Int64, String, Int64)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryGetRole(long activityID, string selectedRole, long cpID)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">selectedRole</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">cpID</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_TryRemoveRoles_System_Int64_System_Int64_.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.TryRemoveRoles(System.Int64%2CSystem.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L81">View Source</a>
+  </span>
+  <a id="LAMA_ViewModels_ActivityDetailsViewModel_TryRemoveRoles_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.TryRemoveRoles*"></a>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_TryRemoveRoles_System_Int64_System_Int64_" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.TryRemoveRoles(System.Int64,System.Int64)">TryRemoveRoles(Int64, Int64)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryRemoveRoles(long activityID, long cpID)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">cpID</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_roleReceived.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.roleReceived%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L36">View Source</a>
+  </span>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_roleReceived" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.roleReceived">roleReceived</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event ActivityDetailsViewModel.RoleReceivedDelegate roleReceived</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.ViewModels.ActivityDetailsViewModel.RoleReceivedDelegate.html">ActivityDetailsViewModel.RoleReceivedDelegate</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_roleRemoved.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.roleRemoved%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L39">View Source</a>
+  </span>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_roleRemoved" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.roleRemoved">roleRemoved</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event ActivityDetailsViewModel.RoleRemovedDelegate roleRemoved</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedDelegate.html">ActivityDetailsViewModel.RoleRemovedDelegate</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_roleRemovedResult.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.roleRemovedResult%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L41">View Source</a>
+  </span>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_roleRemovedResult" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.roleRemovedResult">roleRemovedResult</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event ActivityDetailsViewModel.RoleRemovedResultDelegate roleRemovedResult</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedResultDelegate.html">ActivityDetailsViewModel.RoleRemovedResultDelegate</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel_roleRequested.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel.roleRequested%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L34">View Source</a>
+  </span>
+  <h4 id="LAMA_ViewModels_ActivityDetailsViewModel_roleRequested" data-uid="LAMA.ViewModels.ActivityDetailsViewModel.roleRequested">roleRequested</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static event ActivityDetailsViewModel.RoleRequestedDelegate roleRequested</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.ViewModels.ActivityDetailsViewModel.RoleRequestedDelegate.html">ActivityDetailsViewModel.RoleRequestedDelegate</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_ViewModels_ActivityDetailsViewModel.md&amp;value=---%0Auid%3A%20LAMA.ViewModels.ActivityDetailsViewModel%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/ViewModels/ActivityDetailsViewModel.cs/#L29" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

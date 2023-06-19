@@ -1,0 +1,1090 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ModelChangesManager
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ModelChangesManager
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LAMA.Communicator.ModelChangesManager">
+  
+  
+  <h1 id="LAMA_Communicator_ModelChangesManager" data-uid="LAMA.Communicator.ModelChangesManager" class="text-break">Class ModelChangesManager
+  </h1>
+  <div class="markdown level0 summary"><p>The program has an internal model of the state of the LARP. This contains information about the CPs, Activities, Items, Chat, Event itself… This model may be changed by the user. The model changes manager reacts to this by sending the information about this change to all the other users. It also parses the messages about the changes from other users and reacts to them by changing the model when appropriate.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ModelChangesManager</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LAMA.Communicator.html">LAMA.Communicator</a></h6>
+  <h6><strong>Assembly</strong>: LAMA.dll</h6>
+  <h5 id="LAMA_Communicator_ModelChangesManager_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ModelChangesManager</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager__ctor_LAMA_Communicator_Communicator_LAMA_RememberedStringDictionary_LAMA_Communicator_Command_LAMA_Communicator_CommandStorage__LAMA_RememberedStringDictionary_LAMA_Communicator_ModelPropertyChangeInfo_LAMA_Communicator_ModelPropertyChangeInfoStorage__System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.%23ctor(LAMA.Communicator.Communicator%2CLAMA.RememberedStringDictionary%7BLAMA.Communicator.Command%2CLAMA.Communicator.CommandStorage%7D%2CLAMA.RememberedStringDictionary%7BLAMA.Communicator.ModelPropertyChangeInfo%2CLAMA.Communicator.ModelPropertyChangeInfoStorage%7D%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L38">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager__ctor_" data-uid="LAMA.Communicator.ModelChangesManager.#ctor*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager__ctor_LAMA_Communicator_Communicator_LAMA_RememberedStringDictionary_LAMA_Communicator_Command_LAMA_Communicator_CommandStorage__LAMA_RememberedStringDictionary_LAMA_Communicator_ModelPropertyChangeInfo_LAMA_Communicator_ModelPropertyChangeInfoStorage__System_Boolean_System_Boolean_" data-uid="LAMA.Communicator.ModelChangesManager.#ctor(LAMA.Communicator.Communicator,LAMA.RememberedStringDictionary{LAMA.Communicator.Command,LAMA.Communicator.CommandStorage},LAMA.RememberedStringDictionary{LAMA.Communicator.ModelPropertyChangeInfo,LAMA.Communicator.ModelPropertyChangeInfoStorage},System.Boolean,System.Boolean)">ModelChangesManager(Communicator, RememberedStringDictionary&lt;Command, CommandStorage&gt;, RememberedStringDictionary&lt;ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage&gt;, Boolean, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Create new model changes manager, used to change application status based on received messages</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary&lt;Command, CommandStorage&gt; objectsCache, RememberedStringDictionary&lt;ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage&gt; attributesCache, bool server = false, bool testing = false)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.Communicator.html">Communicator</a></td>
+        <td><span class="parametername">initCommunicator</span></td>
+        <td><p>Communicator that uses this manager</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.RememberedStringDictionary-2.html">RememberedStringDictionary</a>&lt;<a class="xref" href="LAMA.Communicator.Command.html">Command</a>, <a class="xref" href="LAMA.Communicator.CommandStorage.html">CommandStorage</a>&gt;</td>
+        <td><span class="parametername">objectsCache</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.RememberedStringDictionary-2.html">RememberedStringDictionary</a>&lt;<a class="xref" href="LAMA.Communicator.ModelPropertyChangeInfo.html">ModelPropertyChangeInfo</a>, <a class="xref" href="LAMA.Communicator.ModelPropertyChangeInfoStorage.html">ModelPropertyChangeInfoStorage</a>&gt;</td>
+        <td><span class="parametername">attributesCache</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">server</span></td>
+        <td><p>Is this server or client</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">testing</span></td>
+        <td><p>Is this manager used for testing, or in the application itself</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ChannelCreated_System_String_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ChannelCreated(System.String%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L194">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ChannelCreated_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelCreated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ChannelCreated_System_String_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelCreated(System.String,System.Int32,System.String,System.Net.Sockets.Socket)">ChannelCreated(String, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client is attempting to create a channel. Try to do so and send him a response about the result (were we able to create a channel).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ChannelCreated(string channelName, int clientID, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">channelName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">clientID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ChannelCreatedResult_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ChannelCreatedResult(System.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L217">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ChannelCreatedResult_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelCreatedResult*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ChannelCreatedResult_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelCreatedResult(System.Int32,System.String,System.Net.Sockets.Socket)">ChannelCreatedResult(Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client received information from the server about the result of their attempt to create a chat channel.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ChannelCreatedResult(int response, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">response</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ChannelModified_System_String_System_Int32_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ChannelModified(System.String%2CSystem.Int32%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L179">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ChannelModified_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelModified*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ChannelModified_System_String_System_Int32_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelModified(System.String,System.Int32,System.Int32,System.String,System.Net.Sockets.Socket)">ChannelModified(String, Int32, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>Client attempts to modify a channel (rename or archive it). Process the request and send a response.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ChannelModified(string channelName, int channelID, int clientID, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">channelName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">channelID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">clientID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ChannelModifiedResult_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ChannelModifiedResult(System.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L209">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ChannelModifiedResult_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelModifiedResult*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ChannelModifiedResult_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ChannelModifiedResult(System.Int32,System.String,System.Net.Sockets.Socket)">ChannelModifiedResult(Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client received information from the server about their attempt to modify a chat channel.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ChannelModifiedResult(int response, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">response</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_CPLocationsUpdated_System_String___System_Int64_System_String_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.CPLocationsUpdated(System.String%5B%5D%2CSystem.Int64%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L228">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_CPLocationsUpdated_" data-uid="LAMA.Communicator.ModelChangesManager.CPLocationsUpdated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_CPLocationsUpdated_System_String___System_Int64_System_String_" data-uid="LAMA.Communicator.ModelChangesManager.CPLocationsUpdated(System.String[],System.Int64,System.String)">CPLocationsUpdated(String[], Int64, String)</h4>
+  <div class="markdown level1 summary"><p>The client received the positions of all the CPs in an event from the server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CPLocationsUpdated(string[] locations, long updateTime, string command)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span>[]</td>
+        <td><span class="parametername">locations</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_DataUpdated_System_String_System_Int64_System_Int32_System_String_System_Int64_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.DataUpdated(System.String%2CSystem.Int64%2CSystem.Int32%2CSystem.String%2CSystem.Int64%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L304">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_DataUpdated_" data-uid="LAMA.Communicator.ModelChangesManager.DataUpdated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_DataUpdated_System_String_System_Int64_System_Int32_System_String_System_Int64_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.DataUpdated(System.String,System.Int64,System.Int32,System.String,System.Int64,System.String,System.Net.Sockets.Socket)">DataUpdated(String, Int64, Int32, String, Int64, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>Message received describing attribute change</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">objectType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">objectID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">indexAttribute</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ItemCreated_System_String_System_String_System_Int64_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ItemCreated(System.String%2CSystem.String%2CSystem.Int64%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L518">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ItemCreated_" data-uid="LAMA.Communicator.ModelChangesManager.ItemCreated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ItemCreated_System_String_System_String_System_Int64_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ItemCreated(System.String,System.String,System.Int64,System.String,System.Net.Sockets.Socket)">ItemCreated(String, String, Int64, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>Message received describing creation of a new object</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">objectType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serializedObject</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ItemDeleted_System_String_System_Int64_System_Int64_System_String_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ItemDeleted(System.String%2CSystem.Int64%2CSystem.Int64%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L984">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ItemDeleted_" data-uid="LAMA.Communicator.ModelChangesManager.ItemDeleted*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ItemDeleted_System_String_System_Int64_System_Int64_System_String_" data-uid="LAMA.Communicator.ModelChangesManager.ItemDeleted(System.String,System.Int64,System.Int64,System.String)">ItemDeleted(String, Int64, Int64, String)</h4>
+  <div class="markdown level1 summary"><p>Message received describing deletion of an object</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ItemDeleted(string objectType, long objectID, long updateTime, string command)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">objectType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">objectID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_OnDataUpdated_LAMA_Serializable_System_Int32_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.OnDataUpdated(LAMA.Serializable%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L265">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_OnDataUpdated_" data-uid="LAMA.Communicator.ModelChangesManager.OnDataUpdated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_OnDataUpdated_LAMA_Serializable_System_Int32_" data-uid="LAMA.Communicator.ModelChangesManager.OnDataUpdated(LAMA.Serializable,System.Int32)">OnDataUpdated(Serializable, Int32)</h4>
+  <div class="markdown level1 summary"><p>Data updated event was triggered, communicator may have to send a message</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnDataUpdated(Serializable changed, int attributeIndex)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Serializable.html">Serializable</a></td>
+        <td><span class="parametername">changed</span></td>
+        <td><p>Item whose attribute was changed</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">attributeIndex</span></td>
+        <td><p>Index of the modified attribute</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_OnItemCreated_LAMA_Serializable_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.OnItemCreated(LAMA.Serializable)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L483">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_OnItemCreated_" data-uid="LAMA.Communicator.ModelChangesManager.OnItemCreated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_OnItemCreated_LAMA_Serializable_" data-uid="LAMA.Communicator.ModelChangesManager.OnItemCreated(LAMA.Serializable)">OnItemCreated(Serializable)</h4>
+  <div class="markdown level1 summary"><p>Item created event was triggered, communicator may have to send a message</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnItemCreated(Serializable changed)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Serializable.html">Serializable</a></td>
+        <td><span class="parametername">changed</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_OnItemDeleted_LAMA_Serializable_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.OnItemDeleted(LAMA.Serializable)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L949">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_OnItemDeleted_" data-uid="LAMA.Communicator.ModelChangesManager.OnItemDeleted*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_OnItemDeleted_LAMA_Serializable_" data-uid="LAMA.Communicator.ModelChangesManager.OnItemDeleted(LAMA.Serializable)">OnItemDeleted(Serializable)</h4>
+  <div class="markdown level1 summary"><p>Item was deleted, message might have to be sent</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnItemDeleted(Serializable changed)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Serializable.html">Serializable</a></td>
+        <td><span class="parametername">changed</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ProcessCommand_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ProcessCommand(System.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L52">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ProcessCommand_" data-uid="LAMA.Communicator.ModelChangesManager.ProcessCommand*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ProcessCommand_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ProcessCommand(System.String,System.Net.Sockets.Socket)">ProcessCommand(String, Socket)</h4>
+  <div class="markdown level1 summary"><p>Process a message received over the network</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ProcessCommand(string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td><p>Received message</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_ReceiveRole_System_Int64_System_String_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.ReceiveRole(System.Int64%2CSystem.String%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L168">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_ReceiveRole_" data-uid="LAMA.Communicator.ModelChangesManager.ReceiveRole*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_ReceiveRole_System_Int64_System_String_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.ReceiveRole(System.Int64,System.String,System.Int32,System.String,System.Net.Sockets.Socket)">ReceiveRole(Int64, String, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client received information about the result of their attempt to get a role at an activity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReceiveRole(long activityID, string roleRequested, int response, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">roleRequested</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">response</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_RemoveRole_System_Int64_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.RemoveRole(System.Int64%2CSystem.Int64%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L145">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_RemoveRole_" data-uid="LAMA.Communicator.ModelChangesManager.RemoveRole*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_RemoveRole_System_Int64_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.RemoveRole(System.Int64,System.Int64,System.Int32,System.String,System.Net.Sockets.Socket)">RemoveRole(Int64, Int64, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client requested to be removed from a role at an activity - try to remove them and notify them about the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveRole(long activityID, long cpID, int clientID, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">cpID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">clientID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_RemoveRoleResult_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.RemoveRoleResult(System.Int64%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L160">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_RemoveRoleResult_" data-uid="LAMA.Communicator.ModelChangesManager.RemoveRoleResult*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_RemoveRoleResult_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.RemoveRoleResult(System.Int64,System.Int32,System.String,System.Net.Sockets.Socket)">RemoveRoleResult(Int64, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client received information about the result of their attempt to be removed from a role at an activity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveRoleResult(long activityID, int response, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">response</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_RequestRole_System_Int64_System_String_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.RequestRole(System.Int64%2CSystem.String%2CSystem.Int64%2CSystem.Int32%2CSystem.String%2CSystem.Net.Sockets.Socket)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L130">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_RequestRole_" data-uid="LAMA.Communicator.ModelChangesManager.RequestRole*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_RequestRole_System_Int64_System_String_System_Int64_System_Int32_System_String_System_Net_Sockets_Socket_" data-uid="LAMA.Communicator.ModelChangesManager.RequestRole(System.Int64,System.String,System.Int64,System.Int32,System.String,System.Net.Sockets.Socket)">RequestRole(Int64, String, Int64, Int32, String, Socket)</h4>
+  <div class="markdown level1 summary"><p>The client requested a place at an activity - try to add them to the activity and send them the result.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RequestRole(long activityID, string roleRequested, long cpID, int clientID, string command, Socket current)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">activityID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">roleRequested</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">cpID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">clientID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_RollbackDataUpdated_System_String_System_Int64_System_Int32_System_String_System_Int64_System_String_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.RollbackDataUpdated(System.String%2CSystem.Int64%2CSystem.Int32%2CSystem.String%2CSystem.Int64%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L415">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_RollbackDataUpdated_" data-uid="LAMA.Communicator.ModelChangesManager.RollbackDataUpdated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_RollbackDataUpdated_System_String_System_Int64_System_Int32_System_String_System_Int64_System_String_" data-uid="LAMA.Communicator.ModelChangesManager.RollbackDataUpdated(System.String,System.Int64,System.Int32,System.String,System.Int64,System.String)">RollbackDataUpdated(String, Int64, Int32, String, Int64, String)</h4>
+  <div class="markdown level1 summary"><p>Rollback previous data update</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RollbackDataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">objectType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">objectID</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">indexAttribute</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_RollbackItemCreated_System_String_System_String_System_Int64_System_String_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.RollbackItemCreated(System.String%2CSystem.String%2CSystem.Int64%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L747">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_RollbackItemCreated_" data-uid="LAMA.Communicator.ModelChangesManager.RollbackItemCreated*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_RollbackItemCreated_System_String_System_String_System_Int64_System_String_" data-uid="LAMA.Communicator.ModelChangesManager.RollbackItemCreated(System.String,System.String,System.Int64,System.String)">RollbackItemCreated(String, String, Int64, String)</h4>
+  <div class="markdown level1 summary"><p>Message received informing client, that item creation should be rolled back</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">objectType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">serializedObject</span></td>
+        <td><p>The object we should roll back to</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">updateTime</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager_SendCPLocations.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager.SendCPLocations%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L247">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ModelChangesManager_SendCPLocations_" data-uid="LAMA.Communicator.ModelChangesManager.SendCPLocations*"></a>
+  <h4 id="LAMA_Communicator_ModelChangesManager_SendCPLocations" data-uid="LAMA.Communicator.ModelChangesManager.SendCPLocations">SendCPLocations()</h4>
+  <div class="markdown level1 summary"><p>Send locations of all of the CPs to the clients.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendCPLocations()</code></pre>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ModelChangesManager.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ModelChangesManager%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ModelChangesManager.cs/#L19" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

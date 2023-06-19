@@ -1,0 +1,797 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class EventList&lt;T&gt;
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class EventList&lt;T&gt;
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LAMA.EventList`1">
+  
+  
+  <h1 id="LAMA_EventList_1" data-uid="LAMA.EventList`1" class="text-break">Class EventList&lt;T&gt;
+  </h1>
+  <div class="markdown level0 summary"><p>List with attatched events on Add, Remove and Update functions.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">System.Collections.Generic.List</span>&lt;T&gt;</div>
+    <div class="level2"><span class="xref">EventList&lt;T&gt;</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.Collections.Generic.IList</span>&lt;T&gt;</div>
+    <div><span class="xref">System.Collections.Generic.ICollection</span>&lt;T&gt;</div>
+    <div><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;T&gt;</div>
+    <div><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;T&gt;</div>
+    <div><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;T&gt;</div>
+    <div><span class="xref">System.Collections.IList</span></div>
+    <div><span class="xref">System.Collections.ICollection</span></div>
+    <div><span class="xref">System.Collections.IEnumerable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.get_Item(System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.set_Item(System.Int32, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.AddRange(System.Collections.Generic.IEnumerable&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.AsReadOnly()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.BinarySearch(T)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.BinarySearch(T, System.Collections.Generic.IComparer&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.BinarySearch(System.Int32, System.Int32, T, System.Collections.Generic.IComparer&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Contains(T)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.ConvertAll&lt;TOutput&gt;(System.Converter&lt;T, TOutput&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.CopyTo(T[])</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.CopyTo(T[], System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.CopyTo(System.Int32, T[], System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Exists(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Find(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindAll(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindIndex(System.Int32, System.Int32, System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindIndex(System.Int32, System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindIndex(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindLast(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindLastIndex(System.Int32, System.Int32, System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindLastIndex(System.Int32, System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.FindLastIndex(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.ForEach(System.Action&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.GetEnumerator()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.GetRange(System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.IndexOf(T)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.IndexOf(T, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.IndexOf(T, System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Insert(System.Int32, T)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.InsertRange(System.Int32, System.Collections.Generic.IEnumerable&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.LastIndexOf(T)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.LastIndexOf(T, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.LastIndexOf(T, System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.RemoveRange(System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Reverse()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Reverse(System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Sort()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Sort(System.Collections.Generic.IComparer&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Sort(System.Comparison&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Sort(System.Int32, System.Int32, System.Collections.Generic.IComparer&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.ICollection.CopyTo(System.Array, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IEnumerable.GetEnumerator()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.Add(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.Contains(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.IndexOf(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.Insert(System.Int32, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.Remove(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.ToArray()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.TrimExcess()</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.TrueForAll(System.Predicate&lt;T&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Capacity</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.Count</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.Generic.ICollection&lt;T&gt;.IsReadOnly</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.ICollection.IsSynchronized</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.ICollection.SyncRoot</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.IsFixedSize</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.IsReadOnly</span>
+    </div>
+    <div>
+      <span class="xref">System.Collections.Generic.List&lt;T&gt;.System.Collections.IList.Item[System.Int32]</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LAMA.html">LAMA</a></h6>
+  <h6><strong>Assembly</strong>: LAMA.dll</h6>
+  <h5 id="LAMA_EventList_1_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class EventList&lt;T&gt; : List&lt;T&gt;, IList&lt;T&gt;, ICollection&lt;T&gt;, IReadOnlyList&lt;T&gt;, IReadOnlyCollection&lt;T&gt;, IEnumerable&lt;T&gt;, IList, ICollection, IEnumerable</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1__ctor.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L107">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1__ctor_" data-uid="LAMA.EventList`1.#ctor*"></a>
+  <h4 id="LAMA_EventList_1__ctor" data-uid="LAMA.EventList`1.#ctor">EventList()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventList()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1__ctor_System_Collections_Generic_List__0__.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.%23ctor(System.Collections.Generic.List%7B%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L112">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1__ctor_" data-uid="LAMA.EventList`1.#ctor*"></a>
+  <h4 id="LAMA_EventList_1__ctor_System_Collections_Generic_List__0__" data-uid="LAMA.EventList`1.#ctor(System.Collections.Generic.List{`0})">EventList(List&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventList(List&lt;T&gt; list)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;T&gt;</td>
+        <td><span class="parametername">list</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_Item_System_Int32_.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.Item(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L17">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_Item_" data-uid="LAMA.EventList`1.Item*"></a>
+  <h4 id="LAMA_EventList_1_Item_System_Int32_" data-uid="LAMA.EventList`1.Item(System.Int32)">Item[Int32]</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T this[int index] { get; set; }</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">index</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_Add__0_.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.Add(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L26">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_Add_" data-uid="LAMA.EventList`1.Add*"></a>
+  <h4 id="LAMA_EventList_1_Add__0_" data-uid="LAMA.EventList`1.Add(`0)">Add(T)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(T what)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">what</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_AddWithoutEvent__0_.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.AddWithoutEvent(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L62">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_AddWithoutEvent_" data-uid="LAMA.EventList`1.AddWithoutEvent*"></a>
+  <h4 id="LAMA_EventList_1_AddWithoutEvent__0_" data-uid="LAMA.EventList`1.AddWithoutEvent(`0)">AddWithoutEvent(T)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddWithoutEvent(T what)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">what</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_Clear.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.Clear%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L120">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_Clear_" data-uid="LAMA.EventList`1.Clear*"></a>
+  <h4 id="LAMA_EventList_1_Clear" data-uid="LAMA.EventList`1.Clear">Clear()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_InvokeDataChanged.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.InvokeDataChanged%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L32">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_InvokeDataChanged_" data-uid="LAMA.EventList`1.InvokeDataChanged*"></a>
+  <h4 id="LAMA_EventList_1_InvokeDataChanged" data-uid="LAMA.EventList`1.InvokeDataChanged">InvokeDataChanged()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InvokeDataChanged()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_Remove__0_.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.Remove(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L49">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_Remove_" data-uid="LAMA.EventList`1.Remove*"></a>
+  <h4 id="LAMA_EventList_1_Remove__0_" data-uid="LAMA.EventList`1.Remove(`0)">Remove(T)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Remove(T what)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">what</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_RemoveAll_System_Predicate__0__.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.RemoveAll(System.Predicate%7B%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L37">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_RemoveAll_" data-uid="LAMA.EventList`1.RemoveAll*"></a>
+  <h4 id="LAMA_EventList_1_RemoveAll_System_Predicate__0__" data-uid="LAMA.EventList`1.RemoveAll(System.Predicate{`0})">RemoveAll(Predicate&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAll(Predicate&lt;T&gt; predicate)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Predicate</span>&lt;T&gt;</td>
+        <td><span class="parametername">predicate</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_RemoveAt_System_Int32_.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.RemoveAt(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L44">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_RemoveAt_" data-uid="LAMA.EventList`1.RemoveAt*"></a>
+  <h4 id="LAMA_EventList_1_RemoveAt_System_Int32_" data-uid="LAMA.EventList`1.RemoveAt(System.Int32)">RemoveAt(Int32)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveAt(int where)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">where</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_ToReadableString.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.ToReadableString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L66">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_ToReadableString_" data-uid="LAMA.EventList`1.ToReadableString*"></a>
+  <h4 id="LAMA_EventList_1_ToReadableString" data-uid="LAMA.EventList`1.ToReadableString">ToReadableString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ToReadableString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_ToString.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.ToString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L85">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_ToString_" data-uid="LAMA.EventList`1.ToString*"></a>
+  <h4 id="LAMA_EventList_1_ToString" data-uid="LAMA.EventList`1.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.Object.ToString()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_Update_System_Collections_Generic_List__0__.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.Update(System.Collections.Generic.List%7B%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L126">View Source</a>
+  </span>
+  <a id="LAMA_EventList_1_Update_" data-uid="LAMA.EventList`1.Update*"></a>
+  <h4 id="LAMA_EventList_1_Update_System_Collections_Generic_List__0__" data-uid="LAMA.EventList`1.Update(System.Collections.Generic.List{`0})">Update(List&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Update(List&lt;T&gt; otherOne)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;T&gt;</td>
+        <td><span class="parametername">otherOne</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1_dataChanged.md&amp;value=---%0Auid%3A%20LAMA.EventList%601.dataChanged%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L16">View Source</a>
+  </span>
+  <h4 id="LAMA_EventList_1_dataChanged" data-uid="LAMA.EventList`1.dataChanged">dataChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventList&lt;T&gt;.DataChanged dataChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.EventList-1.DataChanged.html">EventList.DataChanged</a>&lt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.Collections.Generic.IList&lt;T&gt;</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.Generic.ICollection&lt;T&gt;</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.Generic.IReadOnlyList&lt;T&gt;</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.Generic.IReadOnlyCollection&lt;T&gt;</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.Generic.IEnumerable&lt;T&gt;</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.IList</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.ICollection</span>
+  </div>
+  <div>
+      <span class="xref">System.Collections.IEnumerable</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_EventList_1.md&amp;value=---%0Auid%3A%20LAMA.EventList%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/database/EventList.cs/#L13" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
