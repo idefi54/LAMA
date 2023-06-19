@@ -70,8 +70,6 @@ namespace LAMA.ViewModels
 
         public Command SaveCommand { get; private set; }
         public Command EditCommand { get; private set; }
-        //public Command AddPermissionCommand { get; private set; }
-        //public Command RemovePermissionCommand { get; private set; }
         public Command Archive { get; }
         public Command Unarchive { get; }
         public Command AddRole { get; }
@@ -79,12 +77,6 @@ namespace LAMA.ViewModels
         public Command CancelCommand { get; private set; }
         public ObservableCollection<string> AddablePermissions { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> CurrentPermissions { get; } = new ObservableCollection<string>();
-        //int permissionToAdd;
-        //public int PermissionToAdd { get { return permissionToAdd; }set { SetProperty(ref permissionToAdd, value); } }
-        //int permissionToRemove;
-        //public int PermissionToRemove { get { return permissionToRemove; } set { SetProperty(ref permissionToRemove, value); } }
-
-        //Dictionary<string, CP.PermissionType> namesToPermissions = new Dictionary<string, CP.PermissionType>();
 
         ObservableCollection<PermissionViewModel> _permissionList = new ObservableCollection<PermissionViewModel>();
         public ObservableCollection<PermissionViewModel> PermissionList { get { return _permissionList; } }
@@ -132,8 +124,6 @@ namespace LAMA.ViewModels
                     perm));
             }
 
-            //figureOutPermissions();
-
             SQLEvents.dataChanged += gotChanged;
             Archive = new Command(onArchive);
             Unarchive = new Command(onUnarchive);
@@ -164,8 +154,6 @@ namespace LAMA.ViewModels
                 return;
 
             cp.IsArchived = true;
-            //SetProperty(ref _CanArchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived);
-            //SetProperty(ref _CanUnarchiveCP, LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived);
             CanArchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && !cp.IsArchived;
             CanUnarchiveCP = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP) && cp.IsArchived;
         }
@@ -226,50 +214,7 @@ namespace LAMA.ViewModels
         {
             navigation.PushAsync(new CPEditPage(cp));
         }
-        /*
-        void figureOutPermissions()
-        {
-            AddablePermissions.Clear();
-            CurrentPermissions.Clear();
-            HashSet<CP.PermissionType> taken = new HashSet<CP.PermissionType>();
 
-            for(int i = 0; i< cp.permissions.Count;++i)
-            {
-                taken.Add(cp.permissions[i]);
-            }
-
-            foreach(CP.PermissionType perm in Enum.GetValues(typeof (CP.PermissionType)))
-            {
-                if(taken.Contains(perm))
-                {
-                    CurrentPermissions.Add(Enum.GetName(typeof(CP.PermissionType), perm));
-                }
-                else
-                {
-                    AddablePermissions.Add(Enum.GetName(typeof(CP.PermissionType), perm));
-                }
-            }
-        }
-        */
-        /*
-        void onAddPermission()
-        {
-            cp.permissions.Add(namesToPermissions[AddablePermissions[PermissionToAdd]]);
-            figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToReadableString());
-            Permissions = cp.permissions.ToReadableString();
-        }
-        void onRemovePermission()
-        {
-            //do NOT remove your own permission to change permissions, that's usually a dumb idea and a potential soft lock of a whole larp
-            if (cp == LocalStorage.cp && namesToPermissions[CurrentPermissions[permissionToRemove]]== CP.PermissionType.SetPermission)
-                return;
-            cp.permissions.Remove(namesToPermissions[CurrentPermissions[permissionToRemove]]);
-            figureOutPermissions();
-            SetProperty(ref permissions, cp.permissions.ToReadableString());
-            Permissions = cp.permissions.ToReadableString();
-        }
-        */
         async void OnDelete()
         {
             // don't delete yourself
