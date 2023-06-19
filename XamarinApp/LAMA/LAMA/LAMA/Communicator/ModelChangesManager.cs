@@ -9,14 +9,18 @@ using System.Linq;
 using Xamarin.Forms.Shapes;
 using Newtonsoft.Json.Converters;
 using Xamarin.Forms.Internals;
+using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
-    class ModelChangesManager
+    /// <summary>
+    /// The program has an internal model of the state of the LARP. This contains information about the CPs, Activities, Items, Chat, Event itself… This model may be changed by the user. The model changes manager reacts to this by sending the information about this change to all the other users. It also parses the messages about the changes from other users and reacts to them by changing the model when appropriate.
+    /// </summary>
+    public class ModelChangesManager
     {
         private Communicator communicator;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
-        private RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache;
+        private RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache;
         private bool server;
         private bool testing;
         private string objectIgnoreCreation = "";
@@ -31,7 +35,7 @@ namespace LAMA.Communicator
         /// <param name="attributesCache"></param>
         /// <param name="server">Is this server or client</param>
         /// <param name="testing">Is this manager used for testing, or in the application itself</param>
-        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<TimeValue, TimeValueStorage> attributesCache, bool server = false, bool testing = false)
+        public ModelChangesManager(Communicator initCommunicator, RememberedStringDictionary<Command, CommandStorage> objectsCache, RememberedStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage> attributesCache, bool server = false, bool testing = false)
         {
             this.server = server;
             this.testing = testing;
@@ -41,35 +45,68 @@ namespace LAMA.Communicator
         }
 
         /// <summary>
-        /// Process a received message
+        /// Process a message received over the network
         /// </summary>
         /// <param name="command">Received message</param>
         /// <param name="current"></param>
         public void ProcessCommand(string command, Socket current)
         {
-            Debug.WriteLine($"Command: {command}");
-            string[] messageParts = command.Split(Separators.messagePartSeparator);
+            string[] messageParts = command.Split(SpecialCharacters.messagePartSeparator);
             //Some attribute got updated
             if (messageParts[1] == "DataUpdated")
             {
                 if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+                DataUpdated(messageParts[2], Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), messageParts[5], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "RequestRole" && server)
+            {
+                RequestRole(Int64.Parse(messageParts[2]), messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ReceiveRole" && !server)
+            {
+                if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ReceiveRole(Int64.Parse(messageParts[2]), messageParts[3], Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "RemoveRole" && server)
+            {
+                RemoveRole(Int64.Parse(messageParts[2]), Int64.Parse(messageParts[3]), Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "RemoveRoleResult" && !server)
+            {
+                RemoveRoleResult(Int64.Parse(messageParts[2]), Int32.Parse(messageParts[3]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelCreated" && server)
+            {
+                ChannelCreated(messageParts[2], Int32.Parse(messageParts[3]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelCreatedResult" && !server)
+            {
+                if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
+                ChannelCreatedResult(Int32.Parse(messageParts[2]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelModified" && server)
+            {
+                ChannelModified(messageParts[2], Int32.Parse(messageParts[3]), Int32.Parse(messageParts[4]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
+            }
+            if (messageParts[1] == "ChannelModifiedResult" && !server)
+            {
+                ChannelModifiedResult(Int32.Parse(messageParts[2]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
             }
             if (messageParts[1] == "ItemCreated")
             {
                 Debug.WriteLine("ItemCreated");
                 if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1), current);
+                ItemCreated(messageParts[2], messageParts[3], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1), current);
             }
             if (messageParts[1] == "ItemDeleted")
             {
                 if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+                ItemDeleted(messageParts[2], Int64.Parse(messageParts[3]), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1));
             }
             if (messageParts[1] == "CPLocations")
             {
                 if (!server && !testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                CPLocationsUpdated(messageParts.Skip(2).ToArray(), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+                CPLocationsUpdated(messageParts.Skip(2).ToArray(), Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1));
             }
             //Rollback effect of some previous message
             if (!server && (messageParts[1] == "Rollback"))
@@ -77,16 +114,117 @@ namespace LAMA.Communicator
                 if (messageParts[2] == "DataUpdated")
                 {
                     if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+                    RollbackDataUpdated(messageParts[3], Int64.Parse(messageParts[4]), Int32.Parse(messageParts[5]), messageParts[6], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1));
                 }
                 if (messageParts[2] == "ItemCreated")
                 {
                     if (!testing) communicator.LastUpdate = Int64.Parse(messageParts[0]);
-                    RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(Separators.messagePartSeparator) + 1));
+                    RollbackItemCreated(messageParts[3], messageParts[4], Int64.Parse(messageParts[0]), command.Substring(command.IndexOf(SpecialCharacters.messagePartSeparator) + 1));
                 }
             }
         }
 
+        /// <summary>
+        /// The client requested a place at an activity - try to add them to the activity and send them the result.
+        /// </summary>
+        public void RequestRole(long activityID, string roleRequested, long cpID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool gotRole = ActivityDetailsViewModel.TryGetRole(activityID, roleRequested, cpID);
+                communicator.SendCommand(new Command($"ReceiveRole{SpecialCharacters.messagePartSeparator}{activityID}{SpecialCharacters.messagePartSeparator}{roleRequested}{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(gotRole)}", 
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(), 
+                    activityID + SpecialCharacters.messageSeparator + roleRequested, 
+                    clientID));
+            }
+        }
+
+        /// <summary>
+        /// The client requested to be removed from a role at an activity - try to remove them and notify them about the result.
+        /// </summary>
+        public void RemoveRole(long activityID, long cpID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool roleRemoved = ActivityDetailsViewModel.TryRemoveRoles(activityID, cpID);
+                communicator.SendCommand(new Command($"RemoveRoleResult{SpecialCharacters.messagePartSeparator}{activityID}{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(roleRemoved)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    activityID + SpecialCharacters.messageSeparator + "RemoveRole",
+                    clientID));
+            }
+        }
+
+        /// <summary>
+        /// The client received information about the result of their attempt to be removed from a role at an activity.
+        /// </summary>
+        public void RemoveRoleResult(long activityID, int response, string command, Socket current)
+        {
+            ActivityDetailsViewModel.InvokeRoleRemovedResult(activityID, response == 1);
+        }
+
+        /// <summary>
+        /// The client received information about the result of their attempt to get a role at an activity.
+        /// </summary>
+        public void ReceiveRole(long activityID, string roleRequested, int response, string command, Socket current)
+        {
+            if (!testing && !server)
+            {
+                ActivityDetailsViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
+            }
+        }
+
+        /// <summary>
+        /// Client attempts to modify a channel (rename or archive it). Process the request and send a response.
+        /// </summary>
+        public void ChannelModified(string channelName, int channelID, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool modified = ChatChannelsViewModel.TryModifyChannel(channelID, channelName);
+                communicator.SendCommand(new Command($"ChannelModifiedResult{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(modified)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    channelName + SpecialCharacters.messageSeparator + "ChannelModified",
+                    clientID));
+            }
+        }
+
+        /// <summary>
+        /// The client is attempting to create a channel. Try to do so and send him a response about the result (were we able to create a channel).
+        /// </summary>
+        public void ChannelCreated(string channelName, int clientID, string command, Socket current)
+        {
+            if (server)
+            {
+                bool channelCreated = ChatChannelsViewModel.TryAddChannel(channelName);
+                communicator.SendCommand(new Command($"ChannelCreatedResult{SpecialCharacters.messagePartSeparator}{Convert.ToInt32(channelCreated)}",
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                    channelName + SpecialCharacters.messageSeparator + "ChannelCreated",
+                    clientID));
+            }
+        }
+
+        /// <summary>
+        /// The client received information from the server about their attempt to modify a chat channel.
+        /// </summary>
+        public void ChannelModifiedResult(int response, string command, Socket current)
+        {
+            ChatChannelsViewModel.InvokeChannelModifiedResult(response == 1);
+        }
+
+        /// <summary>
+        /// The client received information from the server about the result of their attempt to create a chat channel.
+        /// </summary>
+        public void ChannelCreatedResult(int response, string command, Socket current)
+        {
+            if (!testing && !server)
+            {
+                ChatChannelsViewModel.InvokeChannelCreatedResult(response == 1);
+            }
+        }
+
+        /// <summary>
+        /// The client received the positions of all the CPs in an event from the server.
+        /// </summary>
         public void CPLocationsUpdated(string[] locations, long updateTime, string command)
         {
             int i = 0;
@@ -95,7 +233,7 @@ namespace LAMA.Communicator
                 long cpID = Int64.Parse(locations[i]);
                 string location = locations[i+1];
                 int locationIndex = 7;
-                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID) != null)
+                if (DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID) != null && cpID != LocalStorage.cpID)
                 {
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(cpID).setAttribute(locationIndex, location);
                 }
@@ -103,18 +241,20 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Send locations of all of the CPs to the clients.
+        /// </summary>
         public void SendCPLocations()
         {
-            Debug.WriteLine($"Server Location: {DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(0).getAttribute(7)}");
             List<string> cpStrings = new List<string>();
             for (int i = 0; i < DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.Count; i++)
             {
                 Models.CP cp = DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList[i];
-                cpStrings.Add(cp.getID() + Separators.messagePartSeparator.ToString() + cp.getAttribute(7));
+                cpStrings.Add(cp.getID() + SpecialCharacters.messagePartSeparator.ToString() + cp.getAttribute(7));
             }
-            string cpStringTogether = string.Join(Separators.messagePartSeparator.ToString(), cpStrings);
-            string finalString = $"CPLocations{Separators.messagePartSeparator}" + cpStringTogether;
-            communicator.SendCommand(new Command(finalString, DateTimeOffset.Now.ToUnixTimeMilliseconds(), $"LAMA.Models.CP{Separators.messagePartSeparator}Positions"));
+            string cpStringTogether = string.Join(SpecialCharacters.messagePartSeparator.ToString(), cpStrings);
+            string finalString = $"CPLocations{SpecialCharacters.messagePartSeparator}" + cpStringTogether;
+            communicator.SendCommand(new Command(finalString, DateTimeOffset.Now.ToUnixTimeMilliseconds(), $"LAMA.Models.CP{SpecialCharacters.messagePartSeparator}Positions"));
         }
 
         /// <summary>
@@ -126,37 +266,29 @@ namespace LAMA.Communicator
         {
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
-            string attributeID = objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + attributeIndex;
+            string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + attributeIndex;
 
-            Debug.WriteLine($"OnDataUpdated: {changed.getAttribute(attributeIndex)}");
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             if (attributesIgnoreChange.ContainsKey(attributeID))
             {
-                if (updateTime - attributesIgnoreChange[attributeID] > 10)
-                {
-                    attributesIgnoreChange.Remove(attributeID);
-                }
-                else
-                {
-                    attributesIgnoreChange.Remove(attributeID);
-                    return;
-                }
+                attributesIgnoreChange.Remove(attributeID);
+                return;
             }
 
             if (!attributesCache.containsKey(attributeID))
             {
-                attributesCache.add(new TimeValue(updateTime, changed.getAttribute(attributeIndex), attributeID));
+                attributesCache.add(new ModelPropertyChangeInfo(updateTime, changed.getAttribute(attributeIndex), attributeID));
             }
             else
             {
                 attributesCache.getByKey(attributeID).value = changed.getAttribute(attributeIndex);
                 attributesCache.getByKey(attributeID).time = updateTime;
             }
-            string command = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + attributeIndex + Separators.messagePartSeparator.ToString() + changed.getAttribute(attributeIndex);
-            if (!testing && !(objectType == "LAMA.Models.CP" &&
-                    changed.getAttributes()[attributeIndex] == "location"))
-                communicator.SendCommand(new Command(command, updateTime, objectType + Separators.messagePartSeparator.ToString() + objectID));
+            string command = "DataUpdated" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + attributeIndex + SpecialCharacters.messagePartSeparator.ToString() + changed.getAttribute(attributeIndex);
+            if (!testing && !(!server && objectType == "LAMA.Models.LarpActivity"
+                    && changed.getAttributeNames()[attributeIndex] == "registrationByRole"))
+                communicator.SendCommand(new Command(command, updateTime, objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID));
         }
 
         /// <summary>
@@ -171,62 +303,68 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         public void DataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command, Socket current)
         {
-            string attributeID = objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute;
-            if (!testing) communicator.Logger.LogWrite($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute;
 
-            Debug.WriteLine($"DataUpdated: {command}, {attributeID}, {value}, {updateTime}");
             if (objectType == "LAMA.Singletons.LarpEvent" && !attributesCache.containsKey(attributeID))
             {
-                attributesCache.add(new TimeValue(updateTime, value, attributeID));
+                attributesCache.add(new ModelPropertyChangeInfo(updateTime, value, attributeID));
             }
             if (attributesCache.containsKey(attributeID) && attributesCache.getByKey(attributeID).time <= updateTime)
             {
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
 
-                if (objectType == "LAMA.Models.LarpActivity")
+                if (objectType == "LAMA.Models.LarpActivity" &&
+                    DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.CP")
+                if (objectType == "LAMA.Models.CP" &&
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.InventoryItem")
+                if (objectType == "LAMA.Models.InventoryItem" &&
+                    DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.ChatMessage")
+                if (objectType == "LAMA.Models.ChatMessage" &&
+                    DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.EncyclopedyCategory")
+                if (objectType == "LAMA.Models.EncyclopedyCategory" &&
+                    DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.EncyclopedyRecord")
+                if (objectType == "LAMA.Models.EncyclopedyRecord" &&
+                    DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.PointOfInterest")
+                if (objectType == "LAMA.Models.PointOfInterest" &&
+                    DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
-                if (objectType == "LAMA.Models.Road")
+                if (objectType == "LAMA.Models.Road" &&
+                    DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID) != null)
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
@@ -235,26 +373,25 @@ namespace LAMA.Communicator
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
                     attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
-                    Debug.WriteLine($"Updating LarpEvent {indexAttribute} ------- {value}");
-                    Singletons.LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
-                    if (indexAttribute == 2)
+                    LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
+                    if (indexAttribute == 3)
                     {
-                        command = "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute + Separators.messagePartSeparator.ToString() + LarpEvent.Instance.chatChannels;
+                        command = "DataUpdated" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute + SpecialCharacters.messagePartSeparator.ToString() + LarpEvent.Instance.chatChannels;
                     }
                 }
                 if (server)
                 {
                     // Notify every client
                     if (!testing && !(objectType == "LAMA.Models.CP" &&
-                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).getAttributes()[indexAttribute] == "location")) 
+                    DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).getAttributeNames()[indexAttribute] == "location")) 
                         communicator.SendCommand(new Command(command, updateTime, attributeID));
                 }
             }
             else if (attributesCache.containsKey(attributeID) && server)
             {
                 //Rollback
-                string rollbackCommand = $"Rollback{Separators.messagePartSeparator}";
-                rollbackCommand += "DataUpdated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute + Separators.messagePartSeparator.ToString() + attributesCache.getByKey(attributeID).value;
+                string rollbackCommand = $"Rollback{SpecialCharacters.messagePartSeparator}";
+                rollbackCommand += "DataUpdated" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute + SpecialCharacters.messagePartSeparator.ToString() + attributesCache.getByKey(attributeID).value;
                 try
                 {
                     if (!testing) current.Send((new Command(rollbackCommand, attributesCache.getByKey(attributeID).time, attributeID)).Encode(communicator.CompressionManager));
@@ -277,8 +414,7 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void RollbackDataUpdated(string objectType, long objectID, int indexAttribute, string value, long updateTime, string command)
         {
-            string attributeID = objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + indexAttribute;
-            if (!testing) communicator.Logger.LogWrite($"RollbackDataUpdated: {command}, {attributeID}, {value}, {updateTime}");
+            string attributeID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + indexAttribute;
             if (attributesCache.containsKey(attributeID))
             {
                 attributesCache.getByKey(attributeID).value = value;
@@ -348,32 +484,25 @@ namespace LAMA.Communicator
         {
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
-            string objectCacheID = objectType + Separators.messagePartSeparator.ToString() + objectID;
-            Debug.WriteLine($"ItemCreated: {objectType}");
+            string objectCacheID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
 
             if (objectIgnoreCreation == objectCacheID)
             {
-                communicator.Logger.LogWrite("Ignore Creation: " + objectIgnoreCreation);
                 objectIgnoreCreation = "";
                 return;
             }
 
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
-            string command = "ItemCreated" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + String.Join(Separators.attributesSeparator.ToString(), attributes);
+            string command = "ItemCreated" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + String.Join(SpecialCharacters.attributesSeparator.ToString(), attributes);
 
-            communicator.Logger.LogWrite($"OnItemCreated: {command}");
             if (!objectsCache.containsKey(objectCacheID) || (objectsCache.getByKey(objectCacheID).command.StartsWith("ItemDeleted") && testing))
             {
                 objectsCache.add(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.add(new TimeValue(updateTime, attributes[i], objectType + Separators.messagePartSeparator.ToString() + objectID + Separators.messagePartSeparator.ToString() + i));
+                    attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributes[i], objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                 }
-            }
-            else
-            {
-                Debug.WriteLine(objectsCache.getByKey(objectCacheID).command);
             }
             if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
         }
@@ -388,15 +517,13 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         public void ItemCreated(string objectType, string serializedObject, long updateTime, string command, Socket current)
         {
-            if (!testing) communicator.Logger.LogWrite($"ItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                Debug.WriteLine(serializedObject);
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 activity.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + activity.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + activity.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -408,10 +535,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.add(activity);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -419,10 +544,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cp.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + cp.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + cp.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -434,10 +559,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.add(cp);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -445,10 +568,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ii.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + ii.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + ii.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -460,22 +583,19 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.add(ii);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
 
             if (objectType == "LAMA.Models.ChatMessage")
             {
-                Debug.WriteLine("LAMA.Models.ChatMessage");
                 Models.ChatMessage cm = new Models.ChatMessage();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + cm.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + cm.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -494,10 +614,8 @@ namespace LAMA.Communicator
                     }
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -505,10 +623,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.EncyclopedyCategory")
             {
                 Models.EncyclopedyCategory cm = new Models.EncyclopedyCategory();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + cm.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + cm.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -520,10 +638,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.add(cm);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -531,10 +647,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.EncyclopedyRecord")
             {
                 Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 er.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + er.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + er.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -546,10 +662,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.add(er);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -557,10 +671,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.PointOfInterest")
             {
                 Models.PointOfInterest pi = new Models.PointOfInterest();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 pi.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + pi.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + pi.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -572,10 +686,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.add(pi);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -584,10 +696,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.Road")
             {
                 Models.Road road = new Models.Road();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 road.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + road.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + road.getID();
 
                 if (!objectsCache.containsKey(objectID) || (objectsCache.getByKey(objectID).command.StartsWith("ItemDeleted") && testing))
                 {
@@ -599,10 +711,8 @@ namespace LAMA.Communicator
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.add(road);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.add(new TimeValue(updateTime, attributtes[i], objectID + Separators.messagePartSeparator.ToString() + i));
+                        attributesCache.add(new ModelPropertyChangeInfo(updateTime, attributtes[i], objectID + SpecialCharacters.messagePartSeparator.ToString() + i));
                     }
-                    // Notify every client of item creation
-                    //if (server && !noCommandSending) communicator.SendCommand(new Command(command, updateTime, objectID));
                 }
                 else if (server) ItemCreatedSendRollback(objectID, current);
             }
@@ -615,7 +725,6 @@ namespace LAMA.Communicator
         /// <param name="current"></param>
         private void ItemCreatedSendRollback(string objectID, Socket current)
         {
-            communicator.Logger.LogWrite($"ItemCreatedSendRollback: {objectID}");
             string rollbackCommand = "Rollback;";
             rollbackCommand += objectsCache.getByKey(objectID).command;
             try
@@ -637,14 +746,13 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void RollbackItemCreated(string objectType, string serializedObject, long updateTime, string command)
         {
-            if (!testing) communicator.Logger.LogWrite($"RollbackItemCreated: {command}, {objectType}");
             if (objectType == "LAMA.Models.LarpActivity")
             {
                 Models.LarpActivity activity = new Models.LarpActivity();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 activity.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + activity.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + activity.getID();
                 long activityID = activity.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -656,8 +764,8 @@ namespace LAMA.Communicator
                     activity.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -665,10 +773,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.CP")
             {
                 Models.CP cp = new Models.CP();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cp.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + cp.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + cp.getID();
 
                 long cpID = cp.getID();
 
@@ -681,8 +789,8 @@ namespace LAMA.Communicator
                     cp.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -690,10 +798,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.InventoryItem")
             {
                 Models.InventoryItem ii = new Models.InventoryItem();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ii.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + ii.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + ii.getID();
                 long itemID = ii.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -705,8 +813,8 @@ namespace LAMA.Communicator
                     ii.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -714,10 +822,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.ChatMessage")
             {
                 Models.ChatMessage cm = new Models.ChatMessage();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 cm.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + cm.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + cm.getID();
                 long messageID = cm.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -729,8 +837,8 @@ namespace LAMA.Communicator
                     cm.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -739,10 +847,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.EncyclopedyCategory")
             {
                 Models.EncyclopedyCategory ec = new Models.EncyclopedyCategory();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 ec.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + ec.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + ec.getID();
                 long messageID = ec.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -754,8 +862,8 @@ namespace LAMA.Communicator
                     ec.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -764,10 +872,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.EncyclopedyRecord")
             {
                 Models.EncyclopedyRecord er = new Models.EncyclopedyRecord();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 er.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + er.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + er.getID();
                 long messageID = er.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -779,8 +887,8 @@ namespace LAMA.Communicator
                     er.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -789,10 +897,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.PointOfInterest")
             {
                 Models.PointOfInterest pi = new Models.PointOfInterest();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 pi.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + pi.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + pi.getID();
                 long messageID = pi.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -803,8 +911,8 @@ namespace LAMA.Communicator
                     pi.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -813,10 +921,10 @@ namespace LAMA.Communicator
             if (objectType == "LAMA.Models.Road")
             {
                 Models.Road road = new Models.Road();
-                string[] attributtes = serializedObject.Split(Separators.attributesSeparator);
+                string[] attributtes = serializedObject.Split(SpecialCharacters.attributesSeparator);
                 for (int i = 0; i < attributtes.Length; i++) attributtes[i] = attributtes[i].Trim('Â');
                 road.buildFromStrings(attributtes);
-                string objectID = objectType + Separators.messagePartSeparator.ToString() + road.getID();
+                string objectID = objectType + SpecialCharacters.messagePartSeparator.ToString() + road.getID();
                 long messageID = road.getID();
 
                 if (objectsCache.containsKey(objectID))
@@ -827,8 +935,8 @@ namespace LAMA.Communicator
                     road.buildFromStrings(attributtes);
                     for (int i = 0; i < attributtes.Length; i++)
                     {
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).value = attributtes[i];
-                        attributesCache.getByKey(objectID + Separators.messagePartSeparator.ToString() + i).time = updateTime;
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).value = attributtes[i];
+                        attributesCache.getByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i).time = updateTime;
                     }
                 }
             }
@@ -842,7 +950,7 @@ namespace LAMA.Communicator
         {
             long objectID = changed.getID();
             string objectType = changed.GetType().ToString();
-            string objectCacheID = objectType + Separators.messagePartSeparator.ToString() + objectID;
+            string objectCacheID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
 
             if (objectIgnoreDeletion == objectCacheID)
             {
@@ -850,11 +958,9 @@ namespace LAMA.Communicator
                 return;
             }
 
-            communicator.Logger.LogWrite($"OnItemDeleted: {objectCacheID}");
-
             long updateTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             string[] attributes = changed.getAttributes();
-            string command = "ItemDeleted" + Separators.messagePartSeparator.ToString() + objectType + Separators.messagePartSeparator.ToString() + objectID;
+            string command = "ItemDeleted" + SpecialCharacters.messagePartSeparator.ToString() + objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
 
             if (objectsCache.containsKey(objectCacheID))
             {
@@ -863,7 +969,7 @@ namespace LAMA.Communicator
                 if (!testing) communicator.SendCommand(new Command(command, updateTime, objectCacheID));
                 for (int i = 0; i < attributes.Length; i++)
                 {
-                    attributesCache.removeByKey(objectID + Separators.messagePartSeparator.ToString() + i);
+                    attributesCache.removeByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i);
                 }
             }
         }
@@ -877,8 +983,7 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void ItemDeleted(string objectType, long objectID, long updateTime, string command)
         {
-            if (!testing) communicator.Logger.LogWrite($"OnItemDeleted: {command}, {objectType}, {objectID}, {updateTime}");
-            string objectCacheID = objectType + Separators.messagePartSeparator.ToString() + objectID;
+            string objectCacheID = objectType + SpecialCharacters.messagePartSeparator.ToString() + objectID;
             if (objectsCache.containsKey(objectCacheID))
             {
                 int nAttributes = 0;
@@ -935,7 +1040,7 @@ namespace LAMA.Communicator
 
                 for (int i = 0; i < nAttributes; i++)
                 {
-                    attributesCache.removeByKey(objectID + Separators.messagePartSeparator.ToString() + i);
+                    attributesCache.removeByKey(objectID + SpecialCharacters.messagePartSeparator.ToString() + i);
                 }
                 objectsCache.getByKey(objectCacheID).command = command;
                 objectsCache.getByKey(objectCacheID).time = updateTime;
@@ -945,6 +1050,46 @@ namespace LAMA.Communicator
                     objectIgnoreDeletion = objectCacheID;
                 }
             }
+        }
+
+        /// <summary>
+        /// We are requesting a role at a LARP activity. Form and send a command to the server requesting the role.
+        /// </summary>
+        internal void OnRoleRequested(long activityID, string roleName)
+        {
+            string command = "RequestRole" + SpecialCharacters.messagePartSeparator + activityID + SpecialCharacters.messagePartSeparator + roleName + SpecialCharacters.messagePartSeparator + LocalStorage.cpID + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + SpecialCharacters.messageSeparator + roleName));
+        }
+
+        /// <summary>
+        /// We are requesting to be removed from a role at an activity. This function formulates and sends a message about the request to the server.
+        /// </summary>
+        internal void OnRoleRemoved(long activityID)
+        {
+            string command = "RemoveRole" + SpecialCharacters.messagePartSeparator.ToString() + activityID + SpecialCharacters.messagePartSeparator + LocalStorage.cpID + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + SpecialCharacters.messageSeparator + "RoleRemoved"));
+        }
+
+        /// <summary>
+        /// We are trying to modify a channel (rename or archive). Formulate and send a message to the server requesting this modification.
+        /// </summary>
+        internal void OnChannelModified(int index, string newName)
+        {
+            string command = "ChannelModified" + SpecialCharacters.messagePartSeparator + newName + SpecialCharacters.messagePartSeparator + index + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), newName + SpecialCharacters.messageSeparator + index + SpecialCharacters.messageSeparator + "ChannelModified"));
+        }
+
+        /// <summary>
+        /// We are trying to create a channel. Send a request to create a channel to the server.
+        /// </summary>
+        internal void OnChannelCreated(string channelName)
+        {
+            string command = "ChannelCreated" + SpecialCharacters.messagePartSeparator.ToString() + channelName + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
+            if (!testing && !server)
+                communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), channelName + SpecialCharacters.messageSeparator + "ChannelCreated"));
         }
     }
 }

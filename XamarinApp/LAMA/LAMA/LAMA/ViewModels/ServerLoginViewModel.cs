@@ -12,18 +12,10 @@ namespace LAMA.ViewModels
 {
     internal class ServerLoginViewModel : BaseViewModel
     {
-        public Xamarin.Forms.Command DatabaseNameCommand { get; }
         public Xamarin.Forms.Command ServerLoginCommand { get; }
-
-        public string DatabaseName { get; set; }
-        private string _databaseNameDisplay;
-        public string DatabaseNameDisplay { get { return _databaseNameDisplay; } set { SetProperty(ref _databaseNameDisplay, value); } }
-
 
         public string ServerName { get; set; }
         public string ServerNgrokEndpoint { get; set; }
-        //public string ServerIP { get; set; }
-        //public string ServerPort { get; set; }
         public string ServerPassword { get; set; }
 
         public string NickName { get; set; }
@@ -38,54 +30,52 @@ namespace LAMA.ViewModels
         public ServerLoginViewModel(bool newServer)
         {
             ServerLoginCommand = new Xamarin.Forms.Command(OnServerLoginClicked);
-            DatabaseNameCommand = new Xamarin.Forms.Command(OnChangeDatabaseName);
-            DatabaseNameDisplay = $"Database Name: {SQLConnectionWrapper.databaseName}";
-            //isNewServer = newServer;
             isNewServer = false;
-        }
-
-        private void OnChangeDatabaseName()
-        {
-            SQLConnectionWrapper.databaseName = DatabaseName;
-            if (SQLConnectionWrapper.connection == null)
-            {
-                DatabaseNameDisplay = $"Database Name: {DatabaseName}";
-            }
         }
 
         private async void OnServerLoginClicked(object obj)
         {
-            string name = ServerName;
-            string nick = NickName;
-            //string IP = ServerIP;
-            string ngrokEndpoint = ServerNgrokEndpoint;
-            string password = ServerPassword;
-            string personalPassword = PersonalPassword;
-            //int port;
-            /*
-            try
-            {
-                port = int.Parse(ServerPort);
-            }
-            catch (Exception e)
-            {
-                ErrorLabel = e.ToString();
-                return;
-            }
-            */
-
             //name - libovolné (čísla, písmena, mezery, podtržítka, pomlčka)
             //IP - veřejná IP (je potřeba psát, nebo by šla někde vytáhnout?)
             //port
             //password - libovolné, klienti ho pak musí opakovat (u existujícího serveru [jméno] to pak při správném hesle edituje hodnoty)
+            string name = ServerName;
+            string nick = NickName;
+            string ngrokEndpoint = ServerNgrokEndpoint;
+            string password = ServerPassword;
+            string personalPassword = PersonalPassword;
+
             try
             {
+                if (name == null || name.Trim() == "") throw new EntryMissingException("Jméno Serveru");
+                if (ngrokEndpoint == null || ngrokEndpoint.Trim() == "") throw new EntryMissingException("Ngrok Endpoint");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Serverové Heslo");
+                if (personalPassword == null || personalPassword.Trim() == "") throw new EntryMissingException("Osobní Heslo");
+                if (nick == null || nick.Trim() == "") throw new EntryMissingException("Přezdívka");
+
+                if (name.Length > 100) throw new EntryTooLongException(100, "Jméno Serveru");
+                if (ngrokEndpoint.Length > 100) throw new EntryTooLongException(100, "Ngrok Endpoint");
+                if (password.Length > 100) throw new EntryTooLongException(100, "Serverové Heslo");
+                if (personalPassword.Length > 100) throw new EntryTooLongException(100, "Osobní Heslo");
+                if (nick.Length > 100) throw new EntryTooLongException(100, "Přezdívka");
+
                 if (CommunicationInfo.Instance.Communicator != null) { CommunicationInfo.Instance.Communicator.EndCommunication(); }
                 Console.WriteLine("Launching Communicator");
                 new ServerCommunicator(name, ngrokEndpoint, password, personalPassword, nick, isNewServer);
-                //new ServerCommunicator(name, IP, port, password);
                 Console.WriteLine("Communicator launched");
 
+            }
+            catch (EntryMissingException e)
+            {
+                isNewServer = false;
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                return;
+            }
+            catch (EntryTooLongException e)
+            {
+                isNewServer = false;
+                await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
+                return;
             }
             catch (PasswordTooShortException)
             {
@@ -96,7 +86,7 @@ namespace LAMA.ViewModels
             catch (CantConnectToCentralServerException)
             {
                 isNewServer = false;
-                await App.Current.MainPage.DisplayAlert("Připojení K Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
+                await App.Current.MainPage.DisplayAlert("Připojení k Seznamu Serverů", "Nepodařilo se připrojit k centrálnímu seznamu serverů. Zkontrolujte internetové připojení.", "OK");
                 return;
             }
             catch (WrongNgrokAddressFormatException)
@@ -109,10 +99,12 @@ namespace LAMA.ViewModels
             {
                 if (isNewServer)
                 {
+                    isNewServer = false;
                     await App.Current.MainPage.DisplayAlert("Jméno Serveru", "Server s tímto jménem už existuje. Zvolte jiné jméno, nebo se přihlašte jako existující server.", "OK");
                 }
                 else if (e.Message == "password")
                 {
+                    isNewServer = false;
                     await App.Current.MainPage.DisplayAlert("Přihlašovací Údaje", "Zadali jste špatné heslo.", "OK");
                 }
                 else
@@ -125,6 +117,7 @@ namespace LAMA.ViewModels
             }
             catch (Exception e)
             {
+                isNewServer = false;
                 ErrorLabel = e.ToString();
                 return;
             }
@@ -137,8 +130,6 @@ namespace LAMA.ViewModels
                     BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
                     BarBackgroundColor = ColorPalette.PrimaryColor
                 };
-                //await Application.Current.MainPage.Navigation.PushAsync(new MapPage());
-                //LAMA.App.Current.MainPage = new MapPage();
             }
             else
             {

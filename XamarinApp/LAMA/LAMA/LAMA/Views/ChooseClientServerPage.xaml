@@ -7,8 +7,8 @@
              mc:Ignorable="d"
              x:Class="LAMA.Views.ChooseClientServerPage"
              Shell.NavBarIsVisible="False"
-			 Shell.FlyoutBehavior="Disabled"
-			 Title="Vybrat roli">
+			 Shell.FlyoutBehavior="Disabled">
+	<!--Title="Vybrat roli"-->
     <ContentPage.Content>
         <StackLayout>
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">

@@ -21,7 +21,7 @@ namespace LAMA.Models
         {
             Id = Helpers.readLong(input[0]);
             Coordinates = input[1];
-            lastChange = Helpers.readLong(input[2]);
+            Icon = Helpers.readInt(input[2]);
             name = input[3];
             description = input[4];
         }

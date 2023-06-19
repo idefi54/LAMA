@@ -9,9 +9,31 @@ namespace LAMA.Models
 {
     public class CP : Serializable
     {
-        public enum Status { ready, onBreak, onActivity};
-
-        public enum PermissionType { SetPermission, ChangeCP, ChangeEncyclopedy, ManageInventory, ChangeActivity, ChangePOI, EditMap, ManageEvent,
+        public static Dictionary<PermissionType, string> permissionsCzech = new Dictionary<PermissionType, string>
+        {
+            { PermissionType.SetPermission, "Nastavovat Práva" },
+            { PermissionType.ChangeCP, "Upravovat CP" },
+            { PermissionType.ChangeEncyclopedy, "Upravovat Encyklopedii" },
+            { PermissionType.ManageInventory, "Spravovat Inventář" },
+            { PermissionType.ChangeActivity, "Upravovat Aktivity" },
+            { PermissionType.ChangePOI, "Spravovat Lokace" },
+            { PermissionType.EditMap, "Editovat Mapu" },
+            { PermissionType.ManageEvent, "Spravovat Událost" },
+            { PermissionType.ManageChat, "Administrátor Chatu" },
+            { PermissionType.EditGraph, "Upravovat Graf Aktivit" }
+        };
+        
+        public enum PermissionType
+        {
+            SetPermission,
+            ChangeCP,
+            ChangeEncyclopedy,
+            ManageInventory,
+            ChangeActivity,
+            ChangePOI,
+            EditMap,
+            ManageEvent,
+            ManageChat,
             EditGraph
         }
 
@@ -73,8 +95,12 @@ namespace LAMA.Models
         }
         string _password = string.Empty;
         public string password { get { return _password; } set { _password = value; updateValue(10, value); } }
-        
-        
+
+        /// <summary>
+        /// Hides from CPs that can't edit other CPs.
+        /// </summary>
+        public bool IsArchived { get { return _isArchived; } set { _isArchived = value; updateValue(11, value ? "1" : "0") ; } }
+        bool _isArchived = false;
 
         public CP()
         {
@@ -95,6 +121,27 @@ namespace LAMA.Models
             _discord = discord;
             _notes = notes;
         }
+
+        public string PermissionsToReadableString()
+        {
+            if (permissions.Count == 0)
+                return string.Empty;
+            else
+            {
+                StringBuilder output = new StringBuilder();
+                for (int i = 0; i < permissions.Count; ++i)
+                {
+                    if (i != 0)
+                        output.Append(", ");
+
+                    output.Append(permissionsCzech[permissions[i]]);
+
+                }
+                return output.ToString();
+            }
+        }
+
+
         public void updateWhole(string name, string nick, string phone, string facebook, string discord, string notes)
         {
             if (name != _name)
@@ -126,7 +173,7 @@ namespace LAMA.Models
 
 
         static string[] attributes = new string[] { "ID", "name", "nick", "roles", "phone", "facebook",
-            "discord", "location", "notes", "permissions", "password"};
+            "discord", "location", "notes", "permissions", "password", "isArchived"};
 
         public long getID()
         {
@@ -182,6 +229,9 @@ namespace LAMA.Models
                 case 10:
                     _password = value;
                     break;
+                case 11:
+                    _isArchived = Helpers.readInt(value) == 1;
+                    break;
                
             }
         }
@@ -210,9 +260,10 @@ namespace LAMA.Models
                 case 8: return _notes;
                 case 9: return Helpers.EnumEventListToString(_permissions);
                 case 10: return _password;
+                case 11: return _isArchived ? "1" : "0";
                 
             }
-            throw new Exception("wring index called");
+            throw new Exception("wrong index called");
         }
         public string[] getAttributes()
         {
@@ -234,7 +285,6 @@ namespace LAMA.Models
         {
             IGotUpdated?.Invoke(this, index);
         }
-
 
         public void MakeMeAdmin()
         {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LAMA.Services;
+using LAMA.Singletons;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

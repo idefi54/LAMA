@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:common="clr-namespace:LAMA.Views"
+             x:Class="LAMA.Views.CreateCPPage">
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Vytvořit" Command="{Binding CreateCommand}"/>
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout
+                Spacing="0"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All">
+                <ScrollView>
+                    <StackLayout>
+                        <!--
+                        <Label Text="Welcome to Xamarin.Forms!"
+                            VerticalOptions="CenterAndExpand" 
+                            HorizontalOptions="CenterAndExpand" />
+
+                        <Label Text="Poznámky"
+					           HorizontalTextAlignment="Start"
+					           VerticalTextAlignment="End"/>
+                        <Entry Text="{Binding Notes}" FontSize="Medium" />
+                        <Button Text="Uložit změny" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                        -->
+
+
+                        <Label Text="Jméno" FontSize="Medium" />
+                        <Entry Text="{Binding Name}" Placeholder="Jméno" FontSize="Medium" />
+						<Label Text="Přezdívka" FontSize="Medium" />
+						<Entry Text="{Binding Nick}" Placeholder="Přezdívka" FontSize="Medium" />
+						<Label Text="Heslo" FontSize="Medium" />
+						<Entry Text="{Binding Password}" Placeholder="Heslo" FontSize="Medium" IsPassword="true" />
+						<Label Text="Role oddělené čárkou" FontSize="Medium" />
+
+						<StackLayout BindableLayout.ItemsSource="{Binding RoleList}">
+							<BindableLayout.ItemTemplate>
+								<DataTemplate>
+									<common:CPRoleItemView/>
+								</DataTemplate>
+							</BindableLayout.ItemTemplate>
+						</StackLayout>
+						<Button Text="Nová role" Command="{Binding AddRole}"/>
+						
+						<Label Text="Telefon" FontSize="Medium" />
+						<Entry Text="{Binding Phone}" Placeholder="Telefon" FontSize="Medium" />
+						<Label Text="Facebook" FontSize="Medium" />
+						<Entry Text="{Binding Facebook}" Placeholder="Facebook" FontSize="Medium" />
+						<Label Text="Discord" FontSize="Medium" />
+						<Entry Text="{Binding Discord}" Placeholder="Discord" FontSize="Medium" />
+						<Label Text="Poznámky" FontSize="Medium" />
+						<Editor Text="{Binding Notes}" Placeholder="Poznámky" FontSize="Medium" AutoSize="TextChanges" Margin="0"/>
+						
+					</StackLayout>
+                </ScrollView>
+            </StackLayout>
+            <StackLayout
+				x:Name="WaitingBackground"
+				IsVisible="{Binding IsBusy}"
+				AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All"
+				BackgroundColor="Black"
+                Opacity="0.5">
+            </StackLayout>
+            <StackLayout
+                x:Name="Waiting"
+                IsVisible="{Binding IsBusy}"
+                AbsoluteLayout.LayoutBounds="0.5, 0.5"
+                AbsoluteLayout.LayoutFlags="PositionProportional">
+                <ActivityIndicator IsRunning="True" IsVisible="{Binding IsBusy}"></ActivityIndicator>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

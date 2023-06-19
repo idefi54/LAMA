@@ -6,6 +6,9 @@ using static LAMA.Models.LarpActivity;
 
 namespace LAMA.Models.DTO
 {
+    /// <summary>
+    /// DTO of LarpActivity used in it's creation
+    /// </summary>
     public class LarpActivityDTO
     {
         public long ID {get; set;}
@@ -23,6 +26,7 @@ namespace LAMA.Models.DTO
         public List<Pair<long, int>> requiredItems {get; set;}
         public List<Pair<string, int>> roles {get; set;}
         public List<Pair<long, string>> registrationByRole {get; set;}
+        public int iconIndex { get; set;}
 
         public LarpActivityDTO(LarpActivity larpActivity)
         {
@@ -41,6 +45,7 @@ namespace LAMA.Models.DTO
             requiredItems = larpActivity.requiredItems.Select(x => x).ToList();
             roles = larpActivity.roles.Select(x=>x).ToList();
             registrationByRole = larpActivity.registrationByRole.Select(x => x).ToList();
+            iconIndex = larpActivity.IconIndex;
         }
 
         public LarpActivity CreateLarpActivity()
@@ -50,7 +55,8 @@ namespace LAMA.Models.DTO
                 duration, day, start, place, status,
                 new EventList<Pair<long, int>>(requiredItems),
                 new EventList<Pair<string, int>>(roles),
-                new EventList<Pair<long, string>>(registrationByRole));
+                new EventList<Pair<long, string>>(registrationByRole),
+                iconIndex);
 
             // Because it's not in the constructor...
             larpActivity.GraphY = GraphY;

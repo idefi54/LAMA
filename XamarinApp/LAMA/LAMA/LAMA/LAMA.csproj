@@ -125,6 +125,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="docfx.console" Version="2.59.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mapsui" Version="3.0.2" />
     <PackageReference Include="Mapsui.Forms" Version="3.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
@@ -139,14 +143,77 @@
     <Compile Update="Views\ActivitySelectionPage.xaml.cs">
       <DependentUpon>ActivitySelectionPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ChatChannelsPage.xaml.cs">
+      <DependentUpon>ChatChannelsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPDetailsPage.xaml.cs">
+      <DependentUpon>CPDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPEditPage.xaml.cs">
+      <DependentUpon>CPEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPEditPage.xaml.cs">
+      <DependentUpon>CPEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CPListPage.xaml.cs">
+      <DependentUpon>CPListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CP.xaml.cs">
+      <DependentUpon>CP.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateCPPage.xaml.cs">
+      <DependentUpon>CreateCPPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateEncyclopediaCategoryPage.xaml.cs">
+      <DependentUpon>CreateEncyclopediaCategoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateEncyclopediaRecordPage.xaml.cs">
+      <DependentUpon>CreateEncyclopediaRecordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CreateInventoryItemPage.xaml.cs">
+      <DependentUpon>CreateInventoryItemPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\DropdownMenuAboveTestPage.xaml.cs">
       <DependentUpon>DropdownMenuAboveTestPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\DropdownMenuOverTestPage.xaml.cs">
       <DependentUpon>DropdownMenuOverTestPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EncyclopediaCategoryEditPage.xaml.cs">
+      <DependentUpon>EncyclopediaCategoryEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EncyclopediaCategoryPage.xaml.cs">
+      <DependentUpon>EncyclopediaCategoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EncyclopediaRecordEditPage.xaml.cs">
+      <DependentUpon>EncyclopediaRecordEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EncyclopediaRecordPage.xaml.cs">
+      <DependentUpon>EncyclopediaRecordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\InventoryItemEditPage.xaml.cs">
+      <DependentUpon>InventoryItemEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\InventoryItemDetailPage.xaml.cs">
+      <DependentUpon>InventoryItemDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\InventoryPage.xaml.cs">
+      <DependentUpon>InventoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\LarpEventPage.xaml.cs">
+      <DependentUpon>LarpEventPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\POIDetailsPage.xaml.cs">
+      <DependentUpon>POIDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\POIEditPage.xaml.cs">
+      <DependentUpon>POIEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\POIListPage.xaml.cs">
+      <DependentUpon>POIListPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ServerLoginTypePage.xaml.cs">
       <DependentUpon>ServerLoginTypePage.xaml</DependentUpon>
@@ -160,19 +227,19 @@
     <EmbeddedResource Update="Views\ActivityListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ChatChannels.xaml">
+    <EmbeddedResource Update="Views\ChatChannelsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\CalendarPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ChatChannels.xaml">
+    <EmbeddedResource Update="Views\ChatChannelsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPDetailsEditView.xaml">
+    <EmbeddedResource Update="Views\CPEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ChooseClientServerPage.xaml">
@@ -187,37 +254,43 @@
     <EmbeddedResource Update="Views\ClientLoginTypePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateEncyclopedyCategoryView.xaml">
+    <EmbeddedResource Update="Views\CP.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateEncyclopedyRecordView.xaml">
+    <EmbeddedResource Update="Views\CPSelectionPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPDetailsView.xaml">
+    <EmbeddedResource Update="Views\CreateEncyclopediaCategoryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CPListView.xaml">
+    <EmbeddedResource Update="Views\CreateEncyclopediaRecordPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateCPView.xaml">
+    <EmbeddedResource Update="Views\CPDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\CreateInventoryItemView.xaml">
+    <EmbeddedResource Update="Views\CPListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\CreateCPPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\CreateInventoryItemPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\DropdownMenuOverTestPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\EncyclopedyCategoryEditView.xaml">
+    <EmbeddedResource Update="Views\EncyclopediaCategoryEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\EncyclopedyCategoryView.xaml">
+    <EmbeddedResource Update="Views\EncyclopediaCategoryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\EncyclopedyRecordEditView.xaml">
+    <EmbeddedResource Update="Views\EncyclopediaRecordEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\EncyclopedyRecordView.xaml">
+    <EmbeddedResource Update="Views\EncyclopediaRecordPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ExampleImagePage.xaml">
@@ -232,16 +305,19 @@
     <EmbeddedResource Update="Views\IntermediateHackPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\InventoryItemDetail.xaml">
+    <EmbeddedResource Update="Views\InventoryItemDetailPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\InventoryItemDetail.xaml">
+    <EmbeddedResource Update="Views\InventoryItemDetailPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\InventoryView.xaml">
+    <EmbeddedResource Update="Views\InventoryItemEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\LarpEventView.xaml">
+    <EmbeddedResource Update="Views\InventoryPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\LarpEventPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MapLimitsPage.xaml">
@@ -265,13 +341,13 @@
     <EmbeddedResource Update="Views\OurNavigationMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\POIDetailsView.xaml">
+    <EmbeddedResource Update="Views\POIDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\POIEditView.xaml">
+    <EmbeddedResource Update="Views\POIEditPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\POIListView.xaml">
+    <EmbeddedResource Update="Views\POIListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ServerLoginPage.xaml">

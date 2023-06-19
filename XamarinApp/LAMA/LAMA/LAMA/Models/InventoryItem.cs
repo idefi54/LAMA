@@ -231,6 +231,11 @@ namespace LAMA.Models
             {       
                 taken = taken - howMany;
                 free = free + howMany;
+
+                if(taken == 0)
+                {
+                    takenBy.Clear();
+                }
             }
         }
         public void Return (int howMany, long who)
@@ -241,11 +246,35 @@ namespace LAMA.Models
                 free += howMany;
                 taken -= howMany;
 
-                if (takenBy[index].second == howMany)
-                    takenBy.RemoveAt(index);
+                if (taken == 0)
+                {
+                    takenBy.Clear();
+                }
                 else
-                    takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
+                {
+                    if (takenBy[index].second == howMany)
+                        takenBy.RemoveAt(index);
+                    else
+                        takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
+                }
             }
+        }
+        public void AlreadyReturned(int howMany, long who)
+        {
+            int index = findBorrowerIndex(who);
+            if (takenBy[index].second == howMany)
+                takenBy.RemoveAt(index);
+            else
+                takenBy[index] = new Pair<long, int>(who, takenBy[index].second - howMany);
+        }
+        public void SetCapacity(int newCap)
+        {
+            if (newCap < taken)
+                throw new Exception("setting wrong capacity");
+            else if (newCap == taken)
+                free = 0;
+            else
+                free = newCap - taken;
         }
 
 

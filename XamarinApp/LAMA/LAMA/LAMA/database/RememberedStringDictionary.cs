@@ -4,7 +4,12 @@ using System.Text;
 
 namespace LAMA
 {
-    class RememberedStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage:Database.DictionaryStorageInterface, new()
+    /// <summary>
+    /// Equivalent to <see cref="RememberedList{T, Storage}"/>, but for storing dictionaries.
+    /// </summary>
+    /// <typeparam name="T"><see cref="SerializableDictionaryItem"/> dictionary to be stored.</typeparam>
+    /// <typeparam name="Storage"></typeparam>
+    public class RememberedStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage:Database.DictionaryStorageInterface, new()
     {        
         Dictionary<string, int> KeyToIndex = new Dictionary<string, int>();
 

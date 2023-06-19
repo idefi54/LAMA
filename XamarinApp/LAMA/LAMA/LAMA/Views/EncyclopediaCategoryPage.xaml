@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             xmlns:colors="clr-namespace:LAMA.Themes"
+             x:Class="LAMA.Views.EncyclopediaCategoryPage"
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+			 xmlns:Converters="clr-namespace:LAMA.XamarinConverters"
+             xmlns:common="clr-namespace:LAMA.Views">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Nová Kategorie" Command="{Binding AddCategoryCommand}" IsVisible="{Binding CanCreate}"/>
+        <forms:BindableToolbarItem Text="Nová Stránka" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanCreate}"/>
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding Edit}" IsVisible="{Binding CanEdit}"/>
+    </ContentPage.ToolbarItems>
+
+
+
+    <ContentPage.Content>
+        <StackLayout>
+            <common:OurNavigationMenu></common:OurNavigationMenu>
+            <ScrollView>
+                <StackLayout  Padding="30,15,30,15" >
+					<Label Text="{Binding Name}" IsVisible="{Binding IsRoot,Converter={Converters:InverseBoolConverter}}"/>
+					<Label Text="{Binding Description}" IsVisible="{Binding IsRoot,Converter={Converters:InverseBoolConverter}}"/>
+
+                    <Label Text="Kategorie"/>
+                    <StackLayout x:Name="CategoryList" BindableLayout.ItemsSource="{Binding Categories}" Margin="5,5,5,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+
+								<Grid Padding="5" Margin="5" BackgroundColor="{x:Static colors:ColorPalette.InteractableColor}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" VerticalOptions="Center" />
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="1" MinimumHeightRequest="40" Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                    Command="{Binding Path=BindingContext.OpenCategoryDetailsCommand, Source={x:Reference Name=CategoryList}}"
+                                                    CommandParameter="{Binding .}"/>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+
+
+                                    <Grid.GestureRecognizers>
+
+                                        <TapGestureRecognizer 
+    										NumberOfTapsRequired="2"
+    										Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenCategoryDetailsCommand}"		
+    										CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
+
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <Label Text="Stránky"/>
+                    <StackLayout x:Name="RecordList" BindableLayout.ItemsSource="{Binding Records}" Margin="5,5,5,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+
+								<Grid Padding="5" Margin="5" BackgroundColor="{x:Static colors:ColorPalette.InteractableColor}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Text="{Binding TLDR}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Text="Detaily" HeightRequest="40" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                    Command="{Binding Path=BindingContext.OpenRecordDetailsCommand, Source={x:Reference Name=RecordList}}"
+                                                    CommandParameter="{Binding .}"/>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+
+                                    <Grid.GestureRecognizers>
+
+                                        <TapGestureRecognizer 
+						    				NumberOfTapsRequired="2"
+						    				Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EncyclopedyCategoryViewModel}}, Path=OpenRecordDetailsCommand}"		
+						    				CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
+
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

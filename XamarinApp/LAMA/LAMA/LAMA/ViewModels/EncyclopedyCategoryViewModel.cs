@@ -8,8 +8,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
 
 namespace LAMA.ViewModels
 {
@@ -24,9 +26,17 @@ namespace LAMA.ViewModels
         public string Name { get { return name; } set{ SetProperty(ref name, value);} }
         string description = "";
         public string Description { get { return description; } set { SetProperty(ref description, value); } }
-        public bool CanChangeEncyclopedy { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy); } set { } }
-        public bool CanCreate { get { return CanChangeEncyclopedy && category == null; } }
-        public bool CanEdit { get { return CanChangeEncyclopedy && category != null; } }
+        private bool _canChangeEncyclopedy;
+        public bool CanChangeEncyclopedy { get => _canChangeEncyclopedy; set => SetProperty(ref _canChangeEncyclopedy, value); }
+
+        private bool _canCreate;
+        public bool CanCreate { get => _canCreate; set => SetProperty(ref _canCreate, value); }
+
+        private bool _canEdit;
+        public bool CanEdit { get => _canEdit; set => SetProperty(ref _canEdit, value); }
+
+
+        public bool IsRoot { get { return category == null; } }
         public Command<object> OpenRecordDetailsCommand { get; private set; }
         public Command<object> OpenCategoryDetailsCommand { get; private set; }
 
@@ -85,14 +95,28 @@ namespace LAMA.ViewModels
         public int SelectedRecordIndex { get { return _SelectedRecordIndex; } set { SetProperty(ref _SelectedRecordIndex, value); } }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
-        public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation)
+        EncyclopedyCategory parent;
+        public EncyclopedyCategoryViewModel(EncyclopedyCategory category, INavigation navigation, EncyclopedyCategory parent = null)
         {
             this.category = category;
             this.Navigation = navigation;
             Categories = new TrulyObservableCollection<EncyclopedyCategoryViewModel>();
             Records = new TrulyObservableCollection<EncyclopedyRecordViewModel>();
+
+            CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+            CanCreate = CanChangeEncyclopedy;
+            CanEdit = CanChangeEncyclopedy && category != null;
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                {
+                    CanChangeEncyclopedy = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeEncyclopedy);
+                    CanCreate = CanChangeEncyclopedy;
+                    CanEdit = CanChangeEncyclopedy && category != null;
+                }
+            };
 
 
             OpenRecordDetailsCommand = new Command<object>(onOpenRecord);
@@ -158,26 +182,25 @@ namespace LAMA.ViewModels
 
             if(category != null)
                 category.IGotUpdated += onUpdated;
-
+            this.parent = parent;
         }
 
         void onUpdated(object sender, int index)
         {
-            string propName = string.Empty;
+            var category = sender as EncyclopedyCategory;
 
             switch(index)
             {
                 case 1:
-                    propName = nameof(Name);
+                    Name = category.Name;
                     break;
                 case 2:
-                    propName = nameof(Description);
+                    Description = category.Description;
                     break;
                 default:
                     return;
 
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
 
@@ -191,7 +214,6 @@ namespace LAMA.ViewModels
             {
                 Categories.Add(new EncyclopedyCategoryViewModel(categoryList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Categories)));
         }
         void OnMyRecordsChanged()
         {
@@ -201,7 +223,6 @@ namespace LAMA.ViewModels
             {
                 Records.Add(new EncyclopedyRecordViewModel(recordList.getByID(a), Navigation));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Records)));
         }
         void OnCategoriesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -244,6 +265,10 @@ namespace LAMA.ViewModels
 
         async void onSave()
         {
+            bool categoryNameValid = InputChecking.CheckInput(name, "Jméno Kategorie", 50);
+            if (!categoryNameValid) return;
+            bool categoryDescriptionValid = InputChecking.CheckInput(description, "Popis Kategorie", 1000);
+            if (!categoryDescriptionValid) return;
             category.Name = name;
             category.Description = description;
 
@@ -251,15 +276,24 @@ namespace LAMA.ViewModels
         }
         async void onCreate()
         {
+            bool categoryNameValid = InputChecking.CheckInput(Name, "Jméno Kategorie", 50);
+            if (!categoryNameValid) return;
+            bool categoryDescriptionValid = InputChecking.CheckInput(Description, "Popis Kategorie", 1000);
+            if (!categoryDescriptionValid) return;
+            
             var list = DatabaseHolder<EncyclopedyCategory, EncyclopedyCategoryStorage>.Instance.rememberedList;
             var newCategory = new EncyclopedyCategory(list.nextID(), Name, Description);
             list.add(newCategory);
+
+            if (parent != null)
+                parent.ChildCategories.Add(newCategory.ID);
+
             await Navigation.PopAsync();
         }
         async void onEdit()
         {
             if (category != null) 
-                await Navigation.PushAsync(new EncyclopedyCategoryEditView(category));
+                await Navigation.PushAsync(new EncyclopediaCategoryEditPage(category));
         }
         async void onCancel()
         {
@@ -293,7 +327,7 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (EncyclopedyRecordViewModel)obj;
-            await Navigation.PushAsync(new EncyclopedyRecordView(viewModel.record));
+            await Navigation.PushAsync(new EncyclopediaRecordPage(viewModel.record));
         }
         async void onOpenCategory(object obj)
         {
@@ -305,21 +339,21 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (EncyclopedyCategoryViewModel)obj;
-            await Navigation.PushAsync(new EncyclopedyCategoryView(viewModel.category));
+            await Navigation.PushAsync(new EncyclopediaCategoryPage(viewModel.category));
         }
 
         async void onAddCategory()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyCategoryView());
+            await Navigation.PushAsync(new CreateEncyclopediaCategoryPage(this.category));
         }
         async void onAddRecord()
         {
-            await Navigation.PushAsync(new CreateEncyclopedyRecordView());
+            await Navigation.PushAsync(new CreateEncyclopediaRecordPage(this.category));
         }
 
-        async void onAddChildCategory()
+        void onAddChildCategory()
         {
-            if (SelectedCategoryIndex < 0)
+            if (SelectedCategoryIndex < 0 || AddableCategoryIndexes.Count == 0)
                 return;
             this.category.ChildCategories.Add(AddableCategoryIndexes[SelectedCategoryIndex]);
             AddableCategoryIndexes.RemoveAt(SelectedRecordIndex);
@@ -327,7 +361,7 @@ namespace LAMA.ViewModels
         }
         async void onAddChildRecord()
         {
-            if (SelectedRecordIndex < 0)
+            if (SelectedRecordIndex < 0 || AddableCategoryIndexes.Count == 0)
                 return;
             this.category.Records.Add(EncyclopedyOrphanage.ParentlessRecords[SelectedRecordIndex].ID);
             _recordNames.RemoveAt(SelectedRecordIndex);

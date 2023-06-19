@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:colors="clr-namespace:LAMA.Themes"
+             x:Class="LAMA.Views.InventoryItemDetailPage"
+             xmlns:forms="clr-namespace:LAMA.Forms">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Smazat" Command="{Binding DeleteCommand}" IsVisible="{Binding ManageInventory}" />
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding ManageInventory}" />
+    </ContentPage.ToolbarItems>
+
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="15" >
+                <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                <Label Text="{Binding Description}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                
+
+                <Label Text="Zapůjčeno"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding NumBorrowed}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Label Text="Na skladě"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding NumFree}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                <Label Text="Detaily zapůjčení"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text= "{Binding BorrowedBy}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+				
+                <Label Text="Detailní zapůjčení/vrácení"
+					   IsVisible="{Binding ManageInventory}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+				
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Jméno"
+                           IsVisible="{Binding ManageInventory}"
+					       HorizontalTextAlignment="Start"
+					       VerticalTextAlignment="End"/>
+					<Button Text="{Binding CPName}"
+							IsVisible="{Binding ManageInventory}"
+							HorizontalOptions="Start"
+							WidthRequest="100"
+							Command="{Binding SelectCP}"/>
+				</StackLayout>
+				
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Kolik"
+						   IsVisible="{Binding ManageInventory}"
+					       HorizontalTextAlignment="Start"
+					       VerticalTextAlignment="End"/>
+                    <Entry Text="{Binding HowManyChange}"
+						   IsVisible="{Binding ManageInventory}"
+						   FontSize="Medium"
+						   WidthRequest="100"/>
+                </StackLayout>
+				
+				<StackLayout Orientation="Horizontal">
+					<Button IsVisible="{Binding ManageInventory}"
+							Text="Vzít"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.BorrowColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedBorrowCommand}"/>
+					<Button IsVisible="{Binding ManageInventory}"
+							Text="Vrátit"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedReturnCommand}"/>
+                    <Button IsVisible="{Binding ManageInventory}"
+							Text="Smazat záznam o zapůjčení"
+							Padding="20,10,20,10" Margin="5,5,5,5"
+							BackgroundColor="{x:Static colors:ColorPalette.ReturnColor}"
+							TextColor="{x:Static colors:ColorPalette.ButtonTextColor}"
+							Command="{Binding DetailedDeleteCommand}"/>
+                    
+				</StackLayout>
+				
+			</StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

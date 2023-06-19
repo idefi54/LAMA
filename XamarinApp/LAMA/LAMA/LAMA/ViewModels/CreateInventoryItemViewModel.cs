@@ -3,8 +3,11 @@ using LAMA.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Text;
 using Xamarin.Forms;
+using static Xamarin.Essentials.Permissions;
+
 namespace LAMA.ViewModels
 {
     internal class CreateInventoryItemViewModel:BaseViewModel
@@ -44,6 +47,16 @@ namespace LAMA.ViewModels
         }
         private async void OnCreate()
         {
+            bool itemNameValid = InputChecking.CheckInput(Name, "Jméno Předmetu", 50);
+            if (!itemNameValid) return;
+            bool itemCountValid = _free > 0;
+            if (!itemCountValid)
+            {
+                await App.Current.MainPage.DisplayAlert("Špatný Počet Předmětů", "Špatný počet předmětů na skladě (musí existovat alespoň 1 předmět)", "OK");
+                return;
+            }
+            bool descriptionValid = InputChecking.CheckInput(Description, "Popis Předmětu", 1000, true);
+            if (!descriptionValid) return;
             var list = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
             InventoryItem item = new InventoryItem(list.nextID(), Name, Description, 0, _free);
             list.add(item);

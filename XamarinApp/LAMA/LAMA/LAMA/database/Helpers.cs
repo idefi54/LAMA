@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
+    /// <summary>
+    /// Contains functions for serialization and deserialization of numbers and pairs of numbers...
+    /// </summary>
     class Helpers
     {
 
@@ -58,7 +61,8 @@ namespace LAMA
         }
         public static int readInt(string input, ref int offset)
         {
-
+            if (input == null)
+                return 0;
 
             bool negative = false;
             int i = offset;
@@ -104,7 +108,7 @@ namespace LAMA
         }
         static void skipNonDigits(string input, ref int offset)
         {
-            while (offset < input.Length && !char.IsDigit(input[offset]))
+            while (offset < input.Length && !char.IsDigit(input[offset]) && input[offset] != '-')
                 ++offset;
         }
         static string readString(string input, ref int offset)
@@ -128,24 +132,48 @@ namespace LAMA
             return -1;
         }
 
+        public static double readDouble(string input)
+        {
+            int i = 0; 
+            return readDouble(input, ref i);
+        }
         public static double readDouble(string input, ref int offset)
         {
             if (input == null)
                 return 0;
-            
+            skipWhiteSpace(input, ref offset);
+            bool negative = false;
+            if(input[offset] == '-')
+            {
+                negative = true;
+                ++offset;
+            }
+
             long firstPart = readLong(input, ref offset);
             // skip the decimal . or ,
             skipWhiteSpace(input, ref offset);
-            if ( offset < input.Length && (input[offset] == '.' || input[offset] == ','))
+            if (offset < input.Length && (input[offset] == '.' || input[offset] == ','))
             {
                 ++offset;
                 int offset1 = offset;
                 long secondPart = readLong(input, ref offset);
                 offset1 = offset - offset1;
-                return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+                if (firstPart < 0)
+                    firstPart *= -1;
+
+                if (negative)
+                    return -1 * ((double)firstPart + ((double)secondPart) / Math.Pow(10, offset1));
+                else
+                    return (double)firstPart + ((double)secondPart) / Math.Pow(10, offset1);
+
             }
             else
-                return firstPart;
+            { 
+                if (negative)
+                    return -firstPart;
+                else
+                    return firstPart;
+            }
         }
         public static Pair<double, double> readDoublePair(string input)
         {
@@ -180,6 +208,18 @@ namespace LAMA
             skipNonDigits(input, ref i);
             int second = readInt(input, ref i);
             return new Pair<int, int>(first, second);
+        }
+
+        public static Pair<long, long> readLongPair(string input)
+        {
+            if (input == null)
+                return new Pair<long, long>(0, 0);
+            int i = 0;
+            skipNonDigits(input, ref i);
+            long first = readLong(input, ref i);
+            skipNonDigits(input, ref i);
+            long second = readLong(input, ref i);
+            return new Pair<long, long>(first, second);
         }
 
         public static EventList<Pair<long, long>> readLongPairField(string input)

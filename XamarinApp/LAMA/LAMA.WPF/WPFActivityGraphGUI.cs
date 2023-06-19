@@ -2,8 +2,13 @@
 using LAMA.Views;
 using SkiaSharp.Views.Forms;
 using System;
+using LAMA;
 using Xamarin.Forms;
 using System.Windows;
+
+using Key = System.Windows.Input.Key;
+using LAMA.ViewModels;
+using LAMA.Models;
 
 [assembly: Dependency(typeof(LAMA.UWP.UWPActivityGraphGUI))]
 namespace LAMA.UWP
@@ -11,6 +16,23 @@ namespace LAMA.UWP
 
     internal class UWPActivityGraphGUI : IActivityGraphGUI
     {
+        private class EditViewModel : BaseViewModel
+        {
+            private bool _editVisible;
+            public bool EditVisible { get => _editVisible; set { SetProperty(ref _editVisible, value); } }
+
+            public EditViewModel()
+            {
+                EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+                SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+                {
+                    if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                        EditVisible = LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph);
+                };
+            }
+        }
+
+
         public (Layout<View>, ActivityGraph) CreateGUI(INavigation navigation)
         {
             var canvasView = CreateCanvasView();
@@ -27,16 +49,22 @@ namespace LAMA.UWP
 
             WPF.App.Current.MainWindow.KeyDown += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                    graph.SwitchActivityCreationMode(true);
+                if (e.Key == Key.X)
+                    graph.Mode = ActivityGraph.EditingMode.Create;
+
+                if (e.Key == Key.C)
+                    graph.Mode = ActivityGraph.EditingMode.Connect;
+
+                if (e.Key == Key.D)
+                    graph.Mode = ActivityGraph.EditingMode.Disconnect;
 
                 canvasView.InvalidateSurface();
             };
 
             WPF.App.Current.MainWindow.KeyUp += (object sender, System.Windows.Input.KeyEventArgs e) =>
             {
-                if (e.Key == System.Windows.Input.Key.LeftCtrl)
-                    graph.SwitchActivityCreationMode(false);
+                if (e.Key == Key.X || e.Key == Key.C || e.Key == Key.D)
+                    graph.Mode = ActivityGraph.EditingMode.None;
 
                 canvasView.InvalidateSurface();
             };
@@ -92,36 +120,36 @@ namespace LAMA.UWP
             // Calendar Button
             {
                 var calendarButton = new Button();
-                calendarButton.Text = "Calendar";
+                calendarButton.Text = "Kalendář";
                 calendarButton.FontAttributes = FontAttributes.Bold;
                 calendarButton.VerticalOptions = LayoutOptions.Center;
                 calendarButton.HorizontalOptions = LayoutOptions.Center;
-                calendarButton.Clicked += async (object sender, EventArgs args) => {
+                calendarButton.Clicked += async (object sender, EventArgs args) =>
+                {
                     graph.TimeOffset = await CalendarPage.ShowCalendarPage(navigation, graph.TimeOffset);
                 };
                 grid.Children.Add(calendarButton, 2, 0);
             }
 
-            // Edit control
-            if (LocalStorage.cp.permissions.Contains(Models.CP.PermissionType.EditGraph))
-            {
-                var editStack = new StackLayout();
-                editStack.Orientation = StackOrientation.Horizontal;
+            var editStack = new StackLayout();
+            editStack.Orientation = StackOrientation.Horizontal;
 
-                var editLabel = new Label();
-                editLabel.Text = "Edit:";
-                editLabel.VerticalOptions = LayoutOptions.Center;
-                editLabel.HorizontalOptions = LayoutOptions.Center;
-                editStack.Children.Add(editLabel);
+            var editLabel = new Label();
+            editLabel.Text = "Upravit:";
+            editLabel.VerticalOptions = LayoutOptions.Center;
+            editLabel.HorizontalOptions = LayoutOptions.Center;
+            editStack.Children.Add(editLabel);
 
-                var editSwitch = new Switch();
-                editSwitch.IsToggled = false;
-                editSwitch.VerticalOptions = LayoutOptions.Center;
-                editSwitch.HorizontalOptions = LayoutOptions.End;
-                editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
-                editStack.Children.Add(editSwitch);
-                grid.Children.Add(editStack, 3, 0);
-            }
+            var editSwitch = new Switch();
+            editSwitch.IsToggled = false;
+            editSwitch.VerticalOptions = LayoutOptions.Center;
+            editSwitch.HorizontalOptions = LayoutOptions.End;
+            editSwitch.Toggled += (object sender, ToggledEventArgs e) => { graph.EditMode = e.Value; };
+            editStack.Children.Add(editSwitch);
+            grid.Children.Add(editStack, 3, 0);
+
+            editStack.BindingContext = new EditViewModel();
+            editStack.SetBinding(View.IsVisibleProperty, "EditVisible");
 
             return grid;
         }

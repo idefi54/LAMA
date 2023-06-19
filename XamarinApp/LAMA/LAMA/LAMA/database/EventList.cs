@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace LAMA
 {
+    /// <summary>
+    /// List with attatched events on Add, Remove and Update functions.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class EventList<T> : List<T>
     {
         public delegate void DataChanged();
@@ -22,6 +26,11 @@ namespace LAMA
         public new void Add(T what)
         {
             base.Add(what);
+            dataChanged?.Invoke();
+        }
+
+        public void InvokeDataChanged()
+        {
             dataChanged?.Invoke();
         }
 
@@ -62,14 +71,11 @@ namespace LAMA
             else
             {
                 StringBuilder output = new StringBuilder();
-                bool first = true;
                 for (int i = 0; i < Count; ++i)
                 {
-                    if (!first)
+                    if (i != 0)
                         output.Append(", ");
 
-                    if (first)
-                        first = false;
                     output.Append(this[i].ToString());
 
                 }
@@ -117,12 +123,12 @@ namespace LAMA
             dataChanged?.Invoke();
         }
 
-        public void Update (EventList<T> otherOne)
+        public void Update(List<T> otherOne)
         {
             
-            for(int i = 0; i< otherOne.Count; ++i)
+            for (int i = 0; i < otherOne.Count; ++i)
             {
-                if (Count < i)
+                if (i < Count)
                 {
                     if (this[i].Equals(otherOne[i]))
                         continue;
@@ -132,6 +138,11 @@ namespace LAMA
                 else
                     base.Add(otherOne[i]);
             }
+			for (int i = Count - 1; i >= otherOne.Count; i--)
+			{
+                base.RemoveAt(i);
+			}
+
             dataChanged?.Invoke();
         }
     }

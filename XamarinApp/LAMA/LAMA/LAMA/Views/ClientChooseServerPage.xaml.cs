@@ -18,5 +18,11 @@ namespace LAMA.Views
             InitializeComponent();
             this.BindingContext = new ClientChooseServerViewModel();
         }
+
+        public ClientChooseServerPage(string serverName)
+        {
+            InitializeComponent();
+            this.BindingContext = new ClientChooseServerViewModel(serverName);
+        }
     }
 }

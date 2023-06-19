@@ -1,5 +1,6 @@
 ﻿using LAMA.Models;
 using LAMA.Services;
+using LAMA.Singletons;
 using LAMA.Themes;
 using LAMA.Views;
 using System;
@@ -30,17 +31,14 @@ namespace LAMA.ViewModels
             get => _currentIconIndex;
             set
             {
-                _currentIconIndex = value;
+                SetProperty(ref _currentIconIndex, value);
                 CurrentIcon = IconLibrary.GetImageSourceFromResourcePath(_icons[value]);
             }
         }
         private ImageSource _currentIcon;
         public ImageSource CurrentIcon
         {
-            get
-            {
-                return _currentIcon;
-            }
+            get => _currentIcon;
             set
             {
                 SetProperty(ref _currentIcon, value);
@@ -51,7 +49,10 @@ namespace LAMA.ViewModels
         public Command Cancel { get; set; }
         public Command Edit { get; set; }
         public Command IconChange { get; set; }
-        public bool CanChange { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI); } }
+        public Command Delete { get; set; }
+
+        private bool _canChange;
+        public bool CanChange { get => _canChange; set => SetProperty(ref _canChange, value); }
         public POIViewModel(INavigation navigation, PointOfInterest POI)
         {
             this.navigation = navigation;
@@ -72,6 +73,13 @@ namespace LAMA.ViewModels
             Cancel = new Command(onCancel);
             Edit = new Command(onEdit);
             IconChange = new Command(onIconChange);
+            Delete = new Command(onDelete);
+            CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
+            SQLEvents.dataChanged += (Serializable changed, int changedAttributeIndex) =>
+            {
+                if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                    CanChange = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangePOI);
+            };
         }
 
         private void onPOIChanged(object sender, int e)
@@ -94,11 +102,19 @@ namespace LAMA.ViewModels
 
         async void onSave()
         {
+            bool nameValid = InputChecking.CheckInput(name, "Název", 5000);
+            if (!nameValid) return;
+            bool descriptionValid = InputChecking.CheckInput(description, "Popis", 100);
+            if (!descriptionValid) return;
+
             if (POI != null)
             {
                 POI.Name = name;
-                POI.description = description;
+                POI.Description = description;
                 POI.Icon = CurrentIconIndex;
+
+                (double lon, double lat) = MapHandler.Instance.GetSelectionPin();
+                POI.Coordinates = new Pair<double, double>(lon, lat);
             }
             else
             {
@@ -114,11 +130,18 @@ namespace LAMA.ViewModels
         }
         async void onEdit()
         {
-            await navigation.PushAsync(new POIEditView(POI));
+            await navigation.PushAsync(new POIEditPage(POI));
         }
         async void onIconChange()
         {
             CurrentIconIndex = await IconSelectionPage.ShowIconSelectionPage(navigation, _icons);
         }
+        private async void onDelete()
+        {
+            var list = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
+            list.removeByID(POI.ID);
+            await navigation.PopAsync();
+        }
     }
+    
 }

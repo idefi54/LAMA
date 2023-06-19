@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace LAMA.Droid
@@ -62,6 +63,14 @@ namespace LAMA.Droid
                 _cts.Cancel();
             }
             base.OnDestroy();
+        }
+
+        public override void OnTaskRemoved(Intent rootIntent)
+        {
+            System.Diagnostics.Debug.WriteLine("TASK REMOVED");
+            MessagingCenter.Send(this, "ServiceStopped");
+            StopSelf();
+            base.OnTaskRemoved(rootIntent);
         }
     }
 }

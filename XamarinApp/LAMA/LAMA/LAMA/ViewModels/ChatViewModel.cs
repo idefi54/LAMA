@@ -11,15 +11,17 @@ using Xamarin.Forms;
 using System.Linq;
 using LAMA.Singletons;
 using LAMA.Views;
+using System.Xml.Linq;
 
 namespace LAMA.ViewModels
 {
-    internal class ChatViewModel : INotifyPropertyChanged
+    internal class ChatViewModel : BaseViewModel
     {
         //public Xamarin.Forms.Command AddMessageCommand { get; }
 
         public Xamarin.Forms.Command MessageSentCommand { get; }
-        public string MessageText { get; set; }
+        private string _messageText;
+        public string MessageText { get { return _messageText; } set { SetProperty(ref _messageText, value); } }
         public ObservableCollection<ChatMessageViewModel> ChatMessageListItems { get; set; }
 
         INavigation Navigation;
@@ -52,14 +54,23 @@ namespace LAMA.ViewModels
             OnMessageSent();
         }
 
+        public void MessageSent(string message)
+        {
+            if (!String.IsNullOrEmpty(message))
+            {
+                bool inputValid = InputChecking.CheckInput(message, "Chatová Zpráva", 5000);
+                message = message.Trim();
+                if (inputValid)
+                {
+                    ChatLogic.Instance.SendMessage(channelID, message);
+                    MessageText = "";
+                }
+            }
+        }
+
         private void OnMessageSent()
         {
-            if (MessageText != "")
-            {
-                ChatLogic.Instance.SendMessage(channelID, MessageText);
-            }
-            MessageText = "";
-            OnPropertyChanged("MessageText");
+            MessageSent(MessageText);
         }
 
         public ChatViewModel(INavigation navigation, string channelName, ChatPage page)
@@ -90,26 +101,6 @@ namespace LAMA.ViewModels
             }
 
             SortMessagesInPlace(ChatMessageListItems);
-            /*
-            #region population of the test database
-            if (DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.Count == 0)
-            {
-                ChatMessage message = new ChatMessage("testCp", 0, "testing testing testing testing testing testing testing testing testing", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-
-                message = new ChatMessage("testCp2", 0, "testing2 testing2 testing2 testing2 testing2 testing2 testing2 testing2 testing2", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-
-                message = new ChatMessage("testCp3", 0, "testing3 testing3 testing3 testing3 testing3 testing3 testing3 testing3 testing3", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-            }
-
-            #endregion
-            */
-            //AddMessageCommand = new Xamarin.Forms.Command(OnAddChatMessage);
         }
 
         private void PropagateCreated(Serializable created)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using LAMA.Extensions;
 using SQLite;
 namespace LAMA.Singletons
 {
@@ -63,7 +64,7 @@ namespace LAMA.Singletons
                         instance = new LarpEvent();
                         SQLConnectionWrapper.connection.InsertAsync(instance).Wait();
                     }
-                    instance.init();
+                    instance.setChatChannels();
                     return instance;
                 }
             }
@@ -78,19 +79,21 @@ namespace LAMA.Singletons
         /// <summary>
         /// remember start and end day
         /// </summary>
-        public static Pair<DateTimeOffset, DateTimeOffset> Days
+        public static Pair<DateTime, DateTime> Days
         {
             get
             {
 
-                var times =  Helpers.readIntPair(Instance.days);
-                return new Pair<DateTimeOffset, DateTimeOffset>(DateTimeOffset.FromUnixTimeMilliseconds(times.first), DateTimeOffset.FromUnixTimeMilliseconds(times.second));
+                var times =  Helpers.readLongPair(Instance.days);
+                return new Pair<DateTime, DateTime>(DateTimeExtension.UnixTimeStampMillisecondsToDateTime(times.first), DateTimeExtension.UnixTimeStampMillisecondsToDateTime(times.second));
             }
 
             set 
             {
-                Instance.days = value.ToString();
+                var unixPair = new Pair<long, long>(value.first.ToUnixTimeMilliseconds(), value.second.ToUnixTimeMilliseconds());
+                Instance.days = unixPair.ToString();
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 1);
             }
         }
 
@@ -101,6 +104,7 @@ namespace LAMA.Singletons
             {
                 Instance.name = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 2);
             }
         }
 
@@ -124,6 +128,7 @@ namespace LAMA.Singletons
             {
                 Instance.lastClientID = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 4);
             }
         }
 
@@ -134,6 +139,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 5);
             } 
         }
         public static double minY 
@@ -143,6 +149,7 @@ namespace LAMA.Singletons
             { 
                 Instance._minY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 6);
             }
         }
         public static double maxX
@@ -152,6 +159,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxX = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 7);
             }
         }
         public static double maxY
@@ -161,6 +169,7 @@ namespace LAMA.Singletons
             {
                 Instance._maxY = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 8);
             }
         }
         public static double minZoom 
@@ -170,6 +179,7 @@ namespace LAMA.Singletons
             {
                 Instance._minZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 9);
             }
         }
         public static double maxZoom 
@@ -179,25 +189,20 @@ namespace LAMA.Singletons
             {
                 Instance._maxZoom = value;
                 SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
+                SQLEvents.invokeChanged(instance, 10);
             }
         }
 
 
 
     
-        public void init()
+        public void setChatChannels()
         {
-            List<long> temp = Helpers.readLongField(days);
 
+
+            _chatChannels = Helpers.readStringField(chatChannels);
             
-            _chatChannels = new EventList<string>();
 
-            List<string> channels = Helpers.readStringField(chatChannels);
-            _chatChannels = new EventList<string>();
-            for (int i = 0; i < channels.Count; ++i)
-            {
-                _chatChannels.Add(channels[i]);
-            }
             _chatChannels.dataChanged += saveChatChannels;
 
         }
@@ -217,7 +222,7 @@ namespace LAMA.Singletons
                 }
             }
             Instance.chatChannels = output.ToString();
-            SQLEvents.invokeChanged(Instance, 2);
+            SQLEvents.invokeChanged(Instance, 3);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
@@ -228,24 +233,26 @@ namespace LAMA.Singletons
         public string chatChannels { get; set; }
         public long lastClientID { get; set; }
 
-        public double _minX = double.NegativeInfinity;
-        public double _minY = double.NegativeInfinity;
-        public double _maxX = double.PositiveInfinity;
-        public double _maxY = double.PositiveInfinity;
-        public double _minZoom = -1;
-        public double _maxZoom = -1;
+        public double _minX { get; set; } = 0;
+        public double _minY { get; set; } = 0;
+        public double _maxX { get; set; } = 0;
+        public double _maxY { get; set; } = 0;
+        public double _minZoom { get; set; } = -1;
+        public double _maxZoom { get; set; } = -1;
 
 
 
 
 
 
-        static string[] atributes = { "name", "days", "chatChannels", "lastClientID" };
+        static string[] atributes = { "days", "name", "chatChannels", "lastClientID", "minX", "minY", "maxX", "maxY", 
+        "minZoom", "maxZoom"};
         public string[] getAttributeNames()
         { return atributes; }
         public string[] getAttributes()
         {
-            return new string[] { name, days.ToString(), chatChannels.ToString().ToString(), lastClientID.ToString() };
+            return new string[] { days.ToString(), name, chatChannels.ToString(), LastClientID.ToString(), minX.ToString(), minY.ToString()
+            , maxX.ToString(), maxY.ToString(), minZoom.ToString(), maxZoom.ToString()};
         }
         public int numOfAttributes()
         {
@@ -259,33 +266,29 @@ namespace LAMA.Singletons
         public void setAttributeDatabase(int i, string value)
         {
             setAttribute(i, value);
+            SQLEvents.invokeChanged(this, i);
             SQLConnectionWrapper.connection.UpdateAsync(Instance).Wait();
         }
 
         public void setAttribute(int i, string value)
         {
+
             switch(i)
             {
-                case 0: 
-                    name = value;
-                    break;
-                case 1: 
-                    days = value;
-                    break;
-                case 2:
+                case 1: days = value; break;
+                case 2: name = value; break;
+                case 3: 
                     chatChannels = value;
-                    List<string> channels = Helpers.readStringField(chatChannels);
-                    for (int j = 0; j < channels.Count; ++j)
-                    {
-                        if (!ChatChannels.Contains(channels[j]) || j >= ChatChannels.Count)
-                        {
-                            ChatChannels.Add(channels[j]);
-                        }
-                    }
+                    setChatChannels();
                     break;
-                case 3:
-                    lastClientID = Helpers.readLong(value);
-                    break;
+                case 4: lastClientID = Helpers.readLong(value); break;
+                case 5: _minX = Helpers.readDouble(value);break;
+                case 6: _minY = Helpers.readDouble(value);break;
+                case 7: _maxX = Helpers.readDouble(value);break;
+                case 8: _maxY = Helpers.readDouble(value);break;
+                case 9: _minZoom = Helpers.readDouble(value);break;
+                case 10: _maxZoom = Helpers.readDouble(value);break;
+
             }
         }
         public void buildFromStrings(string[] input)
@@ -299,16 +302,22 @@ namespace LAMA.Singletons
         {
             switch(i)
             {
-                case 0: return name;
                 case 1: return days;
-                case 2: return chatChannels;
-                case 3: return lastClientID.ToString();
+                case 2: return name;
+                case 3: return chatChannels;
+                case 4: return lastClientID.ToString();
+                case 5: return _minX.ToString();
+                case 6: return _minY.ToString();
+                case 7: return _maxX.ToString();
+                case 8: return _maxY.ToString();
+                case 9: return _minZoom.ToString();
+                case 10: return _maxZoom.ToString();
             }
-            return null;
+            throw new System.NotImplementedException();
         }
         public int getTypeID()
         {
-            return 1234;
+            return 12345;
         }
 
 

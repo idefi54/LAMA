@@ -23,6 +23,7 @@ namespace LAMA.Views
         private float _baseDistance;
         private float _baseZoom;
 
+        // Default constructor without any arguments needs to be defined, otherwise it crashes on Android
         public ActivityGraphPage()
         {
             // Regular setup
@@ -89,7 +90,7 @@ namespace LAMA.Views
                     else if (button != null)
                     {
                         button.ClickEdit(px, py);
-                        _graph.DraggedButton = button;
+                        _graph.SelectedButton = button;
                     }
                 }
 
@@ -110,11 +111,11 @@ namespace LAMA.Views
                 }
 
                 // Create new activity -> redirect to NewActivtyPage
-                if (_graph.ActivityCreationMode)
+                if (_graph.Mode == ActivityGraph.EditingMode.Create && _graph.EditMode)
                 {
                     var time = _graph.ToLocalTime(px);
                     _touchActions.Remove(args.Id);
-                    _graph.DraggedButton = null;
+                    _graph.SelectedButton = null;
 
                     long hourMilliseconds = 60 * 60 * 1000;
                     var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
@@ -124,8 +125,7 @@ namespace LAMA.Views
                     activity.duration = hourMilliseconds;
                     activity.day = time.Day;
 
-
-                    Navigation.PushAsync(new NewActivityPage((Models.DTO.LarpActivityDTO activityDTO) =>
+                    Navigation.PushAsync(new ActivityEditPage((Models.DTO.LarpActivityDTO activityDTO) =>
                     {
                         //Error - must be long, otherwise two activities might have the same id
                         activityDTO.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
@@ -137,14 +137,14 @@ namespace LAMA.Views
             }
 
             // Moving button
-            if (args.Type == TouchActionType.Moved && _graph.DraggedButton != null)
+            if (args.Type == TouchActionType.Moved && _graph.SelectedButton != null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
             }
 
             // Control graph view
-            if (args.Type == TouchActionType.Moved && _graph.DraggedButton == null)
+            if (args.Type == TouchActionType.Moved && _graph.SelectedButton == null)
             {
                 if (_touchActions.ContainsKey(args.Id))
                     _touchActions[args.Id] = args;
@@ -174,10 +174,10 @@ namespace LAMA.Views
             // Release
             if (args.Type == TouchActionType.Released)
             {
-                if (_graph.DraggedButton != null)
+                if (_graph.SelectedButton != null)
                 {
-                    _graph.DraggedButton.ReleaseEdit(px, py);
-                    _graph.DraggedButton = null;
+                    _graph.SelectedButton.ReleaseEdit(px, py);
+                    _graph.SelectedButton = null;
                 }
 
                 _touchActions.Remove(args.Id);

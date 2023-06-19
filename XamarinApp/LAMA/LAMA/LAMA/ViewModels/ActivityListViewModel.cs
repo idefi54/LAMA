@@ -11,28 +11,54 @@ using Xamarin.Forms;
 
 namespace LAMA.ViewModels
 {
+    /// <summary>
+    /// ViewModel for <see cref="ActivityListPage"/>.
+    /// </summary>
     public class ActivityListViewModel : BaseViewModel
     {
-
-        public Command TestChangeValues { get; }
-        public Command TestRefresh { get; }
+        /// <summary>
+        /// Displays and hides flyout for the sorting settings.
+        /// </summary>
         public Command SortCommand { get; }
+        /// <summary>
+        /// Displays and hides flyout for the filtering settings.
+        /// </summary>
         public Command FilterCommand { get; }
+        /// <summary>
+        /// Creates new NewActivityPage and gives it as a callback CreateNewActivity(LarpActivityDTO) method which saves the created activity to the database.
+        /// </summary>
         public Command AddActivityCommand { get; }
-        public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
-        public TrulyObservableCollection<ActivityListItemViewModel> FilteredLarpActivityListItems { get; }
-
+        /// <summary>
+        /// Navigates to the DisplayActivityPage.
+        /// </summary>
         public Command<object> LarpActivityTapped { get; private set; }
-
+        /// <summary>
+        /// Removes LarpActivity from the database and the list.
+        /// </summary>
         public Command<object> RemoveLarpActivity { get; private set; }
 
-        public Command<object> ShowRemoveButton { get; private set; }
+
+        /// <summary>
+        /// TrulyObservableCollection of ActivityListItemViewModel containing all the existing Larp Activities.
+        /// Currently it is not directly displayed in favor of the FilteredLarpActivityListItems collection.
+        /// It is automatically updated to the current state of the database using PropagateCreated, PropagateChanged
+        /// and PropagateDeleted methods.
+        /// </summary>
+        public TrulyObservableCollection<ActivityListItemViewModel> LarpActivityListItems { get; }
+        /// <summary>
+        /// TrulyObservableCollection of ActivityListItemViewModel containing filtered subset of activities determined
+        /// by ActivityFilter and sorted using ActivitySorter. This list is shown in the ActivityListPage.
+        /// </summary>
+        public TrulyObservableCollection<ActivityListItemViewModel> FilteredLarpActivityListItems { get; }
+
+
 
         ActivityListItemViewModel lastInteracterActivity = null;
 
         INavigation Navigation;
 
-        public bool CanChangeActivity => LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+        private bool _canChangeActivity;
+        public bool CanChangeActivity { get => _canChangeActivity; set => SetProperty(ref _canChangeActivity, value); }
 
         private bool _showSortDropdown;
         public bool ShowSortDropdown { get { return _showSortDropdown; } set { SetProperty(ref _showSortDropdown, value); } }
@@ -40,9 +66,13 @@ namespace LAMA.ViewModels
         private bool _showFilterDropdown;
         public bool ShowFilterDropdown { get { return _showFilterDropdown; } set { SetProperty(ref _showFilterDropdown, value); } }
 
-        //int maxId = 0;
-
+        /// <summary>
+        ///  ActivitySorterViewModel that takes care of sorting of activities. It does so for multiple different parameters at the same time.
+        /// </summary>
         public ActivitySorterViewModel ActivitySorter { get; }
+        /// <summary>
+        /// ActivityFilterViewModel that takes care of filing FilteredLarpActivityListItems with a subset of LarpActivityListItems.
+        /// </summary>
         public ActivityFilterViewModel ActivityFilter { get; }
 
         public ActivityListViewModel(INavigation navigation)
@@ -61,60 +91,14 @@ namespace LAMA.ViewModels
                 FilteredLarpActivityListItems.Add(item);
             }
 
-            //foreach(ActivityListItemViewModel item in LarpActivityListItems)
-            //{
-            //    if(item.LarpActivity.ID > maxId)
-            //        maxId = item.LarpActivity.ID;
-            //}
-
-            #region population of test database
-            //LarpActivity activity = new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation };
-
-            //LarpActivity larpActivity = new LarpActivity(0, "Příprava přepadu", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
-            //    new Time(60 + 30), 0, new Time(60 * 12 + 45), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
-            //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
-
-            //larpActivity = new LarpActivity(1, "Přepad karavanu", "", "", LarpActivity.EventType.normal, new EventList<int>(),
-            //    new Time(60 + 30), 0, new Time(60 * 14 + 15), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
-            //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
-
-            //larpActivity = new LarpActivity(2, "Příprava záchrany", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
-            //    new Time(60 + 30), 0, new Time(60 * 14), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
-            //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
-
-            //larpActivity = new LarpActivity(3, "Záchrana kupce", "", "", LarpActivity.EventType.normal, new EventList<int>(),
-            //    new Time(60 + 30), 0, new Time(60 * 16 + 10), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
-            //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
-
-            //larpActivity = new LarpActivity(4, "Úklid mrtvol hráčů", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
-            //    new Time(60 + 30), 0, new Time(60 * 16 + 15), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //DatabaseHolder<LarpActivity>.Instance.rememberedList.add(larpActivity);
-            //LarpActivityListItems.Add(new ActivityListItemViewModel(larpActivity));
-
-            //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava přepadu", start = new Time(60 * 12 + 45), eventType = LarpActivity.EventType.preparation });
-            //LarpActivityListItems.Add(new LarpActivity() { name = "Přepad karavanu", start = new Time(60 * 14 + 15), eventType = LarpActivity.EventType.normal });
-            //LarpActivityListItems.Add(new LarpActivity() { name = "Příprava záchrany", start = new Time(60 * 14), eventType = LarpActivity.EventType.preparation });
-            //LarpActivityListItems.Add(new LarpActivity() { name = "Záchrana kupce", start = new Time(60 * 16 + 10), eventType = LarpActivity.EventType.normal });
-            //LarpActivityListItems.Add(new LarpActivity() { name = "Úklid mrtvol hráčů", start = new Time(60 * 16 + 15), eventType = LarpActivity.EventType.preparation });
-
-            #endregion
-
             AddActivityCommand = new Command(OnAddActivityListItem);
             LarpActivityTapped = new Command<object>(DisplayActivity);
             RemoveLarpActivity = new Command<object>(RemoveActivity);
-            ShowRemoveButton = new Command<object>(DisplayRemoveButton);
-
-            TestChangeValues = new Command(TestChangeLastActivityValues);
-            TestRefresh = new Command(RefreshCollection);
 
             SortCommand = new Command(ToggleSort);
             FilterCommand = new Command(ToggleFilter);
 
-
+            CanChangeActivity = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
             SQLEvents.created += PropagateCreated;
             SQLEvents.dataChanged += PropagateChanged;
             SQLEvents.dataDeleted += PropagateDeleted;
@@ -141,6 +125,9 @@ namespace LAMA.ViewModels
 
         private void PropagateChanged(Serializable changed, int changedAttributeIndex)
         {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID)
+                CanChangeActivity = LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeActivity);
+
             if (changed == null || changed.GetType() != typeof(LarpActivity))
                 return;
 
@@ -190,19 +177,6 @@ namespace LAMA.ViewModels
             ShowSortDropdown = false;
 		}
 
-        private void TestChangeLastActivityValues(object obj)
-		{
-            if(LarpActivityListItems.Count > 0)
-                LarpActivityListItems[0].SetName(LarpActivityListItems[0].LarpActivity.name + "x");
-                //LarpActivityListItems[0].LarpActivity.name = LarpActivityListItems[0].LarpActivity.name + "x";
-        }
-
-		private void RefreshCollection(object obj)
-		{
-            //LarpActivityListItems.Refresh();
-            
-        }
-
 		private void UpdateLastInteracter(ActivityListItemViewModel alivm)
         {
             if(lastInteracterActivity != null)
@@ -226,7 +200,7 @@ namespace LAMA.ViewModels
 
             LarpActivity activity = activityViewModel.LarpActivity;
 
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            await Navigation.PushAsync(new ActivityDetailsPage(activity));
         }
 
         private async void RemoveActivity(object obj)
@@ -260,44 +234,13 @@ namespace LAMA.ViewModels
             }
         }
 
-        private async void DisplayRemoveButton(object obj)
-        {
-
-            if (obj.GetType() != typeof(ActivityListItemViewModel))
-            {
-                await App.Current.MainPage.DisplayAlert("Message", "Object is of wrong type.\nExpected: " + typeof(ActivityListItemViewModel).Name
-                    + "\nActual: " + obj.GetType().Name, "OK");
-                return;
-            }
-
-            ActivityListItemViewModel activityViewModel = (ActivityListItemViewModel)obj;
-            UpdateLastInteracter(activityViewModel);
-
-            await App.Current.MainPage.DisplayAlert("Message", activityViewModel.ShowDeleteButton.ToString(), "OK");
-            activityViewModel.ShowDeleteButton = true;
-            await App.Current.MainPage.DisplayAlert("Message", activityViewModel.ShowDeleteButton.ToString(), "OK");
-            
-        }
-
         private async void OnAddActivityListItem(object obj)
         {
-            //await Shell.Current.GoToAsync(nameof(NewActivityPage));
-
-            await Navigation.PushAsync(new NewActivityPage(CreateNewActivity));
-            
-            //LarpActivity larpActivity = new LarpActivity(0, "New Activity", "", "", LarpActivity.EventType.preparation, new EventList<int>(),
-            //    new Time(0), 0, new Time(0), new Pair<double, double>(0, 0), LarpActivity.Status.launched, new EventList<Pair<int, int>>(), new EventList<Pair<string, int>>(), new EventList<Pair<int, string>>());
-            //LarpActivityListItems.Add(larpActivity);
+            await Navigation.PushAsync(new ActivityEditPage(CreateNewActivity));
         }
 
         private void CreateNewActivity(LarpActivityDTO larpActivity)
         {
-            //larpActivity.ID = ++maxId;
-
-            //LarpActivity activity = new LarpActivity(++maxId, larpActivity.name, larpActivity.description, larpActivity.preparationNeeded, larpActivity.eventType,
-            //    larpActivity.prerequisiteIDs, larpActivity.duration, larpActivity.day, larpActivity.start, larpActivity.place, larpActivity.status,
-            //    larpActivity.requiredItems, larpActivity.roles, larpActivity.registrationByRole);
-
             larpActivity.ID = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList.nextID();
             LarpActivity activity = larpActivity.CreateLarpActivity();
 

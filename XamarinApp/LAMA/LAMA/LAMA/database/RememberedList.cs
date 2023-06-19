@@ -5,12 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using LAMA.Database;
 
 namespace LAMA
 {
 
-    
-    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : Database.StorageInterface, new()
+    /// <summary>
+    /// API between the database and the rest of the application.
+    /// </summary>
+    /// <typeparam name="T">Stored <see cref="Serializable"/> item.</typeparam>
+    /// <typeparam name="Storage"><see cref="StorageInterface"/> helper class to store in SQLite database.</typeparam>
+    public class RememberedList<T, Storage> where T : Serializable, new() where Storage : StorageInterface, new()
     {
         long maxID = 0;
         static long IDOffset = (long)Math.Pow(2, 31);
@@ -88,6 +93,10 @@ namespace LAMA
 
         public int Count { get { return cache.Count; } }
 
+        /// <summary>
+        /// Removes data at specified index.
+        /// </summary>
+        /// <param name="index"></param>
         public void removeAt(int index)
         {
             if (index < 0 || index >= cache.Count)
@@ -103,7 +112,6 @@ namespace LAMA
             who.removed();
             sql.removeAt(who);
         }
-
 
         public void removeByID(long ID)
         {
@@ -122,9 +130,10 @@ namespace LAMA
             return cache[IDToIndex[id]];
         }
 
-
-        
-
+        /// <summary>
+        /// Incremental unique ID based on <see cref="LocalStorage.clientID"/>.
+        /// </summary>
+        /// <returns>New ID for created <see cref="T"/> item.</returns>
         public long nextID()
         {
             ++maxID;

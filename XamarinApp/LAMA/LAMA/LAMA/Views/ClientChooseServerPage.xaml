@@ -8,8 +8,8 @@
              mc:Ignorable="d"
              x:Class="LAMA.Views.ClientChooseServerPage"
 			 Shell.NavBarIsVisible="False"
-			 Shell.FlyoutBehavior="Disabled"
-			 Title="Přihlásit se">
+			 Shell.FlyoutBehavior="Disabled">
+	<!--Title="Přihlásit se"-->
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="ContentPage">
@@ -20,18 +20,12 @@
     <ContentPage.Content>
         <StackLayout  Spacing="0">
             <ScrollView>
-                <StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                    <Label Text="{Binding DatabaseNameDisplay}"/>
-                    <Label Text="Debug: database name"/>
-                    <Entry Placeholder="example: database2.db" Text="{Binding DatabaseName}"/>
-                    <Button Text="Set database name" HorizontalOptions="Center" Command="{Binding DatabaseNameCommand}" IsEnabled="{Binding DatabaseEnabled}"/>
-
-                    <Label Text="Jméno serveru:"/>
+				<StackLayout Padding="40" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+					<Label Text="Jméno serveru:"/>
                     <Entry Placeholder="Jméno serveru" Text="{Binding ClientServerName}"/>
                     <Label Text="Heslo:"/>
                     <Entry Placeholder="Heslo" IsPassword="True" Text="{Binding ClientPassword}"/>
-                    <Button Text="Připojit se k serveru" HorizontalOptions="Center" Command="{Binding LoginCommand}" IsEnabled="{Binding LoginEnabled}"/>
-                    <Button Text="Offline test" HorizontalOptions="Center" Command="{Binding FakeLoginCommand}" IsEnabled="{Binding FakeLoginEnabled}"/>
+                    <Button Text="Připojit se k serveru" Padding="20,10,20,10" HorizontalOptions="End" Command="{Binding LoginCommand}" IsEnabled="{Binding LoginEnabled}"/>
                     <Label Text="{Binding ErrorLabel, Mode=TwoWay}"/>
                     <ActivityIndicator IsRunning="{Binding TryingToConnect}"/>
                 </StackLayout>

@@ -9,6 +9,7 @@ using System;
 using LAMA.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.Views
 {
@@ -91,20 +92,6 @@ namespace LAMA.Views
             base.OnAppearing();
             disappearing = false;
 
-            bool canEdit = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap);
-            EditLabel.IsVisible = canEdit;
-            EditSwitch.IsVisible = canEdit;
-            SetGlobalBoundsButton.IsVisible = canEdit;
-
-            // Add activity indicator
-            var activityIndicator = new ActivityIndicator
-            {
-                VerticalOptions = LayoutOptions.CenterAndExpand,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                IsRunning = true
-            };
-            MapLayout.Children.Add(activityIndicator);
-
             // Handle permissions and location
             if (Device.RuntimePlatform != Device.WPF)
             {
@@ -119,19 +106,10 @@ namespace LAMA.Views
                     "Prosíme, zapněte si lokaci nebo zadejte domovskou lokaci.", "OK");
             }
 
-            // Handle the fucking map
-            await Task.Delay(500);
+            MapHandler mapHandler = MapHandler.Instance;
+            (_mapView, _) = await mapHandler.CreateAndAddMapView(MapLayout, LayoutOptions.FillAndExpand, LayoutOptions.FillAndExpand, 300, null);
+            mapHandler.MapViewSetup(_mapView, showSelection: false, relocateSelection: false);
 
-            // Init Map View
-            _mapView = new MapView
-            {
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                BackgroundColor = Color.Gray,
-                //HeightRequest = Application.Current.MainPage.Height
-            };
-
-            MapHandler.Instance.MapViewSetup(_mapView);
             MapHandler.Instance.OnPinClick += OnPinClicked;
             await MapHandler.Instance.UpdateLocation(_mapView, locationAvailable);
             MapHandler.Instance.SetLocationVisible(_mapView, MapHandler.Instance.CurrentLocation != null || locationAvailable);
@@ -144,9 +122,6 @@ namespace LAMA.Views
                 SetHomeLocationButton.Text = "Zadejte domovskou lokaci";
             }
             SetHomeLocationButton.Clicked += SetHomeClicked;
-
-            MapLayout.Children.Remove(activityIndicator);
-            MapLayout.Children.Add(_mapView);
         }
 
         protected override void OnDisappearing()
@@ -177,7 +152,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
                 LarpActivity activity = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new DisplayActivityPage(activity));
+                await Navigation.PushAsync(new ActivityDetailsPage(activity));
             }
 
             if (e.Pin.Label == "POI")
@@ -185,7 +160,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<PointOfInterest, PointOfInterestStorage>.Instance.rememberedList;
                 PointOfInterest pointOfInterest = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new POIDetailsView(pointOfInterest));
+                await Navigation.PushAsync(new POIDetailsPage(pointOfInterest));
             }
 
             if (e.Pin.Label == "CP")
@@ -193,7 +168,7 @@ namespace LAMA.Views
                 var rememberedList = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
                 CP cp = rememberedList.getByID(id);
                 disappearing = true;
-                await Navigation.PushAsync(new CPDetailsView(cp));
+                await Navigation.PushAsync(new CPDetailsPage(cp));
             }
 
             e.Handled = true;

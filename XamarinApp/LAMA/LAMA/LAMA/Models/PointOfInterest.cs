@@ -20,7 +20,7 @@ namespace LAMA.Models
         public int Icon { get { return icon; } set { icon = value; updateValue(2, value.ToString()); } }
         string name;
         public string Name { get { return name; } set { name = value; updateValue(3, value); } }
-        public string description;
+        string description;
         public string Description { get { return description; } set { description = value; updateValue(4, value); } }
 
         RememberedList<PointOfInterest, PointOfInterestStorage> list = null;

@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LAMA.Views.CPDetailsPage"
+             xmlns:colors="clr-namespace:LAMA.Themes"
+             xmlns:common="clr-namespace:LAMA.Views"
+             xmlns:forms="clr-namespace:LAMA.Forms">
+
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding EditCommand}" IsVisible="{Binding CanEdit}"/>
+        <forms:BindableToolbarItem Text="Archivovat" Command="{Binding Archive}" IsVisible="{Binding CanArchiveCP}" />
+        <forms:BindableToolbarItem Text="Odarchivovat" Command="{Binding Unarchive}" IsVisible="{Binding CanUnarchiveCP}" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <ScrollView
+                x:Name="ScrollView"
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+				AbsoluteLayout.LayoutFlags="All">
+                <StackLayout>
+                    <StackLayout x:Name="DetailsLayout" Padding="15" >
+                        <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                        <Label Text="{Binding Nick}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                        <Label Text="Role"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text="{Binding Roles}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                        <Label Text="Telefon"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text="{Binding Phone}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                        <Label Text="Facebook"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text= "{Binding Facebook}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                        <Label Text="Discord"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text= "{Binding Discord}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+                        <Label Text="Poznámky"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text="{Binding Notes}" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+                        <Label Text="Pravomoce" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                        <Label Text="{Binding Permissions}" 
+                       HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+
+
+
+                    </StackLayout>
+                    <StackLayout x:Name="MapLayout" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                </StackLayout>
+            </ScrollView>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

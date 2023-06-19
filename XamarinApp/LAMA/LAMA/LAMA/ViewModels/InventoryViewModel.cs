@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace LAMA.ViewModels
@@ -29,9 +30,11 @@ namespace LAMA.ViewModels
         public Command<object> ReturnItem { get; private set; }
         public Command<object> OpenDetailCommand { get; private set; }
 
-        public bool CanChangeItems { get { return LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);} set { } }
+        private bool _canChangeItems;
+        public bool CanChangeItems { get => _canChangeItems; set => SetProperty(ref _canChangeItems, value); }
 
         INavigation Navigation;
+        IMessageService messageService;
 
         long maxId = 0;
 
@@ -44,7 +47,9 @@ namespace LAMA.ViewModels
         public InventoryViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            messageService = DependencyService.Get<Services.IMessageService>();
             ItemList = new TrulyObservableCollection<InventoryItemViewModel>();
+            CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
 
             var inventoryItems = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList;
             for (int i = 0; i < inventoryItems.Count; ++i) 
@@ -75,11 +80,18 @@ namespace LAMA.ViewModels
                 return;
             }
             var viewModel = (InventoryItemViewModel)obj;
-            await Navigation.PushAsync(new InventoryItemDetail(viewModel.Item));
+
+            if (!CheckExistence(viewModel.Item.ID).Result)
+                return;
+
+            await Navigation.PushAsync(new InventoryItemDetailPage(viewModel.Item));
         }
         private void OnChange(Serializable changed, int index)
         {
-            if(changed.GetType() != typeof(InventoryItem))
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && index == 9)
+                CanChangeItems = LocalStorage.cp.permissions.Contains(CP.PermissionType.ManageInventory);
+
+            if (changed.GetType() != typeof(InventoryItem))
             {
                 return;
             }            
@@ -121,7 +133,10 @@ namespace LAMA.ViewModels
                 return;
             }
             var itemViewModel = (InventoryItemViewModel)obj;
-            
+
+            if (!CheckExistence(itemViewModel.Item.ID).Result)
+                return;
+
             itemViewModel.Item.Borrow(1);
         }
         private async void OnReturnItem(object obj)
@@ -134,11 +149,29 @@ namespace LAMA.ViewModels
             }
             var itemViewModel = (InventoryItemViewModel)obj;
 
+            if (!CheckExistence(itemViewModel.Item.ID).Result)
+                return;
+
             itemViewModel.Item.Return(1);
         }
         private async void OnCreateItem()
         {
-            await Navigation.PushAsync(new CreateInventoryItemView());
+            await Navigation.PushAsync(new CreateInventoryItemPage());
+        }
+
+        private async Task<bool> CheckExistence(long itemID)
+        {
+            bool itemDeleted = DatabaseHolder<InventoryItem, InventoryItemStorage>.Instance.rememberedList.getByID(itemID) == default(InventoryItem);
+
+            if (itemDeleted)
+            {
+                await messageService.ShowAlertAsync(
+                        "Vypadá to, že se snažíte pracovat s předmětem, který mezitím byl smazán.",
+                        "Předmět neexistuje");
+                IsBusy = false;
+                return false;
+            }
+            return true;
         }
 
 

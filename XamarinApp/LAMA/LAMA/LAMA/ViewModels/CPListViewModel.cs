@@ -13,6 +13,8 @@ namespace LAMA.ViewModels
         INavigation navigation;
 
 
+        public bool ShowArchived { get { return CanAddCP; } }
+
         public Command AddCPCommand { get; private set; }
 
         TrulyObservableCollection<CPViewModel> _CPList = new TrulyObservableCollection<CPViewModel>();
@@ -20,7 +22,9 @@ namespace LAMA.ViewModels
 
         Dictionary<long, CPViewModel> IDToViewModel = new Dictionary<long, CPViewModel>();
         public Command<object> OpenDetailCommand { get; private set; }
-        public bool CanAddCP { get {return LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP); } set { } }
+
+        private bool _canAddCP;
+        public bool CanAddCP { get => _canAddCP; set => SetProperty(ref _canAddCP, value); }
 
         string _filterText = string.Empty;
         public string FilterText { get { return _filterText; } set { SetProperty(ref _filterText, value); OnFilter(); } }
@@ -32,6 +36,9 @@ namespace LAMA.ViewModels
         bool _showDropdown = false;
         public bool ShowDropdown { get { return _showDropdown; } set { SetProperty(ref _showDropdown, value); } }
 
+        TrulyObservableCollection<CPViewModel> _ArchivedCPList = new TrulyObservableCollection<CPViewModel>();
+        public TrulyObservableCollection<CPViewModel> ArchivedCPList { get { return _ArchivedCPList; } }
+
         public CPListViewModel(INavigation navigation)
         {
             this.navigation = navigation;
@@ -41,19 +48,29 @@ namespace LAMA.ViewModels
             OrderByName = new Command(OnOrderByName);
             OrderByNick = new Command(OnOrderByNick);
             ShowOrderAndFilter = new Command(OnShowOrderAndFilter);
+            SQLEvents.dataChanged += PermissionsChanged;
             LoadCPs();
+        }
+
+        private void PermissionsChanged(Serializable changed, int changedAttributeIndex)
+        {
+            if (changed is CP cp && cp.ID == LocalStorage.cpID && changedAttributeIndex == 9)
+                LocalStorage.cp.permissions.Contains(CP.PermissionType.ChangeCP);
         }
 
         void LoadCPs()
         {
             var list = DatabaseHolder<CP, CPStorage>.Instance.rememberedList;
             CPList.Clear();
+            ArchivedCPList.Clear();
             for (int i = 0; i < list.Count; ++i) 
             { 
-                var newOne = new CPViewModel(list[i]);
-                CPList.Add(newOne);
+                var newOne = new CPViewModel(list[i], this);
+                if(!list[i].IsArchived)
+                    CPList.Add(newOne);
+                else 
+                    ArchivedCPList.Add(newOne);
                 IDToViewModel.Add(list[i].ID, newOne);
-            
             }
             SQLEvents.created += OnCreated;
             SQLEvents.dataDeleted += OnDeleted;
@@ -67,11 +84,16 @@ namespace LAMA.ViewModels
             }
             var item = (CP)made;
             OnCancelFilter();
-            CPList.Add(new CPViewModel(item));
-            IDToViewModel.Add(item.ID, CPList[CPList.Count - 1]);
+            var model = new CPViewModel(item, this);
+            if (!item.IsArchived)
+                CPList.Add(model);
+            else
+                ArchivedCPList.Add(model);
+            IDToViewModel.Add(item.ID, model);
             OnFilter();
 
         }
+
         private void OnDeleted(Serializable deleted)
         {
             if (deleted.GetType() != typeof(CP))
@@ -80,13 +102,16 @@ namespace LAMA.ViewModels
             }
             var item = (CP)deleted;
             OnCancelFilter();
-            CPList.Remove(IDToViewModel[item.ID]);
+            if(!item.IsArchived)
+                CPList.Remove(IDToViewModel[item.ID]);
+            else
+                ArchivedCPList.Remove(IDToViewModel[item.ID]);
             IDToViewModel.Remove(item.ID);
             OnFilter();
         }
         async void OnMakeCP()
         {
-            await navigation.PushAsync(new CreateCPView());
+            await navigation.PushAsync(new CreateCPPage());
         }
         async void OnOpenDetail(object obj)
         {
@@ -96,7 +121,7 @@ namespace LAMA.ViewModels
             }
             var cpView = (CPViewModel)obj;
             var cp = cpView.cp;
-            await navigation.PushAsync(new CPDetailsView(cp));
+            await navigation.PushAsync(new CPDetailsPage(cp));
         }
 
 
@@ -187,5 +212,22 @@ namespace LAMA.ViewModels
             }
         }
 
+
+        public void ChangeList(CP whose)
+        {
+            //newly archived
+            if(whose.IsArchived && CPList.Contains( IDToViewModel[whose.ID] ))
+            {
+                CPList.Remove( IDToViewModel[whose.ID] );
+                ArchivedCPList.Add( IDToViewModel[whose.ID] );
+            }
+            //newly unarchived
+            else if (!whose.IsArchived && ArchivedCPList.Contains(IDToViewModel[whose.ID]))
+            {
+                ArchivedCPList.Remove(IDToViewModel[whose.ID]);
+                CPList.Add(IDToViewModel[whose.ID]);
+            }
+
+        }
     }
 }

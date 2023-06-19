@@ -5,15 +5,24 @@ using System.Text;
 
 namespace LAMA.ViewModels
 {
+	/// <summary>
+	/// ViewModel for inventory item as used in activity creation/detail
+	/// </summary>
     public class ItemItemViewModel : BaseViewModel
 	{
 
 		public long ItemID { get; private set; }
 
 		private string _name;
-		public string Name => _name.ToString();//{ get { return _name.ToString(); } set { SetProperty(ref _name, value); } }
+		/// <summary>
+		/// Name of the InventoryItem.
+		/// </summary>
+		public string Name => _name.ToString();
 
 		private int _count;
+		/// <summary>
+		/// Number of the needed amount.
+		/// </summary>
 		public string Count
 		{
 			get { return _count.ToString(); }
@@ -35,6 +44,9 @@ namespace LAMA.ViewModels
 		}
 
 		private int _maxCount;
+		/// <summary>
+		/// The maximum number of this item in the inventory.
+		/// </summary>
 		public string MaxCount => "/" + _maxCount.ToString();
 
 		public ItemItemViewModel(long id, string name, int max, int current = 1)
@@ -50,6 +62,10 @@ namespace LAMA.ViewModels
 
         }
 
+		/// <summary>
+		/// Returns <see cref="Pair"/> of <see cref="long"/> and <see cref="int"/> of the item for saving purposes.
+		/// </summary>
+		/// <returns></returns>
 		public Pair<long, int> ToPair()
 		{
 			return new Pair<long, int>(ItemID, _count);

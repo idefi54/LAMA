@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using LAMA.Services;
+using LAMA.Singletons;
 
 namespace LAMA.ViewModels
 {
@@ -14,6 +16,8 @@ namespace LAMA.ViewModels
     {
         private ClientCommunicator communicator;
         public Xamarin.Forms.Command LoginCommand { get; }
+
+        public Xamarin.Forms.Command Back { get; }
 
         private bool _loginEnabled;
         public bool LoginEnabled
@@ -41,9 +45,35 @@ namespace LAMA.ViewModels
         {
             this.communicator = communicator;
             LoginCommand = new Xamarin.Forms.Command(OnLoginClicked);
+            Back = new Xamarin.Forms.Command(OnGoBack);
             CreatingCP = false;
             LoginEnabled = true;
             isNew = newClient;
+        }
+
+        private async void OnGoBack(object obj)
+        {
+            bool result = await Application.Current.MainPage.DisplayAlert("Návrat", "Opravdu se chcete vrátit na výběr serveru (bude nutné opětovné zadání hesla)?", "Ano", "Ne");
+            if (result)
+            {
+                string serverName = CommunicationInfo.Instance.ServerName;
+                CommunicationInfo.Instance.Communicator = null;
+                CommunicationInfo.Instance.ServerName = "";
+                if (Device.RuntimePlatform == Device.WPF)
+                {
+
+                    App.Current.MainPage = new NavigationPage(new ChooseClientServerPage())
+                    {
+                        BarBackground = new SolidColorBrush(ColorPalette.PrimaryColor),
+                        BarBackgroundColor = ColorPalette.PrimaryColor
+                    };
+                    await App.Current.MainPage.Navigation.PushAsync(new ClientChooseServerPage(serverName));
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync($"//ClientChooseServerPage?serverName={serverName}");
+                }
+            }
         }
 
 
@@ -55,18 +85,22 @@ namespace LAMA.ViewModels
             LoginEnabled = false;
             try
             {
+                if (clientName == null || clientName.Trim() == "") throw new EntryMissingException("Přezdívka");
+                if (password == null || password.Trim() == "") throw new EntryMissingException("Heslo");
                 if (password.Length < 5)
                 {
                     throw new PasswordTooShortException();
                 }
-                //client Name - přezdívka klienta
-                //password - heslo klienta
+
+                if (clientName.Length > 100) throw new EntryTooLongException(100, "Přezdívka");
+                if (password.Length > 100) throw new EntryTooLongException(100, "Heslo");
+
                 communicator.LoginAsCP(clientName, password, isNew);
                 float timer = 0.0f;
                 while (true)
                 {
                     await Task.Delay(500);
-                    if (communicator.connected)
+                    if (communicator.loggedIn)
                     {
                         break;
                     }
@@ -77,12 +111,30 @@ namespace LAMA.ViewModels
                     else
                     {
                         timer += 0.5f;
-                        if (timer > 5.0f)
+                        if (timer > 10.0f)
                         {
-                            throw new TimeoutException("Nepodařilo se nastavit CP jméno. Zkuste se přihlásit znovu.");
+                            throw new TimeoutException("Nepodařilo se vytvořit CP klienta. Zkuste se přihlásit znovu.");
                         }
                     }
                 }
+            }
+            catch (EntryMissingException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Chybějící Údaj", $"Pole \"{e.Message}\" nebylo vyplněno!", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+                isNew = false;
+                return;
+            }
+            catch (EntryTooLongException e)
+            {
+                await App.Current.MainPage.DisplayAlert("Dlouhý Vstup", $"Příliš dlouhý vstup - pole \"{e.fieldName}\" může mít maximální délku {e.length} znaků!", "OK");
+                CreatingCP = false;
+                LoginEnabled = true;
+                communicator.clientRefusedMessage = "";
+                isNew = false;
+                return;
             }
             catch (PasswordTooShortException)
             {
@@ -97,11 +149,11 @@ namespace LAMA.ViewModels
             {
                 bool choseToCreateNewCP = false;
                 if (isNew) {
-                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s tímto jménem už existuje, zvolte prosím jiné jméno", "OK");
+                    await App.Current.MainPage.DisplayAlert("Přihlášení Se Nezdařilo", "CP s touto přezdívkou už existuje, zvolte prosím jiné jméno", "OK");
                 } 
                 else if (communicator.clientRefusedMessage == "Client")
                 {
-                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Existující CP", "CP s tímto jménem neexistuje, chcete ho vytvořit", "Ano", "Ne");
+                    choseToCreateNewCP = await App.Current.MainPage.DisplayAlert("Neexistující CP", "CP s touto přezdívkou neexistuje, chcete ho vytvořit?", "Ano", "Ne");
                 }
                 else
                 {
@@ -151,7 +203,9 @@ namespace LAMA.ViewModels
             }
             else
             {
-                await Shell.Current.GoToAsync($"//ChatChannels");
+                await Shell.Current.GoToAsync($"//MapPage");
+                var startServiceMessage = new StartServiceMessage();
+                MessagingCenter.Send(startServiceMessage, "ServiceStarted");
             }
         }
     }

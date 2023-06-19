@@ -1,0 +1,2406 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/kobli/Desktop/programming/LAMA/XamarinApp/LAMA/LAMA/LAMA",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ActivityGraphLib.ActivityButton.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ActivityGraphLib.ActivityButton.html",
+          "hash": "lK7F85FXwxi7gpePMtyEFQ83tLmnOQZzcrrjnKl0MUo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ActivityGraphLib.ActivityGraph.EditingMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ActivityGraphLib.ActivityGraph.EditingMode.html",
+          "hash": "BKgJWRxJqbDWv/RRwXZwCFtRfaHH2utoIFrNjTkwGNs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ActivityGraphLib.ActivityGraph.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ActivityGraphLib.ActivityGraph.html",
+          "hash": "yn8gcQhdVCUeLGmn4ghgNxWiIhi4fxLyZlVUFc+5NM4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ActivityGraphLib.IActivityGraphGUI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ActivityGraphLib.IActivityGraphGUI.html",
+          "hash": "QhOF/bM6OYMvKWtQ2nSEFxg0/OpRVp5u2gxYZmQ9o88="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ActivityGraphLib.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ActivityGraphLib.html",
+          "hash": "SVTy60pJnqap6eUom5ykghd5dqX/oFoInGupZEth9Og="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.App.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.App.html",
+          "hash": "IaGegRfUukqedCdfVueLvkw/T1ayoSpnOOGDwLEDaMU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.AppShell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.AppShell.html",
+          "hash": "PzzOTDFjKff+CqMiZZ19vcXxzFk5+a7+F5bSzKGsXPc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ChatLogic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ChatLogic.html",
+          "hash": "38hxOUGuWz3RcJGR/Tzhl8Y+XR6dyq/AFEAfHlr5GDw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.CantConnectToCentralServerException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.CantConnectToCentralServerException.html",
+          "hash": "V4UjEbbhfciW2ybyuO0dPv7yqL8wbMlQkXAAWM7p73w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.CantConnectToDatabaseException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.CantConnectToDatabaseException.html",
+          "hash": "fBkROfvD/EjfZ3oK/gqZBalnEdHPQsHZ0/c2PvSQG/4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ClientCommunicator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ClientCommunicator.html",
+          "hash": "jusDcCIObt9CSlybN4XgpU0qeJbYMcJUia0Kbkv/JHM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ClientRefusedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ClientRefusedException.html",
+          "hash": "/PlT9g7NgGeQeeofUaBOfiPpRE04vnrv8AmSSN5UQpw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.Command.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.Command.html",
+          "hash": "b/eH3Xdbyzg2k4hVAfAmS0WEoVTlpaIhOfFKAr4UTdY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.CommandStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.CommandStorage.html",
+          "hash": "NJz3mpv+Dua37DXazgTofuwVUn1O6D9ulQcJXj5TGws="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.Communicator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.Communicator.html",
+          "hash": "qpU26lBXh4677FwUcfwS0KjOdW2caP5tIEQ8i5ybc2w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.Compression.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.Compression.html",
+          "hash": "9Ezuhs2T9PIlan2xsk78m+SZpdpTk9Hc0j/hVYUMVyI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.DebugLogger.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.DebugLogger.html",
+          "hash": "hieL68ZhNLv2Od/iu8gP4XZEFWq1uDdZ0eHaeRuKDmg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.EntryMissingException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.EntryMissingException.html",
+          "hash": "jeb62YaQeKy9GdfgkERWmh9dsKGspYKXJa2rLCTRSgA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.EntryTooLongException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.EntryTooLongException.html",
+          "hash": "x5GVeKmlUufGjZfNS+SzPbYBSBG8g7eqsYZTpLdUByc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.HuffmanNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.HuffmanNode.html",
+          "hash": "QFO7MUSZtBDfoI7Kf3Eeq5ytLTkcoPi9LMFnIqXw6bE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ModelChangesManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ModelChangesManager.html",
+          "hash": "Uy0r/CaDd6xpJCJ8tb+mUYpgjRFVHCAVeQsqdpvqIvA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ModelPropertyChangeInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ModelPropertyChangeInfo.html",
+          "hash": "Lx8z6Q4aYnZ0S/RZDokqdNG+FtEahqKIsyPbHWZal5s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ModelPropertyChangeInfoStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ModelPropertyChangeInfoStorage.html",
+          "hash": "3YI0LMmmfJxq6fGeuACY+63a7kMVudL6L+smi853WSg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.NotAnIPAddressException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.NotAnIPAddressException.html",
+          "hash": "RiJ9wstpB8PFLU5nTe7aRqQba4Iy1A8WPyFgd5qQPtA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.PasswordTooShortException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.PasswordTooShortException.html",
+          "hash": "c6Oe3rGzXEKind3CDHhiR6skSWM37tQ6qppLGwDkwlk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ServerCommunicator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ServerCommunicator.html",
+          "hash": "rRsFU8odhB0CDM8i6XRIMM3958+Lv3wgawp0D+g4hZA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.ServerConnectionRefusedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.ServerConnectionRefusedException.html",
+          "hash": "10Sork2TuHa19OGRBjb5DGEh4yIDDm7P8Bv+CT0yYVA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.SpecialCharacters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.SpecialCharacters.html",
+          "hash": "jejnA82PJEApj8KGtnv6DmcWdcSBhoqMk64axOYgCRo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.WrongCredentialsException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.WrongCredentialsException.html",
+          "hash": "ydkgSTKOYgT8CMFqW6EbNUv6TkXVg6uQmXwttFde4aU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.WrongNameFormatException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.WrongNameFormatException.html",
+          "hash": "6Mte9/4GZSjrrBKYeU88Qf1Pds1rSRPp4QA8+4w574w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.WrongNgrokAddressFormatException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.WrongNgrokAddressFormatException.html",
+          "hash": "lav0YqCHYI8ZLWusVQLVy4FbKzOdect7dVeic2lXzGo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.WrongPortException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.WrongPortException.html",
+          "hash": "scNprpeEyaiKmHtAH7y6dcOdcOO85uxWtjCej0wKMxQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Communicator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Communicator.html",
+          "hash": "0VZgr43fWKZVpWisM2q9WI6yPyfvaSyVepd8HfL9DzI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Database.DictionaryStorageInterface.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Database.DictionaryStorageInterface.html",
+          "hash": "bLW5SvS0Fc9wDtudYelqKJEROeus3N2Bx8t5rABWxjs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Database.StorageInterface.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Database.StorageInterface.html",
+          "hash": "p33Qa9T5M5+5iuRgoigwazJqqDtFEFZ8lyVXFXJR3OU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Database.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Database.html",
+          "hash": "aXTUSWJM6nhzdo1Ik3q9Wx2EQA+RkQ9XVsmj2NSMAuY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.EventList-1.DataChanged.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.EventList-1.DataChanged.html",
+          "hash": "ctZf9ZhECcpCEpHg7z1xR9AXztUBmGbljcR9nZIQCmE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.EventList-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.EventList-1.html",
+          "hash": "qHklvv1p5k/jd9a+JuSGTJv5zYOkEtUT7hnLceSqzQg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Extensions.DateTimeExtension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Extensions.DateTimeExtension.html",
+          "hash": "QOugLOfZGev0LDARBDS7aP5Uvxm4CwQ3tzVYxtnhG4U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Extensions.EnumExtension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Extensions.EnumExtension.html",
+          "hash": "A93biom4ZbFuWpaJadQMbciQQMuAZdJYYnuAA6J3pak="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Extensions.ImageResourceExtension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Extensions.ImageResourceExtension.html",
+          "hash": "AYB//f9XPhseBjAH6PLIsSfnjXcZfaUYJhutaz60Svk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Extensions.LarpActivityExtension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Extensions.LarpActivityExtension.html",
+          "hash": "livrGqg34WPdhO+C2+fLEgBnDiPVt+5ZU4m3mLYuNg4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Extensions.html",
+          "hash": "ZB87mbfCQ4tXxcn4EWcWJo8vQ5T9mTXMKb15lRW91BY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Forms.BindableToolbarItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Forms.BindableToolbarItem.html",
+          "hash": "IpzPIxlpr9XqOMLbDHQmPWOJBHkF4b+M+jYx5dsR1CY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Forms.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Forms.html",
+          "hash": "4S2T0Kt1U8ocpq/KMi3UOZkhLCIUxP1mvnziGAIFtY0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.InputChecking.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.InputChecking.html",
+          "hash": "5lW5xK1Jf7nHPjYHa7u/BiehxhkXrtol4XJkzYwmbfU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.LocalStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.LocalStorage.html",
+          "hash": "AITJVGhpBn/5YTAIrHTUbOhVcOo84QYdhmrKbNf2iRY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.MainPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.MainPage.html",
+          "hash": "V6a/rMAYvJuPEopBU3hBCJkNNbF77bGAG8NX+y4LTQk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.CP.PermissionType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.CP.PermissionType.html",
+          "hash": "IbXL0bzsa7oY5Y3Dfpbqf9O8Ylv/zWBAhZcB/Jm6WZM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.CP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.CP.html",
+          "hash": "vEEjkQPMAAAUj2BqQzJ9/6WyeYeTCwLc4buPLf0GWlE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.ChatMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.ChatMessage.html",
+          "hash": "+eWBOC6a0KhsgYRBgxxfKVD76G1j1b5WD3zRZVvZm4Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.CompositeComparer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.CompositeComparer-1.html",
+          "hash": "we5p7ani0X2yM+QDcN8rLOEFnwHNRknngmj1SKn2OPE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.DTO.LarpActivityDTO.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.DTO.LarpActivityDTO.html",
+          "hash": "aN1vbsKAZN7gQkFCCaamobwQYvEu/pZT96NiyyI/QG4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.DTO.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.DTO.html",
+          "hash": "psMcsiqelQ2gmTjn88ipDwTHaXqWBcxWik5FbnsZdqo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.EncyclopedyCategory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.EncyclopedyCategory.html",
+          "hash": "BFfNDkcS3Bsjlzx1Nej2yMC0SL4qx0KJTT6DFDXzBi8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.EncyclopedyRecord.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.EncyclopedyRecord.html",
+          "hash": "5NwBJssYLVD5pJH1IfKQEL2TM+z9t3rKvY6OuJbLCOo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.InventoryItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.InventoryItem.html",
+          "hash": "nyJs0W3xZEZlIxTi6dBUq6egS5le0fsl7mCh0tpOhXk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.LarpActivity.EventType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.LarpActivity.EventType.html",
+          "hash": "llZB9dov0wooTKZ48um6NsVLDB4v7QoUhlUxUF+5BVc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.LarpActivity.Status.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.LarpActivity.Status.html",
+          "hash": "jjXI5Njo9UIBB2J9NFsnrlD0ZS22+dohJhpuI9Ot52M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.LarpActivity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.LarpActivity.html",
+          "hash": "F/YS7sQ3Utd4FHHMrnjfGRfNDzHMD2u0Oj7AA7x5hQU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.PointOfInterest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.PointOfInterest.html",
+          "hash": "NnWyGtTJRa7GtRLlBju8XPjZBX36pm21C15WeWvOAmY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.Road.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.Road.html",
+          "hash": "ZaXHjozySHtL0bWeC+kiLwZ8nYwsGDCnSiYTYOtUmJI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.RoadStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.RoadStorage.html",
+          "hash": "olxobYfyR3nZ1BjMmP7MOo+vJPrkoSsi+Uhe/rZt78k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.TrulyObservableCollection-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.TrulyObservableCollection-1.html",
+          "hash": "KMnAsjUfEo/jz5PULgGfJ8B5GIaKLmBSb+CR38/KNS4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Models.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Models.html",
+          "hash": "095D2/8LPUHozkJCUbso9kkHeNtygqGi+zl9/T+mAmo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.OurSQL-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.OurSQL-2.html",
+          "hash": "17ZSBbrQtVTyOzxfN3t+GPGYAjkCRdNQ9/BmV0ncDVY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.OurSQLDictionary-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.OurSQLDictionary-2.html",
+          "hash": "7gijgArhu/Tj9ujA56Wu5g6cLd4v5tlQCBCBpj9A4do="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Pair-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Pair-2.html",
+          "hash": "I7Y/W0yUPUGHie7+f+PfLG5ZSJ+nrh07JsKhF/MmnVc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.RememberedList-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.RememberedList-2.html",
+          "hash": "yCzQfF1FF8YljB/pKZqkObUMLFTSKs6WtGTYQ2CtSWA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.RememberedStringDictionary-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.RememberedStringDictionary-2.html",
+          "hash": "qDjhW5rILnDUhBg2+3/huTnVSnxGrt1Prdv12vXvkVw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.SQLEvents.CreatedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.SQLEvents.CreatedDelegate.html",
+          "hash": "50SxeAZizvbLWY/WE5P2aNz2zvd2jNUVASp9hdpcGMA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.SQLEvents.DataChangedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.SQLEvents.DataChangedDelegate.html",
+          "hash": "apJeAVYvP4w+oKYlfTguqxfic3vQ41ylLlU/Quy5+Nw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.SQLEvents.DataDeletedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.SQLEvents.DataDeletedDelegate.html",
+          "hash": "W+wMSMSDFkISJrCcc9PmKTNtyDYI7O+vktGx+cOn3Oc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.SQLEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.SQLEvents.html",
+          "hash": "8eiWUe4gEDNFnROgPUsJj0ZWeO9KZh03cv9BeRVnuLo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Serializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Serializable.html",
+          "hash": "hg6e5xsNn6NYH1xy9PpFVyGW0Tbc0ylbJ1nKeq8s2jo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.SerializableDictionaryItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.SerializableDictionaryItem.html",
+          "hash": "q5aqDdY3unvv30QMTIdO1ItKNjeU5MmlfDI1vCXZdEQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.GetLocationService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.GetLocationService.html",
+          "hash": "H7S9LPhZrdHL1fBPNeV1QEyo2gIKusU7lLGsCeR0xMM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.IKeyboardService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.IKeyboardService.html",
+          "hash": "X8O/2gKQNUldXi1mt9c3TWVnsL04t5wuqEEuWuW1jns="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.IMessageService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.IMessageService.html",
+          "hash": "zTQudckWi797MEUTawhUOUkESqQ6Y/CYhHitI6xk/q4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.INotificationManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.INotificationManager.html",
+          "hash": "4HLu07LjhWOAm/H0i6xBzxPF70+/EiGzUdjvHZnoQ4w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.KeyDown.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.KeyDown.html",
+          "hash": "2Ne1Yhef424AgeENdxLkhp7KpD+8KJHoSvGhB0k2zIE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.KeyUp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.KeyUp.html",
+          "hash": "fnS1ikNu8rz/hy8zpARGuzWuA8nvgt/s0pHKTd0MD9Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.LocationErrorMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.LocationErrorMessage.html",
+          "hash": "GaYxI1j9iuycdraHquJ0fhXKA7APIwq5bi4DJx0cdpM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.LocationMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.LocationMessage.html",
+          "hash": "iUOHjKLrXG5dXjVJbIU0TC4SOheBFFFAjoIs99A1MUA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.MessageService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.MessageService.html",
+          "hash": "KJcU2rpgXqotJ07uubsU39uAfbuxTJSudBnoFfubWwc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.NotificationEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.NotificationEventArgs.html",
+          "hash": "qNy1l3vnVBrdthBdgSguZqncMqI6NgKAMNne3NBwWvw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.SortHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.SortHelper.html",
+          "hash": "4xToP32A3ai61L6YmQvEV4xwC4eBJSoRwF0a0iQ/zhc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.StartServiceMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.StartServiceMessage.html",
+          "hash": "TaAZWE85XT/UectvEhTzhl1PZ4Isk9+eXzB5TfndoLc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.StopServiceMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.StopServiceMessage.html",
+          "hash": "YF8R9FqtwUOkuUnYpqUnA10EaImTlwqZ3bhMzds3/CA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Services.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Services.html",
+          "hash": "CKtNkwB2t51e5U0ZMqUdqry62AvCowEAf9RROG3YglU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.EncyclopedyOrphanage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.EncyclopedyOrphanage.html",
+          "hash": "Bk5UBasWmxPO2Dw+nAX09ROnX8iDnVLKx3fIfiJ8SHU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.MapHandler.EntityType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.MapHandler.EntityType.html",
+          "hash": "ip7Z0xezjcnl10gXWs1oDYhrcH4ji0XJA+a7gGBl2qA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.MapHandler.MapClick.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.MapHandler.MapClick.html",
+          "hash": "wGVFsDfsx6395L1i16P4URCwAem/gydWxzMW+ldOdBA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.MapHandler.PinClick.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.MapHandler.PinClick.html",
+          "hash": "CIuinQAVNnRGGp8erDvwkVJTTtAA+k/QD1DqqYxAXYI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.MapHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.MapHandler.html",
+          "hash": "mkxXEMRY5NnU3aUZ22kNN5DLGJue9115lTmQxyys5Xo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Singletons.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Singletons.html",
+          "hash": "esPjFCmwrqVskCm/1d9cqzDwpqCXC2oFn+2noUVuapE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Themes.ColorPalette.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Themes.ColorPalette.html",
+          "hash": "ga8u2MNKwpghye8GM2IHoW15g4r/3M8ey3+HWu1MK3w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Themes.IPicturePainter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Themes.IPicturePainter.html",
+          "hash": "VUR9qY7VwAK72APJr6pQxGxfG9X4UMcULSsPi42lTKM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Themes.IconLibrary.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Themes.IconLibrary.html",
+          "hash": "Hv5j/+nzjCEgxtnsrFYo58Czv0mEte7yntD7eJh9B8w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Themes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Themes.html",
+          "hash": "tyRWVTiZXi/YiEuCMhWIAw8oWKlccfurkc0yFQS/CAo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ToastInterface.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ToastInterface.html",
+          "hash": "nC/Nteskn9Fl9eISagJLvycm0iNT/oJCVWoP7ezL5i8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleReceivedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleReceivedDelegate.html",
+          "hash": "m6QH+3EWUMwAEzT8dU4+t6K2c7TbcWMcMKFQRLER01g="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedDelegate.html",
+          "hash": "/1jAYjvtldO668AQuXgV5va6FWesVs0VRn9L42hTAa4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedResultDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRemovedResultDelegate.html",
+          "hash": "2Tg9CoX3s2RaBRn3S08qQLdMpx/t1+aZkZLNJ/N68Jg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRequestedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.RoleRequestedDelegate.html",
+          "hash": "dhsy2F0A2HNcqMlCfN5Mr6q1JONxDu0d57dRthyrM0E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityDetailsViewModel.html",
+          "hash": "29Mema+lutWWea7ofKpFg6kHTAMsCD+CDIvistLnSPI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityEditViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityEditViewModel.html",
+          "hash": "0ImRmexcDJey18z1cQj2QX9NgqZSkr9ET8d7I9S3lyA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityFilterExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityFilterExtensions.html",
+          "hash": "ZOHxUKf90nC7WqzCA50/OG/zFiBL1RSAUfECPUX3P7o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityFilterViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityFilterViewModel.html",
+          "hash": "FdS9RJu53aILLlibvBMjzL7kLdGhsLi0zqv7hlz5/O8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityListItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityListItemViewModel.html",
+          "hash": "OmC9nDHbffrrrn6iAhp6ZRhiO/mrZLqlV5//HZGppps="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityListViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityListViewModel.html",
+          "hash": "UrIfc/nlZprQUTdL3LQpZNfnghXOYzGqUw7ZLrVney0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivitySearchRegistration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivitySearchRegistration.html",
+          "hash": "CHX04LXfD9MNWgIH+l0YCtALSs2Kpd7Uz9SrXCct+TA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivitySearchStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivitySearchStatus.html",
+          "hash": "2MbiZToMzmC5PbkOMq8mt6LATsO5jv1Cd9Xf0ovD1xU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivitySearchType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivitySearchType.html",
+          "hash": "K7MlzhuRA5UskiXGyan1rMFRNxvwPcR7IXlriOUW1TY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivitySelectionViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivitySelectionViewModel.html",
+          "hash": "cfBChy0cjJ6L+m2q0o51n5pMJvc44ivNXnfjgQJR0uE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivityShortItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivityShortItemViewModel.html",
+          "hash": "4DA2FkpBf1T1ZTSAtYNAKfxTmFofv0Aw5pA3isOTA8Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ActivitySorterViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ActivitySorterViewModel.html",
+          "hash": "XzKkVUK6xfypXfHEMtL436P5794E5XO3GPupstgvJCY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.BaseViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.BaseViewModel.html",
+          "hash": "a20xmftdRGdphXRUU2Uu9ksT7Czs9X0KnVsh0WzskHk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.CPRoleItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.CPRoleItemViewModel.html",
+          "hash": "hOIAQ26tlrIvsyihjnwFCYoEbfncSFs1fKdmF3xKxkQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.CPSelectItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.CPSelectItemViewModel.html",
+          "hash": "q4FcqdKxHYgoT8aW4Pt2tH9oUhgsG0aJ/J1Vr0opZDM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.CPSelectionViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.CPSelectionViewModel.html",
+          "hash": "sqO1eOIdJ1G3+GMWkv0Kmzy73D6iT9mqFZjD2isvlfA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.CPSelectorFilterViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.CPSelectorFilterViewModel.html",
+          "hash": "swqWohvtl1KNAdqw6l5hP6oKiDEK0ejkUyIVrIR7W+c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsItemViewModel.html",
+          "hash": "2TD0kQCy7Ls2ZGqfx8zutndU4PCXFw2McQnGXhuyoYw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelCreatedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelCreatedDelegate.html",
+          "hash": "ORLCqoCtzeC4NKu4l1VcYvfGPo14rS790O9aYtnfyFQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelCreatedResultDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelCreatedResultDelegate.html",
+          "hash": "Iuc3Ba5MHu0Rx5l/8PcHcww/ghSWhAmLevN2xPVnLRU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelModifiedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelModifiedDelegate.html",
+          "hash": "ofHEmTAk3Y+VcNIKE4mJtu0KFQWumC5rqrAQDEkrd5o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelModifiedResultDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.ChannelModifiedResultDelegate.html",
+          "hash": "CJeiOY8p2Q7ByxPa5xCQvahdypZFHQMkUKeOr7zBeao="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ChatChannelsViewModel.html",
+          "hash": "90BI81whFhNuaCZY2avLsLTDMjgE9KFWGykoa1TW87E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ClientChooseNameViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ClientChooseNameViewModel.html",
+          "hash": "oFCq2k6Hdh7x3bMwZVGRJfDnHQpxH49AUMZ0Rs5Q+SM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ClientChooseServerViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ClientChooseServerViewModel.html",
+          "hash": "OB2hMhXnj8w1FmLQvQo0I77kc/r5dD6lwtgiXXIasyo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.DropdownMenuTestViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.DropdownMenuTestViewModel.html",
+          "hash": "AtVLiWW0DSVVoPNl4wxEcy0NkaQmOEHxcq7IUsu9l/A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.EncyclopedyCategoryViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.EncyclopedyCategoryViewModel.html",
+          "hash": "bUWiEtk/Q4rTGIUrsFbL4+NnbOIrEh5TVNlVAKvaOic="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.EncyclopedyRecordViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.EncyclopedyRecordViewModel.html",
+          "hash": "cu9iI2BaIFK6KMRswJ9mdiX79fUEFwzVeGCt1X+Fsqw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ExampleImageViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ExampleImageViewModel.html",
+          "hash": "zVVtBak8XoVu2dm6e5ZTBodXv2g9wG+05OZsBZv4BSg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.HideExampleViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.HideExampleViewModel.html",
+          "hash": "fPO/r+d1gAEqdtmfOlLpvqAbl/iLyu5Ppg2E9NO4t3c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.InventoryItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.InventoryItemViewModel.html",
+          "hash": "0m0unY/5DbiUtOfUqNzPhCWcsMoDmjPPzuqW1g/hmYo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.InventoryViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.InventoryViewModel.html",
+          "hash": "wSHARhQsCk3nHEtUbXYoZvGPM/LLvlaPJj+oRZ9YmFc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ItemItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ItemItemViewModel.html",
+          "hash": "Vc59ZnnsmuUuxyYreNZoDKVDXv23mmXEd9iyz6pnxF0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ItemSelectionItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ItemSelectionItemViewModel.html",
+          "hash": "7vFEYm2VNTvBdLCVsLDspH0TUgWT5XUvTzdgLHL8By4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.ItemSelectionViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.ItemSelectionViewModel.html",
+          "hash": "zkF7N8n/sCCUTxfa9OJ3iR+4kaMRoHNZ+sXVx+wvIHU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.MapViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.MapViewModel.html",
+          "hash": "q7K49xKgmWI7WxYEBDpDjpUBJ+Nr4kutYVvp1fPnw1E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.PermissionViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.PermissionViewModel.html",
+          "hash": "9WtXGP5XPAqhSIk4lWh0kpXW7t2To25uSmvxyS8Hgw4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.RoleItemViewModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.RoleItemViewModel.html",
+          "hash": "3QnefxVlNRN+1JhQ8hAmbMW5MncK1RJneojInH30eUY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.ViewModels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.ViewModels.html",
+          "hash": "kwhS7CefCbRbKXd5Mi/LAxKT6UEvodb+7519ZJAT+UA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ActivityDetailsPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ActivityDetailsPage.html",
+          "hash": "31GyF638/UWfCdyGcaVOzYRDiN2hLxcjUK2k+kdUtHU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ActivityEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ActivityEditPage.html",
+          "hash": "D+/BPE0DtjPZR9ziPNWnXNSNxPAPxICE8yPkTZ9A4yc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ActivityGraphPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ActivityGraphPage.html",
+          "hash": "wl3O45V/OF21Xd6A2wKAqkh+pJ09pl+wGsWyLRVQCM8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ActivityListPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ActivityListPage.html",
+          "hash": "9AZBd5nU72vxh8HPEdV7qV+g78riLnFu0iwE8tq/wxI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ActivitySelectionPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ActivitySelectionPage.html",
+          "hash": "ihFu9E98/0t5SSXK8Noj7wLugi3zORUC/ChME8xS4iU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CPDetailsPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CPDetailsPage.html",
+          "hash": "IVE/zghfHpmuKxfmvJ8cIVXHiC0WuSuttFTH9ANFubA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CPEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CPEditPage.html",
+          "hash": "9iSJgIab1Y7Go9XlR1wfs0kJe4ilioRV+SPZfPl42D8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CPListPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CPListPage.html",
+          "hash": "rqAcCU8r6yKx1XbATKYT2JaSRbSK4zGojA4Y8TUG/I8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CPRoleItemView.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CPRoleItemView.html",
+          "hash": "lL37so2Oh0aSUXfUrXNFjnIDbCfJlPzU6IETKXGsJ+c="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CPSelectionPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CPSelectionPage.html",
+          "hash": "hwXHiOwktyfyy43ww446FS1pCyOnza5J5fWmfuFH27U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CalendarPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CalendarPage.html",
+          "hash": "ElfzjOwkJ/qb9iG+365L/NVjuq2jfeQ5FEzucoqPxxQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ChatChannelsPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ChatChannelsPage.html",
+          "hash": "l4Vc+ntsCMSgg56niV+7rswxE5dWcOW0IHkHLfk/kGg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ChatPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ChatPage.html",
+          "hash": "AlAJMkTOkiOQvdoHVKxqVGomP6a8nUoEDxaBb6dKX6s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ChooseClientServerPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ChooseClientServerPage.html",
+          "hash": "h4F9nliRMa/IDkiqIyk3dsaDjBW0LRh3/YlfOZyo7eQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ClientChooseNamePage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ClientChooseNamePage.html",
+          "hash": "j3HCGDwL5VruryYc5t54RpsIs4snFEMQuwDbbOb4FAs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ClientChooseServerPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ClientChooseServerPage.html",
+          "hash": "I+nms/U5eNgdodECT9vX1YRaZp3nYerH1LE/zjF4Q08="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ClientLoginTypePage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ClientLoginTypePage.html",
+          "hash": "8h6gYoZRxbAN2/fPhtnYGH6/eBmILX7q/h2qAfPVaoc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CreateCPPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CreateCPPage.html",
+          "hash": "PIRdOq3brmqsjBfEJXuYkZqpfdUQ6MTol+V6tVVz0Iw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CreateEncyclopediaCategoryPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CreateEncyclopediaCategoryPage.html",
+          "hash": "lPiTY4+RtJkrYI73uNLXBbsInR8SNjI70HveBtgwIfA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CreateEncyclopediaRecordPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CreateEncyclopediaRecordPage.html",
+          "hash": "QvWpVvbToy+ZxxpeQUUOB0V0BRnJAnht8iHIq9AqdSM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.CreateInventoryItemPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.CreateInventoryItemPage.html",
+          "hash": "hNg56LZiQoNV4YSOHacraiY/RSY4802BpYbePtZAzeI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.DropdownMenuAboveTestPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.DropdownMenuAboveTestPage.html",
+          "hash": "ovTe9MO3+tTj0ingf8PtP9fyE/eUnebHvsX9qDSfsso="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.DropdownMenuOverTestPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.DropdownMenuOverTestPage.html",
+          "hash": "aBW+M0rtCSvXYgJ7Lng9RQpl9rIHbfyEgabIj/5bsWg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.EncyclopediaCategoryEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.EncyclopediaCategoryEditPage.html",
+          "hash": "cBnmZEtOOlv55pHFSA7etFmD8FHOhnth2qsifThf/1I="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.EncyclopediaCategoryPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.EncyclopediaCategoryPage.html",
+          "hash": "vPGJrlFP68bjzMESB23alyh3v88XbGWpEq9RHfKSbIk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.EncyclopediaRecordEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.EncyclopediaRecordEditPage.html",
+          "hash": "3Nti/eEb9h7O+5f9bT6oUOhYI/Xs6KQHV2ysduG+Qw8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.EncyclopediaRecordPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.EncyclopediaRecordPage.html",
+          "hash": "HvyrOVmcwKsEUYVCaukLbF39ngm4I5yHVwhTcfQeUfg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ExampleImagePage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ExampleImagePage.html",
+          "hash": "TToZAKA77Ru9yHeb1thRYZoqwgOdLBJccGJFFjab+BU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.FlyoutMenuPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.FlyoutMenuPage.html",
+          "hash": "31JRPuqctCEoGXW8KZDmmYRRJzC0n2QY5iAELZMrIvQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.HideExamplePage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.HideExamplePage.html",
+          "hash": "fTjjyHWWgcbl2H8MZKBiWwTSk7X29ZBG/JEP5KlrFOw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.IconSelectionPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.IconSelectionPage.html",
+          "hash": "4/mhslLYX2X5V7rG2NnlkV5DH8vOThMlpU28idY37Hw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.InventoryItemDetailPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.InventoryItemDetailPage.html",
+          "hash": "ax6feSRqzKYvnQbetJLdQfhQww8fDSsyDmueC5AEqCg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.InventoryItemEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.InventoryItemEditPage.html",
+          "hash": "VxHQNEjIOfydJClqys7/Cgv4JvGXqQCJGiSSRdqr5YI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.InventoryPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.InventoryPage.html",
+          "hash": "385ps376qkWbtK2pMF6f9nGt/wdxDQVz4WeXqFmON64="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ItemSelectionPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ItemSelectionPage.html",
+          "hash": "n+T8kdjrlTol8wvEjdAHfZdNvZwxy7jvPSrLzEmOp3w="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.LarpEventPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.LarpEventPage.html",
+          "hash": "Arhtp7FNEowWdPfd3n8CdiywSA7lxppjN3vesdLGQTY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.MapPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.MapPage.html",
+          "hash": "N6dnb3UFwZ4pXjyMRkL+WGto03gMD7zJtz808TxYA34="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.OurNavigationMenu.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.OurNavigationMenu.html",
+          "hash": "CeqPa7n2Nh2L5qezIKJJoM3emxZUxLUz/Of6zKO0oi0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.POIDetailsPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.POIDetailsPage.html",
+          "hash": "EMS3o1vQm5Kxh+whUatK0IqrOyozRqiJSBdeVV1O3fw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.POIEditPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.POIEditPage.html",
+          "hash": "APFWQsqT9gf6ZqhwKbushjUiy8rwSqhFZHwJh+1rnoI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.POIListPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.POIListPage.html",
+          "hash": "Q0/pG0TgZY7JU1qRcD6dQ0QiHS2zNTVH5iPl0IR4niE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ServerLoginPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ServerLoginPage.html",
+          "hash": "wgNNunZjKzZWB3QnoZPRyklL/F3/OM7qO8kamA9OeMc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.ServerLoginTypePage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.ServerLoginTypePage.html",
+          "hash": "I+pd5xcD+zVawkLqC6cNVrb1KNPm1iid9gyKWCIq+K4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.TestPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.TestPage.html",
+          "hash": "Heovym9G9LsnVDZAvZ4ZvEZM7eps3WuTsxHcV4elN3U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.Views.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.Views.html",
+          "hash": "amenO86h7Aydgg2vcBMOPkzaZ5rYHaxy+hzIn+VyMSA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/LAMA.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/LAMA.html",
+          "hash": "kYbK+CXjfQv5pk9cX8j++O46XfTmV1IQdR01Nubk5wc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "3UUcU6YMxIQBAp/1Y9XvMxyqzdb1U99RhndY21l3JtI="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "RXEn8OWQMdSPHMM+gFySgqGVFKaP63RAN7Oo5yF9+9A="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "D/202GuMt56Usj0bn1Nyt2BvBelaHQzLTkilt3Eb75o="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "BlPxk5mtl2kgfcZUgkEguqiSAR/EUyUTT4EdebwkQvs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "2XcE1QCF+bg6x7U4mTFURG6xpOpVO/c2h5boUrl9s1I="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "WSuRrYiGwKKMbtdG9z8W9fXmLoCyTnGg9AxbPKLXm2Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 3,
+          "skipped_file_count": 3
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 190,
+          "skipped_file_count": 13
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

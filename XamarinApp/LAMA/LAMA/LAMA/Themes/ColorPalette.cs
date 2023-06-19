@@ -20,24 +20,28 @@ namespace LAMA.Themes
         public static Color MyMessageColor = Color.LightSkyBlue;
         public static Color OtherMessageColor = Color.LightGray;
 
+        public static Color InteractableColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 
         
-        public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.White;
-        public static SKColor ActivityGraphReadyToLaunch = SKColors.LightBlue;
-        public static SKColor ActivityGraphLaunched = SKColors.LightGreen;
+        public static SKColor ActivityGraphAwaitingPrerequisites = SKColors.PeachPuff;
+        public static SKColor ActivityGraphReadyToLaunch = SKColors.LightGreen;
+        public static SKColor ActivityGraphLaunched = SKColors.LightBlue;
         public static SKColor ActivityGraphInProgress = SKColors.PeachPuff;
         public static SKColor ActivityGraphCompleted = SKColors.Gray;
         public static SKColor ActivityGraphCancelled = SKColors.Red;
         public static SKColor ActivityGraphDefault = SKColors.White;
 
 
-        public static Color ActivityAwaitingPrerequisites = Color.White;
-        public static Color ActivityReadyToLaunch = Color.LightBlue;
-        public static Color ActivityLaunched = Color.LightGreen;
-        public static Color ActivityInProgress = Color.PeachPuff;
-        public static Color ActivityCompleted = Color.Gray;
+        public static Color ActivityAwaitingPrerequisites = Color.Orange;
+        public static Color ActivityReadyToLaunch = Color.DarkGreen;
+        public static Color ActivityLaunched = Color.DarkBlue;
+        public static Color ActivityInProgress = Color.Orange;
+        public static Color ActivityCompleted = Color.FromRgb(0.3, 0.3, 0.3);
         public static Color ActivityCancelled = Color.Red;
-        public static Color ActivityDefault = Color.White;
+        public static Color ActivityDefault = Color.DarkGray;
+
+        public static Color BorrowColor = Color.SteelBlue;
+        public static Color ReturnColor = Color.SpringGreen;
 
     }
 }

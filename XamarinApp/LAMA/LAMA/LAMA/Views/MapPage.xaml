@@ -44,10 +44,20 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         Command="{Binding SetGlobalBounds}"
+                        IsVisible="{Binding CanEditMap}"
                         />
 
-                    <Label x:Name="EditLabel" Text="Edit" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Button
+                        x:Name="RemoveGlobalBoundsButton"
+                        Text="Zrušit omezení"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Command="{Binding RemoveGlobalBounds}"
+                        IsVisible="{Binding CanRemoveBounds}"
+                        />
+
+                    <Label x:Name="EditLabel" Text="Upravit: " VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding CanEditMap}"/>
+                    <Switch x:Name="EditSwitch" IsToggled="{Binding Editing}" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding CanEditMap}"/>
 
                 </StackLayout>
 

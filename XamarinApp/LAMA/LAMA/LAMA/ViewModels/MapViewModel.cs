@@ -4,6 +4,8 @@ using Mapsui.UI.Forms;
 using LAMA.Services;
 using LAMA.Views;
 using Xamarin.Essentials;
+using LAMA.Singletons;
+using LAMA.Models;
 
 namespace LAMA.ViewModels
 {
@@ -21,9 +23,17 @@ namespace LAMA.ViewModels
             get => _showDropdown;
             set => SetProperty(ref _showDropdown, value, nameof(ShowDropdown));
         }
+
+        private bool _canRemoveBounds;
+        public bool CanRemoveBounds { get => _canRemoveBounds; set => SetProperty(ref _canRemoveBounds, value); }
+
+        private bool _canEditMap;
+        public bool CanEditMap { get => _canEditMap; set => SetProperty(ref _canEditMap, value); }
+
         public Command FilterDropdown { get; private set; }
         public Command SaveHome { get; private set; }
         public Command SetGlobalBounds { get; private set; }
+        public Command RemoveGlobalBounds { get; private set; }
 
         /// <summary>
         /// Edit switch for adding polylines.
@@ -35,7 +45,7 @@ namespace LAMA.ViewModels
             set
             {
                 SetProperty(ref _editing, value, nameof(Editing));
-                if (!value) MapHandler.Instance.PolylineFlush();
+                if (!value) MapHandler.Instance.PolylineFlush(_getMapView());
             }
         }
 
@@ -44,15 +54,28 @@ namespace LAMA.ViewModels
             FilterDropdown = new Command(HandleFilterDropdown);
             SaveHome = new Command(HandleSaveHome);
             SetGlobalBounds = new Command(HandleSetGlobalBounds);
+            RemoveGlobalBounds = new Command(HandleRemoveGlobalBounds);
+            CanEditMap = LocalStorage.cp.permissions.Contains(CP.PermissionType.EditMap) && Device.RuntimePlatform == Device.WPF;
+            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits && CanEditMap;
 
             _getMapView = getMapView;
             _keyboard = DependencyService.Get<IKeyboardService>();
+            SQLEvents.dataChanged += BoundsChanged;
 
             if (_keyboard == null)
                 return;
 
             _keyboard.OnKeyDown += OnKeyDown;
             _keyboard.OnKeyUp += OnKeyUp;
+        }
+
+        private void BoundsChanged(Serializable changed, int changedAttributeIndex)
+        {
+            var larpEvent = changed as LarpEvent;
+            if (larpEvent == null)
+                return;
+
+            CanRemoveBounds = MapHandler.Instance.IsGlobalPanLimits && MapHandler.Instance.IsGlobalZoomLimits && CanEditMap;
         }
 
         public void HandleFilterDropdown()
@@ -79,6 +102,11 @@ namespace LAMA.ViewModels
         public void HandleSetGlobalBounds()
         {
             MapHandler.SetGlobalBoundsFromView(_getMapView());
+        }
+
+        public void HandleRemoveGlobalBounds()
+        {
+            MapHandler.RemoveGlobalBounds();
         }
 
         private void OnKeyDown(string key)

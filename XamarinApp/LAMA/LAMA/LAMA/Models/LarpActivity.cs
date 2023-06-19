@@ -136,7 +136,7 @@ namespace LAMA.Models
         public EventList<Pair<long, string>> registrationByRole { get { return _registrationByRole; } }
         void registrationByRoleChanged() { updateValue(13, _registrationByRole.ToString()); }
 
-        double _graphY;
+        double _graphY = -1;
         public double GraphY
         {
             get { return _graphY; }
@@ -144,6 +144,17 @@ namespace LAMA.Models
             {
                 _graphY = value;
                 updateValue(14, _graphY.ToString());
+            }
+        }
+
+        int _iconIndex;
+        public int IconIndex
+        {
+            get { return _iconIndex; }
+            set
+            {
+                _iconIndex = value;
+                updateValue(15, _iconIndex.ToString());
             }
         }
 
@@ -160,7 +171,7 @@ namespace LAMA.Models
         }
         public LarpActivity(long ID, string name, string description, string preparation, EventType eventType, EventList<long> prerequisiteIDs,
             long duration, int day, long start, Pair<double, double> place, Status status, EventList<Pair<long, int>>requiredItems, 
-            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations)
+            EventList<Pair<string, int>> roles, EventList<Pair<long, string>> registrations, int iconIndex = 0)
         {
             _ID = ID;
             _name = name;
@@ -176,12 +187,44 @@ namespace LAMA.Models
             _requiredItems = requiredItems;
             _roles = roles;
             _registrationByRole = registrations;
+            _iconIndex = iconIndex;
 
             initChangeListeners();
         }
 
+        public List<LarpActivity> GetDependentActivities()
+        {
+            List<LarpActivity> outList = new List<LarpActivity>();
+
+            RememberedList<LarpActivity, LarpActivityStorage> storage = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < storage.Count; i++)
+            {
+                LarpActivity activity = storage[i];
+
+                if (activity.prerequisiteIDs.Contains(this.ID))
+                    outList.Add(activity);
+            }
+
+            return outList;
+        }
+
+        public List<LarpActivity> GetPrerequisiteActivities()
+        {
+            List<LarpActivity> outList = new List<LarpActivity>();
+
+            RememberedList<LarpActivity, LarpActivityStorage> storage = DatabaseHolder<LarpActivity, LarpActivityStorage>.Instance.rememberedList;
+
+            for (int i = 0; i < prerequisiteIDs.Count; i++)
+            {
+                outList.Add(storage.getByID(prerequisiteIDs[i]));
+            }
+
+            return outList;
+        }
+
         public void UpdateWhole(string name, string description, string preparation, EventType eventType, long duration, int day,
-            long start, Pair<double, double> place, Status status)
+            long start, Pair<double, double> place, Status status, int icon)
         {
             if (name != _name)
                 this.name = name;
@@ -200,8 +243,42 @@ namespace LAMA.Models
             if (!place.Equals(_place))
                 this.place = place;
             if (status != _status)
-                this.status = status;
+                UpdateStatus(status);
+            if (icon != _iconIndex)
+                this.IconIndex = icon;
         }
+
+        public void UpdateStatus(LarpActivity.Status newStatus)
+		{
+            this.status = newStatus;
+
+            AutomaticStatusUpdate();
+
+            var dependentActivities = GetDependentActivities();
+
+            foreach (var dependentActivity in dependentActivities)
+			{
+                dependentActivity.AutomaticStatusUpdate();
+			}
+		}
+
+        public void AutomaticStatusUpdate()
+		{
+            if (this.status != Status.awaitingPrerequisites && this.status != Status.readyToLaunch)
+                return;
+
+            var dependencies = GetPrerequisiteActivities();
+
+            foreach (var dependency in dependencies)
+			{
+                if(dependency.status != Status.completed)
+				{
+                    this.status = Status.awaitingPrerequisites;
+                    return;
+				}
+			}
+            this.status = Status.readyToLaunch;
+		}
 
         public void UpdatePrerequisiteIDs(List<long> newPrerequisites)
         {
@@ -216,6 +293,9 @@ namespace LAMA.Models
                 if (!prerequisiteIDs.Contains(id))
                     prerequisiteIDs.Add(id);
             }
+            onPrerequisiteChange();
+
+            AutomaticStatusUpdate();
         }
 
         public void UpdateRoles(List<Pair<string,int>> newRoles)
@@ -326,7 +406,7 @@ namespace LAMA.Models
         }
         
         static string[] attributeNames = { "ID", "name", "description", "preparationNeeded", "eventType", "prerequisiteIDs",
-            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole", "GraphY" };
+            "duration", "day", "start", "place", "status", "requiredItems", "roles", "registrationByRole", "GraphY", "Icon" };
         public string[] getAttributeNames()
         {
             return attributeNames;
@@ -375,6 +455,8 @@ namespace LAMA.Models
                     return _registrationByRole.ToString();
                 case 14:
                     return _graphY.ToString();
+                case 15:
+                    return _iconIndex.ToString();
             }
             throw new Exception("wrong index selected");
         }
@@ -440,7 +522,9 @@ namespace LAMA.Models
                     int j = 0;
                     _graphY = Helpers.readDouble(value, ref j);
                     break;
-
+                case 15:
+                    _iconIndex = Helpers.readInt(value);
+                    break;
             }
         }
 

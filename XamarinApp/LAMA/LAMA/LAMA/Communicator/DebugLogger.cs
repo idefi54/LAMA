@@ -6,6 +6,9 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Logger capable of writing into a file
+    /// </summary>
     public class DebugLogger
     {
         readonly private bool shouldLog;

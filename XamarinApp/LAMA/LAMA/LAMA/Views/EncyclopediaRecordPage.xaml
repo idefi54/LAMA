@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.EncyclopediaRecordPage">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Nová Stránka" Command="{Binding AddRecordCommand}" IsVisible="{Binding CanChangeEncyclopedy}" />
+        <forms:BindableToolbarItem Text="Upravit" Command="{Binding Edit}" IsVisible="{Binding CanChangeEncyclopedy}"/>
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="15" >
+                <Label Text="{Binding Name}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding TLDR}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                <Label Text="{Binding Text}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"/>
+                
+
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.LarpEventPage"
+             xmlns:common="clr-namespace:LAMA.Views">
+
+    <ContentPage.Content>
+        <StackLayout>
+            <common:OurNavigationMenu></common:OurNavigationMenu>
+            <ScrollView>
+                <Grid Padding="30,15,15,15">
+
+                    <Label
+                        Grid.Row="0" Grid.Column="0"
+                        VerticalOptions="Center"
+                        Text="Jméno Serveru:"
+                        FontAttributes="Bold"
+                        FontSize="Medium"/>
+                    <Label
+                       Grid.Row="0" Grid.Column="1"
+                        VerticalOptions="Center"
+                        Text="{Binding ServerName}"
+                        FontSize="Medium"/>
+
+                    <Label
+                        Grid.Row="1" Grid.Column="0"
+                        VerticalOptions="Center"
+                        Text="Jméno Události:"
+                        FontAttributes="Bold"
+                        FontSize="Medium"/>
+                    <Label
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalOptions="Center"
+                        Text="{Binding Name}"
+                        FontSize="Medium"
+                        IsVisible="{Binding CanNotChangeLarpEvent}"/>
+                    <Entry
+                        Grid.Row="1" Grid.Column="1"
+                        VerticalOptions="Center"
+                        Text="{Binding Name}"
+                        FontSize="Medium"
+                        IsVisible="{Binding CanChangeLarpEvent}"
+                        TextChanged="Changed">
+                    </Entry>
+
+                    <Label
+                        Grid.Row="2" Grid.Column="0"
+                        VerticalOptions="Center"
+                        Text="Začátek:"
+                        FontAttributes="Bold"
+                        FontSize="Medium"/>
+                    <Label
+                       Grid.Row="2" Grid.Column="1"
+                        VerticalOptions="Center"
+                       Text="{Binding StartDay}"
+                        FontSize="Medium"/>
+                    <Button
+                        Grid.Row="2" Grid.Column="2"
+                        VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand"
+                        Text="Nastavit začátek" Command="{Binding SetStartDay}"
+                        IsVisible="{Binding CanChangeLarpEvent}"
+                        FontSize="Medium"
+                        Clicked="Changed"/>
+
+                    <Label
+                        Grid.Row="3" Grid.Column="0"
+                        VerticalOptions="Center"
+                        Text="Konec:"
+                        FontAttributes="Bold"
+                        FontSize="Medium"/>
+                    <Label
+                       Grid.Row="3" Grid.Column="1"
+                        VerticalOptions="Center"
+                       Text="{Binding EndDay}"
+					   HorizontalTextAlignment="Start"
+					   VerticalTextAlignment="End"
+                        FontSize="Medium"/>
+                    <Button
+                        Grid.Row="3" Grid.Column="2"
+                        VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand"
+                        Text="Nastavit konec" Command="{Binding SetEndDay}"
+                        IsVisible="{Binding CanChangeLarpEvent}"
+                        FontSize="Medium"
+                        Clicked="Changed"/>
+
+                    <Button x:Name="SaveButton"
+                        Grid.Row="4" Grid.Column="1"
+                        Margin="20,5"
+                        VerticalOptions="Center"
+                        HorizontalOptions="CenterAndExpand"
+                        Text="Uložit změny" Command="{Binding SaveChanges}"
+                        IsVisible="{Binding CanChangeLarpEvent}"
+                        FontSize="Large"
+                        Clicked="Saved"/>
+                </Grid>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

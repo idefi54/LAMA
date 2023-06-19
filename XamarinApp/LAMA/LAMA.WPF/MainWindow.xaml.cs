@@ -16,6 +16,7 @@ using Xamarin.Forms.Platform.WPF;
 using Xamarin.Forms;
 using LAMA.Services;
 using System.Diagnostics;
+using LAMA.Singletons;
 
 namespace LAMA.WPF
 {

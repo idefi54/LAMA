@@ -3,6 +3,7 @@ using LAMA.ViewModels;
 using Mapsui.Widgets;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -24,8 +25,12 @@ namespace LAMA.Views
         {
             _shiftHeld = false;
             _keyboard = DependencyService.Get<IKeyboardService>();
-            _keyboard.OnKeyDown += OnKeyDown;
-            _keyboard.OnKeyUp += OnKeyUp;
+            if (_keyboard != null)
+            {
+                _keyboard.OnKeyDown += OnKeyDown;
+                _keyboard.OnKeyUp += OnKeyUp;
+            }
+
             InitializeComponent();
 
             chatViewModel = new ChatViewModel(Navigation, channelName, this);
@@ -54,21 +59,28 @@ namespace LAMA.Views
 
         protected void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (e.OldTextValue != null && !_shiftHeld && Device.RuntimePlatform == Device.WPF)
+            string oldText;
+            if (e.OldTextValue == null) oldText = "";
+            else oldText = e.OldTextValue;
+            if (!_shiftHeld && Device.RuntimePlatform == Device.WPF)
             {
                 string newText = e.NewTextValue;
-                string oldText = e.OldTextValue;
                 if (newText.Length == oldText.Length+2)
                 {
                     int i;
                     for (i = 0; i < oldText.Length; i++) {
                         if (newText[i] != oldText[i]) break;
                     }
-                    Debug.WriteLine(newText[i]);
                     if (newText[i] == '\r' && newText[i+1]== '\n')
                     {
-                        chatViewModel.MessageText = oldText;
-                        chatViewModel.OnEntryComplete(sender, null);
+                        if (oldText.Trim().Length != 0)
+                        {
+                            chatViewModel.MessageSent(oldText);
+                        }
+                        else
+                        {
+                            chatViewModel.MessageText = oldText;
+                        }
                     }
                 }
             }

@@ -1,0 +1,593 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ServerCommunicator
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ServerCommunicator
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="LAMA.Communicator.ServerCommunicator">
+  
+  
+  <h1 id="LAMA_Communicator_ServerCommunicator" data-uid="LAMA.Communicator.ServerCommunicator" class="text-break">Class ServerCommunicator
+  </h1>
+  <div class="markdown level0 summary"><p>Handles the communication for the server application. It is able to receive messages from the clients and send messages to all of the clients at once or do so individually.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ServerCommunicator</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="LAMA.Communicator.Communicator.html">Communicator</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="LAMA.Communicator.html">LAMA.Communicator</a></h6>
+  <h6><strong>Assembly</strong>: LAMA.dll</h6>
+  <h5 id="LAMA_Communicator_ServerCommunicator_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ServerCommunicator : Communicator</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator__ctor_System_String_System_String_System_String_System_String_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.%23ctor(System.String%2CSystem.String%2CSystem.String%2CSystem.String%2CSystem.String%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L511">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator__ctor_" data-uid="LAMA.Communicator.ServerCommunicator.#ctor*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator__ctor_System_String_System_String_System_String_System_String_System_String_System_Boolean_" data-uid="LAMA.Communicator.ServerCommunicator.#ctor(System.String,System.String,System.String,System.String,System.String,System.Boolean)">ServerCommunicator(String, String, String, String, String, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Create new ServerCommunicator - used to communicate with the clients</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ServerCommunicator(string name, string ngrokAddress, string password, string adminPassword, string nick, bool newServer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of the server</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">ngrokAddress</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">password</span></td>
+        <td><p>Server password</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">adminPassword</span></td>
+        <td><p>Server administrator password</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">nick</span></td>
+        <td><p>Personal nick</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">newServer</span></td>
+        <td><p>Is this a new or an existing server</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.CantConnectToCentralServerException.html">CantConnectToCentralServerException</a></td>
+        <td><p>Can't connect to the central server</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.CantConnectToDatabaseException.html">CantConnectToDatabaseException</a></td>
+        <td><p>Connecting to database failed</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongCredentialsException.html">WrongCredentialsException</a></td>
+        <td><p>Wrong password used for existing server</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.NotAnIPAddressException.html">NotAnIPAddressException</a></td>
+        <td><p>Invalid IP address format</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongPortException.html">WrongPortException</a></td>
+        <td><p>Port number not in the valid range</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.PasswordTooShortException.html">PasswordTooShortException</a></td>
+        <td><p>The password is too short</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongNgrokAddressFormatException.html">WrongNgrokAddressFormatException</a></td>
+        <td><p>The ngrok endpoint supplied isn't in a correct format</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_CompressionManager.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.CompressionManager%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L28">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_CompressionManager_" data-uid="LAMA.Communicator.ServerCommunicator.CompressionManager*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_CompressionManager" data-uid="LAMA.Communicator.ServerCommunicator.CompressionManager">CompressionManager</h4>
+  <div class="markdown level1 summary"><p>Class managing the Huffman encoding of the messages</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Compression CompressionManager { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.Compression.html">Compression</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_LastUpdate.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.LastUpdate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L33">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_LastUpdate_" data-uid="LAMA.Communicator.ServerCommunicator.LastUpdate*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_LastUpdate" data-uid="LAMA.Communicator.ServerCommunicator.LastUpdate">LastUpdate</h4>
+  <div class="markdown level1 summary"><p>the last time we were updated over the network</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long LastUpdate { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_EndCommunication.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.EndCommunication%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L61">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_EndCommunication_" data-uid="LAMA.Communicator.ServerCommunicator.EndCommunication*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_EndCommunication" data-uid="LAMA.Communicator.ServerCommunicator.EndCommunication">EndCommunication()</h4>
+  <div class="markdown level1 summary"><p>Stop communication gracefully, stop broadcasting and dispose of all the necessary objects</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EndCommunication()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_initServerCommunicator_System_String_System_String_System_Int32_System_Int32_System_String_System_String_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.initServerCommunicator(System.String%2CSystem.String%2CSystem.Int32%2CSystem.Int32%2CSystem.String%2CSystem.String%2CSystem.String%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L363">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_initServerCommunicator_" data-uid="LAMA.Communicator.ServerCommunicator.initServerCommunicator*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_initServerCommunicator_System_String_System_String_System_Int32_System_Int32_System_String_System_String_System_String_System_Boolean_" data-uid="LAMA.Communicator.ServerCommunicator.initServerCommunicator(System.String,System.String,System.Int32,System.Int32,System.String,System.String,System.String,System.Boolean)">initServerCommunicator(String, String, Int32, Int32, String, String, String, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Initialize server communicator (update information on remote server, start listenning to clients, set up message sending...)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void initServerCommunicator(string name, string IP, int localPort, int distantPort, string password, string adminPassword, string nick, bool newServer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of the server</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">IP</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">localPort</span></td>
+        <td><p>port the LARP server listens on</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">distantPort</span></td>
+        <td><p>Port the ngrok listens on</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">password</span></td>
+        <td><p>Server password (clients use it to access the server)</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">adminPassword</span></td>
+        <td><p>Administrator password</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">nick</span></td>
+        <td><p>Personal nick/name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">newServer</span></td>
+        <td><p>New or existing server</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongNameFormatException.html">WrongNameFormatException</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongPortException.html">WrongPortException</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.NotAnIPAddressException.html">NotAnIPAddressException</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.CantConnectToCentralServerException.html">CantConnectToCentralServerException</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.CantConnectToDatabaseException.html">CantConnectToDatabaseException</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.WrongCredentialsException.html">WrongCredentialsException</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_SendCommand_LAMA_Communicator_Command_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.SendCommand(LAMA.Communicator.Command)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L524">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_SendCommand_" data-uid="LAMA.Communicator.ServerCommunicator.SendCommand*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_SendCommand_LAMA_Communicator_Command_" data-uid="LAMA.Communicator.ServerCommunicator.SendCommand(LAMA.Communicator.Command)">SendCommand(Command)</h4>
+  <div class="markdown level1 summary"><p>Insert command to the command queue (commands from this queue are sent automatically)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendCommand(Command command)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="LAMA.Communicator.Command.html">Command</a></td>
+        <td><span class="parametername">command</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_SendLocations_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.SendLocations(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L119">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_SendLocations_" data-uid="LAMA.Communicator.ServerCommunicator.SendLocations*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_SendLocations_System_Threading_CancellationToken_" data-uid="LAMA.Communicator.ServerCommunicator.SendLocations(System.Threading.CancellationToken)">SendLocations(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Send locations to all of the clients</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public async Task SendLocations(CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator_SendUpdate_System_Net_Sockets_Socket_System_Int32_System_Int64_.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator.SendUpdate(System.Net.Sockets.Socket%2CSystem.Int32%2CSystem.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L647">View Source</a>
+  </span>
+  <a id="LAMA_Communicator_ServerCommunicator_SendUpdate_" data-uid="LAMA.Communicator.ServerCommunicator.SendUpdate*"></a>
+  <h4 id="LAMA_Communicator_ServerCommunicator_SendUpdate_System_Net_Sockets_Socket_System_Int32_System_Int64_" data-uid="LAMA.Communicator.ServerCommunicator.SendUpdate(System.Net.Sockets.Socket,System.Int32,System.Int64)">SendUpdate(Socket, Int32, Int64)</h4>
+  <div class="markdown level1 summary"><p>Send information to a client about all the changes since a certain time</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendUpdate(Socket current, int id, long lastUpdateTime)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Net.Sockets.Socket</span></td>
+        <td><span class="parametername">current</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Client id</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">lastUpdateTime</span></td>
+        <td><p>The last time this client was updated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="LAMA.Communicator.Communicator.html">Communicator</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/new/vetvusDebugus/apiSpec/new?filename=LAMA_Communicator_ServerCommunicator.md&amp;value=---%0Auid%3A%20LAMA.Communicator.ServerCommunicator%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/idefi54/LAMA/blob/vetvusDebugus/XamarinApp/LAMA/LAMA/LAMA/Communicator/ServerCommunicator.cs/#L23" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

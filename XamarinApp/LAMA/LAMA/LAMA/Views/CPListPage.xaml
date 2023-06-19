@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:LAMA.Forms"
+             x:Class="LAMA.Views.CPListPage"
+             xmlns:viewmodel="clr-namespace:LAMA.ViewModels"
+             xmlns:colors="clr-namespace:LAMA.Themes"
+             xmlns:common="clr-namespace:LAMA.Views">
+
+    <ContentPage.ToolbarItems>
+        <forms:BindableToolbarItem Text="Řadit a filtrovat" Command="{Binding ShowOrderAndFilter}"/>
+        <forms:BindableToolbarItem Text="Nové CP" Command="{Binding AddCPCommand}" IsVisible="{Binding CanAddCP}" />
+    </ContentPage.ToolbarItems>
+
+
+    <ContentPage.Content>
+        <StackLayout>
+            <common:OurNavigationMenu></common:OurNavigationMenu>
+            <ScrollView>
+                <StackLayout>
+                    <StackLayout x:Name="CPList" BindableLayout.ItemsSource="{Binding CPList}" Margin="5,5,5,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+
+								<Grid Padding="5" Margin="5" BackgroundColor="{x:Static colors:ColorPalette.InteractableColor}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Nick}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Roles}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
+                                                Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                Command="{Binding Path=BindingContext.OpenDetailCommand, Source={x:Reference Name=CPList}}"
+                                                CommandParameter="{Binding .}"/>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+
+                                    <Grid.GestureRecognizers>
+
+                                        <TapGestureRecognizer 
+                                        NumberOfTapsRequired="2"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CPListViewModel}}, Path=OpenDetailCommand}"		
+                                        CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
+
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+
+
+                    <Label Text="Archivovaná CP" IsVisible="{Binding ShowArchived}"/>
+
+                    <StackLayout x:Name="ArchivedCPList" BindableLayout.ItemsSource="{Binding ArchivedCPList}"  Margin="5,5,5,0" IsVisible="{Binding ShowArchived}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5" Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Name}" FontSize="Small" />
+                                    <Label Grid.Row="0" Grid.Column="2" Text="{Binding Nick}" FontSize="Small" />
+                                    <Label Grid.Row="1" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Roles}" FontSize="Micro" TextColor="{x:Static colors:ColorPalette.MicroTextColor}" />
+
+                                    <OnPlatform x:TypeArguments="View">
+                                        <OnPlatform.Platforms>
+                                            <On Platform="WPF">
+                                                <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
+                                                Text="Detaily" Padding="20,10,20,10" Margin="5,5,5,5"
+                                                Command="{Binding Path=BindingContext.OpenDetailCommand, Source={x:Reference Name=CPList}}"
+                                                CommandParameter="{Binding .}"/>
+                                            </On>
+
+                                            <On Platform="Android">
+                                                <Label/>
+                                            </On>
+
+                                            <On Platform="iOS">
+                                                <Label/>
+                                            </On>
+                                        </OnPlatform.Platforms>
+                                    </OnPlatform>
+                                    
+                                    
+                                    <Grid.GestureRecognizers>
+
+                                        <TapGestureRecognizer 
+                                        NumberOfTapsRequired="2"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CPListViewModel}}, Path=OpenDetailCommand}"		
+                                        CommandParameter="{Binding .}">
+                                        </TapGestureRecognizer>
+
+                                    </Grid.GestureRecognizers>
+
+
+
+                                </Grid>
+
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+
+
+
+
+
+            <Frame x:Name="dropdownMenu"
+                   AbsoluteLayout.LayoutFlags="WidthProportional" AbsoluteLayout.LayoutBounds="0,0,1,200"
+                   BackgroundColor="{x:Static colors:ColorPalette.LighterPrimaryColor}"
+                   IsVisible="{Binding ShowDropdown}">
+                <StackLayout>
+                    <Label Text="Hledat"/>
+                    <Entry Text="{Binding FilterText}"/>
+                    <Button Text="Seřadit podle jména" Command="{Binding OrderByName}"/>
+                    <Button Text="Seřadit podle přezdívky" Command="{Binding OrderByNick}"/>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

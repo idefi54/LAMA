@@ -79,32 +79,39 @@ namespace LAMA.Views
             }
         }
 
+        async void OnTestPrompt(object sender, EventArgs args)
+        {
+            var messagesService = DependencyService.Get<IMessageService>();
+            string prompt = await messagesService.DisplayPromptAsync("enter prompt");
+            await messagesService.ShowAlertAsync(prompt);
+        }
+
         async void OnDisplayActivity(object sender, EventArgs args)
         {
             //await Shell.Current.GoToAsync($"//{nameof(DisplayActivityPage)}");
-            await Navigation.PushAsync(new DisplayActivityPage(activity));
+            await Navigation.PushAsync(new ActivityDetailsPage(activity));
         }
 
         async void OnNewActivity(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new NewActivityPage(CreateActivity));
+            await Navigation.PushAsync(new ActivityEditPage(CreateActivity));
         }
 
         async void OnEditActivity(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new NewActivityPage(DummyUpdateActivity, activity));
+            await Navigation.PushAsync(new ActivityEditPage(DummyUpdateActivity, activity));
         }
         async void OnInventory(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new InventoryView());
+            await Navigation.PushAsync(new InventoryPage());
         }
         async void OnEncyclopedy(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new EncyclopedyCategoryView(null));
+            await Navigation.PushAsync(new EncyclopediaCategoryPage(null));
         }
         async void OnCP(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new CPListView());
+            await Navigation.PushAsync(new CPListPage());
         }
 
         async void OnActivitySelector(object sender, EventArgs args)
@@ -124,6 +131,38 @@ namespace LAMA.Views
 
             }
         }
+
+        void OnPopulateCPs(object sender, EventArgs args)
+        {
+            for (int id = 1000; id < 1010; id++)
+            {
+                var user = DatabaseHolder<CP, CPStorage>.Instance.rememberedList.getByID(id);
+                if (user == null)
+                {
+                    user = new CP(id, "Steve " + id, "spartan-"+id, new EventList<string>() { "greenTeam","Officer"}, "", "", "", "");
+                    DatabaseHolder<CP, CPStorage>.Instance.rememberedList.add(user);
+                }
+            }
+        }
+
+        async void OnCPSelector(object sender, EventArgs args)
+        {
+            CPSelectionPage page = new CPSelectionPage(_displayName);
+            await Navigation.PushAsync(page);
+
+
+            void _displayName(CP cp)
+            {
+
+                if (cp != null)
+                    _ = DisplayAlert("CP", cp.name, "OK");
+                else
+                    _ = DisplayAlert("Problem", "Something went wrong and no cp is present.", "BUMMER");
+
+
+            }
+        }
+
         void OnResetDatabase(object sender, EventArgs args)
         {
             SQLConnectionWrapper.ResetDatabase();
@@ -208,7 +247,7 @@ namespace LAMA.Views
         }
         async void OnLarpEvent(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new LarpEventView());
+            await Navigation.PushAsync(new LarpEventPage());
         }
 
         async void OnIconSelection(object sender, EventArgs args)
@@ -263,7 +302,7 @@ namespace LAMA.Views
             }
             if (Device.RuntimePlatform == Device.Android)
             {
-                if (!Preferences.Get("LocationServiceRunning", false))
+                if (!GetLocationService.IsRunning)
                     StartService();
                 else
                     StopService();
@@ -299,14 +338,14 @@ namespace LAMA.Views
         {
             var startServiceMessage = new StartServiceMessage();
             MessagingCenter.Send(startServiceMessage, "ServiceStarted");
-            Preferences.Set("LocationServiceRunning", true);
+            //Preferences.Set(GetLocationService.SERVICE_RUNNING, true);
         }
 
         private void StopService()
         {
             var stopServiceMessage = new StopServiceMessage();
             MessagingCenter.Send(stopServiceMessage, "ServiceStopped");
-            Preferences.Set("LocationServiceRunning", false);
+            //Preferences.Set(GetLocationService.SERVICE_RUNNING, false);
         }
 
     }

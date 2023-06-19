@@ -10,8 +10,8 @@ namespace LAMA.Models
 
         long _ID;
         public long ID { get { return _ID; }}
-        string _from;
-        public string from { get { return _from; } }
+        long _from;
+        public long from { get { return _from; } }
         int _channel;
         public int channel { get { return _channel; } }
         string _message;
@@ -49,7 +49,7 @@ namespace LAMA.Models
         }
         public string[] getAttributes()
         {
-            return new string[] { ID.ToString(), from, channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
+            return new string[] { ID.ToString(), from.ToString(), channel.ToString(), message, sentAt.ToString(), receivedByServer.ToString() };
         }
         public string[] getAttributeNames()
         {
@@ -70,7 +70,7 @@ namespace LAMA.Models
                     _ID = Helpers.readLong(value); 
                     break;
                 case 1:
-                    _from = value;
+                    _from = Helpers.readLong(value);
                     break;
                 case 2:
                     _channel = Helpers.readInt(value);
@@ -123,7 +123,7 @@ namespace LAMA.Models
 
         public ChatMessage()
         { }
-        public ChatMessage(string from, int channel, string message, long sentAt, bool receivedByServer)
+        public ChatMessage(long from, int channel, string message, long sentAt, bool receivedByServer)
         {
             _from = from;
             _channel = channel;

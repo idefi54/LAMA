@@ -4,13 +4,43 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// User didn't enter a correct ngrok endpoint address
+    /// </summary>
     public class WrongNgrokAddressFormatException : Exception
     {
         public WrongNgrokAddressFormatException() { }
     }
+
+    /// <summary>
+    /// The passwords must have a minimum length to increase the security
+    /// </summary>
     public class PasswordTooShortException : Exception
     {
         public PasswordTooShortException() { }
+    }
+
+    /// <summary>
+    /// The user forgot to fill some entry (it was empty or filled with just white characters)
+    /// </summary>
+    public class EntryMissingException : Exception
+    {
+        public EntryMissingException(string message)
+            : base(message) { }
+    }
+
+    /// <summary>
+    /// The user filled entries have a character limit, which can not be overreached
+    /// </summary>
+    public class EntryTooLongException : Exception
+    {
+        public int length;
+        public string fieldName;
+        public EntryTooLongException(int length, string fieldName)
+        {
+            this.length = length;
+            this.fieldName = fieldName;
+        }
     }
 
     /// <summary>
@@ -37,17 +67,6 @@ namespace LAMA.Communicator
             : base(message, inner) { }
     }
 
-    /// <summary>
-    /// Server with this name doesn't exist (no such server specified in the database table)
-    /// </summary>
-    public class NonExistentServerException : Exception
-    {
-        public NonExistentServerException() { }
-        public NonExistentServerException(string message)
-            : base(message) { }
-        public NonExistentServerException(string message, Exception inner)
-            : base(message, inner) { }
-    }
 
     /// <summary>
     /// Unable to connect to the central (remote) server - probably problem with connection
