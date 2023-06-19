@@ -9,7 +9,7 @@ namespace LAMA
     /// </summary>
     /// <typeparam name="T"><see cref="SerializableDictionaryItem"/> dictionary to be stored.</typeparam>
     /// <typeparam name="Storage"></typeparam>
-    class RememberedStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage:Database.DictionaryStorageInterface, new()
+    public class RememberedStringDictionary<T, Storage> where T : SerializableDictionaryItem, new() where Storage:Database.DictionaryStorageInterface, new()
     {        
         Dictionary<string, int> KeyToIndex = new Dictionary<string, int>();
 

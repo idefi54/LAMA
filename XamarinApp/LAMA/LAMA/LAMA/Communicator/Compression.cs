@@ -5,9 +5,15 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Class managing the Huffman tree compression and decompression.
+    /// </summary>
     public class Compression
     {
         private HuffmanTree huffmanTree;
+        /// <summary>
+        /// Initializes the Huffman tree with hard-coded character frequencie
+        /// </summary>
         public Compression()
         {
             Dictionary<char, int> frequencies = new Dictionary<char, int>();
@@ -124,16 +130,33 @@ namespace LAMA.Communicator
             huffmanTree.Build(frequencies);
         }
 
+        /// <summary>
+        /// Compresses the message using the Huffman coding
+        /// </summary>
+        /// <param name="source">message to be encoded</param>
+        /// <returns>message encoded into bytes</returns>
         public byte[] Encode(string source)
         {
             return huffmanTree.Encode(source);
         }
 
+        /// <summary>
+        /// Decodes a string message from bytes using Huffman coding
+        /// </summary>
+        /// <param name="bytes">bytes of the compressed message</param>
+        /// <returns>decompressed string message</returns>
         public string Decode(byte[] bytes)
         {
             return huffmanTree.Decode(bytes);
         }
 
+        /// <summary>
+        /// Decodes a message from bytes received from AES decryption using Huffman tree. 
+        /// There can be multiple messages concatenated (in this case return the first message + offset of the second message).
+        /// </summary>
+        /// <param name="bytes">bytes received from AES encryption</param>
+        /// <param name="offsetEnd">the offset of the second message (if there is one)</param>
+        /// <returns>the first message decompressed from the bytes</returns>
         public string DecodeFromAESBytes(byte[] bytes, out int offsetEnd)
         {
             return huffmanTree.DecodeFromAESBytes(bytes, out offsetEnd);

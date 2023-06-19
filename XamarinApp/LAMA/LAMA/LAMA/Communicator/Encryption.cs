@@ -13,6 +13,9 @@ using Mapsui.Styles;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Class capable of computing password hashes and encrypting and decrypting messages using AES.
+    /// </summary>
     internal static class Encryption
     {
         private static byte[] AESkey;
@@ -30,6 +33,12 @@ namespace LAMA.Communicator
             return Convert.ToBase64String(encrypted);
         }
 
+        /// <summary>
+        /// Encrypts a message (in the byte format) using the AES
+        /// </summary>
+        /// <param name="bytes">bytes to be encrypted</param>
+        /// <param name="ECB">Should the ECB version if the algorithm be used (no IV)</param>
+        /// <returns>encrypted message</returns>
         public static byte[] EncryptBytesToBytes_Aes(byte[] bytes, bool ECB = true)
         {
             using (Aes myAes = Aes.Create())
@@ -110,6 +119,13 @@ namespace LAMA.Communicator
             return decryptedBytes.ToArray();
         }
 
+        /// <summary>
+        /// Compress a message uning Huffman coding and then encrypts it using AES.
+        /// </summary>
+        /// <param name="plainText">text of the message</param>
+        /// <param name="compressor">compressor object used to do the Huffman encoding</param>
+        /// <param name="ECB">Should the ECB version of the AES be used</param>
+        /// <returns>compressed and encrypted message</returns>
         public static byte[] HuffmanCompressAESEncode(string plainText, Compression compressor, bool ECB = true)
         {
             byte[] compressed = compressor.Encode(plainText);
@@ -117,6 +133,13 @@ namespace LAMA.Communicator
             return encrypted;
         }
 
+        /// <summary>
+        /// Decrypt a message using AES and decompress it using Huffman coding
+        /// </summary>
+        /// <param name="encrypted">the encrypted message</param>
+        /// <param name="compressor">compressor object used to do the Huffman decoding</param>
+        /// <param name="ECB">Should the ECB version of the AES be used</param>
+        /// <returns>decoded and decompressed message</returns>
         public static string AESDecryptHuffmanDecompress(byte[] encrypted, Compression compressor, bool ECB = true)
         {
             int offset = 0;

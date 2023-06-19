@@ -4,21 +4,34 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// User didn't enter a correct ngrok endpoint address
+    /// </summary>
     public class WrongNgrokAddressFormatException : Exception
     {
         public WrongNgrokAddressFormatException() { }
     }
+
+    /// <summary>
+    /// The passwords must have a minimum length to increase the security
+    /// </summary>
     public class PasswordTooShortException : Exception
     {
         public PasswordTooShortException() { }
     }
 
+    /// <summary>
+    /// The user forgot to fill some entry (it was empty or filled with just white characters)
+    /// </summary>
     public class EntryMissingException : Exception
     {
         public EntryMissingException(string message)
             : base(message) { }
     }
 
+    /// <summary>
+    /// The user filled entries have a character limit, which can not be overreached
+    /// </summary>
     public class EntryTooLongException : Exception
     {
         public int length;

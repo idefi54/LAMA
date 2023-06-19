@@ -13,7 +13,10 @@ using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
-    class ModelChangesManager
+    /// <summary>
+    /// The program has an internal model of the state of the LARP. This contains information about the CPs, Activities, Items, Chat, Event itself… This model may be changed by the user. The model changes manager reacts to this by sending the information about this change to all the other users. It also parses the messages about the changes from other users and reacts to them by changing the model when appropriate.
+    /// </summary>
+    public class ModelChangesManager
     {
         private Communicator communicator;
         private RememberedStringDictionary<Command, CommandStorage> objectsCache;
@@ -42,7 +45,7 @@ namespace LAMA.Communicator
         }
 
         /// <summary>
-        /// Process a received message
+        /// Process a message received over the network
         /// </summary>
         /// <param name="command">Received message</param>
         /// <param name="current"></param>
@@ -120,7 +123,10 @@ namespace LAMA.Communicator
                 }
             }
         }
-        
+
+        /// <summary>
+        /// The client requested a place at an activity - try to add them to the activity and send them the result.
+        /// </summary>
         public void RequestRole(long activityID, string roleRequested, long cpID, int clientID, string command, Socket current)
         {
             if (server)
@@ -133,6 +139,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// The client requested to be removed from a role at an activity - try to remove them and notify them about the result.
+        /// </summary>
         public void RemoveRole(long activityID, long cpID, int clientID, string command, Socket current)
         {
             if (server)
@@ -145,19 +154,28 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// The client received information about the result of their attempt to be removed from a role at an activity.
+        /// </summary>
         public void RemoveRoleResult(long activityID, int response, string command, Socket current)
         {
             ActivityDetailsViewModel.InvokeRoleRemovedResult(activityID, response == 1);
         }
 
+        /// <summary>
+        /// The client received information about the result of their attempt to get a role at an activity.
+        /// </summary>
         public void ReceiveRole(long activityID, string roleRequested, int response, string command, Socket current)
         {
             if (!testing && !server)
             {
-                DisplayActivityViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
+                ActivityDetailsViewModel.InvokeRoleReceived(activityID, roleRequested, response == 1);
             }
         }
 
+        /// <summary>
+        /// Client attempts to modify a channel (rename or archive it). Process the request and send a response.
+        /// </summary>
         public void ChannelModified(string channelName, int channelID, int clientID, string command, Socket current)
         {
             if (server)
@@ -170,6 +188,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// The client is attempting to create a channel. Try to do so and send him a response about the result (were we able to create a channel).
+        /// </summary>
         public void ChannelCreated(string channelName, int clientID, string command, Socket current)
         {
             if (server)
@@ -182,11 +203,17 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// The client received information from the server about their attempt to modify a chat channel.
+        /// </summary>
         public void ChannelModifiedResult(int response, string command, Socket current)
         {
             ChatChannelsViewModel.InvokeChannelModifiedResult(response == 1);
         }
 
+        /// <summary>
+        /// The client received information from the server about the result of their attempt to create a chat channel.
+        /// </summary>
         public void ChannelCreatedResult(int response, string command, Socket current)
         {
             if (!testing && !server)
@@ -195,6 +222,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// The client received the positions of all the CPs in an event from the server.
+        /// </summary>
         public void CPLocationsUpdated(string[] locations, long updateTime, string command)
         {
             int i = 0;
@@ -211,6 +241,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Send locations of all of the CPs to the clients.
+        /// </summary>
         public void SendCPLocations()
         {
             List<string> cpStrings = new List<string>();
@@ -1019,6 +1052,9 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// We are requesting a role at a LARP activity. Form and send a command to the server requesting the role.
+        /// </summary>
         internal void OnRoleRequested(long activityID, string roleName)
         {
             string command = "RequestRole" + SpecialCharacters.messagePartSeparator + activityID + SpecialCharacters.messagePartSeparator + roleName + SpecialCharacters.messagePartSeparator + LocalStorage.cpID + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
@@ -1026,6 +1062,9 @@ namespace LAMA.Communicator
                 communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + SpecialCharacters.messageSeparator + roleName));
         }
 
+        /// <summary>
+        /// We are requesting to be removed from a role at an activity. This function formulates and sends a message about the request to the server.
+        /// </summary>
         internal void OnRoleRemoved(long activityID)
         {
             string command = "RemoveRole" + SpecialCharacters.messagePartSeparator.ToString() + activityID + SpecialCharacters.messagePartSeparator + LocalStorage.cpID + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
@@ -1033,6 +1072,9 @@ namespace LAMA.Communicator
                 communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), activityID + SpecialCharacters.messageSeparator + "RoleRemoved"));
         }
 
+        /// <summary>
+        /// We are trying to modify a channel (rename or archive). Formulate and send a message to the server requesting this modification.
+        /// </summary>
         internal void OnChannelModified(int index, string newName)
         {
             string command = "ChannelModified" + SpecialCharacters.messagePartSeparator + newName + SpecialCharacters.messagePartSeparator + index + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;
@@ -1040,6 +1082,9 @@ namespace LAMA.Communicator
                 communicator.SendCommand(new Command(command, DateTimeOffset.Now.ToUnixTimeMilliseconds(), newName + SpecialCharacters.messageSeparator + index + SpecialCharacters.messageSeparator + "ChannelModified"));
         }
 
+        /// <summary>
+        /// We are trying to create a channel. Send a request to create a channel to the server.
+        /// </summary>
         internal void OnChannelCreated(string channelName)
         {
             string command = "ChannelCreated" + SpecialCharacters.messagePartSeparator.ToString() + channelName + SpecialCharacters.messagePartSeparator + LocalStorage.clientID;

@@ -4,7 +4,10 @@ using System.Text;
 using SQLite;
 namespace LAMA.Communicator
 {
-    internal class ModelPropertyChangeInfoStorage: Database.DictionaryStorageInterface
+    /// <summary>
+    /// Class which helps to store the ModelPropertyChangeInfo into a database.
+    /// </summary>
+    public class ModelPropertyChangeInfoStorage: Database.DictionaryStorageInterface
     {
         [PrimaryKey]
         public string key { get; set; }

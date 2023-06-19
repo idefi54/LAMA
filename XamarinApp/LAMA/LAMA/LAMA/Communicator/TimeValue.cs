@@ -4,6 +4,9 @@ using System.Text;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Class stores an information about the last modification of an object property
+    /// </summary>
     public class ModelPropertyChangeInfo : SerializableDictionaryItem
     {
         private string _key;

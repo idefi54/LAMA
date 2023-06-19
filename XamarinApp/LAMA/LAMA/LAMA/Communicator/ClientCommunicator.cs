@@ -17,24 +17,36 @@ using LAMA.ViewModels;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Handles the communication for client applications. 
+    /// It is capable of sending messages to the server and reacting to those arriving from the server.
+    /// </summary>
     public class ClientCommunicator : Communicator
     {
         public Compression CompressionManager { get; set; }
-        //Managed to connect to the server
         private bool _connected = false;
+        /// <summary>
+        /// Did we manage to establish a connection with the server?
+        /// </summary>
         public bool connected
         {
             get { return _connected; }
         }
-        //Is the client already logged in into the application
+        /// <summary>
+        /// Is the client already logged in into the application
+        /// </summary>
         public bool loggedIn = false;
-        //Server socket
+        /// <summary>
+        /// Server socket
+        /// </summary>
         public static Socket s;
         //So we can use the socket in different threads
         private static object socketLock = new object();
         //Thread the client listens on
         private Thread listener;
-        //When was the client last updated from the server
+        /// <summary>
+        /// When was the client last updated from the server
+        /// </summary>
         public long LastUpdate
         {
             get { return LocalStorage.LastUpdateTime; }
@@ -65,8 +77,14 @@ namespace LAMA.Communicator
         private Timer connectionTimer;
         private Timer broadcastTimer;
 
+        /// <summary>
+        /// When the server refuses a client it send a message specifying the reason why.
+        /// </summary>
         public string clientRefusedMessage = "";
 
+        /// <summary>
+        /// Stop communication gracefully. Clean up, dispose of the System.Threading.Timers broadcasting messages.
+        /// </summary>
         public void EndCommunication()
         {
             if (s != null)
@@ -77,6 +95,9 @@ namespace LAMA.Communicator
             if (broadcastTimer != null) broadcastTimer.Dispose();
         }
 
+        /// <summary>
+        /// Stop trying to connect to the server.
+        /// </summary>
         public void KillConnectionTimer()
         {
             if (connectionTimer != null)
@@ -105,6 +126,7 @@ namespace LAMA.Communicator
                                 commandsToBroadcast.Enqueue(currentCommand);
                                 break;
                             }
+                            Debug.WriteLine($"Sending: {currentCommand.command}");
                             byte[] data = currentCommand.Encode(CompressionManager);
                             try
                             {
@@ -179,6 +201,7 @@ namespace LAMA.Communicator
 
             for (int i = 0; i < messages.Length - 1; i++)
             {
+                Debug.WriteLine($"Received: {messages[i]}");
                 string message = messages[i];
                 message = message.Trim('\0');
                 string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);

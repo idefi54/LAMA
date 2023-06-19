@@ -17,10 +17,19 @@ using System.Threading.Tasks;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Handles the communication for the server application. It is able to receive messages from the clients and send messages to all of the clients at once or do so individually. 
+    /// </summary>
     public class ServerCommunicator : Communicator
     {
+        /// <summary>
+        /// Class managing the Huffman encoding of the messages
+        /// </summary>
         public Compression CompressionManager { get; set; }
 
+        /// <summary>
+        /// the last time we were updated over the network
+        /// </summary>
         public long LastUpdate
         {
             get { return DateTimeOffset.Now.ToUnixTimeMilliseconds(); }
@@ -46,6 +55,9 @@ namespace LAMA.Communicator
 
         private ModelChangesManager modelChangesManager;
 
+        /// <summary>
+        /// Stop communication gracefully, stop broadcasting and dispose of all the necessary objects
+        /// </summary>
         public void EndCommunication()
         {
             foreach (Socket clientSocket in clientSockets.Values)
@@ -99,6 +111,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Send locations to all of the clients
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task SendLocations(CancellationToken token)
         {
             await Task.Run(async () =>
@@ -124,7 +141,7 @@ namespace LAMA.Communicator
                 {
                     if (commandsToBroadcast.Count > 0)
                     {
-                        Command currentCommand = commandsToBroadcast.Dequeue();
+                        currentCommand = commandsToBroadcast.Dequeue();
                     }
                     else
                     {
@@ -133,6 +150,7 @@ namespace LAMA.Communicator
                 }
                 if (currentCommand != null)
                 {
+                    Debug.WriteLine($"Sending: {currentCommand.command}");
                     byte[] data = currentCommand.Encode(CompressionManager);
                     List<int> socketsToRemove = new List<int>();
                     lock (ServerCommunicator.socketsLock)
@@ -259,6 +277,7 @@ namespace LAMA.Communicator
             string[] messages = Encryption.AESDecryptHuffmanDecompress(data, THIS.CompressionManager).Split(SpecialCharacters.messageSeparator);
             for (int i = 0; i < messages.Length - 1; i++)
             {
+                Debug.WriteLine($"Received Message: {messages[i]}");
                 string message = messages[i];
                 string[] messageParts = message.Split(SpecialCharacters.messagePartSeparator);
                 for (int j = 0; j < messageParts.Length; j++)
@@ -504,6 +523,7 @@ namespace LAMA.Communicator
         /// <param name="command"></param>
         public void SendCommand(Command command)
         {
+            Debug.WriteLine($"SendCommand: {command.command}");
             lock (ServerCommunicator.commandsLock)
             {
                 commandsToBroadcast.Enqueue(command);
@@ -519,6 +539,7 @@ namespace LAMA.Communicator
         /// <param name="clientID"></param>
         private void ExistingClientID(Socket current, string clientName, string password, int clientID)
         {
+            Debug.WriteLine("Existing Client");
             bool passwordCorrect = true;
             if (clientID == -1)
             {

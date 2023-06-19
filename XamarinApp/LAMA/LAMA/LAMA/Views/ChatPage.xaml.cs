@@ -67,12 +67,10 @@ namespace LAMA.Views
                 string newText = e.NewTextValue;
                 if (newText.Length == oldText.Length+2)
                 {
-                    Debug.WriteLine("newText.Length == oldText.Length+2");
                     int i;
                     for (i = 0; i < oldText.Length; i++) {
                         if (newText[i] != oldText[i]) break;
                     }
-                    Debug.WriteLine(newText[i]);
                     if (newText[i] == '\r' && newText[i+1]== '\n')
                     {
                         if (oldText.Trim().Length != 0)
