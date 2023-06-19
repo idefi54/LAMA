@@ -1,4 +1,5 @@
 ﻿using LAMA.Models;
+using LAMA.Singletons;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,25 @@ namespace LAMA.Extensions
 {
 	public static class EnumExtension
 	{
+		public static string ToFriendlyString(this MapHandler.EntityType entityType)
+		{
+			switch (entityType)
+			{
+				case MapHandler.EntityType.Nothing:
+					return "Nothing";
+				case MapHandler.EntityType.Activities:
+					return "Aktivity";
+				case MapHandler.EntityType.CPs:
+					return "CP";
+				case MapHandler.EntityType.PointsOfIntrest:
+					return "Lokace";
+				case MapHandler.EntityType.Polylines:
+					return "Cesty";
+				default:
+					return "Nezname";
+			}
+
+		}
 		public static string ToShortString(this LarpActivity.EventType eventType)
 		{
 			switch (eventType)
