@@ -125,6 +125,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="docfx.console" Version="2.59.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mapsui" Version="3.0.2" />
     <PackageReference Include="Mapsui.Forms" Version="3.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />

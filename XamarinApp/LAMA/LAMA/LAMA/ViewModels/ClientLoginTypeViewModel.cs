@@ -30,9 +30,6 @@ namespace LAMA.ViewModels
             }
             else
             {
-                //Debug.WriteLine("New Client");
-                //ClientChooseNamePage.InitPage(clientCommunicator, true);
-                //Debug.WriteLine("Before navigation");
                 await Shell.Current.Navigation.PushAsync(new ClientChooseNamePage(clientCommunicator, true));
             }
         }

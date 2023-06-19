@@ -10,13 +10,26 @@ using System.Xml.Xsl;
 
 namespace LAMA.Communicator
 {
+    /// <summary>
+    /// Huffman tree, which can be used to compress and decompress string messages
+    /// </summary>
     internal class HuffmanTree
     {
+        /// <summary>
+        /// Character used to encode characters not present in the tree
+        /// </summary>
         public static char specialCharacter = 'ƽ';
         private List<HuffmanNode> nodes = new List<HuffmanNode>();
         private bool littleEndian = true;
+        /// <summary>
+        /// Root node of the tree
+        /// </summary>
         public HuffmanNode Root { get; set; }
 
+        /// <summary>
+        /// Initialize the tree with characters and their frequencies
+        /// </summary>
+        /// <param name="frequencies">characters to be added to the tree and their frequencies</param>
         public void Build(Dictionary<char, int> frequencies)
         {
             //Check if bytes are little or big endian
@@ -58,6 +71,11 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Compress a message using Huffman encoding
+        /// </summary>
+        /// <param name="source">text of the message</param>
+        /// <returns>encoded message</returns>
         public byte[] Encode(string source)
         {
             List<bool> encodedSource = new List<bool>();
@@ -78,12 +96,16 @@ namespace LAMA.Communicator
             }
 
             BitArray bits = new BitArray(encodedSource.ToArray());
-            //Debug.WriteLine("[{0}]", string.Join(", ", bits));
             byte[] result = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(result, 0);
             return result;
         }
 
+        /// <summary>
+        /// Decompresses a message from bytes
+        /// </summary>
+        /// <param name="bytes">compressed message</param>
+        /// <returns>text of the message</returns>
         public string Decode(byte[] bytes)
         {
             BitArray bits = new BitArray(bytes);
@@ -155,6 +177,13 @@ namespace LAMA.Communicator
             return decoded;
         }
 
+        /// <summary>
+        /// Decode the first message from the bytes received from the AES decryption. 
+        /// Get the offset of a potentional second message (two messages may have been concatenated).
+        /// </summary>
+        /// <param name="bytes">bytes received from the AES decryption</param>
+        /// <param name="offset">offset of a potentional second message.</param>
+        /// <returns>first message found in the bytes</returns>
         public string DecodeFromAESBytes(byte[] bytes, out int offset)
         {
             HuffmanNode current = this.Root;

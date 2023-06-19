@@ -150,7 +150,6 @@
         await Shell.Current.GoToAsync("//LoginPage");
     -->
     <TabBar>
-		<ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
 		<ShellContent Route="ActivityEditPage" ContentTemplate="{DataTemplate local:ActivityEditPage}"/>
         <ShellContent Route="ClientChooseServerPage" ContentTemplate="{DataTemplate local:ClientChooseServerPage}"/>
         <ShellContent Route="ClientLoginTypePage" ContentTemplate="{DataTemplate local:ClientLoginTypePage}"/>

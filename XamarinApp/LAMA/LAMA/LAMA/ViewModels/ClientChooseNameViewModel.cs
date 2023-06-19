@@ -68,7 +68,6 @@ namespace LAMA.ViewModels
                         BarBackgroundColor = ColorPalette.PrimaryColor
                     };
                     await App.Current.MainPage.Navigation.PushAsync(new ClientChooseServerPage(serverName));
-                    //await App.Current.MainPage.Navigation.PushAsync(new ChooseClientServerPage());
                 }
                 else
                 {

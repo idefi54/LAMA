@@ -10,12 +10,21 @@ namespace LAMA.Communicator
     public class Command : SerializableDictionaryItem
     {
         private string _key;
+        /// <summary>
+        /// Unique string key identifying the object
+        /// </summary>
         public string key { get { return _key; } }
 
         private int _receiverID;
+        /// <summary>
+        /// ID of the client the command is sent to. This is equal to -1 if the command is sent to everyone.
+        /// </summary>
         public int receiverID { get { return _receiverID; } }
 
         private string _command;
+        /// <summary>
+        /// Text of the command
+        /// </summary>
         public string command
         {
             get { return _command; }
@@ -26,6 +35,9 @@ namespace LAMA.Communicator
             }
         }
         private long _time;
+        /// <summary>
+        /// The time the command was sent in the Unix format
+        /// </summary>
         public long time
         {
             get { return _time; }
@@ -37,7 +49,7 @@ namespace LAMA.Communicator
         }
 
         /// <summary>
-        /// Initialize empty command
+        /// Initialize an empty command
         /// </summary>
         public Command()
         {
@@ -64,7 +76,7 @@ namespace LAMA.Communicator
         /// Initialize the command with a text, time sent and key
         /// </summary>
         /// <param name="text">Text of the message</param>
-        /// <param name="initTime">The time message was sent</param>
+        /// <param name="initTime">The time the message was sent</param>
         /// <param name="key">Key for the database</param>
         public Command(string text, long initTime, string key)
         {
@@ -113,7 +125,7 @@ namespace LAMA.Communicator
         }
 
         /// <summary>
-        /// Get encoded representation of the command (using AES algorithm)
+        /// Get an encoded representation of the command (using AES algorithm for encryption and Huffman coding for compression)
         /// </summary>
         /// <returns></returns>
         public byte[] Encode(Compression compressor)
@@ -121,6 +133,9 @@ namespace LAMA.Communicator
             return Encryption.HuffmanCompressAESEncode(_time + SpecialCharacters.messagePartSeparator.ToString() + _command + SpecialCharacters.messageSeparator.ToString(), compressor);
         }
 
+        /// <summary>
+        /// Initialize the property values with those specified in a string array
+        /// </summary>
         public void buildFromStrings(string[] input)
         {
             _key = input[0];
@@ -129,6 +144,10 @@ namespace LAMA.Communicator
             _receiverID = Int32.Parse(input[3]);
         }
 
+        /// <summary>
+        /// Get a string of a value of a property.
+        /// </summary>
+        /// <param name="index">The index of the property</param>
         public string getAttribute(int index)
         {
             switch (index)
@@ -141,11 +160,17 @@ namespace LAMA.Communicator
             }
         }
 
+        /// <summary>
+        /// Gets a string array with the names of all of the object properties.
+        /// </summary>
         public string[] getAttributeNames()
         {
             return attributes;
         }
 
+        /// <summary>
+        /// Returns a string array with the values of all of the command properties
+        /// </summary>
         public string[] getAttributes()
         {
             List<string> output = new List<string>();
@@ -156,11 +181,19 @@ namespace LAMA.Communicator
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Returns the number of the object properties
+        /// </summary>
         public int numOfAttributes()
         {
             return attributes.Length;
         }
 
+        /// <summary>
+        /// Sets a value of the object property
+        /// </summary>
+        /// <param name="index">Index of the property</param>
+        /// <param name="value">String value of the property (this method will convert it to the appropriate data type)</param>
         public void setAttribute(int index, string value)
         {
             switch (index)
@@ -173,7 +206,9 @@ namespace LAMA.Communicator
             }
         }
 
-
+        /// <summary>
+        /// Get a unique string identifying the object
+        /// </summary>
         public string getKey()
         {
             return _key;

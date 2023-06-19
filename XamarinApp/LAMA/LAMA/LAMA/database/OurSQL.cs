@@ -159,7 +159,7 @@ namespace LAMA
             DatabaseHolder<Road, RoadStorage>.reset();
             LocalStorage.reset();
             LarpEvent.reset();
-            DatabaseHolderStringDictionary<TimeValue, TimeValueStorage>.reset();
+            DatabaseHolderStringDictionary<ModelPropertyChangeInfo, ModelPropertyChangeInfoStorage>.reset();
             DatabaseHolderStringDictionary<Command, CommandStorage>.reset();
         }
     }

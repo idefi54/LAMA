@@ -101,26 +101,6 @@ namespace LAMA.ViewModels
             }
 
             SortMessagesInPlace(ChatMessageListItems);
-            /*
-            #region population of the test database
-            if (DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.Count == 0)
-            {
-                ChatMessage message = new ChatMessage("testCp", 0, "testing testing testing testing testing testing testing testing testing", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-
-                message = new ChatMessage("testCp2", 0, "testing2 testing2 testing2 testing2 testing2 testing2 testing2 testing2 testing2", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-
-                message = new ChatMessage("testCp3", 0, "testing3 testing3 testing3 testing3 testing3 testing3 testing3 testing3 testing3", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1000000);
-                DatabaseHolder<ChatMessage, ChatMessageStorage>.Instance.rememberedList.add(message);
-                ChatMessageListItems.Add(new ChatMessageViewModel(message));
-            }
-
-            #endregion
-            */
-            //AddMessageCommand = new Xamarin.Forms.Command(OnAddChatMessage);
         }
 
         private void PropagateCreated(Serializable created)
