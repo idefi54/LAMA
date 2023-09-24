@@ -10,6 +10,7 @@ using Xamarin.Forms.Shapes;
 using Newtonsoft.Json.Converters;
 using Xamarin.Forms.Internals;
 using LAMA.ViewModels;
+using System.ComponentModel.Design;
 
 namespace LAMA.Communicator
 {
@@ -419,58 +420,57 @@ namespace LAMA.Communicator
             {
                 attributesCache.getByKey(attributeID).value = value;
                 attributesCache.getByKey(attributeID).time = updateTime;
+                if (attributesIgnoreChange.ContainsKey(attributeID))
+                {
+                    attributesIgnoreChange[attributeID] = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                }
+                else
+                {
+                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+                }
 
                 if (objectType == "LAMA.Models.LarpActivity")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.LarpActivity, Models.LarpActivityStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.CP")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.CP, Models.CPStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.InventoryItem")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.InventoryItem, Models.InventoryItemStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.ChatMessage")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.ChatMessage, Models.ChatMessageStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.EncyclopedyCategory")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyCategory, Models.EncyclopedyCategoryStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.EncyclopedyRecord")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.EncyclopedyRecord, Models.EncyclopedyRecordStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.PointOfInterest")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.PointOfInterest, Models.PointOfInterestStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Models.Road")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     DatabaseHolder<Models.Road, Models.RoadStorage>.Instance.rememberedList.getByID(objectID).setAttributeDatabase(indexAttribute, value);
                 }
 
                 if (objectType == "LAMA.Singletons.LarpEvent")
                 {
-                    attributesIgnoreChange.Add(attributeID, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                     Singletons.LarpEvent.Instance.setAttributeDatabase(indexAttribute, value);
                 }
             }
